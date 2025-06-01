@@ -437,6 +437,129 @@ Rules:
   async getUsageStats() {
     return await APIUsageService.getTodayUsage("gemini")
   }
+
+  async extractFoodTruckDetailsFromMarkdown(
+    markdownContent: string,
+    sourceUrl?: string,
+  ): Promise<GeminiResponse> {
+    const usageCheck = await this.checkUsageLimits()
+    if (!usageCheck.canMakeRequest) {
+      return {
+        success: false,
+        error: "Daily API limits exceeded for Gemini",
+      }
+    }
+
+    const prompt = `
+You are an AI assistant tasked with extracting structured information about food trucks from their website content (provided in Markdown format). Your goal is to populate a JSON object with the following schema. Only return the JSON object, nothing else.
+
+Markdown Content:
+---
+${markdownContent}
+---
+
+Source URL (if available): ${sourceUrl || "Not provided"}
+
+Target JSON Schema:
+{{
+  "name": "string | null",
+  "description": "string | null",
+  "cuisine_type": ["string", ...], // e.g., ["Mexican", "Tacos", "Fusion"]
+  "price_range": "$ | $$ | $$$ | null", // Estimate based on menu prices if possible, otherwise null
+  "specialties": ["string", ...], // e.g., ["Birria Tacos", "Signature Burger"]
+  "current_location": {{
+    "address": "string | null",
+    "city": "string | null",
+    "state": "string | null", // Should be state/province abbreviation e.g. CA, TX, ON
+    "zip_code": "string | null",
+    "raw_text": "original location text from page | null" // The exact text describing the location from the markdown
+  }},
+  "operating_hours": {{ // Use 24-hour format "HH:MM". If unable to parse, leave as null.
+    "monday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "tuesday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "wednesday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "thursday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "friday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "saturday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "sunday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null
+  }},
+  "menu": [ // If no menu found, this should be an empty array []
+    {{
+      "category": "string", // e.g., "Appetizers", "Main Courses", "Drinks"
+      "items": [
+        {{
+          "name": "string",
+          "description": "string | null",
+          "price": "number (e.g., 12.99) | string (e.g., 'Market Price') | null",
+          "dietary_tags": ["string", ...] // e.g., ["vegan", "gluten-free", "spicy"]
+        }}
+      ]
+    }}
+  ],
+  "contact_info": {{
+    "phone": "string | null", // e.g., "555-123-4567"
+    "email": "string | null",
+    "website": "string | null" // This should be the primary business website, not social media links
+  }},
+  "social_media": {{ // Extract usernames or full URLs if available
+    "instagram": "string | null",
+    "facebook": "string | null",
+    "twitter": "string | null",
+    "tiktok": "string | null",
+    "yelp": "string | null"
+    // Add other platforms like yelp, tiktok if found
+  }},
+  "source_url": "${sourceUrl || "Not provided"}"
+}}
+
+Instructions:
+- Parse the Markdown content to extract the information for the JSON fields.
+- If specific details are missing for a field, use 'null' for string/object/numeric fields or empty arrays '[]' for array fields like 'cuisine_type', 'specialties', 'menu', 'dietary_tags'.
+- For 'operating_hours', if a day is mentioned but hours are unclear, set the day to 'null'. If a day is explicitly stated as closed, use '{{"closed": true}}'. If a day is not mentioned at all, also set it to 'null'.
+- Ensure times are in "HH:MM" 24-hour format. For example, "2 PM" should be "14:00".
+- Prices should be extracted as numbers if possible (e.g., 12.99 from "$12.99"). If it's a textual price like "Market Price" or "MP", use the text.
+- 'cuisine_type' should be a list of keywords describing the type of food.
+- 'price_range' can be estimated based on typical item prices: $ (most items < $10), $$ ($10-$20), $$$ (most items > $20).
+- 'current_location.raw_text' should contain the original text snippet from which location details were extracted.
+- Only return the valid JSON object. Do not include any explanatory text before or after the JSON.
+`
+
+    try {
+      const result = await this.model.generateContent(prompt)
+      const response = await result.response
+      let text = response.text()
+
+      // Clean the response to ensure it's valid JSON
+      // Remove potential markdown code block delimiters
+      text = text.replace(/^```json\s*([\s\S]*?)\s*```$/, "$1").trim()
+
+      const tokensUsed = Math.ceil((prompt.length + text.length) / 4) // Approximation
+      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+
+      try {
+        const parsedData = JSON.parse(text)
+        return {
+          success: true,
+          data: parsedData,
+          tokensUsed,
+        }
+      } catch (parseError: any) {
+        console.error("Gemini JSON parsing error:", parseError)
+        console.error("Problematic Gemini raw response text:", text)
+        return {
+          success: false,
+          error: `Failed to parse Gemini response as JSON: ${parseError.message}. Response text: ${text.substring(0, 200)}...`,
+          tokensUsed,
+        }
+      }
+    } catch (error: any) {
+      console.error("Gemini content generation error:", error)
+      return {
+        success: false,
+        error: error.message || "Unknown error during Gemini content generation",
+      }
+    }
+  }
 }
 
 // Export singleton instance
