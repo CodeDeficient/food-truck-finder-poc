@@ -87,14 +87,20 @@ export interface DataProcessingQueue {
 // Food truck operations
 export class FoodTruckService {
   static async getAllTrucks(limit = 50, offset = 0) {
-    const { data, error, count } = await supabase
+    // Construct the query
+    let query = supabase
       .from("food_trucks")
       .select("*", { count: "exact" })
+      // Filter by address containing ", SC" or " South Carolina" (case-insensitive)
+      // Assumes 'current_location' is a JSONB field with an 'address' key.
+      .or("current_location->>address.ilike.%, SC%,current_location->>address.ilike.% South Carolina%")
       .order("updated_at", { ascending: false })
-      .range(offset, offset + limit - 1)
+      .range(offset, offset + limit - 1);
 
-    if (error) throw error
-    return { trucks: data, total: count }
+    const { data, error, count } = await query;
+
+    if (error) throw error;
+    return { trucks: data, total: count };
   }
 
   static async getTruckById(id: string) {

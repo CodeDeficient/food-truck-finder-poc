@@ -43,12 +43,12 @@ export function TruckCard({ truck, isOpen, distance, onSelect }: TruckCardProps)
   }
 
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onSelect}>
+    <Card className="hover:shadow-md transition-shadow cursor-pointer dark:bg-slate-800 dark:border-slate-700" onClick={onSelect}>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <CardTitle className="text-lg">{truck.name}</CardTitle>
-            <CardDescription className="flex items-center mt-1">
+            <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
+            <CardDescription className="flex items-center mt-1 dark:text-gray-400">
               <MapPin className="h-4 w-4 mr-1" />
               {truck.current_location?.address || "Location not available"}
               {distance && <span className="ml-2">• {distance.toFixed(1)} km away</span>}
@@ -56,32 +56,32 @@ export function TruckCard({ truck, isOpen, distance, onSelect }: TruckCardProps)
           </div>
           <div className="flex flex-col items-end space-y-1">
             <Badge variant={isOpen ? "default" : "secondary"}>{isOpen ? "Open" : "Closed"}</Badge>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs dark:text-gray-300 dark:border-slate-600">
               {Math.round(truck.data_quality_score * 100)}% Quality
             </Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-gray-600 mb-4 line-clamp-2">{truck.description}</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{truck.description}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <h4 className="font-medium mb-2 text-sm">Popular Items</h4>
+            <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Popular Items</h4>
             <div className="space-y-1">
               {getPopularItems().map((item, idx) => (
-                <div key={idx} className="flex justify-between text-sm">
-                  <span className="truncate">{item.name}</span>
-                  <span className="text-green-600 ml-2">{formatPrice(item.price)}</span>
+                <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
+                  <span className="truncate dark:text-gray-200">{item.name}</span>
+                  <span className="text-green-600 dark:text-green-400 ml-2">{formatPrice(item.price)}</span>
                 </div>
               ))}
-              {getPopularItems().length === 0 && <p className="text-gray-500 text-sm">Menu not available</p>}
+              {getPopularItems().length === 0 && <p className="text-gray-500 dark:text-gray-400 text-sm">Menu not available</p>}
             </div>
           </div>
 
           <div>
-            <h4 className="font-medium mb-2 text-sm">Contact</h4>
-            <div className="space-y-1">
+            <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
+            <div className="space-y-1 dark:text-gray-300">
               {truck.contact_info?.phone && (
                 <div className="flex items-center text-sm">
                   <Phone className="h-3 w-3 mr-1" />
@@ -94,7 +94,7 @@ export function TruckCard({ truck, isOpen, distance, onSelect }: TruckCardProps)
                   <span className="truncate">Website</span>
                 </div>
               )}
-              <div className="flex items-center text-xs text-gray-500">
+              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                 <Star className="h-3 w-3 mr-1" />
                 <span>{truck.verification_status}</span>
               </div>
