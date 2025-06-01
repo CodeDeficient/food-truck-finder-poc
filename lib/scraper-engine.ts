@@ -220,44 +220,12 @@ export class ScraperEngine {
     }
   }
 
+  // The extractDataFromHTML method is no longer directly used by scrapeWebsite's primary Firecrawl path.
+  // It might be used by a fallback or if direct HTML parsing is needed for other reasons.
+  // Removing the erroneously pasted social media scraping logic from here.
   private extractDataFromHTML(html: string, selectors: Record<string, string>): any {
-    // This part remains unchanged as it's not the focus of this subtask.
-    // However, if Firecrawl can handle social media (it often can via general URL scraping),
-    // this might also be refactored in the future.
-    try {
-      await this.randomDelay() // Still useful if making direct calls
-
-      // Platform-specific scraping logic
-      switch (platform) {
-        case "instagram":
-          return await this.scrapeInstagram(handle)
-        case "facebook":
-          return await this.scrapeFacebook(handle)
-        case "twitter":
-          return await this.scrapeTwitter(handle)
-        default:
-          throw new Error(`Unsupported platform: ${platform}`)
-      }
-    } catch (error) {
-      console.error(`Social media scraping error for ${platform}/${handle}:`, error)
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString(),
-        platform,
-        handle,
-      }
-    }
-  }
-
-  // ... (keep scrapeInstagram, scrapeFacebook, scrapeTwitter as they are for now) ...
-  // The extractDataFromHTML method is no longer directly used by scrapeWebsite if Firecrawl is primary.
-  // It could be kept for the fallback or removed if fallback only returns raw HTML.
-  // For now, let's keep it, but it's unused by the main Firecrawl path.
-  private extractDataFromHTML(html: string, selectors: Record<string, string>): any {
-    // Simulate HTML parsing and data extraction
-    // In real implementation, would use Cheerio or similar library
-
+    // This method's original purpose was to simulate HTML parsing based on selectors.
+    // console.log("extractDataFromHTML called with html (length):", html.length, "selectors:", selectors); // For debugging if ever used
     const extractedData: any = {}
 
     // Mock extraction based on selectors
