@@ -7,11 +7,8 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Food Truck Finder",
-  description: 'Created with v0',
-  generator: 'v0.dev',
-}
-
   description: "Discover the best food trucks near you.",
+  // generator: 'v0.dev', // Removed as it seems like a template placeholder
 }
 
 export default function RootLayout({
