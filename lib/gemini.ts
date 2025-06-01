@@ -6,6 +6,7 @@ interface GeminiResponse {
   data?: any
   tokensUsed?: number
   error?: string
+  promptSent?: string;
 }
 
 export class GeminiService {
@@ -542,6 +543,7 @@ Instructions:
           success: true,
           data: parsedData,
           tokensUsed,
+          promptSent: prompt,
         }
       } catch (parseError: any) {
         console.error("Gemini JSON parsing error:", parseError)
@@ -550,6 +552,7 @@ Instructions:
           success: false,
           error: `Failed to parse Gemini response as JSON: ${parseError.message}. Response text: ${text.substring(0, 200)}...`,
           tokensUsed,
+          promptSent: prompt,
         }
       }
     } catch (error: any) {
@@ -557,6 +560,7 @@ Instructions:
       return {
         success: false,
         error: error.message || "Unknown error during Gemini content generation",
+        promptSent: prompt, // Include prompt here as well, as it was generated before the call
       }
     }
   }
