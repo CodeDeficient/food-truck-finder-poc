@@ -60,18 +60,18 @@ export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
   const activeFilterCount = [filters.query, filters.cuisine, filters.openNow].filter(Boolean).length
 
   return (
-    <Card>
+    <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardContent className="p-4">
         <div className="space-y-4">
           {/* Main Search */}
           <div className="flex space-x-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
               <Input
                 placeholder="Search food trucks, cuisine, or menu items..."
                 value={filters.query}
                 onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-                className="pl-10"
+                className="pl-10 dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400"
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
@@ -79,11 +79,11 @@ export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
-            <Button variant="outline" onClick={() => setShowAdvanced(!showAdvanced)}>
+            <Button variant="outline" onClick={() => setShowAdvanced(!showAdvanced)} className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700">
               <Filter className="h-4 w-4 mr-2" />
               Filters
               {activeFilterCount > 0 && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="secondary" className="ml-2 dark:bg-slate-700 dark:text-gray-300">
                   {activeFilterCount}
                 </Badge>
               )}
@@ -92,31 +92,32 @@ export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
 
           {/* Advanced Filters */}
           {showAdvanced && (
-            <div className="space-y-4 pt-4 border-t">
+            <div className="space-y-4 pt-4 border-t dark:border-slate-700">
               {/* Quick Filters */}
               <div className="flex items-center space-x-2">
                 <Button
                   variant={filters.openNow ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilters({ ...filters, openNow: !filters.openNow })}
+                  className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700"
                 >
                   <Clock className="h-4 w-4 mr-1" />
                   Open Now
                 </Button>
-                <Button variant="outline" size="sm" onClick={clearFilters}>
+                <Button variant="outline" size="sm" onClick={clearFilters} className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700">
                   Clear All
                 </Button>
               </div>
 
               {/* Cuisine Types */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Cuisine Type</label>
+                <label className="text-sm font-medium mb-2 block dark:text-gray-100">Cuisine Type</label>
                 <div className="flex flex-wrap gap-2">
                   {cuisineTypes.map((cuisine) => (
                     <Badge
                       key={cuisine}
                       variant={filters.cuisine === cuisine ? "default" : "outline"}
-                      className="cursor-pointer"
+                      className="cursor-pointer dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700"
                       onClick={() =>
                         setFilters({
                           ...filters,
@@ -132,16 +133,16 @@ export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
 
               {/* Distance */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Distance: {filters.radius} km</label>
+                <label className="text-sm font-medium mb-2 block dark:text-gray-100">Distance: {filters.radius} km</label>
                 <input
                   type="range"
                   min="1"
                   max="50"
                   value={filters.radius}
                   onChange={(e) => setFilters({ ...filters, radius: Number(e.target.value) })}
-                  className="w-full"
+                  className="w-full accent-blue-600 dark:accent-blue-500"
                 />
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
                   <span>1 km</span>
                   <span>50 km</span>
                 </div>
