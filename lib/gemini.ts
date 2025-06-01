@@ -96,10 +96,11 @@ Rules:
 - If no clear categories, use "Main Items"
 - Return only the JSON, no additional text
       `
-      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
-        [{ role: "user", parts: [{ text: prompt }] }]
-      );
-      const responseText = sdkResponse.text; // Use sdkResponse.text directly
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
       const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
 
@@ -166,10 +167,11 @@ Rules:
 - Return only the JSON, no additional text
       `
       // Renamed 'text' parameter to 'textInput' to avoid conflict with 'text' variable for response
-      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
-        [{ role: "user", parts: [{ text: textInput }] }]
-      );
-      const responseText = sdkResponse.text; // Use sdkResponse.text directly
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: textInput }] }]
+      });
+      const responseText = sdkResponse.text;
 
       const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
@@ -232,10 +234,11 @@ Rules:
 - Default to reasonable hours if ambiguous
 - Return only the JSON, no additional text
       `
-      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
-        [{ role: "user", parts: [{ text: prompt }] }]
-      );
-      const responseText = sdkResponse.text; // Use sdkResponse.text directly
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
       const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
@@ -299,10 +302,11 @@ Rules:
 - Summary should be 1-2 sentences max
 - Return only the JSON, no additional text
       `
-      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
-        [{ role: "user", parts: [{ text: prompt }] }]
-      );
-      const responseText = sdkResponse.text; // Use sdkResponse.text directly
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
       const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
@@ -371,10 +375,11 @@ Rules:
 - Estimate price range from menu prices
 - Return only the JSON, no additional text
       `
-      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
-        [{ role: "user", parts: [{ text: prompt }] }]
-      );
-      const responseText = sdkResponse.text; // Use sdkResponse.text directly
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
       const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
@@ -528,10 +533,11 @@ Instructions:
 `
     let textOutput = ""; // Define to ensure it's available in catch/finally if needed for token calculation
     try {
-      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
-        [{ role: "user", parts: [{ text: prompt }] }]
-      );
-      textOutput = sdkResponse.text; // Use sdkResponse.text directly
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      textOutput = sdkResponse.text;
 
       // Clean the response to ensure it's valid JSON
       // Remove potential markdown code block delimiters
