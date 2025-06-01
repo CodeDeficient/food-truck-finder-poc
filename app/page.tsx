@@ -59,9 +59,11 @@ export default function FoodTruckFinder() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [selectedTruck, setSelectedTruck] = useState<FoodTruck | null>(null)
   const [activeTab, setActiveTab] = useState("map")
-  const { theme, setTheme } = useThemeSwitcher()
+  const { theme, setTheme, resolvedTheme } = useThemeSwitcher()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     loadFoodTrucks()
     getUserLocation()
   }, [])
@@ -163,29 +165,30 @@ export default function FoodTruckFinder() {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">🚚 Food Truck Finder</h1>
               <p className="text-gray-600 dark:text-gray-400">Discover amazing food trucks near you</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                {theme === "dark" ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-slate-500" />}
+            <div className="flex flex-wrap items-center justify-end gap-2 sm:space-x-4"> {/* Added flex-wrap, justify-end, gap-2. Removed space-x-4 for sm screens */}
+              <div className="flex items-center space-x-2 order-1 sm:order-none"> {/* Control order for small screens if needed */}
+                {mounted && (resolvedTheme === "dark" ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-slate-500" />)}
                 <Switch
                   id="theme-switcher"
-                  checked={theme === "dark"}
-                  onCheckedChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  checked={mounted && resolvedTheme === "dark"}
+                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
                   aria-label="Switch between dark and light mode"
+                  disabled={!mounted}
                 />
                 <Label htmlFor="theme-switcher" className="hidden sm:block text-sm text-gray-700 dark:text-gray-300">
-                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  {mounted && (resolvedTheme === "dark" ? "Light Mode" : "Dark Mode")}
                 </Label>
               </div>
-              <div className="relative">
+              <div className="relative order-3 sm:order-none w-full sm:w-64"> {/* Full width on small, fixed on sm+ */}
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
                 <Input
                   placeholder="Search food trucks..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 w-64 bg-white dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400"
+                  className="pl-10 w-full bg-white dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400" // w-full for responsiveness
                 />
               </div>
-              <Button onClick={loadNearbyTrucks} disabled={!userLocation} variant="outline">
+              <Button onClick={loadNearbyTrucks} disabled={!userLocation} variant="outline" className="order-2 sm:order-none"> {/* Control order */}
                 <Navigation className="h-4 w-4 mr-2" />
                 Find Nearby
               </Button>
@@ -195,6 +198,25 @@ export default function FoodTruckFinder() {
       </div>
 
       <div className="container mx-auto px-4 py-6">
+        <Card className="mb-6 dark:bg-slate-800 dark:border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold dark:text-gray-100">Current Target Food Truck Source</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              The primary data source for food truck information is currently:
+            </p>
+            <a
+              href="https://eatrotirolls.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline dark:text-blue-400"
+            >
+              https://eatrotirolls.com/
+            </a>
+          </CardContent>
+        </Card>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList>
             <TabsTrigger value="map">Map View</TabsTrigger>
@@ -205,7 +227,7 @@ export default function FoodTruckFinder() {
           <TabsContent value="map" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Real Map */}
-              <div className="lg:col-span-2 h-96 min-h-[400px] dark:bg-slate-800 rounded-lg shadow">
+              <div className="lg:col-span-2 h-80 min-h-[320px] sm:h-96 sm:min-h-[400px] dark:bg-slate-800 rounded-lg shadow">
                 <MapDisplay trucks={filteredTrucks} userLocation={userLocation} />
               </div>
 
@@ -388,11 +410,12 @@ export default function FoodTruckFinder() {
 
 function AdminDashboard() {
   const [dashboardData, setDashboardData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const { theme } = useThemeSwitcher()
-
+  const [loadingAdmin, setLoadingAdmin] = useState(true) // Renamed to avoid conflict
+  const { resolvedTheme: adminTheme } = useThemeSwitcher() // Use resolvedTheme for admin section too
+  const [adminMounted, setAdminMounted] = useState(false)
 
   useEffect(() => {
+    setAdminMounted(true)
     loadDashboardData()
   }, [])
 
@@ -408,8 +431,8 @@ function AdminDashboard() {
     }
   }
 
-  if (loading) {
-    return <div className={`text-center py-8 ${theme === 'dark' ? 'text-gray-300' : ''}`}>Loading admin dashboard...</div>
+  if (loadingAdmin) {
+    return <div className={`text-center py-8 ${adminMounted && adminTheme === 'dark' ? 'text-gray-300' : ''}`}>Loading admin dashboard...</div>
   }
 
   return (
