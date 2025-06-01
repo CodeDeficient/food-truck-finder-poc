@@ -299,7 +299,6 @@ Rules:
 - Summary should be 1-2 sentences max
 - Return only the JSON, no additional text
       `
-      `
       const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
         [{ role: "user", parts: [{ text: prompt }] }]
       );
