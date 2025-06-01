@@ -125,20 +125,39 @@ async function processScrapingJob(jobId: string) {
   } catch (error) {
     console.error(`Scraping job ${jobId} failed:`, error)
     const errorMessage = error instanceof Error ? error.message : "Unknown error"
-    // Ensure job status is updated to failed if not already handled by specific error blocks
-    const currentJob = await ScrapingJobService.getJobsByStatus("all").then(jobs => jobs.find(j => j.id === jobId));
-    if (currentJob && currentJob.status !== "failed") {
-      await ScrapingJobService.updateJobStatus(jobId, "failed", {
-        errors: [errorMessage],
-      });
+
+    // Attempt to update job status to failed
+    try {
+      // Check current status to avoid overwriting if already failed in a specific step
+      const currentJobData = await ScrapingJobService.getJobsByStatus("all").then(jobs => jobs.find(j => j.id === jobId));
+      if (currentJobData && currentJobData.status !== "failed") {
+        await ScrapingJobService.updateJobStatus(jobId, "failed", {
+          errors: [errorMessage],
+        });
+      } else if (!currentJobData) {
+        // If job couldn't be fetched, log but proceed to retry logic if appropriate
+        console.error(`Could not fetch job ${jobId} to update status to failed.`);
+      }
+    } catch (statusUpdateError) {
+      console.error(`Error updating job ${jobId} status to failed:`, statusUpdateError);
     }
-    })
 
     // Increment retry count and potentially retry
-    const job = await ScrapingJobService.incrementRetryCount(jobId)
-    if (job.retry_count < job.max_retries) {
-      console.log(`Retrying job ${jobId} (attempt ${job.retry_count + 1}/${job.max_retries})`)
-      setTimeout(() => processScrapingJob(jobId), 5000) // Retry after 5 seconds
+    try {
+      const jobAfterRetryIncrement = await ScrapingJobService.incrementRetryCount(jobId);
+      // Ensure jobAfterRetryIncrement and its properties are valid before using them
+      if (jobAfterRetryIncrement && typeof jobAfterRetryIncrement.retry_count === 'number' && typeof jobAfterRetryIncrement.max_retries === 'number') {
+        if (jobAfterRetryIncrement.retry_count < jobAfterRetryIncrement.max_retries) {
+          console.log(`Retrying job ${jobId} (attempt ${jobAfterRetryIncrement.retry_count}/${jobAfterRetryIncrement.max_retries})`);
+          setTimeout(() => processScrapingJob(jobId), 5000); // Retry after 5 seconds
+        } else {
+          console.log(`Job ${jobId} reached max retries (${jobAfterRetryIncrement.max_retries}).`);
+        }
+      } else {
+        console.error(`Job ${jobId}: Could not get valid retry_count or max_retries. Won't attempt retry.`);
+      }
+    } catch (retryIncrementError) {
+      console.error(`Error during retry increment logic for job ${jobId}:`, retryIncrementError);
     }
   }
 }
@@ -330,7 +349,6 @@ async function createOrUpdateFoodTruck(jobId: string, extractedTruckData: any, s
     // await ScrapingJobService.updateJobStatus(jobId, "failed", {
     //   errors: [`Food truck creation failed: ${error instanceof Error ? error.message : "Unknown error"}`],
     // });
-  } catch (error) {
-    console.error("Error creating food truck:", error)
   }
+  // Duplicate catch block removed here
 }
