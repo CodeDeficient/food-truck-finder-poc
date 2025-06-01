@@ -155,8 +155,8 @@ export class FoodTruckService {
 // --------- API ROUTE HANDLERS ---------
 
 import { type NextRequest, NextResponse } from "next/server";
-import { ScraperEngine } from "../../lib/scraper-engine"; // Adjusted path
-import { gemini } from "../../lib/gemini"; // Adjusted path
+import { ScraperEngine } from "@/lib/scraper-engine"; // Using path alias
+import { gemini } from "@/lib/gemini"; // Using path alias
 // FoodTruckService, ScrapingJobService, etc. are already defined in this file.
 
 export async function POST(request: NextRequest) {
