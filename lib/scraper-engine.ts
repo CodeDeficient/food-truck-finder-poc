@@ -1,8 +1,12 @@
+import { firecrawl } from "./firecrawl"; // Import the firecrawl singleton
+
 // Core scraping engine with anti-detection measures
 export class ScraperEngine {
+  // User agents and proxies might not be directly used if relying on Firecrawl,
+  // but keeping them for potential future direct fetching or other strategies.
   private userAgents: string[]
   private proxies: string[]
-  private requestDelay: number
+  private requestDelay: number // May not be needed with Firecrawl's own rate limiting
   private maxRetries: number
 
   constructor() {
@@ -11,49 +15,79 @@ export class ScraperEngine {
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     ]
-    this.proxies = [] // Would be populated with proxy servers
-    this.requestDelay = 2000 // 2 seconds between requests
-    this.maxRetries = 3
+    this.proxies = []
+    this.requestDelay = 2000
+    this.maxRetries = 3 // FirecrawlService has its own retry logic, this might be redundant or a fallback.
   }
 
-  async scrapeWebsite(url: string, selectors: Record<string, string>): Promise<any> {
+  // Selectors argument might become less relevant if Firecrawl's onlyMainContent is sufficient
+  // or if Gemini is expected to parse the whole content.
+  async scrapeWebsite(url: string, _selectors?: Record<string, string>): Promise<any> {
     try {
-      // Simulate web scraping with anti-detection measures
-      await this.randomDelay()
+      // Use FirecrawlService to scrape the URL
+      // Request both markdown and html, prioritize markdown for Gemini.
+      const firecrawlResult = await firecrawl.scrapeUrl(url, {
+        formats: ["markdown", "html"],
+        onlyMainContent: true, // Usually good for cleaner data for LLMs
+      });
 
-      const userAgent = this.getRandomUserAgent()
-      const headers = {
-        "User-Agent": userAgent,
-        Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Accept-Encoding": "gzip, deflate",
-        Connection: "keep-alive",
-        "Upgrade-Insecure-Requests": "1",
+      if (!firecrawlResult.success || !firecrawlResult.data) {
+        throw new Error(firecrawlResult.error || "Firecrawl scraping failed to return data.");
       }
 
-      // In a real implementation, this would use Puppeteer or Playwright
-      const response = await fetch(url, { headers })
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      // Structure the output to be compatible with what the pipeline expects.
+      // The pipeline currently passes `scrapeResult.data` to Gemini.
+      // Let's pass both markdown and html content.
+      const returnedData: { markdown_content?: string, html_content?: string, metadata?: any } = {};
+      if (firecrawlResult.data.markdown) {
+        returnedData.markdown_content = firecrawlResult.data.markdown;
+      }
+      if (firecrawlResult.data.html) {
+        returnedData.html_content = firecrawlResult.data.html;
+      }
+      if (firecrawlResult.data.metadata) {
+        returnedData.metadata = firecrawlResult.data.metadata;
       }
 
-      // Simulate data extraction
-      const extractedData = this.extractDataFromHTML(await response.text(), selectors)
+      if (!returnedData.markdown_content && !returnedData.html_content) {
+        throw new Error("Firecrawl returned no markdown or HTML content.");
+      }
 
       return {
         success: true,
-        data: extractedData,
+        data: returnedData, // This object will be part of `scraped_data` for Gemini
         timestamp: new Date().toISOString(),
         source: url,
-      }
+      };
+
     } catch (error) {
-      console.error(`Scraping error for ${url}:`, error)
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString(),
-        source: url,
+      console.error(`Scraping error for ${url} using Firecrawl:`, error);
+      // Fallback to basic fetch if Firecrawl fails and as per subtask instructions
+      console.log(`Falling back to basic fetch for ${url}`);
+      try {
+        const response = await fetch(url, { headers: { "User-Agent": this.getRandomUserAgent() } });
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}: ${response.statusText} during fallback fetch.`);
+        }
+        const htmlContent = await response.text();
+        return {
+          success: true, // Still success in fetching, but indicate it's a fallback
+          data: {
+            html_content: htmlContent,
+            is_fallback: true, // Add a flag to indicate this data is from fallback
+          },
+          timestamp: new Date().toISOString(),
+          source: url,
+          note: "Fetched using basic fetch as Firecrawl failed.",
+        };
+      } catch (fallbackError) {
+        console.error(`Fallback fetch error for ${url}:`, fallbackError);
+        return {
+          success: false,
+          error: fallbackError instanceof Error ? fallbackError.message : "Unknown fallback fetch error",
+          timestamp: new Date().toISOString(),
+          source: url,
+        };
       }
     }
   }
@@ -187,6 +221,40 @@ export class ScraperEngine {
   }
 
   private extractDataFromHTML(html: string, selectors: Record<string, string>): any {
+    // This part remains unchanged as it's not the focus of this subtask.
+    // However, if Firecrawl can handle social media (it often can via general URL scraping),
+    // this might also be refactored in the future.
+    try {
+      await this.randomDelay() // Still useful if making direct calls
+
+      // Platform-specific scraping logic
+      switch (platform) {
+        case "instagram":
+          return await this.scrapeInstagram(handle)
+        case "facebook":
+          return await this.scrapeFacebook(handle)
+        case "twitter":
+          return await this.scrapeTwitter(handle)
+        default:
+          throw new Error(`Unsupported platform: ${platform}`)
+      }
+    } catch (error) {
+      console.error(`Social media scraping error for ${platform}/${handle}:`, error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+        platform,
+        handle,
+      }
+    }
+  }
+
+  // ... (keep scrapeInstagram, scrapeFacebook, scrapeTwitter as they are for now) ...
+  // The extractDataFromHTML method is no longer directly used by scrapeWebsite if Firecrawl is primary.
+  // It could be kept for the fallback or removed if fallback only returns raw HTML.
+  // For now, let's keep it, but it's unused by the main Firecrawl path.
+  private extractDataFromHTML(html: string, selectors: Record<string, string>): any {
     // Simulate HTML parsing and data extraction
     // In real implementation, would use Cheerio or similar library
 
@@ -215,7 +283,7 @@ export class ScraperEngine {
           ]
           break
         default:
-          extractedData[key] = `Sample ${key} data`
+          extractedData[key] = `Sample ${key} data` // This was the source of "Sample page_content data"
       }
     })
 
