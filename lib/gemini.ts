@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenAI } from "@google/genai"; // Updated import
 import { APIUsageService } from "./supabase"
 
 interface GeminiResponse {
@@ -10,14 +10,17 @@ interface GeminiResponse {
 }
 
 export class GeminiService {
-  private genAI: GoogleGenerativeAI
-  private model: any
+  private genAI: GoogleGenAI; // Updated type
+  private modelName: string; // New property for model name
   private dailyRequestLimit = 1500
   private dailyTokenLimit = 32000
 
   constructor() {
-    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-    this.model = this.genAI.getGenerativeModel({ model: "gemini-pro" })
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY environment variable is not set.");
+    }
+    this.genAI = new GoogleGenAI(process.env.GEMINI_API_KEY); // Updated initialization
+    this.modelName = "gemini-2.0-flash-001"; // Changed model name as requested
   }
 
   async checkUsageLimits(): Promise<{ canMakeRequest: boolean; usage?: any }> {
@@ -93,19 +96,18 @@ Rules:
 - If no clear categories, use "Main Items"
 - Return only the JSON, no additional text
       `
+      `
+      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
+        [{ role: "user", parts: [{ text: prompt }] }]
+      );
+      const responseText = sdkResponse.text; // Use sdkResponse.text directly
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
 
-      // Estimate tokens used (rough approximation)
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
-
-      // Track usage
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -127,7 +129,7 @@ Rules:
     }
   }
 
-  async extractLocationFromText(text: string): Promise<GeminiResponse> {
+  async extractLocationFromText(textInput: string): Promise<GeminiResponse> {
     const usageCheck = await this.checkUsageLimits()
     if (!usageCheck.canMakeRequest) {
       return {
@@ -164,16 +166,17 @@ Rules:
 - Include any mentioned landmarks or cross streets
 - Return only the JSON, no additional text
       `
+      // Renamed 'text' parameter to 'textInput' to avoid conflict with 'text' variable for response
+      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
+        [{ role: "user", parts: [{ text: textInput }] }]
+      );
+      const responseText = sdkResponse.text; // Use sdkResponse.text directly
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -230,16 +233,17 @@ Rules:
 - Default to reasonable hours if ambiguous
 - Return only the JSON, no additional text
       `
+      `
+      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
+        [{ role: "user", parts: [{ text: prompt }] }]
+      );
+      const responseText = sdkResponse.text; // Use sdkResponse.text directly
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -297,16 +301,17 @@ Rules:
 - Summary should be 1-2 sentences max
 - Return only the JSON, no additional text
       `
+      `
+      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
+        [{ role: "user", parts: [{ text: prompt }] }]
+      );
+      const responseText = sdkResponse.text; // Use sdkResponse.text directly
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -369,16 +374,17 @@ Rules:
 - Estimate price range from menu prices
 - Return only the JSON, no additional text
       `
+      `
+      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
+        [{ role: "user", parts: [{ text: prompt }] }]
+      );
+      const responseText = sdkResponse.text; // Use sdkResponse.text directly
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -524,21 +530,22 @@ Instructions:
 - 'current_location.raw_text' should contain the original text snippet from which location details were extracted.
 - Only return the valid JSON object. Do not include any explanatory text before or after the JSON.
 `
-
+    let textOutput = ""; // Define to ensure it's available in catch/finally if needed for token calculation
     try {
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      let text = response.text()
+      const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
+        [{ role: "user", parts: [{ text: prompt }] }]
+      );
+      textOutput = sdkResponse.text; // Use sdkResponse.text directly
 
       // Clean the response to ensure it's valid JSON
       // Remove potential markdown code block delimiters
-      text = text.replace(/^```json\s*([\s\S]*?)\s*```$/, "$1").trim()
+      const cleanedText = textOutput.replace(/^```json\s*([\s\S]*?)\s*```$/, "$1").trim()
 
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4) // Approximation
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (cleanedText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text)
+        const parsedData = JSON.parse(cleanedText)
         return {
           success: true,
           data: parsedData,
@@ -547,20 +554,23 @@ Instructions:
         }
       } catch (parseError: any) {
         console.error("Gemini JSON parsing error:", parseError)
-        console.error("Problematic Gemini raw response text:", text)
+        console.error("Problematic Gemini raw response text:", cleanedText)
         return {
           success: false,
-          error: `Failed to parse Gemini response as JSON: ${parseError.message}. Response text: ${text.substring(0, 200)}...`,
-          tokensUsed,
+          error: `Failed to parse Gemini response as JSON: ${parseError.message}. Response text: ${cleanedText.substring(0, 200)}...`,
+          tokensUsed, // This might be from an error response or the fallback if sdkResponse.response.usageMetadata was undefined
           promptSent: prompt,
         }
       }
     } catch (error: any) {
       console.error("Gemini content generation error:", error)
+      // Fallback token calculation if the API call itself failed before getting usageMetadata
+      const tokensUsed = Math.ceil((prompt.length + textOutput.length) / 4);
       return {
         success: false,
         error: error.message || "Unknown error during Gemini content generation",
-        promptSent: prompt, // Include prompt here as well, as it was generated before the call
+        tokensUsed: tokensUsed, // Provide best estimate
+        promptSent: prompt,
       }
     }
   }
