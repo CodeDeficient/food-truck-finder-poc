@@ -96,7 +96,6 @@ Rules:
 - If no clear categories, use "Main Items"
 - Return only the JSON, no additional text
       `
-      `
       const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
         [{ role: "user", parts: [{ text: prompt }] }]
       );
@@ -144,7 +143,7 @@ Extract location information from the following text and return structured data.
 Look for addresses, cross streets, landmarks, or location descriptions.
 
 Text:
-${text}
+${textInput}
 
 Return ONLY valid JSON in this exact format:
 {
@@ -232,7 +231,6 @@ Rules:
 - Handle ranges like "Mon-Fri" by applying to all days in range
 - Default to reasonable hours if ambiguous
 - Return only the JSON, no additional text
-      `
       `
       const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
         [{ role: "user", parts: [{ text: prompt }] }]
