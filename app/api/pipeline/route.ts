@@ -1,17 +1,3 @@
-... shell ...
-\
-Now
-let me
-create
-the
-actual
-integration
-files
-for Supabase, Firecrawl, and Gemini
-:
-
-```ts file="lib/supabase.ts"
-[v0-no-op-code-block-prefix]
 import { createClient } from "@supabase/supabase-js"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
