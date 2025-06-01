@@ -64,22 +64,22 @@ export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
       <CardContent className="p-4">
         <div className="space-y-4">
           {/* Main Search */}
-          <div className="flex space-x-2">
-            <div className="relative flex-1">
+          <div className="flex flex-wrap items-center gap-2 sm:space-x-2"> {/* Allow wrapping and adjust gap */}
+            <div className="relative flex-grow min-w-[200px]"> {/* Use flex-grow and min-w for input section */}
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
               <Input
                 placeholder="Search food trucks, cuisine, or menu items..."
                 value={filters.query}
                 onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-                className="pl-10 dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400"
+                className="pl-10 w-full dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400" // Ensure input takes full width of its container
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
               />
             </div>
-            <Button onClick={handleSearch} disabled={loading}>
+            <Button onClick={handleSearch} disabled={loading} className="flex-shrink-0"> {/* Prevent button from shrinking excessively */}
               <Search className="h-4 w-4 mr-2" />
               Search
             </Button>
-            <Button variant="outline" onClick={() => setShowAdvanced(!showAdvanced)} className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700">
+            <Button variant="outline" onClick={() => setShowAdvanced(!showAdvanced)} className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700 flex-shrink-0"> {/* Prevent button from shrinking */}
               <Filter className="h-4 w-4 mr-2" />
               Filters
               {activeFilterCount > 0 && (
