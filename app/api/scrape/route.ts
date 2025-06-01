@@ -83,30 +83,55 @@ async function processScrapingJob(jobId: string) {
 
     // Scrape the website using Firecrawl
     console.log(`Starting scrape for ${job.target_url}`)
-    const scrapeResult = await firecrawl.scrapeFoodTruckWebsite(job.target_url)
+    const scrapeResult = await firecrawl.scrapeFoodTruckWebsite(job.target_url) // Simplified call
 
-    if (!scrapeResult.success) {
-      throw new Error(scrapeResult.error || "Scraping failed")
+    if (!scrapeResult.success || !scrapeResult.data?.markdown) {
+      await ScrapingJobService.updateJobStatus(jobId, "failed", {
+        errors: [scrapeResult.error || "Scraping failed or markdown content not found"],
+      })
+      throw new Error(scrapeResult.error || "Scraping failed or markdown content not found")
     }
 
-    // Update job with scraped data
+    console.log(`Scraping successful for ${job.target_url}, proceeding to Gemini extraction.`)
+
+    // Call Gemini to extract structured data
+    const geminiResult = await gemini.extractFoodTruckDetailsFromMarkdown(
+      scrapeResult.data.markdown,
+      scrapeResult.data.source_url || job.target_url,
+    )
+
+    if (!geminiResult.success || !geminiResult.data) {
+      await ScrapingJobService.updateJobStatus(jobId, "failed", {
+        errors: [geminiResult.error || "Gemini data extraction failed"],
+      })
+      throw new Error(geminiResult.error || "Gemini data extraction failed")
+    }
+
+    console.log(`Gemini extraction successful for ${job.target_url}.`)
+
+    // Update job with structured data from Gemini
     await ScrapingJobService.updateJobStatus(jobId, "completed", {
-      data_collected: scrapeResult.data,
+      data_collected: geminiResult.data, // This is the structured JSON
       completed_at: new Date().toISOString(),
     })
 
-    // Process the scraped data with Gemini
-    if (scrapeResult.data) {
-      await processScrapedData(jobId, scrapeResult.data)
-    }
+    // Create or update FoodTruck entry
+    await createOrUpdateFoodTruck(jobId, geminiResult.data, scrapeResult.data.source_url || job.target_url)
 
-    console.log(`Scraping job ${jobId} completed successfully`)
+    // The call to processScrapedData is removed as Gemini now handles full extraction.
+    // The old processScrapedData and processDataQueue can remain for other potential uses or reprocessing.
+
+    console.log(`Scraping job ${jobId} completed successfully and data processed.`)
   } catch (error) {
     console.error(`Scraping job ${jobId} failed:`, error)
-
-    // Update job status to failed
-    await ScrapingJobService.updateJobStatus(jobId, "failed", {
-      errors: [error instanceof Error ? error.message : "Unknown error"],
+    const errorMessage = error instanceof Error ? error.message : "Unknown error"
+    // Ensure job status is updated to failed if not already handled by specific error blocks
+    const currentJob = await ScrapingJobService.getJobsByStatus("all").then(jobs => jobs.find(j => j.id === jobId));
+    if (currentJob && currentJob.status !== "failed") {
+      await ScrapingJobService.updateJobStatus(jobId, "failed", {
+        errors: [errorMessage],
+      });
+    }
     })
 
     // Increment retry count and potentially retry
@@ -238,31 +263,73 @@ async function processDataQueue() {
   }
 }
 
-async function createOrUpdateFoodTruck(enhancedData: any, originalData: any) {
+async function createOrUpdateFoodTruck(jobId: string, extractedTruckData: any, sourceUrl: string) {
   try {
-    const truckData = {
-      name: enhancedData.name || originalData.name || "Unknown Food Truck",
-      description: enhancedData.description || originalData.description,
-      current_location: originalData.location
-        ? {
-            lat: 0, // Will need geocoding
-            lng: 0,
-            address: originalData.location,
-            timestamp: new Date().toISOString(),
-          }
-        : null,
-      scheduled_locations: [],
-      operating_hours: enhancedData.standardized_hours || {},
-      menu: enhancedData.enhanced_menu?.categories || [],
-      contact_info: enhancedData.cleaned_contact || originalData.contact || {},
-      social_media: originalData.social || {},
-      data_quality_score: enhancedData.confidence_score || 0.5,
-      verification_status: "pending",
-      source_urls: [originalData.source_url].filter(Boolean),
+    // Basic input validation
+    if (!extractedTruckData || typeof extractedTruckData !== "object") {
+      console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`)
+      return
+    }
+    if (!sourceUrl) {
+      console.warn(`Job ${jobId}: Missing sourceUrl for food truck, proceeding without it.`)
     }
 
+    const name = extractedTruckData.name || "Unknown Food Truck"
+    console.log(`Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl}`)
+
+    // Map Gemini output to FoodTruck schema
+    const locationData = extractedTruckData.current_location || {}
+    const fullAddress = [locationData.address, locationData.city, locationData.state, locationData.zip_code]
+      .filter(Boolean)
+      .join(", ")
+
+    const truckData = {
+      name: name,
+      description: extractedTruckData.description || null,
+      current_location: {
+        // Placeholder lat/lng, geocoding would be a separate step
+        lat: locationData.lat || 0,
+        lng: locationData.lng || 0,
+        address: fullAddress || locationData.raw_text || null,
+        timestamp: new Date().toISOString(),
+      },
+      scheduled_locations: extractedTruckData.scheduled_locations || [],
+      operating_hours: extractedTruckData.operating_hours || {},
+      menu: (extractedTruckData.menu || []).map((category: any) => ({
+        category: category.category || "Uncategorized",
+        items: (category.items || []).map((item: any) => ({
+          name: item.name || "Unknown Item",
+          description: item.description || null,
+          // Ensure price is a number or string, default to null if undefined
+          price: typeof item.price === 'number' || typeof item.price === 'string' ? item.price : null,
+          dietary_tags: item.dietary_tags || [],
+        })),
+      })),
+      contact_info: extractedTruckData.contact_info || {},
+      social_media: extractedTruckData.social_media || {},
+      cuisine_type: extractedTruckData.cuisine_type || [],
+      price_range: extractedTruckData.price_range || null,
+      specialties: extractedTruckData.specialties || [],
+      data_quality_score: 0.6, // Placeholder score
+      verification_status: "pending" as "pending" | "verified" | "flagged",
+      source_urls: [sourceUrl].filter(Boolean),
+      last_scraped_at: new Date().toISOString(),
+      // created_at and updated_at are handled by Supabase
+    }
+
+    // For now, we focus on creation.
+    // TODO: Implement update logic if a truck from this source_url already exists.
     const truck = await FoodTruckService.createTruck(truckData)
-    console.log(`Created food truck: ${truck.name} (${truck.id})`)
+    console.log(`Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl}`)
+
+    // Potentially link the truck_id back to the data_processing_queue items if needed,
+    // though the current flow bypasses that queue for initial creation.
+  } catch (error) {
+    console.error(`Job ${jobId}: Error creating food truck from ${sourceUrl}:`, error)
+    // Optionally, update the scraping job with this error information if it's critical
+    // await ScrapingJobService.updateJobStatus(jobId, "failed", {
+    //   errors: [`Food truck creation failed: ${error instanceof Error ? error.message : "Unknown error"}`],
+    // });
   } catch (error) {
     console.error("Error creating food truck:", error)
   }

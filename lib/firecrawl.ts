@@ -161,17 +161,11 @@ export class FirecrawlService {
   }
 
   // Specialized methods for food truck data
-  async scrapeFoodTruckWebsite(url: string): Promise<{
+  async scrapeFoodTruckWebsite(
+    url: string,
+  ): Promise<{
     success: boolean
-    data?: {
-      name?: string
-      description?: string
-      menu?: string
-      hours?: string
-      location?: string
-      contact?: string
-      social?: string
-    }
+    data?: { markdown: string; name?: string; source_url?: string }
     error?: string
   }> {
     const result = await this.scrapeUrl(url, {
@@ -180,25 +174,17 @@ export class FirecrawlService {
       waitFor: 2000,
     })
 
-    if (!result.success || !result.data?.markdown) {
-      return { success: false, error: result.error }
-    }
-
-    const markdown = result.data.markdown
-    const extractedData: any = {}
-
-    // Extract food truck information using patterns
-    extractedData.name = this.extractPattern(markdown, /(?:truck|food truck|restaurant)\s*:?\s*([^\n]+)/i)
-    extractedData.description = this.extractPattern(markdown, /(?:about|description|story)\s*:?\s*([^\n]+)/i)
-    extractedData.menu = this.extractMenuSection(markdown)
-    extractedData.hours = this.extractPattern(markdown, /(?:hours|open|operating)\s*:?\s*([^\n]+)/i)
-    extractedData.location = this.extractPattern(markdown, /(?:location|address|find us)\s*:?\s*([^\n]+)/i)
-    extractedData.contact = this.extractContactInfo(markdown)
-    extractedData.social = this.extractSocialMedia(markdown)
-
-    return {
-      success: true,
-      data: extractedData,
+    if (result.success && result.data?.markdown) {
+      return {
+        success: true,
+        data: {
+          markdown: result.data.markdown,
+          name: result.data.metadata?.title,
+          source_url: result.data.metadata?.sourceURL,
+        },
+      }
+    } else {
+      return { success: false, error: result.error || "Markdown content not found" }
     }
   }
 
