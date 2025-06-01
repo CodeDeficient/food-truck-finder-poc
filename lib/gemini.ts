@@ -16,10 +16,12 @@ export class GeminiService {
   private dailyTokenLimit = 32000
 
   constructor() {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY environment variable is not set.");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY environment variable is not set or is empty.");
     }
-    this.genAI = new GoogleGenAI(process.env.GEMINI_API_KEY); // Updated initialization
+    console.log(`GEMINI_API_KEY found, starts with: ${apiKey.substring(0, 5)}...`);
+    this.genAI = new GoogleGenAI(apiKey); // Updated initialization
     this.modelName = "gemini-2.0-flash-001"; // Changed model name as requested
   }
 
