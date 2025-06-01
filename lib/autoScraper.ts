@@ -1,7 +1,7 @@
 // lib/autoScraper.ts
 import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config';
 import { supabaseAdmin, FoodTruckService, ScrapingJobService } from './supabase'; // Assuming FoodTruckService and ScrapingJobService are exported from supabase
-import { processScrapingJob } from '@/app/api/scrape/route'; // This import might be problematic due to its location and dependencies.
+import { processScrapingJob } from '@/lib/pipelineProcessor'; // Corrected import path
 
 async function triggerScrapingProcess(url: string): Promise<{ success: boolean; jobId?: string; error?: string; message?: string }> {
   // Check for existing pending or running jobs for this URL to avoid duplicates
