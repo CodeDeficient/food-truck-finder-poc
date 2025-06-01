@@ -372,7 +372,6 @@ Rules:
 - Estimate price range from menu prices
 - Return only the JSON, no additional text
       `
-      `
       const sdkResponse = await this.genAI.getGenerativeModel({ model: this.modelName }).generateContent(
         [{ role: "user", parts: [{ text: prompt }] }]
       );
