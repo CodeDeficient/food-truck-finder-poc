@@ -44,6 +44,7 @@ export interface FoodTruck {
     facebook?: string
     twitter?: string
   }
+  cuisine_type: string[];
   data_quality_score: number
   verification_status: "pending" | "verified" | "flagged"
   source_urls: string[]
