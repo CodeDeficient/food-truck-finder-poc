@@ -17,7 +17,7 @@ export class GeminiService {
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    if (!apiKey) { // Check if it's null, undefined, or empty string
       throw new Error("GEMINI_API_KEY environment variable is not set or is empty.");
     }
     console.log(`GEMINI_API_KEY found, starts with: ${apiKey.substring(0, 5)}...`);
@@ -525,6 +525,12 @@ Target JSON Schema:
 Instructions:
 - Parse the Markdown content to extract the information for the JSON fields.
 - If specific details are missing for a field, use 'null' for string/object/numeric fields or empty arrays '[]' for array fields like 'cuisine_type', 'specialties', 'menu', 'dietary_tags'.
+- For the 'description' field:
+  - Generate a brief and neutral summary suitable for a food truck directory (target 1-2 sentences, maximum 200 characters).
+  - Describe the primary cuisine, signature dishes if mentioned, or overall theme.
+  - Do NOT include subjective superlatives (e.g., "world's best", "most delicious").
+  - If the source text makes specific claims of being "the first" or "the oldest," you may include this factually if it seems central to their identity, but phrase it cautiously (e.g., "States it was established in [year] as one of the first..."). Avoid if it seems like puffery.
+  - Prioritize objective information over marketing language.
 - For 'operating_hours', if a day is mentioned but hours are unclear, set the day to 'null'. If a day is explicitly stated as closed, use '{{"closed": true}}'. If a day is not mentioned at all, also set it to 'null'.
 - Ensure times are in "HH:MM" 24-hour format. For example, "2 PM" should be "14:00".
 - Prices should be extracted as numbers if possible (e.g., 12.99 from "$12.99"). If it's a textual price like "Market Price" or "MP", use the text.
