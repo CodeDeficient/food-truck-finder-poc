@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { GoogleGenAI } from "@google/genai"; // Updated import
 import { APIUsageService } from "./supabase"
 
 interface GeminiResponse {
@@ -6,17 +6,23 @@ interface GeminiResponse {
   data?: any
   tokensUsed?: number
   error?: string
+  promptSent?: string;
 }
 
 export class GeminiService {
-  private genAI: GoogleGenerativeAI
-  private model: any
+  private genAI: GoogleGenAI; // Updated type
+  private modelName: string; // New property for model name
   private dailyRequestLimit = 1500
   private dailyTokenLimit = 32000
 
   constructor() {
-    this.genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-    this.model = this.genAI.getGenerativeModel({ model: "gemini-pro" })
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) { // Check if it's null, undefined, or empty string
+      throw new Error("GEMINI_API_KEY environment variable is not set or is empty.");
+    }
+    console.log(`GEMINI_API_KEY found, starts with: ${apiKey.substring(0, 5)}...`);
+    this.genAI = new GoogleGenAI(apiKey); // Updated initialization
+    this.modelName = "gemini-2.0-flash-001"; // Changed model name as requested
   }
 
   async checkUsageLimits(): Promise<{ canMakeRequest: boolean; usage?: any }> {
@@ -92,19 +98,18 @@ Rules:
 - If no clear categories, use "Main Items"
 - Return only the JSON, no additional text
       `
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
 
-      // Estimate tokens used (rough approximation)
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
-
-      // Track usage
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -126,7 +131,7 @@ Rules:
     }
   }
 
-  async extractLocationFromText(text: string): Promise<GeminiResponse> {
+  async extractLocationFromText(textInput: string): Promise<GeminiResponse> {
     const usageCheck = await this.checkUsageLimits()
     if (!usageCheck.canMakeRequest) {
       return {
@@ -141,7 +146,7 @@ Extract location information from the following text and return structured data.
 Look for addresses, cross streets, landmarks, or location descriptions.
 
 Text:
-${text}
+${textInput}
 
 Return ONLY valid JSON in this exact format:
 {
@@ -163,16 +168,18 @@ Rules:
 - Include any mentioned landmarks or cross streets
 - Return only the JSON, no additional text
       `
+      // Renamed 'text' parameter to 'textInput' to avoid conflict with 'text' variable for response
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: textInput }] }]
+      });
+      const responseText = sdkResponse.text;
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -229,16 +236,17 @@ Rules:
 - Default to reasonable hours if ambiguous
 - Return only the JSON, no additional text
       `
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -296,16 +304,17 @@ Rules:
 - Summary should be 1-2 sentences max
 - Return only the JSON, no additional text
       `
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -368,16 +377,17 @@ Rules:
 - Estimate price range from menu prices
 - Return only the JSON, no additional text
       `
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      const responseText = sdkResponse.text;
 
-      const result = await this.model.generateContent(prompt)
-      const response = await result.response
-      const text = response.text()
-
-      const tokensUsed = Math.ceil((prompt.length + text.length) / 4)
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
       await APIUsageService.trackUsage("gemini", 1, tokensUsed)
 
       try {
-        const parsedData = JSON.parse(text.trim())
+        const parsedData = JSON.parse(responseText.trim())
         return {
           success: true,
           data: parsedData,
@@ -436,6 +446,143 @@ Rules:
 
   async getUsageStats() {
     return await APIUsageService.getTodayUsage("gemini")
+  }
+
+  async extractFoodTruckDetailsFromMarkdown(
+    markdownContent: string,
+    sourceUrl?: string,
+  ): Promise<GeminiResponse> {
+    const usageCheck = await this.checkUsageLimits()
+    if (!usageCheck.canMakeRequest) {
+      return {
+        success: false,
+        error: "Daily API limits exceeded for Gemini",
+      }
+    }
+
+    const prompt = `
+You are an AI assistant tasked with extracting structured information about food trucks from their website content (provided in Markdown format). Your goal is to populate a JSON object with the following schema. Only return the JSON object, nothing else.
+
+Markdown Content:
+---
+${markdownContent}
+---
+
+Source URL (if available): ${sourceUrl || "Not provided"}
+
+Target JSON Schema:
+{{
+  "name": "string | null",
+  "description": "string | null",
+  "cuisine_type": ["string", ...], // e.g., ["Mexican", "Tacos", "Fusion"]
+  "price_range": "$ | $$ | $$$ | null", // Estimate based on menu prices if possible, otherwise null
+  "specialties": ["string", ...], // e.g., ["Birria Tacos", "Signature Burger"]
+  "current_location": {{
+    "address": "string | null",
+    "city": "string | null",
+    "state": "string | null", // Should be state/province abbreviation e.g. CA, TX, ON
+    "zip_code": "string | null",
+    "raw_text": "original location text from page | null" // The exact text describing the location from the markdown
+  }},
+  "operating_hours": {{ // Use 24-hour format "HH:MM". If unable to parse, leave as null.
+    "monday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "tuesday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "wednesday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "thursday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "friday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "saturday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
+    "sunday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null
+  }},
+  "menu": [ // If no menu found, this should be an empty array []
+    {{
+      "category": "string", // e.g., "Appetizers", "Main Courses", "Drinks"
+      "items": [
+        {{
+          "name": "string",
+          "description": "string | null",
+          "price": "number (e.g., 12.99) | string (e.g., 'Market Price') | null",
+          "dietary_tags": ["string", ...] // e.g., ["vegan", "gluten-free", "spicy"]
+        }}
+      ]
+    }}
+  ],
+  "contact_info": {{
+    "phone": "string | null", // e.g., "555-123-4567"
+    "email": "string | null",
+    "website": "string | null" // This should be the primary business website, not social media links
+  }},
+  "social_media": {{ // Extract usernames or full URLs if available
+    "instagram": "string | null",
+    "facebook": "string | null",
+    "twitter": "string | null",
+    "tiktok": "string | null",
+    "yelp": "string | null"
+    // Add other platforms like yelp, tiktok if found
+  }},
+  "source_url": "${sourceUrl || "Not provided"}"
+}}
+
+Instructions:
+- Parse the Markdown content to extract the information for the JSON fields.
+- If specific details are missing for a field, use 'null' for string/object/numeric fields or empty arrays '[]' for array fields like 'cuisine_type', 'specialties', 'menu', 'dietary_tags'.
+- For the 'description' field:
+  - Generate a brief and neutral summary suitable for a food truck directory (target 1-2 sentences, maximum 200 characters).
+  - Describe the primary cuisine, signature dishes if mentioned, or overall theme.
+  - Do NOT include subjective superlatives (e.g., "world's best", "most delicious").
+  - If the source text makes specific claims of being "the first" or "the oldest," you may include this factually if it seems central to their identity, but phrase it cautiously (e.g., "States it was established in [year] as one of the first..."). Avoid if it seems like puffery.
+  - Prioritize objective information over marketing language.
+- For 'operating_hours', if a day is mentioned but hours are unclear, set the day to 'null'. If a day is explicitly stated as closed, use '{{"closed": true}}'. If a day is not mentioned at all, also set it to 'null'.
+- Ensure times are in "HH:MM" 24-hour format. For example, "2 PM" should be "14:00".
+- Prices should be extracted as numbers if possible (e.g., 12.99 from "$12.99"). If it's a textual price like "Market Price" or "MP", use the text.
+- 'cuisine_type' should be a list of keywords describing the type of food.
+- 'price_range' can be estimated based on typical item prices: $ (most items < $10), $$ ($10-$20), $$$ (most items > $20).
+- 'current_location.raw_text' should contain the original text snippet from which location details were extracted.
+- Only return the valid JSON object. Do not include any explanatory text before or after the JSON.
+`
+    let textOutput = ""; // Define to ensure it's available in catch/finally if needed for token calculation
+    try {
+      const sdkResponse = await this.genAI.models.generateContent({
+        model: this.modelName,
+        contents: [{ role: "user", parts: [{ text: prompt }] }]
+      });
+      textOutput = sdkResponse.text;
+
+      // Clean the response to ensure it's valid JSON
+      // Remove potential markdown code block delimiters
+      const cleanedText = textOutput.replace(/^```json\s*([\s\S]*?)\s*```$/, "$1").trim()
+
+      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (cleanedText || '').length) / 4);
+      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+
+      try {
+        const parsedData = JSON.parse(cleanedText)
+        return {
+          success: true,
+          data: parsedData,
+          tokensUsed,
+          promptSent: prompt,
+        }
+      } catch (parseError: any) {
+        console.error("Gemini JSON parsing error:", parseError)
+        console.error("Problematic Gemini raw response text:", cleanedText)
+        return {
+          success: false,
+          error: `Failed to parse Gemini response as JSON: ${parseError.message}. Response text: ${cleanedText.substring(0, 200)}...`,
+          tokensUsed, // This might be from an error response or the fallback if sdkResponse.response.usageMetadata was undefined
+          promptSent: prompt,
+        }
+      }
+    } catch (error: any) {
+      console.error("Gemini content generation error:", error)
+      // Fallback token calculation if the API call itself failed before getting usageMetadata
+      const tokensUsed = Math.ceil((prompt.length + textOutput.length) / 4);
+      return {
+        success: false,
+        error: error.message || "Unknown error during Gemini content generation",
+        tokensUsed: tokensUsed, // Provide best estimate
+        promptSent: prompt,
+      }
+    }
   }
 }
 
