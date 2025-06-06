@@ -3,6 +3,7 @@ interface FirecrawlResponse {
   data?: {
     markdown?: string;
     html?: string;
+    content?: string; // <-- Added this line
     metadata?: {
       title?: string;
       description?: string;
