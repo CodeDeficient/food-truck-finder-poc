@@ -1,171 +1,241 @@
-import { createClient } from "@supabase/supabase-js"
+import {
+  createClient,
+  type PostgrestSingleResponse,
+  type PostgrestResponse,
+} from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 // Database types
+import {
+  MenuCategory,
+  MenuItem,
+  OperatingHours,
+  PriceRange,
+  ExtractedFoodTruckDetails,
+} from './types';
+
+export interface FoodTruckLocation {
+  lat?: number;
+  lng?: number;
+  address?: string;
+  timestamp: string;
+}
+
+// Re-exporting from types.ts to ensure consistency
+
 export interface FoodTruck {
-  id: string
-  name: string
-  description?: string
-  current_location: {
-    lat: number
-    lng: number
-    address: string
-    timestamp: string
-  }
-  scheduled_locations: Array<{
-    lat: number
-    lng: number
-    start_time: string
-    end_time: string
-  }>
-  operating_hours: Record<string, { open: string; close: string; closed: boolean }>
-  menu: Array<{
-    category: string
-    items: Array<{
-      name: string
-      description: string
-      price: number
-      dietary_tags: string[]
-    }>
-  }>
-  contact_info: {
-    phone?: string
-    email?: string
-    website?: string
-  }
-  social_media: {
-    instagram?: string
-    facebook?: string
-    twitter?: string
-  }
-  cuisine_type: string[];
-  price_range?: string;
-  specialties: string[];
-  data_quality_score: number
-  verification_status: "pending" | "verified" | "flagged"
-  source_urls: string[]
-  created_at: string
-  updated_at: string
-  last_scraped_at?: string
+  id: string;
+  name: string;
+  description?: string;
+  current_location: FoodTruckLocation;
+  scheduled_locations?: ExtractedFoodTruckDetails['scheduled_locations']; // Use type from types.ts
+  operating_hours?: OperatingHours; // Use type from types.ts
+  menu?: MenuCategory[]; // Use type from types.ts
+  contact_info?: ExtractedFoodTruckDetails['contact_info']; // Use type from types.ts
+  social_media?: ExtractedFoodTruckDetails['social_media']; // Use type from types.ts
+  cuisine_type?: string[];
+  price_range?: PriceRange; // Use type from types.ts
+  specialties?: string[];
+  data_quality_score?: number;
+  verification_status: 'pending' | 'verified' | 'flagged' | 'rejected';
+  source_urls?: string[];
+  created_at: string;
+  updated_at: string;
+  last_scraped_at?: string;
+  exact_location?: FoodTruckLocation;
+  city_location?: FoodTruckLocation;
 }
 
 export interface ScrapingJob {
-  id: string
-  job_type: string
-  target_url?: string
-  target_handle?: string
-  platform?: string
-  status: "pending" | "running" | "completed" | "failed"
-  priority: number
-  scheduled_at: string
-  started_at?: string
-  completed_at?: string
-  data_collected?: any
-  errors?: string[]
-  retry_count: number
-  max_retries: number
-  created_at: string
+  id: string;
+  job_type: string;
+  target_url?: string;
+  target_handle?: string;
+  platform?: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  priority: number;
+  scheduled_at: string;
+  started_at?: string;
+  completed_at?: string;
+  data_collected?: Record<string, unknown>;
+  errors?: string[];
+  retry_count: number;
+  max_retries: number;
+  created_at: string;
 }
 
 export interface DataProcessingQueue {
-  id: string
-  truck_id?: string
-  processing_type: string
-  raw_data: any
-  processed_data?: any
-  gemini_tokens_used: number
-  status: "pending" | "processing" | "completed" | "failed"
-  priority: number
-  created_at: string
-  processed_at?: string
+  id: string;
+  truck_id?: string;
+  processing_type: string;
+  raw_data: Record<string, unknown>;
+  processed_data?: Record<string, unknown>;
+  gemini_tokens_used: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  priority: number;
+  created_at: string;
+  processed_at?: string;
+}
+
+export interface ApiUsage {
+  id: string;
+  service_name: string;
+  usage_date: string;
+  requests_count: number;
+  tokens_used: number;
 }
 
 // Food truck operations
-export class FoodTruckService {
-  static async getAllTrucks(limit = 50, offset = 0) {
+export const FoodTruckService = {
+  async getAllTrucks(limit = 50, offset = 0): Promise<{ trucks: FoodTruck[]; total: number }> {
     try {
-      const { data, error, count } = await supabase
-        .from("food_trucks")
-        .select("*", { count: "exact" })
-        .order("updated_at", { ascending: false })
-        .range(offset, offset + limit - 1)
+      const { data, error, count }: PostgrestResponse<FoodTruck> = await supabase
+        .from('food_trucks')
+        .select('*', { count: 'exact' })
+        .order('updated_at', { ascending: false })
+        .range(offset, offset + limit - 1);
 
-      if (error) throw error
-      return { trucks: data || [], total: count || 0 }
-    } catch (error) {
-      console.error("Error fetching trucks:", error)
-      return { trucks: [], total: 0 }
-    }
-  }
+      if (error) throw error;
+      const trucks: FoodTruck[] = (data || []).map((t: FoodTruck) => normalizeTruckLocation(t));
 
-  static async getTruckById(id: string) {
-    const { data, error } = await supabase.from("food_trucks").select("*").eq("id", id).single()
-
-    if (error) throw error
-    return data
-  }
-
-  static async getTrucksByLocation(lat: number, lng: number, radius = 5) {
-    try {
-      // Fallback to simple query if PostGIS function doesn't exist
-      const { data, error } = await supabase
-        .from("food_trucks")
-        .select("*")
-        .not("current_location", "is", null)
-        .limit(10)
-
-      if (error) throw error
-      return data || []
-    } catch (error) {
-      console.error("Error fetching trucks by location:", error)
-      return []
-    }
-  }
-
-  static async createTruck(truckData: Partial<FoodTruck>) {
-    const { data, error } = await supabaseAdmin.from("food_trucks").insert([truckData]).select().single()
-
-    if (error) throw error
-    return data
-  }
-
-  static async updateTruck(id: string, updates: Partial<FoodTruck>) {
-    const { data, error } = await supabaseAdmin.from("food_trucks").update(updates).eq("id", id).select().single()
-
-    if (error) throw error
-    return data
-  }
-
-  static async getDataQualityStats() {
-    try {
-      // Fallback to simple aggregation if custom function doesn't exist
-      const { data, error } = await supabase.from("food_trucks").select("data_quality_score, verification_status")
-
-      if (error) throw error
-
-      const trucks = data || []
-      const total = trucks.length
-
-      return {
-        total_trucks: total,
-        avg_quality_score: total > 0 ? trucks.reduce((sum, t) => sum + (t.data_quality_score || 0), 0) / total : 0,
-        high_quality_count: trucks.filter((t) => (t.data_quality_score || 0) >= 0.8).length,
-        medium_quality_count: trucks.filter(
-          (t) => (t.data_quality_score || 0) >= 0.5 && (t.data_quality_score || 0) < 0.8,
-        ).length,
-        low_quality_count: trucks.filter((t) => (t.data_quality_score || 0) < 0.5).length,
-        verified_count: trucks.filter((t) => t.verification_status === "verified").length,
-        pending_count: trucks.filter((t) => t.verification_status === "pending").length,
-        flagged_count: trucks.filter((t) => t.verification_status === "flagged").length,
+      const truckIds = trucks.map((t) => t.id);
+      let menuItems: {
+        food_truck_id: string;
+        name: string;
+        description: string;
+        price: number;
+        dietary_tags: string[];
+      }[] = [];
+      if (truckIds.length > 0) {
+        const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
+          await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
+        if (menuError) throw menuError;
+        menuItems = (items as typeof menuItems) || [];
       }
-    } catch (error) {
-      console.error("Error getting quality stats:", error)
+
+      const menuByTruck: Record<string, typeof menuItems> = {};
+      for (const item of menuItems) {
+        if (!menuByTruck[item.food_truck_id]) {
+          menuByTruck[item.food_truck_id] = [];
+        }
+        menuByTruck[item.food_truck_id].push(item);
+      }
+
+      for (const truck of trucks) {
+        truck.menu = groupMenuItems(menuByTruck[truck.id] || []);
+      }
+      return { trucks, total: count || 0 };
+    } catch (error: unknown) {
+      console.warn('Error fetching trucks:', error);
+      return { trucks: [], total: 0 };
+    }
+  },
+  async getTruckById(id: string): Promise<FoodTruck> {
+    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabase
+      .from('food_trucks')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    const truck: FoodTruck = normalizeTruckLocation(data);
+    const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> = await supabase
+      .from('menu_items')
+      .select('*')
+      .eq('food_truck_id', id);
+    if (menuError) throw menuError;
+    truck.menu = groupMenuItems(items || []);
+    return truck;
+  },
+
+  async getTrucksByLocation(lat: number, lng: number, radiusKm: number): Promise<FoodTruck[]> {
+    try {
+      const { trucks } = await FoodTruckService.getAllTrucks();
+      const nearbyTrucks = trucks.filter((truck) => {
+        if (
+          !truck.current_location ||
+          typeof truck.current_location.lat !== 'number' ||
+          typeof truck.current_location.lng !== 'number'
+        ) {
+          return false;
+        }
+        const distance = calculateDistance(
+          lat,
+          lng,
+          truck.current_location.lat,
+          truck.current_location.lng,
+        );
+        return distance <= radiusKm;
+      });
+      return nearbyTrucks;
+    } catch (error: unknown) {
+      console.warn('Error fetching trucks by location:', error);
+      return [];
+    }
+  },
+  async createTruck(truckData: Partial<FoodTruck>): Promise<FoodTruck> {
+    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
+      .from('food_trucks')
+      .insert([truckData])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+  async updateTruck(id: string, updates: Partial<FoodTruck>): Promise<FoodTruck> {
+    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
+      .from('food_trucks')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getDataQualityStats(): Promise<{
+    total_trucks: number;
+    avg_quality_score: number;
+    high_quality_count: number;
+    medium_quality_count: number;
+    low_quality_count: number;
+    verified_count: number;
+    pending_count: number;
+    flagged_count: number;
+  }> {
+    try {
+      const {
+        data,
+        error,
+      }: PostgrestSingleResponse<{
+        total_trucks: number;
+        avg_quality_score: number;
+        high_quality_count: number;
+        medium_quality_count: number;
+        low_quality_count: number;
+        verified_count: number;
+        pending_count: number;
+        flagged_count: number;
+      }> = await supabase.rpc('get_data_quality_stats').single();
+      if (error) throw error;
+      return data as {
+        total_trucks: number;
+        avg_quality_score: number;
+        high_quality_count: number;
+        medium_quality_count: number;
+        low_quality_count: number;
+        verified_count: number;
+        pending_count: number;
+        flagged_count: number;
+      };
+    } catch (error: unknown) {
+      console.warn('Error fetching data quality stats:', error);
       return {
         total_trucks: 0,
         avg_quality_score: 0,
@@ -175,188 +245,261 @@ export class FoodTruckService {
         verified_count: 0,
         pending_count: 0,
         flagged_count: 0,
-      }
+      };
     }
-  }
+  },
+};
+
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  return distance;
 }
 
-// Scraping job operations
-export class ScrapingJobService {
-  static async createJob(jobData: Partial<ScrapingJob>) {
-    const { data, error } = await supabaseAdmin
-      .from("scraping_jobs")
+// Define a helper type for items coming from the DB, which might include a category field
+interface RawMenuItemFromDB {
+  name: string;
+  description?: string;
+  price?: number;
+  dietary_tags?: string[];
+  category?: string; // This field is expected from the DB query
+  // Potentially other fields like id, food_truck_id, etc.
+  [key: string]: unknown; // Allow other properties from DB select *
+}
+
+function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
+  const byCategory: Record<string, MenuItem[]> = {}; // Stores processed MenuItems
+  for (const rawItem of rawItems) {
+    const categoryName: string = rawItem.category || 'Uncategorized';
+    if (!byCategory[categoryName]) {
+      byCategory[categoryName] = [];
+    }
+    // Construct a MenuItem conforming to the MenuItem interface (no 'category' property)
+    const menuItem: MenuItem = {
+      name: rawItem.name,
+      // Use nullish coalescing to convert null from DB to undefined for the MenuItem type
+      description: rawItem.description ?? undefined,
+      price: rawItem.price ?? undefined,
+      dietary_tags: rawItem.dietary_tags ?? [], // Default to empty array if null/undefined
+    };
+    byCategory[categoryName].push(menuItem);
+  }
+  // Map to MenuCategory structure { name: string, items: MenuItem[] }
+  return Object.entries(byCategory).map(([categoryName, itemsList]) => ({
+    name: categoryName, // 'name' here refers to the category's name
+    items: itemsList,
+  }));
+}
+
+function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
+  const fallback: FoodTruckLocation = {
+    lat: undefined,
+    lng: undefined,
+    address: 'Unknown',
+    timestamp: new Date().toISOString(),
+  };
+  const loc = truck.exact_location || truck.current_location || truck.city_location || {};
+  const lat = loc.lat ?? undefined;
+  const lng = loc.lng ?? undefined;
+  const address = loc.address;
+  const timestamp = loc.timestamp;
+
+  truck.current_location =
+    typeof lat !== 'number' || typeof lng !== 'number' || (lat === 0 && lng === 0)
+      ? { ...fallback, address: address || fallback.address }
+      : {
+          lat,
+          lng,
+          address: address || fallback.address,
+          timestamp: timestamp || fallback.timestamp,
+        };
+  return truck;
+}
+
+export const ScrapingJobService = {
+  async createJob(jobData: Partial<ScrapingJob>): Promise<ScrapingJob> {
+    const { data, error }: PostgrestSingleResponse<ScrapingJob> = await supabaseAdmin
+      .from('scraping_jobs')
       .insert([
         {
           ...jobData,
-          status: "pending",
+          status: 'pending',
           retry_count: 0,
           max_retries: 3,
           created_at: new Date().toISOString(),
         },
       ])
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
-  }
+    if (error) throw error;
+    return data;
+  },
 
-  static async getJobsByStatus(status: string) {
+  async getJobsByStatus(status: string): Promise<ScrapingJob[]> {
     try {
       const query =
-        status === "all"
-          ? supabase.from("scraping_jobs").select("*")
-          : supabase.from("scraping_jobs").select("*").eq("status", status)
+        status === 'all'
+          ? supabase.from('scraping_jobs').select('*')
+          : supabase.from('scraping_jobs').select('*').eq('status', status);
 
-      const { data, error } = await query
-        .order("priority", { ascending: false })
-        .order("scheduled_at", { ascending: true })
+      const { data, error }: PostgrestResponse<ScrapingJob> = await query
+        .order('priority', { ascending: false })
+        .order('scheduled_at', { ascending: true });
 
-      if (error) throw error
-      return data || []
-    } catch (error) {
-      console.error("Error fetching jobs:", error)
-      return []
+      if (error) throw error;
+      return data || [];
+    } catch (error: unknown) {
+      console.warn('Error fetching jobs:', error);
+      return [];
     }
-  }
-
-  static async updateJobStatus(id: string, status: string, updates: Partial<ScrapingJob> = {}) {
-    const { data, error } = await supabaseAdmin
-      .from("scraping_jobs")
+  },
+  async updateJobStatus(
+    id: string,
+    status: string,
+    updates: Partial<ScrapingJob> = {},
+  ): Promise<ScrapingJob> {
+    const { data, error }: PostgrestSingleResponse<ScrapingJob> = await supabaseAdmin
+      .from('scraping_jobs')
       .update({
         status,
         ...updates,
-        ...(status === "running" && { started_at: new Date().toISOString() }),
-        ...(status === "completed" && { completed_at: new Date().toISOString() }),
+        ...(status === 'running' && { started_at: new Date().toISOString() }),
+        ...(status === 'completed' && { completed_at: new Date().toISOString() }),
       })
-      .eq("id", id)
+      .eq('id', id)
       .select()
-      .single()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+  async incrementRetryCount(id: string): Promise<ScrapingJob> {
+    const {
+      data: current,
+      error: fetchError,
+    }: PostgrestSingleResponse<Pick<ScrapingJob, 'retry_count'>> = await supabaseAdmin
+      .from('scraping_jobs')
+      .select('retry_count')
+      .eq('id', id)
+      .single();
 
-    if (error) throw error
-    return data
-  }
+    if (fetchError) throw fetchError;
 
-  static async incrementRetryCount(id: string) {
-    // Simple increment since we can't use supabase.raw in this context
-    const { data: current, error: fetchError } = await supabaseAdmin
-      .from("scraping_jobs")
-      .select("retry_count")
-      .eq("id", id)
-      .single()
-
-    if (fetchError) throw fetchError
-
-    const { data, error } = await supabaseAdmin
-      .from("scraping_jobs")
-      .update({ retry_count: (current.retry_count || 0) + 1 })
-      .eq("id", id)
+    const { data, error }: PostgrestSingleResponse<ScrapingJob> = await supabaseAdmin
+      .from('scraping_jobs')
+      .update({ retry_count: (current?.retry_count || 0) + 1 })
+      .eq('id', id)
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
-  }
-}
+    if (error) throw error;
+    return data;
+  },
+};
 
-// Data processing queue operations
-export class DataProcessingService {
-  static async addToQueue(queueData: Partial<DataProcessingQueue>) {
-    const { data, error } = await supabaseAdmin
-      .from("data_processing_queue")
+export const DataProcessingService = {
+  async addToQueue(queueData: Partial<DataProcessingQueue>): Promise<DataProcessingQueue> {
+    const { data, error }: PostgrestSingleResponse<DataProcessingQueue> = await supabaseAdmin
+      .from('data_processing_queue')
       .insert([
         {
           ...queueData,
-          status: "pending",
+          status: 'pending',
           gemini_tokens_used: 0,
           created_at: new Date().toISOString(),
         },
       ])
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
-  }
+    if (error) throw error;
+    return data;
+  },
 
-  static async getNextQueueItem() {
-    const { data, error } = await supabaseAdmin
-      .from("data_processing_queue")
-      .select("*")
-      .eq("status", "pending")
-      .order("priority", { ascending: false })
-      .order("created_at", { ascending: true })
+  async getNextQueueItem(): Promise<DataProcessingQueue | undefined> {
+    const { data, error }: PostgrestSingleResponse<DataProcessingQueue> = await supabaseAdmin
+      .from('data_processing_queue')
+      .select('*')
+      .eq('status', 'pending')
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: true })
       .limit(1)
-      .single()
+      .single();
 
-    if (error && error.code !== "PGRST116") throw error
-    return data
-  }
+    if (error && error.code !== 'PGRST116') throw error;
+    return data ?? undefined;
+  },
 
-  static async getQueueByStatus(status: string) {
+  async getQueueByStatus(status: string): Promise<DataProcessingQueue[]> {
     try {
-      const { data, error } = await supabase
-        .from("data_processing_queue")
-        .select("*")
-        .eq("status", status)
-        .order("created_at", { ascending: false })
+      const { data, error }: PostgrestResponse<DataProcessingQueue> = await supabase
+        .from('data_processing_queue')
+        .select('*')
+        .eq('status', status)
+        .order('created_at', { ascending: false });
 
-      if (error) throw error
-      return data || []
-    } catch (error) {
-      console.error("Error fetching queue:", error)
-      return []
+      if (error) throw error;
+      return data || [];
+    } catch (error: unknown) {
+      console.warn('Error fetching queue:', error);
+      return [];
     }
-  }
-
-  static async updateQueueItem(id: string, updates: Partial<DataProcessingQueue>) {
-    const { data, error } = await supabaseAdmin
-      .from("data_processing_queue")
+  },
+  async updateQueueItem(
+    id: string,
+    updates: Partial<DataProcessingQueue>,
+  ): Promise<DataProcessingQueue> {
+    const { data, error }: PostgrestSingleResponse<DataProcessingQueue> = await supabaseAdmin
+      .from('data_processing_queue')
       .update({
         ...updates,
-        ...(updates.status === "completed" && { processed_at: new Date().toISOString() }),
+        ...(updates.status === 'completed' && { processed_at: new Date().toISOString() }),
       })
-      .eq("id", id)
+      .eq('id', id)
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
-  }
-}
+    if (error) throw error;
+    return data;
+  },
+};
 
-// API usage tracking
-export class APIUsageService {
-  static async trackUsage(serviceName: string, requests: number, tokens: number) {
+export const APIUsageService = {
+  async trackUsage(serviceName: string, requests: number, tokens: number): Promise<ApiUsage> {
     try {
-      const today = new Date().toISOString().split("T")[0]
+      const today = new Date().toISOString().split('T')[0];
 
-      // Try to get existing record first
-      const { data: existing } = await supabaseAdmin
-        .from("api_usage")
-        .select("*")
-        .eq("service_name", serviceName)
-        .eq("usage_date", today)
-        .single()
-
+      const { data: existing }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
+        .from('api_usage')
+        .select('*')
+        .eq('service_name', serviceName)
+        .eq('usage_date', today)
+        .single();
       if (existing) {
-        // Update existing record
-        const { data, error } = await supabaseAdmin
-          .from("api_usage")
+        const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
+          .from('api_usage')
           .update({
             requests_count: (existing.requests_count || 0) + requests,
             tokens_used: (existing.tokens_used || 0) + tokens,
           })
-          .eq("id", existing.id)
+          .eq('id', existing.id)
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
-        return data
+        if (error) throw error;
+        return data;
       } else {
-        // Create new record
-        const { data, error } = await supabaseAdmin
-          .from("api_usage")
+        const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
+          .from('api_usage')
           .insert([
             {
               service_name: serviceName,
@@ -366,49 +509,50 @@ export class APIUsageService {
             },
           ])
           .select()
-          .single()
+          .single();
 
-        if (error) throw error
-        return data
+        if (error) throw error;
+        return data;
       }
-    } catch (error) {
-      console.error("Error tracking usage:", error)
-      return null
+    } catch (error: unknown) {
+      console.warn('Error tracking usage:', error);
+      throw error;
     }
-  }
-
-  static async getTodayUsage(serviceName: string) {
+  },
+  async getTodayUsage(serviceName: string): Promise<ApiUsage | undefined> {
     try {
-      const today = new Date().toISOString().split("T")[0]
+      const today = new Date().toISOString().split('T')[0];
 
-      const { data, error } = await supabase
-        .from("api_usage")
-        .select("*")
-        .eq("service_name", serviceName)
-        .eq("usage_date", today)
-        .single()
+      const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabase
+        .from('api_usage')
+        .select('*')
+        .eq('service_name', serviceName)
+        .eq('usage_date', today)
+        .single();
 
-      if (error && error.code !== "PGRST116") throw error
-      return data
-    } catch (error) {
-      console.error("Error getting today usage:", error)
-      return null
+      if (error && error.code !== 'PGRST116') throw error;
+      return data ?? undefined;
+    } catch (error: unknown) {
+      console.warn('Error getting today usage:', error);
+      throw error;
     }
-  }
+  },
 
-  static async getAllUsageStats() {
+  async getAllUsageStats(): Promise<ApiUsage[]> {
     try {
-      const { data, error } = await supabase
-        .from("api_usage")
-        .select("*")
-        .order("usage_date", { ascending: false })
-        .limit(30)
+      const { data, error }: PostgrestResponse<ApiUsage> = await supabase
+        .from('api_usage')
+        .select('*')
+        .order('usage_date', { ascending: false })
+        .limit(30);
 
-      if (error) throw error
-      return data || []
-    } catch (error) {
-      console.error("Error getting usage stats:", error)
-      return []
+      if (error) throw error;
+      return data || [];
+    } catch (error: unknown) {
+      console.warn('Error getting usage stats:', error);
+      throw error;
     }
-  }
-}
+  },
+};
+
+export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange } from './types';

@@ -9,8 +9,8 @@
   and validation of the pipeline's components.
 
   How to Use:
-  1. Input a URL to test the full scraping and processing flow.
-  2. Alternatively, select "Use Raw Text Input Instead" and paste Markdown/HTML
+  1. Input a url to test the full scraping and processing flow.
+  2. Alternatively, select "Use Raw Text Input Instead" and paste Markdown/html
      directly into the textarea to test only the Gemini processing stage onwards.
   3. Use the "Dry Run" checkbox to control whether data is actually saved to
      Supabase or if the save operation is just simulated. By default, it's a dry run.
@@ -25,38 +25,35 @@
   added to the `lib/` directory. These outline future tests to be implemented using a
   framework like Jest or Vitest.
 */
-"use client";
+'use client';
+
+/*
+Admin Dashboard Architecture Proposal (wbs 3.1.2)
+--------------------------------------------------
+Recommended Approach: Sub-domain or separate route within the existing Next.js app, with robust access control.
+
+- Security: Use Supabase rls and custom roles to restrict access. Consider deploying the admin dashboard at /admin or on a sub-domain (admin.yoursite.com) for separation.
+- Separation of Concerns: Keep admin components, logic, and styles in a dedicated /admin directory. Avoid mixing admin and user-facing code.
+- Maintainability: Modularize admin features (data editing, pipeline monitoring, quality management) as separate components/pages.
+- Authentication: Require login with admin role for all admin routes. Use Supabase Auth or a similar provider.
+- Deployment: Can be deployed as part of the main app or as a separate Next.js app if stricter separation is needed in the future.
+*/
 
 import { useState, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // If you want to use tabs for results
-
-interface StageResult {
-  status: string;
-  data?: any;
-  error?: string;
-  details?: string;
-  prompt?: string; // For Gemini
-  tokensUsed?: number; // For Gemini
-  metadata?: any; // For Firecrawl
-  rawContent?: string; // For Firecrawl
-  preparedData?: any; // For Supabase
-  recordId?: string; // For Supabase
-}
-
-interface TestPipelineResults {
-  firecrawl?: StageResult;
-  gemini?: StageResult;
-  supabase?: StageResult;
-  overallStatus?: string;
-  logs?: string[];
-  error?: string;
-}
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'; // If you want to use tabs for results
+import {
+  StageResult,
+  TestPipelineResults,
+  // FirecrawlOutputData, // Already imported via StageResult's data union if needed directly
+  // ExtractedFoodTruckDetails, // Already imported via StageResult's data union
+  // FoodTruckSchema // Already imported via StageResult's data union
+} from '@/lib/types';
 
 export default function TestPipelinePage() {
   const [url, setUrl] = useState<string>('');
@@ -64,87 +61,118 @@ export default function TestPipelinePage() {
   const [useRawText, setUseRawText] = useState<boolean>(false);
   const [isDryRun, setIsDryRun] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<TestPipelineResults | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [results, setResults] = useState<TestPipelineResults | undefined>();
+  const [error, setError] = useState<string | undefined>();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    setResults(null);
-    setError(null);
+    setResults(undefined);
+    setError(undefined);
 
     const payload = {
       url: useRawText ? undefined : url,
       rawText: useRawText ? rawText : undefined,
       isDryRun,
     };
-
     try {
       const response = await fetch('/api/test-pipeline-run', {
-        method: 'POST',
+        method: 'post',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as TestPipelineResults;
 
       if (!response.ok) {
-        throw new Error(data.message || data.error || 'Test run failed');
+        throw new Error(data.error || 'Test run failed');
       }
-      setResults(data.results);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      setResults({ error: err instanceof Error ? err.message : 'An unknown error occurred' });
+      setResults(data);
+    } catch (error_) {
+      const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';
+      setError(errorMessage);
+      setResults({ error: errorMessage });
     } finally {
       setIsLoading(false);
     }
   };
-
   const renderStageResult = (stageName: string, result?: StageResult) => {
-    if (!result) return null;
+    if (!result) return;
     return (
       <Card className="mt-4">
         <CardHeader>
           <CardTitle>{stageName}</CardTitle>
-          <CardDescription>Status: <span className={result.status === 'Success' ? 'text-green-500' : 'text-red-500'}>{result.status}</span></CardDescription>
+          <CardDescription>
+            Status:{' '}
+            <span className={result.status === 'Success' ? 'text-green-500' : 'text-red-500'}>
+              {result.status}
+            </span>
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          {result.error && <p className="text-red-500"><strong>Error:</strong> {result.error}</p>}
-          {result.details && <p><strong>Details:</strong> {result.details}</p>}
+          {result.error && (
+            <p className="text-red-500">
+              <strong>Error:</strong> {result.error}
+            </p>
+          )}
+          {result.details && (
+            <p>
+              <strong>Details:</strong> {result.details}
+            </p>
+          )}
           {result.prompt && (
             <div>
               <strong>Prompt:</strong>
-              <Textarea readOnly value={result.prompt} className="mt-1 h-32 bg-gray-50 dark:bg-slate-700" />
+              <Textarea
+                readOnly
+                value={result.prompt}
+                className="mt-1 h-32 bg-gray-50 dark:bg-slate-700"
+              />
             </div>
           )}
           {result.rawContent && (
-             <div>
+            <div>
               <strong>Raw Content (Firecrawl):</strong>
-              <Textarea readOnly value={result.rawContent} className="mt-1 h-48 bg-gray-50 dark:bg-slate-700" />
+              <Textarea
+                readOnly
+                value={result.rawContent}
+                className="mt-1 h-48 bg-gray-50 dark:bg-slate-700"
+              />
             </div>
           )}
           {result.data && (
             <div className="mt-2">
-              <strong>Data Output:</strong>
+              <strong>Data Output:</strong>{' '}
               <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
+                {/* eslint-disable-next-line unicorn/no-null */}
                 {JSON.stringify(result.data, null, 2)}
               </pre>
             </div>
           )}
-           {result.preparedData && (
+          {result.preparedData && (
             <div className="mt-2">
-              <strong>Data Prepared for Supabase:</strong>
+              <strong>Data Prepared for Supabase:</strong>{' '}
               <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
+                {/* eslint-disable-next-line unicorn/no-null */}
                 {JSON.stringify(result.preparedData, null, 2)}
               </pre>
             </div>
           )}
-          {result.recordId && <p><strong>Supabase Record ID:</strong> {result.recordId}</p>}
-          {result.tokensUsed !== undefined && <p><strong>Gemini Tokens Used:</strong> {result.tokensUsed}</p>}
+          {result.recordId && (
+            <p>
+              <strong>Supabase Record id:</strong> {result.recordId}
+            </p>
+          )}
+          {result.tokensUsed !== undefined && (
+            <p>
+              <strong>Gemini Tokens Used:</strong> {result.tokensUsed}
+            </p>
+          )}
           {result.metadata && (
-             <div>
-              <strong>Metadata (Firecrawl):</strong>
-               <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
+            <div>
+              <strong>Metadata (Firecrawl):</strong>{' '}
+              <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
+                {/* eslint-disable-next-line unicorn/no-null */}
                 {JSON.stringify(result.metadata, null, 2)}
               </pre>
             </div>
@@ -160,13 +188,19 @@ export default function TestPipelinePage() {
         <CardHeader>
           <CardTitle>Test Data Pipeline</CardTitle>
           <CardDescription>
-            Use this page to test the data scraping and processing pipeline with a specific URL or raw text.
+            Use this page to test the data scraping and processing pipeline with a specific url or
+            raw text.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form
+            onSubmit={(e) => {
+              void handleSubmit(e);
+            }}
+            className="space-y-6"
+          >
             <div>
-              <Label htmlFor="url-input">URL to Scrape</Label>
+              <Label htmlFor="url-input">url to Scrape</Label>
               <Input
                 id="url-input"
                 type="url"
@@ -189,10 +223,10 @@ export default function TestPipelinePage() {
             </div>
 
             <div>
-              <Label htmlFor="raw-text-input">Raw Text (Markdown/HTML)</Label>
+              <Label htmlFor="raw-text-input">Raw Text (Markdown/html)</Label>
               <Textarea
                 id="raw-text-input"
-                placeholder="Paste Markdown or HTML content here..."
+                placeholder="Paste Markdown or html content here..."
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
                 disabled={!useRawText || isLoading}
@@ -232,14 +266,22 @@ export default function TestPipelinePage() {
         <Card>
           <CardHeader>
             <CardTitle>Test Results</CardTitle>
-            {results.overallStatus && <CardDescription>Overall Status: {results.overallStatus}</CardDescription>}
+            {results.overallStatus && (
+              <CardDescription>Overall Status: {results.overallStatus}</CardDescription>
+            )}
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="firecrawl" className="w-full">
               <TabsList>
-                <TabsTrigger value="firecrawl" disabled={!results.firecrawl}>Firecrawl</TabsTrigger>
-                <TabsTrigger value="gemini" disabled={!results.gemini}>Gemini</TabsTrigger>
-                <TabsTrigger value="supabase" disabled={!results.supabase}>Supabase</TabsTrigger>
+                <TabsTrigger value="firecrawl" disabled={!results.firecrawl}>
+                  Firecrawl
+                </TabsTrigger>
+                <TabsTrigger value="gemini" disabled={!results.gemini}>
+                  Gemini
+                </TabsTrigger>
+                <TabsTrigger value="supabase" disabled={!results.supabase}>
+                  Supabase
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="firecrawl">
                 {renderStageResult('Firecrawl Stage', results.firecrawl)}
