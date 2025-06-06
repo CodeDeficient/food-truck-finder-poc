@@ -661,10 +661,6 @@ Instructions:
       };
     }
   }
-}
-
-// Export singleton instance
-export const gemini = new GeminiService();
 
   async getDirectoryClassificationForContent(pageContent: string): Promise<GeminiResponse<DirectoryClassificationOutput>> {
     const usageCheck = await this.checkUsageLimits();
@@ -767,3 +763,7 @@ Only return the valid JSON object based on your analysis of the Webpage Text Con
             };
           }
         }
+}
+
+// Export singleton instance
+export const gemini = new GeminiService();
