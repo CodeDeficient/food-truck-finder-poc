@@ -2,6 +2,7 @@
 import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config';
 import { supabaseAdmin, ScrapingJobService } from './supabase';
 import { processScrapingJob } from '@/lib/pipelineProcessor';
+import { discoverUrlsFromDirectories, SOUTH_CAROLINA_DIRECTORY_URLS } from './urlDiscovery'; // Added
 
 // Define interfaces for better type safety
 interface FoodTruck {
@@ -140,55 +141,115 @@ async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapin
   }
 }
 
-export async function ensureDefaultTrucksAreScraped(): Promise<
+// Renamed function
+export async function initiateFoodTruckProcessing(): Promise<
   Array<{ url: string; status: string; details?: string; jobId?: string }>
 > {
-  console.info('AutoScraper: Starting check for default trucks...');
+  console.info('AutoScraper: Starting food truck processing initiation...');
   const results: Array<{ url: string; status: string; details?: string; jobId?: string }> = [];
 
+  // 1. Discover and Process New SC URLs
+  console.info('AutoScraper: Starting URL discovery for South Carolina...');
+  try {
+    const newlyDiscoveredUrls = await discoverUrlsFromDirectories(SOUTH_CAROLINA_DIRECTORY_URLS, "SC");
+    console.info(`AutoScraper: Discovered ${newlyDiscoveredUrls.length} new URLs from directories, saved to 'discovered_urls'.`);
+
+    // Fetch all 'new' URLs for SC region from discovered_urls table
+    const { data: newScUrls, error: fetchError } = await supabaseAdmin
+      .from('discovered_urls')
+      .select('*') // Select all fields to get id, url etc.
+      .eq('status', 'new')
+      .eq('region', 'SC');
+
+    if (fetchError) {
+      console.error('AutoScraper: Error fetching new URLs from discovered_urls:', fetchError.message);
+      results.push({
+        url: 'SC_DISCOVERY_FETCH',
+        status: 'error',
+        details: `Failed to fetch new SC URLs: ${fetchError.message}`,
+      });
+    } else if (newScUrls && newScUrls.length > 0) {
+      console.info(`AutoScraper: Found ${newScUrls.length} new URLs in 'discovered_urls' with status 'new' for SC region. Processing them...`);
+      for (const discoveredUrl of newScUrls) {
+        try {
+          console.info(`AutoScraper: Processing newly discovered SC URL: ${discoveredUrl.url} (ID: ${discoveredUrl.id})`);
+          const triggerResult = await triggerScrapingProcess(discoveredUrl.url);
+          results.push({
+            url: discoveredUrl.url,
+            status: triggerResult.success ? 'newly_discovered_scrape_triggered' : 'error_triggering_discovered_scrape',
+            details: triggerResult.error || triggerResult.message,
+            jobId: triggerResult.jobId,
+          });
+
+          if (triggerResult.success) {
+            // Update status to 'processing'
+            const { error: updateError } = await supabaseAdmin
+              .from('discovered_urls')
+              .update({ status: 'processing', last_processed_at: new Date().toISOString() })
+              .eq('id', discoveredUrl.id);
+            if (updateError) {
+              console.warn(`AutoScraper: Failed to update status for discovered_url ID ${discoveredUrl.id}: ${updateError.message}`);
+              // Add a note to results or log, but don't override primary status if trigger was successful
+               const resultIndex = results.length -1;
+               results[resultIndex].details = (results[resultIndex].details || "") + ` | DB status update failed: ${updateError.message}`;
+            } else {
+              console.info(`AutoScraper: Successfully updated status to 'processing' for discovered_url ID ${discoveredUrl.id}`);
+            }
+          }
+        } catch (e: unknown) {
+          console.error(`AutoScraper: Error processing discovered URL ${discoveredUrl.url}:`, e);
+          results.push({
+            url: discoveredUrl.url,
+            status: 'error',
+            details: e instanceof Error ? e.message : 'Unknown error during discovered URL processing',
+          });
+        }
+      }
+    } else {
+      console.info("AutoScraper: No new URLs with status 'new' found in 'discovered_urls' for SC region.");
+    }
+  } catch (discoveryError: unknown) {
+    console.error('AutoScraper: Error during URL discovery phase:', discoveryError);
+    results.push({
+      url: 'SC_DISCOVERY_PROCESS',
+      status: 'error',
+      details: discoveryError instanceof Error ? discoveryError.message : 'Unknown error during URL discovery',
+    });
+  }
+
+  // 2. Maintain Existing DEFAULT_SCRAPE_URLS Logic
+  console.info('AutoScraper: Starting check for default configured URLs...');
   for (const url of DEFAULT_SCRAPE_URLS) {
     try {
-      console.info(`AutoScraper: Checking url: ${url}`);
-      // Check if a food truck from this source url already exists
-      // We need a way to query food_trucks by source_url.
-      // FoodTruckService might not have this method. Let's query directly or add it.
+      console.info(`AutoScraper: Checking default URL: ${url}`);
       const { data: existingTrucks, error: truckQueryError } = await supabaseAdmin
         .from('food_trucks')
         .select('id, last_scraped_at, source_urls')
-        .or(`source_urls.cs.{"${url}"}`) // Check if url is in the source_urls array
+        .or(`source_urls.cs.{"${url}"}`)
         .limit(1);
 
       if (truckQueryError) {
-        console.warn(
-          `AutoScraper: Error querying for existing truck for url ${url}:`,
-          truckQueryError.message,
-        );
-        results.push({
-          url,
-          status: 'error',
-          details: `Supabase query error: ${truckQueryError.message}`,
-        });
+        console.warn(`AutoScraper: Error querying existing truck for default URL ${url}:`, truckQueryError.message);
+        results.push({ url, status: 'error', details: `Supabase query error: ${truckQueryError.message}` });
         continue;
       }
 
-      const truck: FoodTruck | undefined =
-        existingTrucks && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
+      const truck: FoodTruck | undefined = existingTrucks && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
 
       if (truck) {
-        void handleExistingTruck(url, truck).then((result) => results.push(result));
+        // Using await here to ensure results are added in order for default trucks
+        const result = await handleExistingTruck(url, truck);
+        results.push(result);
       } else {
-        void handleNewTruck(url).then((result) => results.push(result));
+        const result = await handleNewTruck(url);
+        results.push(result);
       }
     } catch (error: unknown) {
-      console.warn(`AutoScraper: Unexpected error processing url ${url}:`, error);
-      results.push({
-        url,
-        status: 'error',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      });
+      console.warn(`AutoScraper: Unexpected error processing default URL ${url}:`, error);
+      results.push({ url, status: 'error', details: error instanceof Error ? error.message : 'Unknown error' });
     }
   }
-  console.info('AutoScraper: Finished check for default trucks.');
+  console.info('AutoScraper: Finished food truck processing initiation.');
   return results;
 }
 

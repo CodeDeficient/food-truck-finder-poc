@@ -175,6 +175,7 @@ export async function createOrUpdateFoodTruck(
       verification_status: 'pending', // Type is already "pending" | "verified" | "flagged"
       source_urls: [sourceUrl].filter(Boolean),
       last_scraped_at: new Date().toISOString(),
+      state: extractedTruckData.current_location?.state ?? undefined, // Added state
       // created_at and updated_at are handled by Supabase
     }; // For now, we focus on creation.
     const truck = await FoodTruckService.createTruck(truckData);

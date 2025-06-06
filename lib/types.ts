@@ -87,6 +87,7 @@ export interface ExtractedFoodTruckDetails {
     lat?: number;
     lng?: number;
     raw_text: string | undefined;
+    is_south_carolina_location_confirmed?: boolean; // Added for SC location confirmation
   };
   scheduled_locations?: {
     // Added scheduled_locations
@@ -145,6 +146,7 @@ export interface FoodTruckSchema {
   source_urls: string[];
   last_scraped_at: string;
   test_run_flag?: boolean;
+  state?: string; // Added new state field
 }
 
 export interface GeminiResponse<T = unknown> {
