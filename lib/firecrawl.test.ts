@@ -1,19 +1,18 @@
 // lib/firecrawl.test.ts
 
-import { FirecrawlService } from './firecrawl';
+// Remove unused import
+// import { FirecrawlService } from './firecrawl';
 
 // Mock global fetch
-global.fetch = jest.fn();
+globalThis.fetch = jest.fn();
 
 describe('FirecrawlService', () => {
-  let firecrawlService: FirecrawlService;
   const mockApiKey = 'test-firecrawl-api-key';
 
   beforeEach(() => {
     // Reset mocks and service instance before each test
-    (global.fetch as jest.Mock).mockClear();
+    (globalThis.fetch as jest.Mock).mockClear();
     process.env.FIRECRAWL_API_KEY = mockApiKey;
-    firecrawlService = new FirecrawlService();
   });
 
   afterEach(() => {
@@ -31,7 +30,7 @@ describe('FirecrawlService', () => {
       // Mock failed fetch response (e.g., 400, 500 error)
       // Assert that the method returns success: false and an error message
     });
-     it('should handle network errors gracefully for scrapeUrl', async () => {
+    it('should handle network errors gracefully for scrapeUrl', async () => {
       // Mock fetch to throw a network error
       // Assert that the method returns success: false and an error message
     });
