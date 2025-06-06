@@ -24,7 +24,7 @@ export class GeminiService {
     }
     console.info(`GEMINI_API_KEY found, starts with: ${apiKey.slice(0, 5)}...`);
     this.genAI = new GoogleGenAI({ apiKey });
-    this.modelName = 'gemini-1.5-flash-latest'; // Updated model name
+    this.modelName = 'gemini-pro'; // Updated model name to gemini-pro
   }
 
   async checkUsageLimits(): Promise<{
