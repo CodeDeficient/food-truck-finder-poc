@@ -124,21 +124,32 @@ export class FirecrawlService {
         }),
       });
 
-      const data: unknown = await response.json();
-
+      // Enhanced error handling for scrapeUrl
       if (!response.ok) {
-        const errorData = data as { error?: string };
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        let errorData: any = { error: `HTTP ${response.status}: ${response.statusText}` }; // Default error
+        try {
+          const responseText = await response.text(); // Read text first to avoid consuming body if it's not JSON
+          if (responseText) {
+            errorData = JSON.parse(responseText); // Firecrawl usually returns JSON errors
+          }
+        } catch (jsonParseError) {
+          // If error response isn't JSON or failed to parse, use the status text.
+          console.error(`FirecrawlService: scrapeUrl HTTP ${response.status} for ${url}. Non-JSON error response or parse failed. Status: ${response.statusText}`);
+           // errorData is already set to a default above, or use response.text() if available and not parsed
+        }
+        const message = errorData?.error?.message || errorData?.error || errorData?.detail || `HTTP ${response.status}: Firecrawl API error.`;
+        console.error(`FirecrawlService: scrapeUrl failed for ${url} with status ${response.status}:`, message, errorData);
+        return { success: false, error: message, data: errorData }; // Include full error data if possible
       }
 
+      const data: FirecrawlResponse = await response.json();
       this.setCacheResult(cacheKey, data);
-      return data as FirecrawlResponse;
+      return data;
+
     } catch (error: unknown) {
-      console.warn('Firecrawl scrape error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      console.error(`FirecrawlService: scrapeUrl exception for ${url}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return { success: false, error: `Exception during scrapeUrl: ${errorMessage}` };
     }
   }
 
@@ -185,21 +196,30 @@ export class FirecrawlService {
         }),
       });
 
-      const data: unknown = await response.json();
-
+      // Enhanced error handling for crawlWebsite
       if (!response.ok) {
-        const errorData = data as { error?: string };
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        let errorData: any = { error: `HTTP ${response.status}: ${response.statusText}` }; // Default error
+        try {
+          const responseText = await response.text();
+          if (responseText) {
+            errorData = JSON.parse(responseText);
+          }
+        } catch (jsonParseError) {
+          console.error(`FirecrawlService: crawlWebsite HTTP ${response.status} for ${url}. Non-JSON error response or parse failed. Status: ${response.statusText}`);
+        }
+        const message = errorData?.error?.message || errorData?.error || errorData?.detail || `HTTP ${response.status}: Firecrawl API /crawl error.`;
+        console.error(`FirecrawlService: crawlWebsite failed for ${url} with status ${response.status}:`, message, errorData);
+        return { success: false, error: message }; // CrawlJobResponse doesn't have a 'data' field for errors
       }
 
+      const data: CrawlJobResponse = await response.json();
       this.setCacheResult(cacheKey, data);
-      return data as CrawlJobResponse;
+      return data;
+
     } catch (error: unknown) {
-      console.warn('Firecrawl crawl error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      console.error(`FirecrawlService: crawlWebsite exception for ${url}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return { success: false, error: `Exception during crawlWebsite: ${errorMessage}` };
     }
   }
 
@@ -217,21 +237,31 @@ export class FirecrawlService {
         },
       });
 
-      const data: unknown = await response.json();
-
+      // Enhanced error handling for getCrawlStatus
       if (!response.ok) {
-        const errorData = data as { error?: string };
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        let errorData: any = { error: `HTTP ${response.status}: ${response.statusText}` }; // Default error
+        try {
+          const responseText = await response.text();
+          if (responseText) {
+            errorData = JSON.parse(responseText);
+          }
+        } catch (jsonParseError) {
+           console.error(`FirecrawlService: getCrawlStatus HTTP ${response.status} for Job ID ${jobId}. Non-JSON error response or parse failed. Status: ${response.statusText}`);
+        }
+        const message = errorData?.error?.message || errorData?.error || errorData?.detail || `HTTP ${response.status}: Firecrawl API /crawl/status error.`;
+        console.error(`FirecrawlService: getCrawlStatus failed for Job ID ${jobId} with status ${response.status}:`, message, errorData);
+        // CrawlStatusResponse can convey error in its 'error' field and 'data' might be absent or partial.
+        return { success: false, error: message, status: 'failed', data: errorData?.data || undefined };
       }
 
+      const data: CrawlStatusResponse = await response.json();
       this.setCacheResult(cacheKey, data);
-      return data as CrawlStatusResponse;
+      return data;
+
     } catch (error: unknown) {
-      console.warn('Firecrawl status error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      console.error(`FirecrawlService: getCrawlStatus exception for Job ID ${jobId}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return { success: false, error: `Exception during getCrawlStatus: ${errorMessage}`, status: 'failed' };
     }
   }
 

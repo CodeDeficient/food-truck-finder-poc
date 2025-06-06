@@ -100,66 +100,64 @@ export async function prospectForCandidateDirectories(): Promise<string[]> {
   console.info('DirectoryProspector: Starting to prospect for candidate directory URLs...');
   const allCandidateLinks = new Set<string>();
 
-  // 1. Process Seed URLs
-  console.info(`DirectoryProspector: Processing ${SC_DIRECTORY_PROSPECTOR_SEED_URLS.length} seed URLs...`);
-  for (const seedUrl of SC_DIRECTORY_PROSPECTOR_SEED_URLS) {
-    console.info(`DirectoryProspector: Scraping seed URL: ${seedUrl}`);
-    try {
-      // Using scrapeUrl to get HTML content directly.
-      // A shallow crawl (depth 0) essentially means scraping the entry page.
-      const scrapeResult = await firecrawl.scrapeUrl(seedUrl, { pageOptions: { format: 'html' } });
-      if (scrapeResult.success && scrapeResult.data?.html) {
-        const baseOrigin = new URL(seedUrl).origin;
-        const linksFromSeed = extractAbsoluteLinks(scrapeResult.data.html, baseOrigin);
-        console.info(`DirectoryProspector: Found ${linksFromSeed.size} links from ${seedUrl}`);
-        linksFromSeed.forEach(link => allCandidateLinks.add(link));
-      } else {
-        console.warn(`DirectoryProspector: Failed to scrape seed URL ${seedUrl}. Error: ${scrapeResult.error}`);
-      }
-    } catch (error) {
-      console.error(`DirectoryProspector: Exception while processing seed URL ${seedUrl}:`, error);
-    }
-  }
+  // 1. Process Seed URLs (Temporarily modified for focused testing)
+  // console.info(`DirectoryProspector: Processing ${SC_DIRECTORY_PROSPECTOR_SEED_URLS.length} seed URLs...`);
+  // for (const seedUrl of SC_DIRECTORY_PROSPECTOR_SEED_URLS) {
+  const singleTestSeedUrl = 'https://www.sc.gov'; // Focused test URL
+  console.info(`DirectoryProspector: [Focused Test] Processing SINGLE seed URL: ${singleTestSeedUrl}`);
+  try {
+    // Using scrapeUrl to get HTML content directly.
+    console.info(`DirectoryProspector: [Focused Test] About to call firecrawl.scrapeUrl for: ${singleTestSeedUrl}`);
+    const firecrawlOptions = { pageOptions: { format: 'html' } };
+    console.info(`DirectoryProspector: [Focused Test] Options:`, JSON.stringify(firecrawlOptions, null, 2));
+    const scrapeResult = await firecrawl.scrapeUrl(singleTestSeedUrl, firecrawlOptions);
+    console.info(`DirectoryProspector: [Focused Test] Raw scrapeResult for ${singleTestSeedUrl}:`, JSON.stringify(scrapeResult, null, 2));
 
-  // 2. Process Search Queries (SERP Scraping)
-  console.info(`DirectoryProspector: Processing ${SC_DIRECTORY_PROSPECTOR_SEARCH_QUERIES.length} search queries via Google SERP scraping...`);
-  console.warn("DirectoryProspector: SERP scraping is experimental and may be unreliable due to Google's anti-scraping measures and changing page structures.");
-
-  for (const query of SC_DIRECTORY_PROSPECTOR_SEARCH_QUERIES) {
-    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&hl=en&gl=us`; // Added hl and gl for consistency
-    console.info(`DirectoryProspector: Attempting to scrape SERP for query: "${query}" via URL: ${googleSearchUrl}`);
-    try {
-      // Using scrapeUrl to get HTML content of the Google SERP.
-      // This requires Firecrawl to be able to render JavaScript if Google SERPs heavily rely on it.
-      // Success here is highly dependent on Firecrawl's capabilities and Google's current blocking strategies.
-      const serpResult = await firecrawl.scrapeUrl(googleSearchUrl, {
-        pageOptions: { format: 'html' },
-        scraperOptions: {
-          // It's possible specific Firecrawl scraper options might be needed here,
-          // e.g., related to waiting for page load or JavaScript rendering,
-          // but these are not standardized in the current FirecrawlService interface.
-          // This is a point of potential enhancement or configuration for Firecrawl.
-        }
-      });
-      if (serpResult.success && serpResult.data?.html) {
-        const linksFromSerp = extractAbsoluteLinks(serpResult.data.html, 'https://www.google.com');
-        console.info(`DirectoryProspector: Found ${linksFromSerp.size} links from SERP for query "${query}"`);
-        linksFromSerp.forEach(link => {
-          // Filter out Google's own internal/redirect links more aggressively here
-          if (!link.startsWith('https://www.google.com/url?') && !link.startsWith('https://accounts.google.com')) {
-            allCandidateLinks.add(link);
-          }
-        });
-      } else {
-        console.warn(`DirectoryProspector: Failed to scrape SERP for query "${query}". Error: ${serpResult.error}`);
-      }
-    } catch (error) {
-      console.error(`DirectoryProspector: Exception while processing SERP for query "${query}":`, error);
+    if (scrapeResult.success && scrapeResult.data?.html) {
+      const baseOrigin = new URL(singleTestSeedUrl).origin;
+      const linksFromSeed = extractAbsoluteLinks(scrapeResult.data.html, baseOrigin);
+      console.info(`DirectoryProspector: [Focused Test] Found ${linksFromSeed.size} links from ${singleTestSeedUrl}`);
+      linksFromSeed.forEach(link => allCandidateLinks.add(link));
+    } else {
+      console.warn(`DirectoryProspector: [Focused Test] Failed to scrape seed URL ${singleTestSeedUrl}. Error: ${scrapeResult.error}`);
     }
+  } catch (error) {
+    console.error(`DirectoryProspector: [Focused Test] Exception while processing seed URL ${singleTestSeedUrl}:`, error);
   }
+  // } // End of original loop (commented out for focused test)
+
+  // 2. Process Search Queries (SERP Scraping) - Temporarily Commented Out
+  // console.info(`DirectoryProspector: Processing ${SC_DIRECTORY_PROSPECTOR_SEARCH_QUERIES.length} search queries via Google SERP scraping...`);
+  // console.warn("DirectoryProspector: SERP scraping is experimental and may be unreliable due to Google's anti-scraping measures and changing page structures.");
+  // for (const query of SC_DIRECTORY_PROSPECTOR_SEARCH_QUERIES) {
+  //   const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&hl=en&gl=us`; // Added hl and gl for consistency
+  //   console.info(`DirectoryProspector: Attempting to scrape SERP for query: "${query}" via URL: ${googleSearchUrl}`);
+  //   try {
+  //     // Using scrapeUrl to get HTML content of the Google SERP.
+  //     const serpResult = await firecrawl.scrapeUrl(googleSearchUrl, {
+  //       pageOptions: { format: 'html' },
+  //       scraperOptions: {
+  //         // It's possible specific Firecrawl scraper options might be needed here
+  //       }
+  //     });
+  //     if (serpResult.success && serpResult.data?.html) {
+  //       const linksFromSerp = extractAbsoluteLinks(serpResult.data.html, 'https://www.google.com');
+  //       console.info(`DirectoryProspector: Found ${linksFromSerp.size} links from SERP for query "${query}"`);
+  //       linksFromSerp.forEach(link => {
+  //         if (!link.startsWith('https://www.google.com/url?') && !link.startsWith('https://accounts.google.com')) {
+  //           allCandidateLinks.add(link);
+  //         }
+  //       });
+  //     } else {
+  //       console.warn(`DirectoryProspector: Failed to scrape SERP for query "${query}". Error: ${serpResult.error}`);
+  //     }
+  //   } catch (error) {
+  //     console.error(`DirectoryProspector: Exception while processing SERP for query "${query}":`, error);
+  //   }
+  // }
 
   // 3. Filter all collected links
-  console.info(`DirectoryProspector: Collected ${allCandidateLinks.size} raw candidate links. Filtering...`);
+  console.info(`DirectoryProspector: [Focused Test] Collected ${allCandidateLinks.size} raw candidate links (from single seed). Filtering...`);
   const filteredUrls = filterCandidateUrls(allCandidateLinks);
   console.info(`DirectoryProspector: Filtered down to ${filteredUrls.size} unique candidate directory URLs.`);
 
