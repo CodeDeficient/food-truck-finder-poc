@@ -178,3 +178,12 @@ export interface TestPipelineResults {
   logs?: string[];
   error?: string;
 }
+
+export interface DirectoryClassificationOutput {
+  is_directory: boolean;
+  is_sc_focused: boolean;
+  directory_name?: string;
+  directory_description?: string; // Brief summary of the directory's content/purpose
+  relevance_score: number; // e.g., 0.0 to 1.0, how relevant it is as a food truck source
+  sc_focus_score: number;  // e.g., 0.0 to 1.0, how focused on SC it is
+}
