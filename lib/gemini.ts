@@ -8,14 +8,16 @@ import {
   SentimentAnalysisResult,
   EnhancedFoodTruckData,
   ExtractedFoodTruckDetails,
+  DirectoryClassificationOutput, // Added import
   GeminiResponse,
 } from './types';
 
 export class GeminiService {
   private genAI: GoogleGenAI;
   private modelName: string;
-  private dailyRequestLimit = 1500;
-  private dailyTokenLimit = 32_000;
+  // Limits for gemini-2.5-flash-preview-05-20 (Free Tier)
+  private dailyRequestLimit = 500; // RPD for gemini-2.5-flash-preview-05-20 (Free Tier). Note: RPM is 10.
+  private dailyTokenLimit = 125000000; // Placeholder (500 RPD * 250k avg tokens/req). Focus on RPD=500. TPM=250k & RPM=10 are key operational constraints not actively throttled by this daily check.
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -24,7 +26,7 @@ export class GeminiService {
     }
     console.info(`GEMINI_API_KEY found, starts with: ${apiKey.slice(0, 5)}...`);
     this.genAI = new GoogleGenAI({ apiKey });
-    this.modelName = 'gemini-pro'; // Updated model name to gemini-pro
+    this.modelName = 'gemini-2.5-flash-preview-05-20'; // Corrected model name
   }
 
   async checkUsageLimits(): Promise<{
@@ -663,3 +665,105 @@ Instructions:
 
 // Export singleton instance
 export const gemini = new GeminiService();
+
+  async getDirectoryClassificationForContent(pageContent: string): Promise<GeminiResponse<DirectoryClassificationOutput>> {
+    const usageCheck = await this.checkUsageLimits();
+    if (!usageCheck.canMakeRequest) {
+      return {
+        success: false,
+        error: 'Daily API limits exceeded for Gemini',
+      };
+    }
+
+    const prompt = `
+You are an AI assistant tasked with classifying webpage content to determine if it represents a food truck directory or a relevant listing of multiple businesses, with a special focus on South Carolina. Analyze the provided text content and return a JSON object with the specified schema.
+
+Webpage Text Content:
+---
+${pageContent.substring(0, 15000)} // Truncate content to a reasonable length for the prompt
+---
+
+Target JSON Schema and Instructions:
+{{
+  "is_directory": boolean, // True if the page lists multiple businesses/food trucks, false if it's about a single entity or irrelevant.
+  "is_sc_focused": boolean, // True if the content strongly indicates a focus on South Carolina (e.g., mentions SC cities, regions, or explicitly states SC focus).
+  "directory_name": "string | undefined", // The prominent name of the website or directory if identifiable.
+  "directory_description": "string | undefined", // A concise 1-2 sentence summary of what the page lists or its primary purpose.
+  "relevance_score": number, // Your confidence (0.0 to 1.0) that this page is a useful source for finding food truck leads or other food-related business listings.
+  "sc_focus_score": number // Your confidence (0.0 to 1.0) that this page's content is specifically and primarily about South Carolina.
+}}
+
+Few-shot Examples:
+
+Example 1 (Good SC Directory):
+Input Text Snippet: "Welcome to Charleston's Best Food Trucks! Find local mobile eats from BBQ to Tacos. Our listed vendors serve Charleston, Mount Pleasant, and Summerville, SC. Check event calendars."
+Expected JSON Output: {{ "is_directory": true, "is_sc_focused": true, "directory_name": "Charleston's Best Food Trucks", "directory_description": "A directory listing food trucks in Charleston, Mount Pleasant, and Summerville, SC, covering various cuisines and events.", "relevance_score": 0.9, "sc_focus_score": 1.0 }}
+
+Example 2 (Individual Food Truck, Not a Directory):
+Input Text Snippet: "About Mobile Joe's Coffee - We're proud to serve the freshest coffee in Greenville, SC. Find our daily location on Twitter @MobileJoes!"
+Expected JSON Output: {{ "is_directory": false, "is_sc_focused": true, "directory_name": "Mobile Joe's Coffee", "directory_description": "The official website or page for Mobile Joe's Coffee, an individual coffee truck operating in Greenville, SC.", "relevance_score": 0.2, "sc_focus_score": 1.0 }}
+
+Example 3 (Generic US Directory, Low SC Focus):
+Input Text Snippet: "FoodTruckFinder USA lists thousands of trucks nationwide. From New York to California, find a Foursquare or Yelp alternative for mobile food."
+Expected JSON Output: {{ "is_directory": true, "is_sc_focused": false, "directory_name": "FoodTruckFinder USA", "directory_description": "A national directory of food trucks across the USA, not specific to any single state.", "relevance_score": 0.7, "sc_focus_score": 0.1 }}
+
+Example 4 (Irrelevant Page):
+Input Text Snippet: "The history of the automobile and its impact on American society. Chapter 3: The Rise of Roadside Diners."
+Expected JSON Output: {{ "is_directory": false, "is_sc_focused": false, "directory_name": "History of the Automobile", "directory_description": "An article about automotive history and roadside diners, not a directory of current food businesses.", "relevance_score": 0.0, "sc_focus_score": 0.0 }}
+
+Only return the valid JSON object based on your analysis of the Webpage Text Content. Do not include any explanatory text before or after the JSON.
+          `; // End of prompt string
+
+          let textOutput: string = '';
+          try {
+            const sdkResponse = await this.genAI.models.generateContent({
+              model: this.modelName, // Uses the modelName set in constructor (e.g., gemini-1.5-flash-preview-0514)
+              contents: [{ role: 'user', parts: [{ text: prompt }] }],
+              generationConfig: { responseMimeType: "application/json" }, // Request JSON output
+            });
+            // textOutput = sdkResponse.text || ''; // Deprecated with responseMimeType
+             if (sdkResponse.response && typeof sdkResponse.response.text === 'function') {
+                 textOutput = sdkResponse.response.text();
+             } else {
+                 // Fallback or error handling if .text() is not available or response is not as expected
+                 console.warn('Gemini response format unexpected or .text() function not available.');
+                 textOutput = JSON.stringify(sdkResponse.response); // Attempt to stringify the whole response if .text() is missing.
+             }
+
+
+            const tokensUsed =
+              sdkResponse.response.usageMetadata?.totalTokenCount ||
+              Math.ceil((prompt.length + textOutput.length) / 4); // Estimate if not available
+
+            void APIUsageService.trackUsage('gemini', 1, tokensUsed);
+
+            try {
+              // The response should already be JSON if responseMimeType worked.
+              const parsedData = JSON.parse(textOutput.trim()) as DirectoryClassificationOutput;
+              return {
+                success: true,
+                data: parsedData,
+                tokensUsed,
+                promptSent: prompt, // For debugging
+              };
+            } catch (parseError: unknown) {
+              console.warn('Gemini (getDirectoryClassificationForContent) JSON parsing error:', parseError);
+              console.warn('Problematic Gemini raw response text:', textOutput.trim());
+              return {
+                success: false,
+                error: `Failed to parse Gemini response as JSON: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text (first 200 chars): ${textOutput.trim().slice(0, 200)}...`,
+                tokensUsed,
+                promptSent: prompt,
+              };
+            }
+          } catch (error: unknown) {
+            console.warn('Gemini (getDirectoryClassificationForContent) content generation error:', error);
+            const tokensUsed = Math.ceil((prompt.length + textOutput.length) / 4); // Estimate
+            return {
+              success: false,
+              error: error instanceof Error ? error.message : 'Unknown error during Gemini content generation',
+              tokensUsed: tokensUsed,
+              promptSent: prompt,
+            };
+          }
+        }
