@@ -1,80 +1,89 @@
-import { GoogleGenAI } from "@google/genai"; // Updated import
-import { APIUsageService } from "./supabase"
+import { GoogleGenAI } from '@google/genai';
+import { APIUsageService } from './supabase';
 
-interface GeminiResponse {
-  success: boolean
-  data?: any
-  tokensUsed?: number
-  error?: string
-  promptSent?: string;
-}
+import {
+  MenuCategory,
+  LocationData,
+  OperatingHours,
+  SentimentAnalysisResult,
+  EnhancedFoodTruckData,
+  ExtractedFoodTruckDetails,
+  GeminiResponse,
+} from './types';
 
 export class GeminiService {
-  private genAI: GoogleGenAI; // Updated type
-  private modelName: string; // New property for model name
-  private dailyRequestLimit = 1500
-  private dailyTokenLimit = 32000
+  private genAI: GoogleGenAI;
+  private modelName: string;
+  private dailyRequestLimit = 1500;
+  private dailyTokenLimit = 32_000;
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) { // Check if it's null, undefined, or empty string
-      throw new Error("GEMINI_API_KEY environment variable is not set or is empty.");
+    if (!apiKey) {
+      throw new Error('GEMINI_API_KEY environment variable is not set or is empty.');
     }
-    console.log(`GEMINI_API_KEY found, starts with: ${apiKey.substring(0, 5)}...`);
-    this.genAI = new GoogleGenAI(apiKey); // Updated initialization
-    this.modelName = "gemini-2.0-flash-001"; // Changed model name as requested
+    console.info(`GEMINI_API_KEY found, starts with: ${apiKey.slice(0, 5)}...`);
+    this.genAI = new GoogleGenAI({ apiKey });
+    this.modelName = 'gemini-2.0-flash-lite-001';
   }
 
-  async checkUsageLimits(): Promise<{ canMakeRequest: boolean; usage?: any }> {
+  async checkUsageLimits(): Promise<{
+    canMakeRequest: boolean;
+    usage?: {
+      requests: { used: number; limit: number; remaining: number };
+      tokens: { used: number; limit: number; remaining: number };
+    };
+  }> {
     try {
-      const usage = await APIUsageService.getTodayUsage("gemini")
+      const usage = await APIUsageService.getTodayUsage('gemini');
 
       if (!usage) {
-        return { canMakeRequest: true }
+        return { canMakeRequest: true };
       }
+      const requestsUsed = usage.requests_count ?? 0;
+      const tokensUsed = usage.tokens_used ?? 0;
 
-      const requestsRemaining = this.dailyRequestLimit - (usage.requests_count || 0)
-      const tokensRemaining = this.dailyTokenLimit - (usage.tokens_used || 0)
+      const requestsRemaining = this.dailyRequestLimit - requestsUsed;
+      const tokensRemaining = this.dailyTokenLimit - tokensUsed;
 
       return {
         canMakeRequest: requestsRemaining > 0 && tokensRemaining > 100, // Keep 100 token buffer
         usage: {
           requests: {
-            used: usage.requests_count || 0,
+            used: requestsUsed,
             limit: this.dailyRequestLimit,
             remaining: requestsRemaining,
           },
           tokens: {
-            used: usage.tokens_used || 0,
+            used: tokensUsed,
             limit: this.dailyTokenLimit,
             remaining: tokensRemaining,
           },
         },
-      }
-    } catch (error) {
-      console.error("Error checking Gemini usage limits:", error)
-      return { canMakeRequest: false }
+      };
+    } catch (error: unknown) {
+      console.warn('Error checking Gemini usage limits:', error);
+      return { canMakeRequest: false };
     }
   }
 
-  async processMenuData(rawMenuText: string): Promise<GeminiResponse> {
-    const usageCheck = await this.checkUsageLimits()
+  async processMenuData(rawMenuText: string): Promise<GeminiResponse<MenuCategory[]>> {
+    const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
         success: false,
-        error: "Daily API limits exceeded",
-      }
+        error: 'Daily API limits exceeded',
+      };
     }
 
-    try {
-      const prompt = `
+    const prompt = `
 Parse the following food truck menu text and return a structured JSON format.
 Extract menu items with categories, names, descriptions, prices, and dietary tags.
 
 Menu text:
 ${rawMenuText}
 
-Return ONLY valid JSON in this exact format:
+Return only valid json in this exact format:
 {
   "categories": [
     {
@@ -96,196 +105,225 @@ Rules:
 - Include dietary restrictions and special tags
 - Group items into logical categories
 - If no clear categories, use "Main Items"
-- Return only the JSON, no additional text
-      `
+- Return only the json, no additional text
+      `;
+    let textOutput: string = '';
+    try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      const responseText = sdkResponse.text;
+      textOutput = sdkResponse.text || '';
 
-      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
+      const tokensUsed =
+        sdkResponse.usageMetadata?.totalTokenCount ||
+        Math.ceil((prompt.length + textOutput.length) / 4);
 
-      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 
       try {
-        const parsedData = JSON.parse(responseText.trim())
+        const parsedData = JSON.parse(textOutput.trim()) as { categories: MenuCategory[] };
         return {
           success: true,
-          data: parsedData,
+          data: parsedData.categories,
           tokensUsed,
-        }
-      } catch (parseError) {
+        };
+      } catch (parseError: unknown) {
+        console.warn('Gemini json parsing error:', parseError);
+        console.warn('Problematic Gemini raw response text:', textOutput.trim());
         return {
           success: false,
-          error: "Failed to parse Gemini response as JSON",
+          error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${textOutput.trim().slice(0, 200)}...`,
           tokensUsed,
-        }
+        };
       }
-    } catch (error) {
-      console.error("Gemini menu processing error:", error)
+    } catch (error: unknown) {
+      console.warn('Gemini menu processing error:', error);
+      const tokensUsed = Math.ceil(
+        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
+          4,
+      );
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tokensUsed: tokensUsed,
+      };
     }
   }
 
-  async extractLocationFromText(textInput: string): Promise<GeminiResponse> {
-    const usageCheck = await this.checkUsageLimits()
+  async extractLocationFromText(textInput: string): Promise<GeminiResponse<LocationData>> {
+    const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
         success: false,
-        error: "Daily API limits exceeded",
-      }
+        error: 'Daily API limits exceeded',
+      };
     }
 
-    try {
-      const prompt = `
+    const prompt = `
 Extract location information from the following text and return structured data.
 Look for addresses, cross streets, landmarks, or location descriptions.
 
 Text:
 ${textInput}
 
-Return ONLY valid JSON in this exact format:
+Return only valid json in this exact format:
 {
   "address": "full_address_if_available",
   "city": "city_name",
   "state": "state_abbreviation",
   "landmarks": ["nearby_landmark1", "nearby_landmark2"],
   "coordinates": {
-    "lat": null,
-    "lng": null
+    "lat": undefined,
+    "lng": undefined
   },
   "confidence": 0.95,
   "raw_location_text": "original_location_mention"
 }
 
 Rules:
-- Set coordinates to null if not explicitly provided
+- Set coordinates to undefined if not explicitly provided
 - Confidence should be 0.0 to 1.0 based on clarity
 - Include any mentioned landmarks or cross streets
-- Return only the JSON, no additional text
-      `
-      // Renamed 'text' parameter to 'textInput' to avoid conflict with 'text' variable for response
+- Return only the json, no additional text
+      `;
+    let textOutput: string = '';
+    try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
-        contents: [{ role: "user", parts: [{ text: textInput }] }]
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      const responseText = sdkResponse.text;
+      textOutput = sdkResponse.text || '';
 
-      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
-      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+      const tokensUsed =
+        sdkResponse.usageMetadata?.totalTokenCount ||
+        Math.ceil((prompt.length + textOutput.length) / 4);
+      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 
       try {
-        const parsedData = JSON.parse(responseText.trim())
+        const parsedData = JSON.parse(textOutput.trim()) as LocationData;
         return {
           success: true,
           data: parsedData,
           tokensUsed,
-        }
-      } catch (parseError) {
+        };
+      } catch (parseError: unknown) {
+        console.warn('Gemini json parsing error:', parseError);
+        console.warn('Problematic Gemini raw response text:', textOutput.trim());
         return {
           success: false,
-          error: "Failed to parse Gemini response as JSON",
+          error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${textOutput.trim().slice(0, 200)}...`,
           tokensUsed,
-        }
+        };
       }
-    } catch (error) {
-      console.error("Gemini location extraction error:", error)
+    } catch (error: unknown) {
+      console.warn('Gemini location extraction error:', error);
+      const tokensUsed = Math.ceil(
+        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
+          4,
+      );
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tokensUsed: tokensUsed,
+      };
     }
   }
 
-  async standardizeOperatingHours(hoursText: string): Promise<GeminiResponse> {
-    const usageCheck = await this.checkUsageLimits()
+  async standardizeOperatingHours(hoursText: string): Promise<GeminiResponse<OperatingHours>> {
+    const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
         success: false,
-        error: "Daily API limits exceeded",
-      }
+        error: 'Daily API limits exceeded',
+      };
     }
 
-    try {
-      const prompt = `
+    const prompt = `
 Parse the following operating hours text and return standardized format.
 Convert all times to 24-hour format and handle various input formats.
 
 Hours text:
 ${hoursText}
 
-Return ONLY valid JSON in this exact format:
+Return only valid json in this exact format:
 {
-  "monday": {"open": "HH:MM", "close": "HH:MM", "closed": false},
-  "tuesday": {"open": "HH:MM", "close": "HH:MM", "closed": false},
-  "wednesday": {"open": "HH:MM", "close": "HH:MM", "closed": false},
-  "thursday": {"open": "HH:MM", "close": "HH:MM", "closed": false},
-  "friday": {"open": "HH:MM", "close": "HH:MM", "closed": false},
-  "saturday": {"open": "HH:MM", "close": "HH:MM", "closed": false},
-  "sunday": {"open": "HH:MM", "close": "HH:MM", "closed": false}
+  "monday": {"open": "hh:mm", "close": "hh:mm", "closed": false},
+  "tuesday": {"open": "hh:mm", "close": "hh:mm", "closed": false},
+  "wednesday": {"open": "hh:mm", "close": "hh:mm", "closed": false},
+  "thursday": {"open": "hh:mm", "close": "hh:mm", "closed": false},
+  "friday": {"open": "hh:mm", "close": "hh:mm", "closed": false},
+  "saturday": {"open": "hh:mm", "close": "hh:mm", "closed": false},
+  "sunday": {"open": "hh:mm", "close": "hh:mm", "closed": false}
 }
 
 Rules:
-- Use 24-hour format (e.g., "14:30" for 2:30 PM)
+- Use 24-hour format (e.g., "14:30" for 2:30 pm)
 - If closed on a day, set "closed": true and omit open/close times
 - Handle ranges like "Mon-Fri" by applying to all days in range
 - Default to reasonable hours if ambiguous
-- Return only the JSON, no additional text
-      `
+- Return only the json, no additional text
+      `;
+    let textOutput: string = '';
+    try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      const responseText = sdkResponse.text;
+      textOutput = sdkResponse.text || '';
 
-      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
-      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+      const tokensUsed =
+        sdkResponse.usageMetadata?.totalTokenCount ||
+        Math.ceil((prompt.length + textOutput.length) / 4);
+      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 
       try {
-        const parsedData = JSON.parse(responseText.trim())
+        const parsedData = JSON.parse(textOutput.trim()) as OperatingHours;
         return {
           success: true,
           data: parsedData,
           tokensUsed,
-        }
-      } catch (parseError) {
+        };
+      } catch (parseError: unknown) {
+        console.warn('Gemini json parsing error:', parseError);
+        console.warn('Problematic Gemini raw response text:', textOutput.trim());
         return {
           success: false,
-          error: "Failed to parse Gemini response as JSON",
+          error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${textOutput.trim().slice(0, 200)}...`,
           tokensUsed,
-        }
+        };
       }
-    } catch (error) {
-      console.error("Gemini hours standardization error:", error)
+    } catch (error: unknown) {
+      console.warn('Gemini hours standardization error:', error);
+      const tokensUsed = Math.ceil(
+        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
+          4,
+      );
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tokensUsed: tokensUsed,
+      };
     }
   }
 
-  async analyzeSentiment(reviewText: string): Promise<GeminiResponse> {
-    const usageCheck = await this.checkUsageLimits()
+  async analyzeSentiment(reviewText: string): Promise<GeminiResponse<SentimentAnalysisResult>> {
+    const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
         success: false,
-        error: "Daily API limits exceeded",
-      }
+        error: 'Daily API limits exceeded',
+      };
     }
 
-    try {
-      const prompt = `
+    const prompt = `
 Analyze the sentiment of this food truck review and extract key insights.
 Focus on food quality, service, value, and overall experience.
 
 Review:
 ${reviewText}
 
-Return ONLY valid JSON in this exact format:
+Return only valid json in this exact format:
 {
   "sentiment": "positive|negative|neutral",
   "score": 0.85,
@@ -302,58 +340,68 @@ Rules:
 - Confidence should be 0.0 to 1.0 based on clarity of sentiment
 - Include specific aspects mentioned in the review
 - Summary should be 1-2 sentences max
-- Return only the JSON, no additional text
-      `
+- Return only the json, no additional text
+      `;
+    let textOutput: string = '';
+    try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      const responseText = sdkResponse.text;
+      textOutput = sdkResponse.text || '';
 
-      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
-      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+      const tokensUsed =
+        sdkResponse.usageMetadata?.totalTokenCount ||
+        Math.ceil((prompt.length + textOutput.length) / 4);
+      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 
       try {
-        const parsedData = JSON.parse(responseText.trim())
+        const parsedData = JSON.parse(textOutput.trim()) as SentimentAnalysisResult;
         return {
           success: true,
           data: parsedData,
           tokensUsed,
-        }
-      } catch (parseError) {
+        };
+      } catch (parseError: unknown) {
+        console.warn('Gemini json parsing error:', parseError);
+        console.warn('Problematic Gemini raw response text:', textOutput.trim());
         return {
           success: false,
-          error: "Failed to parse Gemini response as JSON",
+          error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${textOutput.trim().slice(0, 200)}...`,
           tokensUsed,
-        }
+        };
       }
-    } catch (error) {
-      console.error("Gemini sentiment analysis error:", error)
+    } catch (error: unknown) {
+      console.warn('Gemini sentiment analysis error:', error);
+      const tokensUsed = Math.ceil(
+        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
+          4,
+      );
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tokensUsed: tokensUsed,
+      };
     }
   }
 
-  async enhanceFoodTruckData(rawData: any): Promise<GeminiResponse> {
-    const usageCheck = await this.checkUsageLimits()
+  async enhanceFoodTruckData(rawData: unknown): Promise<GeminiResponse<EnhancedFoodTruckData>> {
+    const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
         success: false,
-        error: "Daily API limits exceeded",
-      }
+        error: 'Daily API limits exceeded',
+      };
     }
 
-    try {
-      const prompt = `
-Enhance and standardize this food truck data. Clean up inconsistencies, 
+    const prompt = `
+Enhance and standardize this food truck data. Clean up inconsistencies,
 fill in missing information where possible, and improve data quality.
 
 Raw data:
-${JSON.stringify(rawData, null, 2)}
+${JSON.stringify(rawData, undefined, 2)}
 
-Return ONLY valid JSON with enhanced data in this format:
+Return only valid json with enhanced data in this format:
 {
   "name": "cleaned_truck_name",
   "description": "enhanced_description",
@@ -362,11 +410,11 @@ Return ONLY valid JSON with enhanced data in this format:
   "specialties": ["signature_dish1", "signature_dish2"],
   "dietary_options": ["vegetarian", "vegan", "gluten_free"],
   "enhanced_menu": {
-    "categories": [...]
+    "categories": []
   },
-  "standardized_hours": {...},
-  "cleaned_contact": {...},
-  "data_quality_improvements": ["improvement1", "improvement2"],
+  "standardized_hours": {},
+  "cleaned_contact": {},
+  "data_quality_improvements": [],
   "confidence_score": 0.85
 }
 
@@ -375,123 +423,139 @@ Rules:
 - Standardize naming conventions
 - Infer cuisine type from menu items
 - Estimate price range from menu prices
-- Return only the JSON, no additional text
-      `
+- Return only the json, no additional text
+      `;
+    let textOutput: string = '';
+    try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      const responseText = sdkResponse.text;
+      textOutput = sdkResponse.text || '';
 
-      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (responseText || '').length) / 4);
-      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+      const tokensUsed =
+        sdkResponse.usageMetadata?.totalTokenCount ||
+        Math.ceil((prompt.length + textOutput.length) / 4);
+      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 
       try {
-        const parsedData = JSON.parse(responseText.trim())
+        const parsedData = JSON.parse(textOutput.trim()) as EnhancedFoodTruckData;
         return {
           success: true,
           data: parsedData,
           tokensUsed,
-        }
-      } catch (parseError) {
+        };
+      } catch (parseError: unknown) {
+        console.warn('Gemini json parsing error:', parseError);
+        console.warn('Problematic Gemini raw response text:', textOutput.trim());
         return {
           success: false,
-          error: "Failed to parse Gemini response as JSON",
+          error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${textOutput.trim().slice(0, 200)}...`,
           tokensUsed,
-        }
+        };
       }
-    } catch (error) {
-      console.error("Gemini data enhancement error:", error)
+    } catch (error: unknown) {
+      console.warn('Gemini data enhancement error:', error);
+      const tokensUsed = Math.ceil(
+        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
+          4,
+      );
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+        tokensUsed: tokensUsed,
+      };
     }
   }
 
-  async batchProcess(items: Array<{ type: string; data: any }>, batchSize = 5): Promise<Array<GeminiResponse>> {
-    const results: Array<GeminiResponse> = []
+  async batchProcess(
+    items: Array<{ type: string; data: unknown }>,
+  ): Promise<Array<GeminiResponse<unknown>>> {
+    const results: Array<GeminiResponse<unknown>> = [];
 
-    for (let i = 0; i < items.length; i += batchSize) {
-      const batch = items.slice(i, i + batchSize)
-
-      const batchPromises = batch.map(async (item) => {
-        switch (item.type) {
-          case "menu":
-            return await this.processMenuData(item.data)
-          case "location":
-            return await this.extractLocationFromText(item.data)
-          case "hours":
-            return await this.standardizeOperatingHours(item.data)
-          case "sentiment":
-            return await this.analyzeSentiment(item.data)
-          case "enhance":
-            return await this.enhanceFoodTruckData(item.data)
-          default:
-            return { success: false, error: `Unknown processing type: ${item.type}` }
+    for (const item of items) {
+      let result: GeminiResponse<unknown>;
+      switch (item.type) {
+        case 'menu': {
+          result = await this.processMenuData(item.data as string);
+          break;
         }
-      })
-
-      const batchResults = await Promise.all(batchPromises)
-      results.push(...batchResults)
-
-      // Add delay between batches to respect rate limits
-      if (i + batchSize < items.length) {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        case 'location': {
+          result = await this.extractLocationFromText(item.data as string);
+          break;
+        }
+        case 'hours': {
+          result = await this.standardizeOperatingHours(item.data as string);
+          break;
+        }
+        case 'sentiment': {
+          result = await this.analyzeSentiment(item.data as string);
+          break;
+        }
+        case 'enhance': {
+          result = await this.enhanceFoodTruckData(item.data); // item.data is already unknown
+          break;
+        }
+        default: {
+          result = { success: false, error: `Unknown processing type: ${item.type}` };
+          break;
+        }
       }
+      results.push(result);
     }
 
-    return results
+    return results;
   }
 
-  async getUsageStats() {
-    return await APIUsageService.getTodayUsage("gemini")
+  async getUsageStats(): Promise<{ requests_count: number; tokens_used: number } | undefined> {
+    const usage = await APIUsageService.getTodayUsage('gemini');
+    return usage === undefined ? undefined : usage;
   }
 
   async extractFoodTruckDetailsFromMarkdown(
     markdownContent: string,
     sourceUrl?: string,
-  ): Promise<GeminiResponse> {
-    const usageCheck = await this.checkUsageLimits()
+  ): Promise<GeminiResponse<ExtractedFoodTruckDetails>> {
+    const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
         success: false,
-        error: "Daily API limits exceeded for Gemini",
-      }
+        error: 'Daily API limits exceeded for Gemini',
+      };
     }
 
     const prompt = `
-You are an AI assistant tasked with extracting structured information about food trucks from their website content (provided in Markdown format). Your goal is to populate a JSON object with the following schema. Only return the JSON object, nothing else.
+You are an ai assistant tasked with extracting structured information about food trucks from their website content (provided in Markdown format). Your goal is to populate a json object with the following schema. Only return the json object, nothing else.
 
 Markdown Content:
 ---
 ${markdownContent}
 ---
 
-Source URL (if available): ${sourceUrl || "Not provided"}
+Source url (if available): ${sourceUrl || 'Not provided'}
 
-Target JSON Schema:
+Target json Schema:
 {{
-  "name": "string | null",
-  "description": "string | null",
+  "name": "string | undefined",
+  "description": "string | undefined",
   "cuisine_type": ["string", ...], // e.g., ["Mexican", "Tacos", "Fusion"]
-  "price_range": "$ | $$ | $$$ | null", // Estimate based on menu prices if possible, otherwise null
+  "price_range": "$ | $$ | $$$ | undefined", // Estimate based on menu prices if possible, otherwise undefined
   "specialties": ["string", ...], // e.g., ["Birria Tacos", "Signature Burger"]
   "current_location": {{
-    "address": "string | null",
-    "city": "string | null",
-    "state": "string | null", // Should be state/province abbreviation e.g. CA, TX, ON
-    "zip_code": "string | null",
-    "raw_text": "original location text from page | null" // The exact text describing the location from the markdown
+    "address": "string | undefined",
+    "city": "string | undefined",
+    "state": "string | undefined", // Should be state/province abbreviation e.g. ca, tx, on
+    "zip_code": "string | undefined",
+    "raw_text": "original location text from page | undefined" // The exact text describing the location from the markdown
   }},
-  "operating_hours": {{ // Use 24-hour format "HH:MM". If unable to parse, leave as null.
-    "monday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
-    "tuesday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
-    "wednesday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
-    "thursday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
-    "friday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
-    "saturday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null,
-    "sunday": {{ "open": "HH:MM", "close": "HH:MM" }} | {{ "closed": true }} | null
+  "operating_hours": {{ // Use 24-hour format "hh:mm". If unable to parse, leave as undefined.
+    "monday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
+    "tuesday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
+    "wednesday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
+    "thursday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
+    "friday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
+    "saturday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
+    "sunday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined
   }},
   "menu": [ // If no menu found, this should be an empty array []
     {{
@@ -499,92 +563,97 @@ Target JSON Schema:
       "items": [
         {{
           "name": "string",
-          "description": "string | null",
-          "price": "number (e.g., 12.99) | string (e.g., 'Market Price') | null",
+          "description": "string | undefined",
+          "price": "number (e.g., 12.99) | string (e.g., 'Market Price') | undefined",
           "dietary_tags": ["string", ...] // e.g., ["vegan", "gluten-free", "spicy"]
         }}
       ]
     }}
   ],
   "contact_info": {{
-    "phone": "string | null", // e.g., "555-123-4567"
-    "email": "string | null",
-    "website": "string | null" // This should be the primary business website, not social media links
+    "phone": "string | undefined", // e.g., "555-123-4567"
+    "email": "string | undefined",
+    "website": "string | undefined" // This should be the primary business website, not social media links
   }},
-  "social_media": {{ // Extract usernames or full URLs if available
-    "instagram": "string | null",
-    "facebook": "string | null",
-    "twitter": "string | null",
-    "tiktok": "string | null",
-    "yelp": "string | null"
+  "social_media": {{ // Extract usernames or full urls if available
+    "instagram": "string | undefined",
+    "facebook": "string | undefined",
+    "twitter": "string | undefined",
+    "tiktok": "string | undefined",
+    "yelp": "string | undefined"
     // Add other platforms like yelp, tiktok if found
   }},
-  "source_url": "${sourceUrl || "Not provided"}"
+    "source_url": "${sourceUrl || 'Not provided'}"
 }}
 
 Instructions:
-- Parse the Markdown content to extract the information for the JSON fields.
-- If specific details are missing for a field, use 'null' for string/object/numeric fields or empty arrays '[]' for array fields like 'cuisine_type', 'specialties', 'menu', 'dietary_tags'.
+- Parse the Markdown content to extract the information for the json fields.
+- If specific details are missing for a field, use 'undefined' for string/object/numeric fields or empty arrays '[]' for array fields like 'cuisine_type', 'specialties', 'menu', 'dietary_tags'.
 - For the 'description' field:
-  - Generate a brief and neutral summary suitable for a food truck directory (target 1-2 sentences, maximum 200 characters).
+  - Generate a brief, natural, and owner-written style summary suitable for a food truck directory (target 1-2 sentences, maximum 200 characters).
+  - Do not use the phrase "food truck" in the description.
   - Describe the primary cuisine, signature dishes if mentioned, or overall theme.
-  - Do NOT include subjective superlatives (e.g., "world's best", "most delicious").
+  - Prefer specific cuisine types (e.g., "Korean bbq", "Neapolitan Pizza") over general ones (e.g., "Asian", "Pizza"). If only general types are available, condense to the most specific possible.
+  - Maintain a consistent, fact-based, and neutral tone. Avoid subjective superlatives (e.g., "world's best", "most delicious").
   - If the source text makes specific claims of being "the first" or "the oldest," you may include this factually if it seems central to their identity, but phrase it cautiously (e.g., "States it was established in [year] as one of the first..."). Avoid if it seems like puffery.
   - Prioritize objective information over marketing language.
-- For 'operating_hours', if a day is mentioned but hours are unclear, set the day to 'null'. If a day is explicitly stated as closed, use '{{"closed": true}}'. If a day is not mentioned at all, also set it to 'null'.
-- Ensure times are in "HH:MM" 24-hour format. For example, "2 PM" should be "14:00".
-- Prices should be extracted as numbers if possible (e.g., 12.99 from "$12.99"). If it's a textual price like "Market Price" or "MP", use the text.
-- 'cuisine_type' should be a list of keywords describing the type of food.
+- For 'operating_hours', if a day is mentioned but hours are unclear, set the day to 'undefined'. If a day is explicitly stated as closed, use '{{"closed": true}}'. If a day is not mentioned at all, also set it to 'undefined'.
+- Ensure times are in "hh:mm" 24-hour format. For example, "2 pm" should be "14:00".
+- Prices should be extracted as numbers if possible (e.g., 12.99 from "$12.99"). If it's a textual price like "Market Price" or "mp", use the text.
+- 'cuisine_type' should be a list of keywords describing the type of food, as specific as possible.
 - 'price_range' can be estimated based on typical item prices: $ (most items < $10), $$ ($10-$20), $$$ (most items > $20).
 - 'current_location.raw_text' should contain the original text snippet from which location details were extracted.
-- Only return the valid JSON object. Do not include any explanatory text before or after the JSON.
-`
-    let textOutput = ""; // Define to ensure it's available in catch/finally if needed for token calculation
+- Only return the valid json object. Do not include any explanatory text before or after the json.
+`;
+    let textOutput: string = '';
     try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      textOutput = sdkResponse.text;
+      textOutput = sdkResponse.text || ''; // Clean the response to ensure it's valid json      // Remove potential markdown code block delimiters with safer regex patterns
+      const cleanedText = textOutput
+        .replace(/^```json[ \t\r\n]{0,10}/, '')
+        .replace(/[ \t\r\n]{0,10}```$/, '')
+        .trim();
 
-      // Clean the response to ensure it's valid JSON
-      // Remove potential markdown code block delimiters
-      const cleanedText = textOutput.replace(/^```json\s*([\s\S]*?)\s*```$/, "$1").trim()
-
-      const tokensUsed = sdkResponse.usageMetadata?.totalTokenCount || Math.ceil((prompt.length + (cleanedText || '').length) / 4);
-      await APIUsageService.trackUsage("gemini", 1, tokensUsed)
+      const tokensUsed =
+        sdkResponse.usageMetadata?.totalTokenCount ||
+        Math.ceil((prompt.length + cleanedText.length) / 4);
+      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 
       try {
-        const parsedData = JSON.parse(cleanedText)
+        const parsedData = JSON.parse(cleanedText) as ExtractedFoodTruckDetails;
         return {
           success: true,
           data: parsedData,
           tokensUsed,
           promptSent: prompt,
-        }
-      } catch (parseError: any) {
-        console.error("Gemini JSON parsing error:", parseError)
-        console.error("Problematic Gemini raw response text:", cleanedText)
+        };
+      } catch (parseError: unknown) {
+        console.warn('Gemini json parsing error:', parseError);
+        console.warn('Problematic Gemini raw response text:', cleanedText);
         return {
           success: false,
-          error: `Failed to parse Gemini response as JSON: ${parseError.message}. Response text: ${cleanedText.substring(0, 200)}...`,
-          tokensUsed, // This might be from an error response or the fallback if sdkResponse.response.usageMetadata was undefined
+          error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${cleanedText.slice(0, 200)}...`,
+          tokensUsed,
           promptSent: prompt,
-        }
+        };
       }
-    } catch (error: any) {
-      console.error("Gemini content generation error:", error)
-      // Fallback token calculation if the API call itself failed before getting usageMetadata
+    } catch (error: unknown) {
+      console.warn('Gemini content generation error:', error);
+      // Fallback token calculation if the api call itself failed before getting usageMetadata
       const tokensUsed = Math.ceil((prompt.length + textOutput.length) / 4);
       return {
         success: false,
-        error: error.message || "Unknown error during Gemini content generation",
-        tokensUsed: tokensUsed, // Provide best estimate
+        error:
+          error instanceof Error ? error.message : 'Unknown error during Gemini content generation',
+        tokensUsed: tokensUsed,
         promptSent: prompt,
-      }
+      };
     }
   }
 }
 
 // Export singleton instance
-export const gemini = new GeminiService()
+export const gemini = new GeminiService();

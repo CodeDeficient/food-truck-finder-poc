@@ -1,97 +1,298 @@
 // lib/autoScraper.ts
 import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config';
-import { supabaseAdmin, FoodTruckService, ScrapingJobService } from './supabase'; // Assuming FoodTruckService and ScrapingJobService are exported from supabase
-import { processScrapingJob } from '@/lib/pipelineProcessor'; // Corrected import path
+import { supabaseAdmin, ScrapingJobService } from './supabase';
+import { processScrapingJob } from '@/lib/pipelineProcessor';
 
-async function triggerScrapingProcess(url: string): Promise<{ success: boolean; jobId?: string; error?: string; message?: string }> {
-  // Check for existing pending or running jobs for this URL to avoid duplicates
-  const existingJobs = await ScrapingJobService.getJobsByStatus('all'); // Fetch all to check pending/running
-  const pendingOrRunningJob = existingJobs.find(
-    (job) => job.target_url === url && (job.status === 'pending' || job.status === 'running')
-  );
+// Define interfaces for better type safety
+interface FoodTruck {
+  id: string;
+  last_scraped_at: string;
+  source_urls: string[];
+}
 
-  if (pendingOrRunningJob) {
-    console.log(`AutoScraper: Job for ${url} is already pending or running (Job ID: ${pendingOrRunningJob.id}). Skipping.`);
-    return { success: false, message: `Job for ${url} is already pending or running.` };
-  }
+interface TriggerScrapingProcessResult {
+  success: boolean;
+  jobId?: string;
+  message?: string;
+  error?: string;
+}
 
-  console.log(`AutoScraper: No pending/running job for ${url}. Creating new scrape job.`);
+// Define interfaces for Gemini service inputs/outputs
+interface GeminiUsageLimits {
+  canMakeRequest: boolean;
+}
+
+interface ProcessedMenuData {
+  // Define structure based on expected output from Gemini's processMenuData
+  menu: Array<{
+    category: string;
+    items: Array<{
+      name: string;
+      description?: string;
+      price?: number;
+      dietary_tags?: string[];
+    }>;
+  }>;
+}
+
+interface ExtractedLocationData {
+  // Define structure based on expected output from Gemini's extractLocationFromText
+  location: {
+    address?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    coordinates?: {
+      latitude: number;
+      longitude: number;
+    };
+  };
+}
+
+interface StandardizedOperatingHours {
+  // Define structure based on expected output from Gemini's standardizeOperatingHours
+  hours: Record<string, string>; // e.g., { "Monday": "9 AM - 5 PM" }
+}
+
+interface SentimentAnalysisResult {
+  // Define structure based on expected output from Gemini's analyzeSentiment
+  overall_sentiment: 'positive' | 'negative' | 'neutral';
+  score: number;
+  // Add more detailed sentiment breakdown if available
+}
+
+interface EnhancedFoodTruckData {
+  // Define structure based on expected output from Gemini's enhanceFoodTruckData
+  description: string;
+  cuisine_type: string[];
+  specialties: string[];
+  // Add other enhanced fields
+}
+
+interface GeminiService {
+  checkUsageLimits(): Promise<GeminiUsageLimits>;
+  processMenuData(input: unknown): Promise<ProcessedMenuData>;
+  extractLocationFromText(input: unknown): Promise<ExtractedLocationData>;
+  standardizeOperatingHours(input: unknown): Promise<StandardizedOperatingHours>;
+  analyzeSentiment(input: unknown): Promise<SentimentAnalysisResult>;
+  enhanceFoodTruckData(input: unknown): Promise<EnhancedFoodTruckData>;
+}
+
+/*
+Food Truck Scraping Strategy (wbs 2.1.2)
+----------------------------------------
+Goal: Extract structured data for food trucks (description, menu, prices, locations, events) from web sources.
+
+1. Discovery:
+   - Use Firecrawl/Tavily search/crawl to find food truck directories and individual truck sites.
+   - Filter urls to target only likely food truck homepages or menu/schedule pages.
+
+2. Content Extraction:
+   - For each truck site, extract:
+     - Description: Look for about/landing page text, business summary, or meta description.
+     - Menu: Scrape menu sections, parse categories, items, prices, and dietary tags.
+     - Prices: Extract explicit prices as numbers; fallback to price range if only text is available.
+     - Locations: Parse current and scheduled locations, addresses, and geocoordinates if present.
+     - Events: Identify event/calendar/schedule sections for upcoming appearances.
+
+3. Data Mapping:
+   - Map extracted fields to Supabase schema:
+     - name, description, cuisine_type, specialties
+     - menu (categories/items/prices/dietary_tags)
+     - current_location, scheduled_locations, exact_location, city_location
+     - events (future: event table)
+
+4. Quality & Validation:
+   - Use Gemini to summarize/clean descriptions and standardize menu/locations.
+   - Validate extracted data types and required fields before db insert.
+   - Log and skip/flag incomplete or ambiguous records for review.
+
+5. Ingestion:
+   - Upsert into Supabase using unique identifier (e.g., website url or business name).
+   - Avoid duplicates and resolve conflicts by preferring most recent or most complete data.
+
+6. Automation:
+   - Schedule regular crawls and re-scrapes.
+   - Track api usage and cache results to stay within rate limits.
+   - Monitor for site changes and trigger updates as needed.
+*/
+
+// Helper to trigger a scraping process for a given url
+async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapingProcessResult> {
   try {
     const job = await ScrapingJobService.createJob({
-      job_type: 'website_auto', // Differentiate auto-triggered jobs
-      target_url: url,
-      priority: 5, // Default priority
+      job_type: 'website_auto',
+      target_url: targetUrl,
+      priority: 5,
       scheduled_at: new Date().toISOString(),
     });
-
-    // IMPORTANT: Directly calling processScrapingJob here.
-    // This assumes processScrapingJob is self-contained or its dependencies are available.
-    // This is a simplification. A more robust solution might involve an internal queue or API call.
-    processScrapingJob(job.id);
-
-    console.log(`AutoScraper: Successfully created and initiated processing for job ${job.id} for URL ${url}.`);
-    return { success: true, jobId: job.id, message: `Scraping job created and processing initiated for ${url}.` };
-  } catch (error) {
-    console.error(`AutoScraper: Error creating/processing job for ${url}:`, error);
-    return { success: false, error: error instanceof Error ? error.message : 'Failed to create or process job' };
+    void processScrapingJob(job.id); // Mark as void to explicitly ignore promise
+    return {
+      success: true,
+      jobId: job.id,
+      message: `Scraping job created and processing initiated for ${targetUrl}.`,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create or process job',
+    };
   }
 }
 
-export async function ensureDefaultTrucksAreScraped(): Promise<Array<{ url: string; status: string; details?: string; jobId?: string }>> {
-  console.log('AutoScraper: Starting check for default trucks...');
-  const results = [];
+export async function ensureDefaultTrucksAreScraped(): Promise<
+  Array<{ url: string; status: string; details?: string; jobId?: string }>
+> {
+  console.info('AutoScraper: Starting check for default trucks...');
+  const results: Array<{ url: string; status: string; details?: string; jobId?: string }> = [];
 
   for (const url of DEFAULT_SCRAPE_URLS) {
     try {
-      console.log(`AutoScraper: Checking URL: ${url}`);
-      // Check if a food truck from this source URL already exists
+      console.info(`AutoScraper: Checking url: ${url}`);
+      // Check if a food truck from this source url already exists
       // We need a way to query food_trucks by source_url.
       // FoodTruckService might not have this method. Let's query directly or add it.
       const { data: existingTrucks, error: truckQueryError } = await supabaseAdmin
         .from('food_trucks')
         .select('id, last_scraped_at, source_urls')
-        .or(`source_urls.cs.{"${url}"}`) // Check if URL is in the source_urls array
+        .or(`source_urls.cs.{"${url}"}`) // Check if url is in the source_urls array
         .limit(1);
 
       if (truckQueryError) {
-        console.error(`AutoScraper: Error querying for existing truck for URL ${url}:`, truckQueryError.message);
-        results.push({ url, status: 'error', details: `Supabase query error: ${truckQueryError.message}` });
+        console.warn(
+          `AutoScraper: Error querying for existing truck for url ${url}:`,
+          truckQueryError.message,
+        );
+        results.push({
+          url,
+          status: 'error',
+          details: `Supabase query error: ${truckQueryError.message}`,
+        });
         continue;
       }
 
-      const truck = existingTrucks && existingTrucks.length > 0 ? existingTrucks[0] : null;
+      const truck: FoodTruck | undefined =
+        existingTrucks && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
 
       if (truck) {
-        console.log(`AutoScraper: Found existing truck for ${url} (ID: ${truck.id}). Last scraped: ${truck.last_scraped_at}`);
-        const lastScrapedDate = new Date(truck.last_scraped_at);
-        const stalenessLimit = new Date();
-        stalenessLimit.setDate(stalenessLimit.getDate() - DEFAULT_STALENESS_THRESHOLD_DAYS);
-
-        if (lastScrapedDate < stalenessLimit) {
-          console.log(`AutoScraper: Data for ${url} is stale. Triggering re-scrape.`);
-          const triggerResult = await triggerScrapingProcess(url);
-          results.push({ url, status: triggerResult.success ? 're-scraping_triggered' : 'error', details: triggerResult.error || triggerResult.message, jobId: triggerResult.jobId });
-        } else {
-          console.log(`AutoScraper: Data for ${url} is fresh. No action needed.`);
-          results.push({ url, status: 'fresh', details: `Last scraped at ${truck.last_scraped_at}` });
-        }
+        void handleExistingTruck(url, truck).then((result) => results.push(result));
       } else {
-        console.log(`AutoScraper: No existing truck found for ${url}. Triggering initial scrape.`);
-        const triggerResult = await triggerScrapingProcess(url);
-        results.push({ url, status: triggerResult.success ? 'initial_scrape_triggered' : 'error', details: triggerResult.error || triggerResult.message, jobId: triggerResult.jobId });
+        void handleNewTruck(url).then((result) => results.push(result));
       }
-    } catch (e) {
-      console.error(`AutoScraper: Unexpected error processing URL ${url}:`, e);
-      results.push({ url, status: 'error', details: e instanceof Error ? e.message : 'Unknown error' });
+    } catch (error: unknown) {
+      console.warn(`AutoScraper: Unexpected error processing url ${url}:`, error);
+      results.push({
+        url,
+        status: 'error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
   }
-  console.log('AutoScraper: Finished check for default trucks.');
+  console.info('AutoScraper: Finished check for default trucks.');
   return results;
+}
+
+async function handleExistingTruck(
+  url: string,
+  truck: FoodTruck,
+): Promise<{ url: string; status: string; details?: string; jobId?: string }> {
+  console.info(
+    `AutoScraper: Found existing truck for ${url} (id: ${truck.id}). Last scraped: ${truck.last_scraped_at}`,
+  );
+  const lastScrapedDate = new Date(truck.last_scraped_at);
+  const stalenessLimit = new Date();
+  stalenessLimit.setDate(stalenessLimit.getDate() - DEFAULT_STALENESS_THRESHOLD_DAYS);
+
+  if (lastScrapedDate < stalenessLimit) {
+    console.info(`AutoScraper: Data for ${url} is stale. Triggering re-scrape.`);
+    const triggerResult = await triggerScrapingProcess(url);
+    return {
+      url,
+      status: triggerResult.success ? 're-scraping_triggered' : 'error',
+      details: triggerResult.error || triggerResult.message,
+      jobId: triggerResult.jobId,
+    };
+  } else {
+    console.info(`AutoScraper: Data for ${url} is fresh. No action needed.`);
+    return { url, status: 'fresh', details: `Last scraped at ${truck.last_scraped_at}` };
+  }
+}
+
+async function handleNewTruck(
+  url: string,
+): Promise<{ url: string; status: string; details?: string; jobId?: string }> {
+  console.info(`AutoScraper: No existing truck found for ${url}. Triggering initial scrape.`);
+  const triggerResult = await triggerScrapingProcess(url);
+  return {
+    url,
+    status: triggerResult.success ? 'initial_scrape_triggered' : 'error',
+    details: triggerResult.error || triggerResult.message,
+    jobId: triggerResult.jobId,
+  };
+}
+
+// --- Gemini API Rate Limiting & Caching ---
+const GEMINI_CACHE_TTL_MS = 1000 * 60 * 60 * 6; // 6 hours
+
+const geminiCache: Record<string, { data: unknown; timestamp: number }> = {};
+
+export async function callGeminiWithCache(
+  type: string,
+  input: unknown,
+  gemini: GeminiService,
+): Promise<unknown> {
+  const cacheKey = `${type}:${JSON.stringify(input)}`;
+  const now = Date.now();
+  // Clean up expired cache
+  for (const key in geminiCache) {
+    if (
+      Object.prototype.hasOwnProperty.call(geminiCache, key) &&
+      now - geminiCache[key].timestamp > GEMINI_CACHE_TTL_MS
+    ) {
+      delete geminiCache[key];
+    }
+  }
+  if (geminiCache[cacheKey] && now - geminiCache[cacheKey].timestamp < GEMINI_CACHE_TTL_MS) {
+    return geminiCache[cacheKey].data;
+  }
+  // Check Gemini usage limits before making a call
+  const usage = await gemini.checkUsageLimits();
+  if (!usage.canMakeRequest) {
+    throw new Error('Gemini API daily limit reached. Try again tomorrow.');
+  }
+  let result: unknown;
+  switch (type) {
+    case 'menu': {
+      result = await gemini.processMenuData(input);
+      break;
+    }
+    case 'location': {
+      result = await gemini.extractLocationFromText(input);
+      break;
+    }
+    case 'hours': {
+      result = await gemini.standardizeOperatingHours(input);
+      break;
+    }
+    case 'sentiment': {
+      result = await gemini.analyzeSentiment(input);
+      break;
+    }
+    case 'enhance': {
+      result = await gemini.enhanceFoodTruckData(input);
+      break;
+    }
+    default: {
+      throw new Error(`Unknown Gemini call type: ${type}`);
+    }
+  }
+  geminiCache[cacheKey] = { data: result, timestamp: now };
+  return result;
 }
 
 // Note on processScrapingJob import:
 // The direct import of `processScrapingJob` from `@/app/api/scrape/route.ts` can be problematic
 // if `route.ts` has side effects or dependencies not suitable for a library context (like NextRequest/Response).
 // A cleaner way would be to refactor `processScrapingJob` into a shared utility if it's to be called directly,
-// or for `triggerScrapingProcess` to make an internal HTTP POST request to `/api/scrape`.
+// or for `triggerScrapingProcess` to make an internal http post request to `/api/scrape`.
 // For this iteration, we are attempting direct call, assuming it's manageable.
