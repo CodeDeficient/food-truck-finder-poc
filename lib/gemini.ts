@@ -24,7 +24,7 @@ export class GeminiService {
     }
     console.info(`GEMINI_API_KEY found, starts with: ${apiKey.slice(0, 5)}...`);
     this.genAI = new GoogleGenAI({ apiKey });
-    this.modelName = 'gemini-2.0-flash-lite-001';
+    this.modelName = 'gemini-1.5-flash-latest'; // Updated model name
   }
 
   async checkUsageLimits(): Promise<{
@@ -544,9 +544,10 @@ Target json Schema:
   "current_location": {{
     "address": "string | undefined",
     "city": "string | undefined",
-    "state": "string | undefined", // Should be state/province abbreviation e.g. ca, tx, on
+    "state": "string | undefined", // Should be state/province abbreviation e.g. SC, NC, GA, CA, TX, ON
     "zip_code": "string | undefined",
-    "raw_text": "original location text from page | undefined" // The exact text describing the location from the markdown
+    "raw_text": "original location text from page | undefined", // The exact text describing the location from the markdown
+    "is_south_carolina_location_confirmed": "boolean" // true if a South Carolina location is confidently identified, false otherwise
   }},
   "operating_hours": {{ // Use 24-hour format "hh:mm". If unable to parse, leave as undefined.
     "monday": {{ "open": "hh:mm", "close": "hh:mm" }} | {{ "closed": true }} | undefined,
@@ -603,6 +604,11 @@ Instructions:
 - 'cuisine_type' should be a list of keywords describing the type of food, as specific as possible.
 - 'price_range' can be estimated based on typical item prices: $ (most items < $10), $$ ($10-$20), $$$ (most items > $20).
 - 'current_location.raw_text' should contain the original text snippet from which location details were extracted.
+- For 'current_location.state', ensure it is the two-letter abbreviation (e.g., "SC", "NC", "GA").
+- Location Prioritization:
+  - If a South Carolina (SC) address is found (e.g., city and state 'SC'), ensure it's the primary one extracted into 'current_location'.
+  - If multiple locations are listed and one is in SC, that SC location should take precedence.
+  - Set 'current_location.is_south_carolina_location_confirmed' to true if a South Carolina location is confidently identified based on the address or other contextual clues. Otherwise, set it to false.
 - Only return the valid json object. Do not include any explanatory text before or after the json.
 `;
     let textOutput: string = '';
