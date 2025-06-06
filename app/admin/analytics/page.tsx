@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/Table';
+} from '@/components/ui/table';
 import { BarChart3 } from 'lucide-react';
 
 export default async function AnalyticsPage() {
