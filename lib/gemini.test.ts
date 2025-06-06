@@ -1,12 +1,11 @@
 // lib/gemini.test.ts
 
-import { GeminiService } from './gemini';
-import { APIUsageService } from './supabase';
+import { APIUsageService, type ApiUsage } from './supabase'; // Import ApiUsage type
 
-// Mock @google/generative-ai
+// Mock @google/genai
 const mockGenerateContent = jest.fn();
-jest.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
+jest.mock('@google/genai', () => ({
+  GoogleGenAI: jest.fn().mockImplementation(() => ({
     getGenerativeModel: jest.fn().mockReturnValue({
       generateContent: mockGenerateContent,
     }),
@@ -15,20 +14,26 @@ jest.mock('@google/generative-ai', () => ({
 
 // Mock APIUsageService
 jest.mock('./supabase', () => ({
-  ...jest.requireActual('./supabase'), // Keep other exports
   APIUsageService: {
-    trackUsage: jest.fn().mockResolvedValue({}),
-    getTodayUsage: jest.fn().mockResolvedValue({ requests_count: 0, tokens_used: 0 }),
+    trackUsage: jest.fn<Promise<ApiUsage>, [string, number, number]>(),
+    getTodayUsage: jest.fn<Promise<ApiUsage | undefined>, [string]>().mockResolvedValue({
+      requests_count: 0,
+      tokens_used: 0,
+      id: 'mock-id',
+      service_name: 'mock-service',
+      usage_date: '2023-01-01',
+    }),
   },
 }));
 
+// Import after mocks are set up
+import { GeminiService } from './gemini';
+
 describe('GeminiService', () => {
-  let geminiService: GeminiService;
   const mockApiKey = 'test-gemini-api-key';
 
   beforeEach(() => {
     process.env.GEMINI_API_KEY = mockApiKey;
-    geminiService = new GeminiService();
     mockGenerateContent.mockClear();
     (APIUsageService.trackUsage as jest.Mock).mockClear();
     (APIUsageService.getTodayUsage as jest.Mock).mockClear();
@@ -37,10 +42,11 @@ describe('GeminiService', () => {
   afterEach(() => {
     delete process.env.GEMINI_API_KEY;
   });
-
   describe('extractFoodTruckDetailsFromMarkdown', () => {
-    const sampleMarkdown = '# Test Truck\nMenu: Burger - $5';
-    const sampleSourceUrl = 'https://example.com/truck';
+    it('should instantiate GeminiService correctly', () => {
+      const service = new GeminiService();
+      expect(service).toBeDefined();
+    });
 
     it('should call Gemini API with the correct prompt and return parsed data on success', async () => {
       // Mock successful generateContent response with valid JSON string
@@ -68,9 +74,7 @@ describe('GeminiService', () => {
       // Call extractFoodTruckDetailsFromMarkdown
       // Assert it returns success: false and an error about limits without calling generateContent
     });
-  });
-
-  // Add similar describe blocks for other public methods of GeminiService like:
+  }); // Add similar describe blocks for other public methods of GeminiService like:
   // processMenuData, extractLocationFromText, standardizeOperatingHours, enhanceFoodTruckData
   // focusing on prompt construction, response parsing, and error handling.
 });
