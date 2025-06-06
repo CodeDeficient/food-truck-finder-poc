@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Home, Truck, Settings, Activity, Users, CalendarDays, BarChart3 } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/Sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
