@@ -4,7 +4,7 @@ import { initiateFoodTruckProcessing } from '@/lib/autoScraper'; // Updated impo
 
 export const dynamic = 'force-dynamic'; // Ensure this route is not statically optimized if it needs fresh execution
 
-export async function get() {
+export async function GET() { // Renamed from get to GET
   console.info('api Route auto-scrape-initiate: Received get request.');
   try {
     const results = await initiateFoodTruckProcessing(); // Updated function call
