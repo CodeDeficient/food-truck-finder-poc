@@ -30,7 +30,7 @@ export default async function DataQualityPage() {
         <CardHeader>
           <CardTitle>Food Truck Data Quality</CardTitle>
           <CardDescription>
-            Review and manage the data quality scores for food trucks.
+            Review and manage the data quality score for food trucks.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -39,7 +39,7 @@ export default async function DataQualityPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Quality Score</TableHead>
+                <TableHead>Data Quality Score</TableHead>
                 <TableHead>Last Scraped</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -55,7 +55,7 @@ export default async function DataQualityPage() {
                       {truck.verification_status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{truck.data_quality_score?.toFixed(1) || 'N/A'}</TableCell>
+                  <TableCell>{truck.data_quality_score ? `${(truck.data_quality_score * 100).toFixed(truck.data_quality_score * 100 % 1 === 0 ? 0 : 1)}%` : 'N/A'}</TableCell>
                   <TableCell>
                     {truck.last_scraped_at
                       ? new Date(truck.last_scraped_at).toLocaleDateString()

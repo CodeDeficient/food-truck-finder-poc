@@ -8,7 +8,7 @@
 ## General Linting Rule Compliance (Ongoing)
 
 - [x] **`unicorn/no-null`**: Replace `null` with `undefined`. (Previously thought complete, new instances found)
-  - Files: `app/api/scheduler/route.ts`, `app/api/search/route.ts`, `app/loading.tsx`, `components/TruckCard.tsx`, `components/ui/chart.tsx`, `components/ui/form.tsx`
+  - Files: `app/api/search/route.ts`, `app/loading.tsx`, `components/TruckCard.tsx`, `components/ui/chart.tsx`, `components/ui/form.tsx`
 - [~] **Type Safety (`@typescript-eslint/no-unsafe-*`, `@typescript-eslint/no-explicit-any`)**: Ensure proper type checking and eliminate `any`.
   - [x] Explicit `any` (matching `:\s*any\b|\bany,`) resolved.
   - [x] Address numerous `no-unsafe-assignment`, `no-unsafe-return`, `no-unsafe-argument`, `no-unsafe-member-access`, `no-unsafe-call` errors across many files (especially `app/api/pipeline/route.ts`, `lib/supabase.ts`, `app/page.tsx`, `components/FoodTruckInfoCard.tsx`, `app/middleware.ts`). (Partially resolved in `components/FoodTruckInfoCard.tsx`)
@@ -32,7 +32,7 @@
   - `sonarjs/no-misleading-array-reverse`: `app/admin/data-quality/page.tsx`
   - `sonarjs/no-nested-conditional`: `app/admin/pipeline/page.tsx`, `components/MapDisplay.tsx`
   - `sonarjs/cognitive-complexity`: `app/api/test-pipeline-run/route.ts`, `lib/ScraperEngine.ts`, `lib/pipelineProcessor.ts`, `lib/scheduler.ts`
-  - [ ] `sonarjs/pseudo-random`: `app/api/scheduler/route.ts`, `components/ui/Sidebar.tsx`, `lib/ScraperEngine.ts`
+  - [ ] `sonarjs/pseudo-random`: `components/ui/Sidebar.tsx`, `lib/ScraperEngine.ts`
   - [x] `sonarjs/prefer-read-only-props`: `components/SearchFilters.tsx`, `components/ThemeProvider.tsx`, `components/TruckCard.tsx`, `components/ui/Skeleton.tsx`, `components/ui/badge.tsx`
   - `sonarjs/table-header`: `components/ui/Table.tsx`
   - `sonarjs/no-empty-collection`: `lib/scheduler.ts`
@@ -42,7 +42,7 @@
   - `sonarjs/no-redundant-optional`: `lib/scheduler.ts`, `lib/supabase.ts`
   - `sonarjs/void-use`: `lib/ScraperEngine.ts`, `app/page.tsx`
 - [x] **Unicorn Plugin Rules**:
-  - `unicorn/no-useless-undefined`: `app/api/scheduler/route.ts`, `app/page.tsx`, `app/api/test-pipeline-run/route.ts`
+  - `unicorn/no-useless-undefined`: `app/page.tsx`, `app/api/test-pipeline-run/route.ts`
   - [x] `unicorn/no-document-cookie`: `components/ui/Sidebar.tsx`
   - [x] `unicorn/prefer-number-properties`: `components/TruckCard.tsx` (isNaN)
   - [x] `unicorn/explicit-length-check`: `components/ui/ToggleGroup.tsx`
