@@ -112,6 +112,75 @@ export async function processScrapingJob(jobId: string) {
   }
 }
 
+// Helper function to validate input data
+function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruckDetails): boolean {
+  if (!extractedTruckData || typeof extractedTruckData !== 'object') {
+    console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`);
+    return false;
+  }
+  return true;
+}
+
+// Helper function to build location data
+function buildLocationData(extractedTruckData: ExtractedFoodTruckDetails) {
+  const locationData = extractedTruckData.current_location || {};
+  const fullAddress = [
+    locationData.address,
+    locationData.city,
+    locationData.state,
+    locationData.zip_code,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  return {
+    lat: typeof locationData.lat === 'number' ? locationData.lat : 0,
+    lng: typeof locationData.lng === 'number' ? locationData.lng : 0,
+    address: fullAddress || (locationData.raw_text ?? undefined),
+    timestamp: new Date().toISOString(),
+  };
+}
+
+// Helper function to process menu data
+function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCategory[] {
+  if (!Array.isArray(extractedTruckData.menu)) {
+    return [];
+  }
+
+  return extractedTruckData.menu.map((category: unknown): MenuCategory => {
+    const categoryData = category as { items?: unknown[]; category?: string; name?: string };
+    const items = (Array.isArray(categoryData.items) ? categoryData.items : []).map(
+      (item: unknown): MenuItem => {
+        const itemData = item as {
+          name?: string;
+          description?: string;
+          price?: string | number;
+          dietary_tags?: string[];
+        };
+        let price: number | undefined = undefined;
+        if (typeof itemData.price === 'number') {
+          price = itemData.price;
+        } else if (typeof itemData.price === 'string') {
+          const parsedPrice = Number.parseFloat(itemData.price.replaceAll(/[^\d.-]/g, ''));
+          if (!Number.isNaN(parsedPrice)) {
+            price = parsedPrice;
+          }
+        }
+        return {
+          name: itemData.name || 'Unknown Item',
+          description: itemData.description ?? undefined,
+          price: price,
+          dietary_tags: Array.isArray(itemData.dietary_tags) ? itemData.dietary_tags : [],
+        };
+      },
+    );
+    return {
+      name: categoryData.category || categoryData.name || 'Uncategorized',
+      items: items,
+    };
+  });
+}
+
 export async function createOrUpdateFoodTruck(
   jobId: string,
   extractedTruckData: ExtractedFoodTruckDetails,
@@ -119,78 +188,115 @@ export async function createOrUpdateFoodTruck(
 ) {
   try {
     // Basic input validation
-    if (!extractedTruckData || typeof extractedTruckData !== 'object') {
-      console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`);
+    if (!validateTruckData(jobId, extractedTruckData)) {
+      await ScrapingJobService.updateJobStatus(jobId, 'failed', {
+        errors: ['Invalid extracted data received from AI processing step.'],
+      });
       return;
     }
+
     if (!sourceUrl) {
-      console.warn(`Job ${jobId}: Missing sourceUrl for food truck, proceeding without it.`);
+      // Log a warning but proceed if sourceUrl is missing, as it might not be critical for all data.
+      console.warn(`Job ${jobId}: Missing sourceUrl for food truck data, proceeding without it.`);
     }
-    const name = extractedTruckData.name || 'Unknown Food Truck';
-    console.info(`Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl}`);
 
-    // Map Gemini output to FoodTruck schema
-    const locationData = extractedTruckData.current_location || {};
-    const fullAddress = [
-      locationData.address,
-      locationData.city,
-      locationData.state,
-      locationData.zip_code,
-    ]
-      .filter(Boolean)
-      .join(', ');
-
-    const truckData: FoodTruckSchema = {
-      // Explicitly type truckData
-      name: name,
-      description: extractedTruckData.description ?? undefined,
-      current_location: {
-        // Placeholder lat/lng, geocoding would be a separate step
-        lat: locationData.lat || 0,
-        lng: locationData.lng || 0,
-        address: fullAddress || (locationData.raw_text ?? undefined),
-        timestamp: new Date().toISOString(),
-      },
-      scheduled_locations: extractedTruckData.scheduled_locations ?? undefined,
-      operating_hours: extractedTruckData.operating_hours ?? undefined,
-      menu: (extractedTruckData.menu || []).map((category: MenuCategory) => ({
-        name: category.name || 'Uncategorized',
-        items: (category.items || []).map((item: MenuItem) => ({
-          name: item.name || 'Unknown Item',
-          description: item.description ?? undefined,
-          // Ensure price is a number or string, default to undefined if undefined
-          price:
-            typeof item.price === 'number' || typeof item.price === 'string'
-              ? item.price
-              : undefined,
-          dietary_tags: item.dietary_tags || [],
-        })),
-      })),
-      contact_info: extractedTruckData.contact_info ?? undefined,
-      social_media: extractedTruckData.social_media ?? undefined,
-      cuisine_type: extractedTruckData.cuisine_type || [],
-      price_range: extractedTruckData.price_range ?? undefined,
-      specialties: extractedTruckData.specialties || [],
-      data_quality_score: 0.6, // Placeholder score
-      verification_status: 'pending', // Type is already "pending" | "verified" | "flagged"
-      source_urls: [sourceUrl].filter(Boolean),
-      last_scraped_at: new Date().toISOString(),
-      // created_at and updated_at are handled by Supabase
-    }; // For now, we focus on creation.
-    const truck = await FoodTruckService.createTruck(truckData);
+    const name = extractedTruckData.name || 'Unknown Food Truck'; // Ensure name has a fallback
     console.info(
-      `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl}`,
+      `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl || 'Unknown Source'}`,
     );
 
-    // Potentially link the truck_id back to the data_processing_queue items if needed,
-    // though the current flow bypasses that queue for initial creation.
+    // Map Gemini output to FoodTruck schema with stricter type checking and defaults
+    const currentLocation = buildLocationData(extractedTruckData);
+
+    const truckData: FoodTruckSchema = {
+      name: name,
+      description: extractedTruckData.description ?? undefined, // Keep as undefined if null/missing
+      current_location: currentLocation,
+      scheduled_locations: Array.isArray(extractedTruckData.scheduled_locations)
+        ? extractedTruckData.scheduled_locations.map((loc) => ({
+            lat: typeof loc.lat === 'number' ? loc.lat : 0,
+            lng: typeof loc.lng === 'number' ? loc.lng : 0,
+            address: loc.address ?? undefined,
+            start_time: loc.start_time ?? undefined,
+            end_time: loc.end_time ?? undefined,
+            timestamp: new Date().toISOString(),
+          }))
+        : undefined,
+      operating_hours: extractedTruckData.operating_hours
+        ? {
+            monday: extractedTruckData.operating_hours.monday ?? { closed: true },
+            tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
+            wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
+            thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
+            friday: extractedTruckData.operating_hours.friday ?? { closed: true },
+            saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
+            sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
+          }
+        : {
+            monday: { closed: true },
+            tuesday: { closed: true },
+            wednesday: { closed: true },
+            thursday: { closed: true },
+            friday: { closed: true },
+            saturday: { closed: true },
+            sunday: { closed: true },
+          },
+      menu: processMenuData(extractedTruckData),
+      contact_info: {
+        phone: extractedTruckData.contact_info?.phone ?? undefined,
+        email: extractedTruckData.contact_info?.email ?? undefined,
+        website: extractedTruckData.contact_info?.website ?? undefined,
+      },
+      social_media: {
+        instagram: extractedTruckData.social_media?.instagram ?? undefined,
+        facebook: extractedTruckData.social_media?.facebook ?? undefined,
+        twitter: extractedTruckData.social_media?.twitter ?? undefined,
+        tiktok: extractedTruckData.social_media?.tiktok ?? undefined,
+        yelp: extractedTruckData.social_media?.yelp ?? undefined,
+      },
+      cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
+        ? extractedTruckData.cuisine_type
+        : [],
+      price_range: extractedTruckData.price_range ?? undefined, // Ensure it's one of the allowed enum values or undefined
+      specialties: Array.isArray(extractedTruckData.specialties)
+        ? extractedTruckData.specialties
+        : [],
+      data_quality_score: 0.5, // Default score - confidence_score not available in type
+      verification_status: 'pending',
+      source_urls: sourceUrl ? [sourceUrl] : [], // Ensure source_urls is always an array
+      last_scraped_at: new Date().toISOString(),
+    };
+
+    // Attempt to create/update the truck in Supabase
+    // For now, we focus on creation. Update/Upsert logic would be more complex.
+    // Consider checking if a truck with a similar name or sourceUrl already exists if upserting.
+    const truck = await FoodTruckService.createTruck(truckData);
+    console.info(
+      `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl || 'Unknown Source'}`,
+    );
+
+    // Link truck_id back to the scraping job
+    await ScrapingJobService.updateJobStatus(jobId, 'completed', {
+      completed_at: new Date().toISOString(),
+    });
   } catch (error: unknown) {
-    // Explicitly type error as unknown
-    console.error(`Job ${jobId}: Error creating food truck from ${sourceUrl}:`, error);
-    // Optionally, update the scraping job with this error information if it's critical
-    // await ScrapingJobService.updateJobStatus(jobId, "failed", {
-    //   errors: [`Food truck creation failed: ${error instanceof Error ? error.message : "Unknown error"}`],
-    // });
+    console.error(
+      `Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl || 'Unknown Source'}:`,
+      error,
+    );
+    // Update the scraping job with this error information
+    try {
+      await ScrapingJobService.updateJobStatus(jobId, 'failed', {
+        errors: [
+          `Food truck data processing/saving failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
+      });
+    } catch (jobUpdateError) {
+      console.error(
+        `Job ${jobId}: Critical error - failed to update job status after data processing failure:`,
+        jobUpdateError,
+      );
+    }
   }
 }
 

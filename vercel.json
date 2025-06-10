@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/auto-scrape",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/quality-check",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
