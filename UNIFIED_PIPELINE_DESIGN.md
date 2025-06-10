@@ -146,7 +146,7 @@ POST /api/pipeline
 - `/api/enhanced-pipeline` → `/api/pipeline` with `action: "full"`
 - `/api/autonomous-discovery` → `/api/pipeline` with `action: "discovery"`
 - Keep `/api/scrape` for simple direct scraping
-- Remove `/api/scraper` (appears to be demo code)
+- Remove `/api/scraper` (appears to be demo code) - Done.
 
 ## Database Service Consolidation
 

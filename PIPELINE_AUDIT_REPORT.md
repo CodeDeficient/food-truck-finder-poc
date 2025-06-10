@@ -140,7 +140,7 @@ _Phase 1.1.1 - System Consolidation Audit_
 1. **Scraping Endpoints**:
 
    - `/api/scrape` - Basic scraping job creation
-   - `/api/scraper` - Mock scraper configuration (appears to be demo code)
+   - `/api/scraper` - Mock scraper configuration (appears to be demo code, now removed)
    - Both handle similar functionality but different implementations
 
 2. **Pipeline Endpoints**:
@@ -168,7 +168,7 @@ Create a single, modular pipeline system that combines the best features of all 
 
 ### 3. API Route Cleanup
 
-- Consolidate `/api/scrape` and `/api/scraper`
+- Consolidate `/api/scrape` and `/api/scraper` - Done. `/api/scraper` removed, `/api/scrape` is the standard.
 - Create a single `/api/pipeline` endpoint with action-based routing
 - Deprecate redundant endpoints
 

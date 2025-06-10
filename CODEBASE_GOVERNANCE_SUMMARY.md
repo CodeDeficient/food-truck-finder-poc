@@ -104,7 +104,7 @@ Establish comprehensive rules and guidelines to enable multiple AI agents to wor
 
 - ❌ **Database Services**: Duplicated in `app/api/pipeline/route.ts`
 - ❌ **Pipeline Systems**: 6 overlapping implementations
-- ❌ **API Routes**: `/api/scrape` vs `/api/scraper` overlap
+- ✅ **API Routes**: `/api/scrape` is the primary endpoint for scraping. `/api/scraper` has been removed.
 - ❌ **Supabase Clients**: Multiple client instances across files
 
 ### **Consolidation Targets**

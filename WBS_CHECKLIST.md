@@ -61,7 +61,7 @@ This document outlines the tasks required to implement the planned improvements.
           - Regex matching on URLs for keywords like "foodtruck," "catering," "menu."
           - Scraping meta descriptions or page titles for confirmation.
           - Leveraging Firecrawl's `extract` tool with a schema to identify key entities on a page that confirm it's a food truck.
-      4.  **Scheduled Execution:** Integrate the automated scraping process with a scheduler (e.g., using `app/api/scheduler/route.ts` or a cron job on the server) to run periodically (initially daily, eventually weekly).
+      4.  **Scheduled Execution:** Integrate the automated scraping process with a scheduler (e.g., using a cron job on the server) to run periodically (initially daily, eventually weekly).
       5.  **Rate Limiting & Caching:**
           - Rely on Firecrawl's built-in rate limiting and exponential backoff for its API calls.
           - Implement application-level caching (`lib/autoScraper.ts`) for Gemini API calls and scraped content to minimize redundant requests and stay within free tier limits.
