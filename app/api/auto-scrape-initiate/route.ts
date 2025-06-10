@@ -4,8 +4,8 @@ import { ensureDefaultTrucksAreScraped } from '@/lib/autoScraper';
 
 export const dynamic = 'force-dynamic'; // Ensure this route is not statically optimized if it needs fresh execution
 
-export async function get() {
-  console.info('api Route auto-scrape-initiate: Received get request.');
+export async function GET() {
+  console.info('api Route auto-scrape-initiate: Received GET request.');
   try {
     const results = await ensureDefaultTrucksAreScraped();
     console.info('api Route auto-scrape-initiate: ensureDefaultTrucksAreScraped completed.');

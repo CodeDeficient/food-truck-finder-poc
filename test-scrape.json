@@ -1,0 +1,5 @@
+{
+  "action": "scrape",
+  "target_url": "https://eatrotirolls.com/",
+  "job_type": "website_scrape"
+}
