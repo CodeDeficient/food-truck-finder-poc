@@ -1,5 +1,16 @@
+'use client';
+
 import Link from 'next/link';
-import { Home, Truck, Settings, Activity, Users, CalendarDays, BarChart3 } from 'lucide-react';
+import {
+  Home,
+  Truck,
+  Settings,
+  Activity,
+  Users,
+  CalendarDays,
+  BarChart3,
+  LogOut,
+} from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,13 +23,27 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ModeToggle } from '@/components/ModeToggle'; // Assuming you have a dark mode toggle component
+import { ModeToggle } from '@/components/ModeToggle';
+import { AuthProvider, useAuth } from '@/app/auth/AuthProvider';
+import { useRouter } from 'next/navigation';
 
-export default function AdminLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+function AdminLayoutContent({ children }: { readonly children: React.ReactNode }) {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
+
+  const userInitials = user?.user_metadata?.full_name
+    ? (user.user_metadata.full_name as string)
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+    : user?.email?.slice(0, 2).toUpperCase() || 'AD';
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -51,6 +76,13 @@ export default function AdminLayout({
               >
                 <Activity className="h-4 w-4" />
                 Pipeline Monitoring
+              </Link>
+              <Link
+                href="/admin/auto-scraping"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Settings className="h-4 w-4" />
+                Auto-Scraping
               </Link>
               <Link
                 href="/admin/data-quality"
@@ -121,6 +153,13 @@ export default function AdminLayout({
                   Pipeline Monitoring
                 </Link>
                 <Link
+                  href="/admin/auto-scraping"
+                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                >
+                  <Settings className="h-5 w-5" />
+                  Auto-Scraping
+                </Link>
+                <Link
                   href="/admin/data-quality"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
@@ -167,24 +206,44 @@ export default function AdminLayout({
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar>
-                  <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src={user?.user_metadata?.avatar_url as string} alt="Avatar" />
+                  <AvatarFallback>{userInitials}</AvatarFallback>
                 </Avatar>
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium">{user?.user_metadata?.full_name || 'Admin'}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleSignOut().catch((error) => console.warn('Sign out failed:', error));
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">{children}</main>
       </div>
     </div>
+  );
+}
+
+export default function AdminLayout({ children }: { readonly children: React.ReactNode }) {
+  return (
+    <AuthProvider>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </AuthProvider>
   );
 }

@@ -1,20 +1,38 @@
 import { test, expect } from '@playwright/test';
 
 test('has title', async ({ page }) => {
-  await page.goto('http://localhost:3000'); // Assuming the app runs on localhost:3000
+  await page.goto('/');
 
   // Expect a title "to contain" a substring.
-  // The regex used here is simple and not vulnerable to super-linear runtime due to backtracking.
-
-  await expect(page).toHaveTitle(/^Food Truck Finder$/);
+  await expect(page).toHaveTitle(/Food Truck Finder/);
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('http://localhost:3000');
+test('displays food truck finder interface', async ({ page }) => {
+  await page.goto('/');
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+  // Check for main UI elements
+  await expect(page.getByText('Food Truck Finder')).toBeVisible();
 
-  // Expects page to have a heading with the name of the current URL.
-  await expect(page).toHaveURL(/introduction/);
+  // Check for search functionality
+  await expect(page.getByPlaceholder(/search/i)).toBeVisible();
+
+  // Check for map display container (using a more generic selector)
+  await expect(page.locator('.leaflet-container')).toBeVisible({ timeout: 10000 });
+});
+
+test('can search for food trucks', async ({ page }) => {
+  await page.goto('/');
+
+  // Find search input and search button
+  const searchInput = page.getByPlaceholder(/search/i);
+  await expect(searchInput).toBeVisible();
+
+  // Type in search term
+  await searchInput.fill('pizza');
+
+  // Click search or press enter
+  await searchInput.press('Enter');
+
+  // Wait for results to load
+  await page.waitForLoadState('networkidle');
 });

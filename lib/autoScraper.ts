@@ -17,6 +17,12 @@ interface TriggerScrapingProcessResult {
   error?: string;
 }
 
+export interface AutoScrapeResult {
+  trucksProcessed: number;
+  newTrucksFound: number;
+  errors: Array<{ url: string; details?: string }>;
+}
+
 // Define interfaces for Gemini service inputs/outputs
 interface GeminiUsageLimits {
   canMakeRequest: boolean;
@@ -84,7 +90,7 @@ Food Truck Scraping Strategy (wbs 2.1.2)
 Goal: Extract structured data for food trucks (description, menu, prices, locations, events) from web sources.
 
 1. Discovery:
-   - Use Firecrawl/Tavily search/crawl to find food truck directories and individual truck sites.
+   - Use internal API endpoints that leverage Tavily MCP tools to find food truck directories and individual truck sites.
    - Filter urls to target only likely food truck homepages or menu/schedule pages.
 
 2. Content Extraction:
@@ -126,7 +132,9 @@ async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapin
       priority: 5,
       scheduled_at: new Date().toISOString(),
     });
-    void processScrapingJob(job.id); // Mark as void to explicitly ignore promise
+    processScrapingJob(job.id).catch((error) => {
+      console.error('Failed to process scraping job:', error);
+    });
     return {
       success: true,
       jobId: job.id,
@@ -140,56 +148,117 @@ async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapin
   }
 }
 
-export async function ensureDefaultTrucksAreScraped(): Promise<
-  Array<{ url: string; status: string; details?: string; jobId?: string }>
-> {
-  console.info('AutoScraper: Starting check for default trucks...');
-  const results: Array<{ url: string; status: string; details?: string; jobId?: string }> = [];
+// Helper function to process existing truck results
+async function processExistingTruckResult(
+  url: string,
+  result: { status: string; details?: string },
+  counters: { trucksProcessed: number; newTrucksFound: number },
+  errors: Array<{ url: string; details?: string }>,
+): Promise<void> {
+  switch (result.status) {
+    case 're-scraping_triggered': {
+      counters.trucksProcessed++;
+      await updateDiscoveredUrlStatus(url, 'processing', 'Re-scraping triggered due to stale data');
+      break;
+    }
+    case 'fresh': {
+      await updateDiscoveredUrlStatus(url, 'processed', 'Data is fresh, no action needed');
+      break;
+    }
+    case 'error': {
+      errors.push({ url, details: result.details });
+      await updateDiscoveredUrlStatus(url, 'irrelevant', `Error: ${result.details}`);
+      break;
+    }
+    // No default
+  }
+}
 
-  for (const url of DEFAULT_SCRAPE_URLS) {
+// Helper function to process new truck results
+async function processNewTruckResult(
+  url: string,
+  result: { status: string; details?: string },
+  counters: { trucksProcessed: number; newTrucksFound: number },
+  errors: Array<{ url: string; details?: string }>,
+): Promise<void> {
+  if (result.status === 'initial_scrape_triggered') {
+    counters.newTrucksFound++;
+    counters.trucksProcessed++;
+    await updateDiscoveredUrlStatus(url, 'processing', 'Initial scraping triggered');
+  } else if (result.status === 'error') {
+    errors.push({ url, details: result.details });
+    await updateDiscoveredUrlStatus(url, 'irrelevant', `Error: ${result.details}`);
+  }
+}
+
+// Helper function to find existing truck for URL
+async function findExistingTruck(url: string): Promise<{ truck?: FoodTruck; error?: string }> {
+  if (!supabaseAdmin) {
+    return { error: 'Supabase admin client not available' };
+  }
+
+  const { data: existingTrucks, error: truckQueryError } = await supabaseAdmin
+    .from('food_trucks')
+    .select('id, last_scraped_at, source_urls')
+    .or(`source_urls.cs.{"${url}"}`)
+    .limit(1);
+
+  if (truckQueryError) {
+    console.warn(
+      `AutoScraper: Error querying for existing truck for url ${url}:`,
+      truckQueryError.message,
+    );
+    return { error: `Supabase query error: ${truckQueryError.message}` };
+  }
+
+  const truck: FoodTruck | undefined =
+    existingTrucks && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
+
+  return { truck };
+}
+
+export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult> {
+  console.info('AutoScraper: Starting autonomous scraping process...');
+  const counters = { trucksProcessed: 0, newTrucksFound: 0 };
+  const errors: Array<{ url: string; details?: string }> = [];
+
+  // Get URLs to scrape - combine static defaults with dynamically discovered URLs
+  const urlsToScrape = await getUrlsToScrape();
+  console.info(`AutoScraper: Found ${urlsToScrape.length} URLs to process`);
+
+  for (const url of urlsToScrape) {
     try {
       console.info(`AutoScraper: Checking url: ${url}`);
-      // Check if a food truck from this source url already exists
-      // We need a way to query food_trucks by source_url.
-      // FoodTruckService might not have this method. Let's query directly or add it.
-      const { data: existingTrucks, error: truckQueryError } = await supabaseAdmin
-        .from('food_trucks')
-        .select('id, last_scraped_at, source_urls')
-        .or(`source_urls.cs.{"${url}"}`) // Check if url is in the source_urls array
-        .limit(1);
 
-      if (truckQueryError) {
-        console.warn(
-          `AutoScraper: Error querying for existing truck for url ${url}:`,
-          truckQueryError.message,
-        );
-        results.push({
-          url,
-          status: 'error',
-          details: `Supabase query error: ${truckQueryError.message}`,
-        });
+      const { truck, error } = await findExistingTruck(url);
+
+      if (error) {
+        errors.push({ url, details: error });
         continue;
       }
 
-      const truck: FoodTruck | undefined =
-        existingTrucks && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
-
       if (truck) {
-        void handleExistingTruck(url, truck).then((result) => results.push(result));
+        const result = await handleExistingTruck(url, truck);
+        await processExistingTruckResult(url, result, counters, errors);
       } else {
-        void handleNewTruck(url).then((result) => results.push(result));
+        const result = await handleNewTruck(url);
+        await processNewTruckResult(url, result, counters, errors);
       }
     } catch (error: unknown) {
       console.warn(`AutoScraper: Unexpected error processing url ${url}:`, error);
-      results.push({
+      errors.push({
         url,
-        status: 'error',
         details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
-  console.info('AutoScraper: Finished check for default trucks.');
-  return results;
+
+  console.info('AutoScraper: Finished autonomous scraping process.');
+  return {
+    trucksProcessed: counters.trucksProcessed,
+    newTrucksFound: counters.newTrucksFound,
+    errors,
+  };
 }
 
 async function handleExistingTruck(
@@ -290,9 +359,92 @@ export async function callGeminiWithCache(
   return result;
 }
 
+// Helper to get URLs to scrape from both static defaults and dynamic discovery
+async function getUrlsToScrape(): Promise<string[]> {
+  const urls = new Set<string>();
+
+  // Add static default URLs
+  for (const url of DEFAULT_SCRAPE_URLS) urls.add(url);
+
+  // Add dynamically discovered URLs that are ready for processing
+  try {
+    if (!supabaseAdmin) {
+      console.warn('AutoScraper: Supabase admin client not available for discovered URLs');
+      return [...urls];
+    }
+
+    const { data: discoveredUrls, error } = await supabaseAdmin
+      .from('discovered_urls')
+      .select('url')
+      .in('status', ['new', 'processed']) // Include both new and previously processed URLs
+      .order('discovered_at', { ascending: false })
+      .limit(100); // Limit to prevent overwhelming the system
+
+    if (error) {
+      console.warn('AutoScraper: Error fetching discovered URLs:', error.message);
+    } else if (discoveredUrls) {
+      for (const { url } of discoveredUrls) urls.add(url as string);
+      console.info(`AutoScraper: Added ${discoveredUrls.length} discovered URLs to scraping queue`);
+    }
+  } catch (error) {
+    console.warn('AutoScraper: Failed to fetch discovered URLs:', error);
+  }
+
+  return [...urls];
+}
+
+// Helper to update discovered URL status after processing
+async function updateDiscoveredUrlStatus(
+  url: string,
+  status: 'processing' | 'processed' | 'irrelevant',
+  notes?: string,
+): Promise<void> {
+  try {
+    if (!supabaseAdmin) {
+      console.warn(
+        `AutoScraper: Cannot update status for ${url} - Supabase admin client not available`,
+      );
+      return;
+    }
+
+    const { error } = await supabaseAdmin
+      .from('discovered_urls')
+      .update({
+        status,
+        last_processed_at: new Date().toISOString(),
+        notes: notes || undefined,
+      })
+      .eq('url', url);
+
+    if (error) {
+      console.warn(`AutoScraper: Failed to update status for ${url}:`, error.message);
+    }
+  } catch (error) {
+    console.warn(`AutoScraper: Error updating discovered URL status for ${url}:`, error);
+  }
+}
+
 // Note on processScrapingJob import:
 // The direct import of `processScrapingJob` from `@/app/api/scrape/route.ts` can be problematic
 // if `route.ts` has side effects or dependencies not suitable for a library context (like NextRequest/Response).
 // A cleaner way would be to refactor `processScrapingJob` into a shared utility if it's to be called directly,
 // or for `triggerScrapingProcess` to make an internal http post request to `/api/scrape`.
 // For this iteration, we are attempting direct call, assuming it's manageable.
+
+// Export autoScraper object for use in cron jobs
+export const autoScraper = {
+  runAutoScraping: ensureDefaultTrucksAreScraped,
+  triggerScrapingProcess,
+  callGeminiWithCache,
+  getUrlsToScrape,
+  updateDiscoveredUrlStatus,
+};
+
+// Main autonomous scraping function that combines discovery and scraping
+export async function runAutonomousScraping(): Promise<AutoScrapeResult> {
+  console.info('AutoScraper: Starting fully autonomous scraping cycle...');
+
+  // This function can be called by the autonomous scheduler
+  // It uses the updated ensureDefaultTrucksAreScraped which now pulls from discovered_urls
+  return await ensureDefaultTrucksAreScraped();
+}
