@@ -4,12 +4,24 @@ import {
   type PostgrestResponse,
 } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl) {
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
+}
+
+if (!supabaseAnonKey) {
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+// Only create admin client on server side where service key is available
+export const supabaseAdmin = supabaseServiceKey
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : undefined;
 
 // Database types
 import {
@@ -179,24 +191,68 @@ export const FoodTruckService = {
     }
   },
   async createTruck(truckData: Partial<FoodTruck>): Promise<FoodTruck> {
-    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
+    // Extract menu data before inserting truck
+    const menuData = truckData.menu;
+    const truckDataWithoutMenu = { ...truckData };
+    delete truckDataWithoutMenu.menu;
+
+    // Insert truck first
+    const { data: truck, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
       .from('food_trucks')
-      .insert([truckData])
+      .insert([truckDataWithoutMenu])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Insert menu items if they exist
+    if (menuData && menuData.length > 0 && truck.id) {
+      const menuItems = menuData.flatMap((category) =>
+        (category.items || []).map((item) => ({
+          food_truck_id: truck.id,
+          category: category.name || 'Uncategorized',
+          name: item.name || 'Unknown Item',
+          description: item.description || undefined,
+          price: typeof item.price === 'number' ? item.price : undefined,
+          dietary_tags: item.dietary_tags || [],
+        })),
+      );
+
+      if (menuItems.length > 0) {
+        const { error: menuError } = await supabaseAdmin.from('menu_items').insert(menuItems);
+
+        if (menuError) {
+          console.error('Error inserting menu items for truck', truck.id, menuError);
+          // Don't throw here - truck creation succeeded, menu insertion failed
+        }
+      }
+    }
+
+    return truck;
   },
   async updateTruck(id: string, updates: Partial<FoodTruck>): Promise<FoodTruck> {
-    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
-      .from('food_trucks')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
+    // Extract menu data before updating truck
+    const menuData = updates.menu;
+    const updatesWithoutMenu = { ...updates };
+    delete updatesWithoutMenu.menu;
+
+    // Update truck first
+    const truck = await updateTruckData(id, updatesWithoutMenu);
+
+    // Update menu items if provided
+    if (menuData !== undefined) {
+      await updateTruckMenu(id, menuData);
+    }
+
+    return truck;
   },
 
   async getDataQualityStats(): Promise<{
@@ -249,6 +305,64 @@ export const FoodTruckService = {
     }
   },
 };
+
+// Helper functions to reduce cognitive complexity
+async function updateTruckData(
+  id: string,
+  updatesWithoutMenu: Partial<FoodTruck>,
+): Promise<FoodTruck> {
+  if (!supabaseAdmin) {
+    throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  const { data: truck, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
+    .from('food_trucks')
+    .update(updatesWithoutMenu)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return truck;
+}
+
+async function updateTruckMenu(id: string, menuData: MenuCategory[]): Promise<void> {
+  if (!supabaseAdmin) {
+    throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  // Delete existing menu items
+  const { error: deleteError } = await supabaseAdmin
+    .from('menu_items')
+    .delete()
+    .eq('food_truck_id', id);
+
+  if (deleteError) {
+    console.error('Error deleting existing menu items for truck', id, deleteError);
+  }
+
+  // Insert new menu items if they exist
+  if (menuData && menuData.length > 0) {
+    const menuItems = menuData.flatMap((category) =>
+      (category.items || []).map((item) => ({
+        food_truck_id: id,
+        category: category.name || 'Uncategorized',
+        name: item.name || 'Unknown Item',
+        description: item.description || undefined,
+        price: typeof item.price === 'number' ? item.price : undefined,
+        dietary_tags: item.dietary_tags || [],
+      })),
+    );
+
+    if (menuItems.length > 0) {
+      const { error: menuError } = await supabaseAdmin.from('menu_items').insert(menuItems);
+
+      if (menuError) {
+        console.error('Error inserting updated menu items for truck', id, menuError);
+      }
+    }
+  }
+}
 
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
@@ -327,6 +441,10 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
 
 export const ScrapingJobService = {
   async createJob(jobData: Partial<ScrapingJob>): Promise<ScrapingJob> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     const { data, error }: PostgrestSingleResponse<ScrapingJob> = await supabaseAdmin
       .from('scraping_jobs')
       .insert([
@@ -368,6 +486,10 @@ export const ScrapingJobService = {
     status: string,
     updates: Partial<ScrapingJob> = {},
   ): Promise<ScrapingJob> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     const { data, error }: PostgrestSingleResponse<ScrapingJob> = await supabaseAdmin
       .from('scraping_jobs')
       .update({
@@ -383,6 +505,10 @@ export const ScrapingJobService = {
     return data;
   },
   async incrementRetryCount(id: string): Promise<ScrapingJob> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     const {
       data: current,
       error: fetchError,
@@ -408,6 +534,10 @@ export const ScrapingJobService = {
 
 export const DataProcessingService = {
   async addToQueue(queueData: Partial<DataProcessingQueue>): Promise<DataProcessingQueue> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     const { data, error }: PostgrestSingleResponse<DataProcessingQueue> = await supabaseAdmin
       .from('data_processing_queue')
       .insert([
@@ -426,6 +556,10 @@ export const DataProcessingService = {
   },
 
   async getNextQueueItem(): Promise<DataProcessingQueue | undefined> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     const { data, error }: PostgrestSingleResponse<DataProcessingQueue> = await supabaseAdmin
       .from('data_processing_queue')
       .select('*')
@@ -458,6 +592,10 @@ export const DataProcessingService = {
     id: string,
     updates: Partial<DataProcessingQueue>,
   ): Promise<DataProcessingQueue> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     const { data, error }: PostgrestSingleResponse<DataProcessingQueue> = await supabaseAdmin
       .from('data_processing_queue')
       .update({
@@ -475,6 +613,10 @@ export const DataProcessingService = {
 
 export const APIUsageService = {
   async trackUsage(serviceName: string, requests: number, tokens: number): Promise<ApiUsage> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+
     try {
       const today = new Date().toISOString().split('T')[0];
 

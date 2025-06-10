@@ -163,6 +163,16 @@ export class TaskScheduler {
 
     return nextRun.toISOString();
   }
+
+  public scheduleFollowUpTasks(result: unknown): void {
+    // Implementation for scheduling follow-up tasks based on scraping results
+    console.info('Scheduling follow-up tasks based on scraping results:', result);
+
+    // This could include:
+    // - Scheduling quality checks for newly scraped data
+    // - Setting up monitoring for high-priority trucks
+    // - Triggering additional scraping for related sources
+  }
 }
 
 interface ScheduledTask {
@@ -248,6 +258,33 @@ interface PendingDataItem {
 interface SocialMediaPost {
   location?: string;
   // Add other properties of a social media post if needed
+}
+
+// Helper function to update truck location from social media
+async function updateTruckLocationFromSocial(
+  truck: FoodTruck,
+  scraperEngine: ScraperEngine,
+): Promise<void> {
+  if (!truck.social_media.instagram_handle) {
+    return;
+  }
+
+  const socialResult = await scraperEngine.scrapeSocialMedia(
+    'instagram',
+    truck.social_media.instagram_handle,
+  );
+
+  if (socialResult.success && socialResult.data) {
+    const socialData = socialResult.data as { posts: SocialMediaPost[] };
+    const recentPosts = socialData.posts.slice(0, 3);
+
+    for (const post of recentPosts) {
+      if (post.location) {
+        console.info(`Updated location for ${truck.name}: ${post.location}`);
+        break;
+      }
+    }
+  }
 }
 
 // Pre-configured tasks for food truck data pipeline
@@ -412,7 +449,6 @@ export function createDefaultTasks(
       enabled: true,
       successCount: 0,
       errorCount: 0,
-      // eslint-disable-next-line sonarjs/cognitive-complexity
       execute: async () => {
         // Get active trucks (those currently operating)
         const activeTrucks: FoodTruck[] = []; // Placeholder: fetch active trucks from database
@@ -423,30 +459,12 @@ export function createDefaultTasks(
         }
 
         for (const truck of activeTrucks) {
-          // Check social media for location updates
-          if (truck.social_media.instagram_handle) {
-            const socialResult = await scraperEngine.scrapeSocialMedia(
-              'instagram',
-              truck.social_media.instagram_handle,
-            );
-
-            if (socialResult.success && socialResult.data) {
-              // Extract location from recent posts
-              const socialData = socialResult.data as { posts: SocialMediaPost[] };
-              const recentPosts = socialData.posts.slice(0, 3);
-
-              for (const post of recentPosts) {
-                if (post.location) {
-                  // Update truck location
-                  console.info(`Updated location for ${truck.name}: ${post.location}`);
-                  break;
-                }
-              }
-            }
-          }
+          await updateTruckLocationFromSocial(truck, scraperEngine);
         }
-        await Promise.resolve();
       },
     },
   ];
 }
+
+// Export scheduler instance for use in cron jobs
+export const scheduler = new TaskScheduler();

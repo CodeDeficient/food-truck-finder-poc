@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { FoodTruckService } from '@/lib/supabase';
-import { z, type infer as zInfer } from 'zod';
+import { z, type infer as ZInfer } from 'zod';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -171,7 +171,7 @@ const UpdateFoodTruckSchema = FoodTruckSchema.partial().extend({
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as zInfer<typeof FoodTruckSchema>;
+    const body = (await request.json()) as ZInfer<typeof FoodTruckSchema>;
     const validatedData = FoodTruckSchema.parse(body);
 
     const newTruck = await FoodTruckService.createTruck(validatedData);
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = (await request.json()) as zInfer<typeof UpdateFoodTruckSchema>;
+    const body = (await request.json()) as ZInfer<typeof UpdateFoodTruckSchema>;
     const validatedData = UpdateFoodTruckSchema.parse(body);
     const { id, ...updates } = validatedData;
 

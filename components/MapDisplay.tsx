@@ -45,12 +45,12 @@ const MapViewUpdater = ({
   return <></>;
 };
 
-// Custom food truck icon (public/placeholder-logo.png or use your own svg/png)
+// Custom food truck icon
 const foodTruckIcon = new L.Icon({
-  iconUrl: '/placeholder-logo.png',
-  iconSize: [36, 36],
-  iconAnchor: [18, 36],
-  popupAnchor: [0, -36],
+  iconUrl: '/food-truck-icon.svg',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
   className: 'food-truck-marker-icon',
 });
 
@@ -132,7 +132,7 @@ const MapDisplay = ({
         >
           <Popup>
             <h4 className="font-bold">{truck.name}</h4>
-            <div>{truck.current_location.address || 'Location not available'}</div>
+            {truck.current_location.address && <div>{truck.current_location.address}</div>}
           </Popup>
         </Marker>
       ))}

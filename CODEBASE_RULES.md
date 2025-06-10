@@ -1,6 +1,57 @@
 # Codebase Rules and Guidelines for Food Truck Finder Web App
 
-This document outlines a set of rules and guidelines for AI instances (Cline, Copilot, Jules) to reference during development of the Food Truck Finder web application. Adhering to these rules will ensure consistency, prevent errors, reduce duplicate code, and maintain a high standard of code quality and user experience.
+This document outlines a set of rules and guidelines for AI instances (Cline, Copilot, Jules, Augment Agent) to reference during development of the Food Truck Finder web application. Adhering to these rules will ensure consistency, prevent errors, reduce duplicate code, and maintain a high standard of code quality and user experience.
+
+## 🚨 **CRITICAL ANTI-DUPLICATION RULES** 🚨
+
+### **RULE 0: MANDATORY PRE-WORK VERIFICATION**
+
+Before making ANY changes, agents MUST:
+
+1. **Check existing implementations** using codebase-retrieval tool
+2. **Verify no duplicate services/routes exist** in target area
+3. **Confirm standardized patterns** are being followed
+4. **Review this document** for applicable rules
+
+### **RULE 0.1: DATABASE CLIENT STANDARDIZATION**
+
+- **NEVER create new Supabase clients** - ALWAYS use `lib/supabase.ts`
+- **NEVER duplicate service definitions** - Use existing services from `lib/supabase.ts`
+- **NEVER create database operations** outside of centralized services
+- **ALWAYS import services** from `@/lib/supabase` using named imports
+
+### **RULE 0.2: API ROUTE CONSOLIDATION**
+
+- **NEVER create overlapping API routes** (check existing routes first)
+- **ALWAYS use `/api/pipeline`** for pipeline operations with action parameters
+- **NEVER create new pipeline endpoints** - extend existing unified pipeline
+- **ALWAYS check route conflicts** before creating new endpoints
+
+### **RULE 0.3: SERVICE LAYER UNIFICATION**
+
+- **NEVER duplicate service logic** across files
+- **ALWAYS use centralized services** from `lib/supabase.ts`
+- **NEVER create inline database operations** in API routes
+- **ALWAYS follow established service patterns**
+
+### **RULE 0.4: IMPORT STANDARDIZATION**
+
+```typescript
+// ✅ CORRECT - Use centralized services
+import { FoodTruckService, ScrapingJobService } from '@/lib/supabase';
+
+// ❌ WRONG - Never create duplicate services
+const FoodTruckService = {
+  /* duplicate implementation */
+};
+```
+
+### **RULE 0.5: PIPELINE SYSTEM RULES**
+
+- **NEVER create new pipeline systems** - Use unified pipeline manager
+- **ALWAYS use `/api/pipeline`** with action-based routing
+- **NEVER duplicate pipeline logic** across multiple files
+- **ALWAYS extend existing pipeline components** rather than creating new ones
 
 ## 1. Gemini Prompting Rules
 
@@ -28,3 +79,294 @@ This document outlines a set of rules and guidelines for AI instances (Cline, Co
 ## 5. Data Quality Score Rules
 
 - **Rule 5.1: Admin Dashboard Only:** The data quality score MUST be removed from the user-facing UI. It MUST only be displayed and managed within the admin dashboard and backend.
+
+## 6. File Organization Rules
+
+### **RULE 6.1: DIRECTORY STRUCTURE STANDARDS**
+
+```
+lib/                    # Core business logic and utilities
+├── supabase.ts        # ✅ ONLY database client and services
+├── pipelineManager.ts # ✅ ONLY unified pipeline orchestration
+├── types.ts           # ✅ ONLY shared TypeScript types
+└── utils.ts           # ✅ ONLY utility functions
+
+app/api/               # API endpoints
+├── pipeline/          # ✅ ONLY unified pipeline endpoint
+├── dashboard/         # ✅ ONLY admin dashboard data
+└── trucks/            # ✅ ONLY food truck CRUD operations
+```
+
+### **RULE 6.2: SERVICE LAYER ORGANIZATION**
+
+- **Database Services**: ONLY in `lib/supabase.ts`
+- **Pipeline Logic**: ONLY in `lib/pipelineManager.ts` and related files
+- **API Routes**: ONLY handle request/response, delegate to services
+- **Types**: ONLY in `lib/types.ts` and `lib/database.types.ts`
+
+### **RULE 6.3: COMPONENT ORGANIZATION**
+
+- **UI Components**: ONLY in `components/` directory
+- **Page Components**: ONLY in `app/` directory following Next.js 13+ structure
+- **Shared Hooks**: ONLY in `hooks/` directory
+- **Utilities**: ONLY in `lib/utils.ts`
+
+## 7. TypeScript and Code Quality Rules
+
+### **RULE 7.1: TYPE SAFETY REQUIREMENTS**
+
+- **ALWAYS use TypeScript** for all new files
+- **NEVER use `any` type** - Use proper typing or `unknown`
+- **ALWAYS define interfaces** for API request/response bodies
+- **ALWAYS use proper return types** for functions
+
+### **RULE 7.2: ERROR HANDLING STANDARDS**
+
+```typescript
+// ✅ CORRECT - Structured error handling
+try {
+  const result = await SomeService.operation();
+  return NextResponse.json(result);
+} catch (error) {
+  console.error('Operation failed:', error);
+  return NextResponse.json({ error: 'Operation failed', details: error.message }, { status: 500 });
+}
+
+// ❌ WRONG - Unhandled errors
+const result = await SomeService.operation(); // No error handling
+```
+
+### **RULE 7.3: ASYNC/AWAIT PATTERNS**
+
+- **ALWAYS use async/await** instead of Promise chains
+- **ALWAYS handle errors** in async functions
+- **NEVER mix async/await with .then()/.catch()**
+
+## 8. Database and API Rules
+
+### **RULE 8.1: DATABASE OPERATION STANDARDS**
+
+- **ALWAYS use transactions** for multi-table operations
+- **ALWAYS validate data** before database operations
+- **NEVER expose raw database errors** to client
+- **ALWAYS use proper error codes** in API responses
+
+### **RULE 8.2: API ENDPOINT STANDARDS**
+
+```typescript
+// ✅ CORRECT - Proper API structure
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    // Validate input
+    if (!body.required_field) {
+      return NextResponse.json({ error: 'Missing required field' }, { status: 400 });
+    }
+
+    // Delegate to service
+    const result = await SomeService.operation(body);
+    return NextResponse.json(result);
+  } catch (error) {
+    // Handle errors appropriately
+  }
+}
+```
+
+### **RULE 8.3: AUTHENTICATION AND AUTHORIZATION**
+
+- **ALWAYS verify authentication** for protected routes
+- **ALWAYS check user permissions** before operations
+- **NEVER expose sensitive data** without proper authorization
+- **ALWAYS use middleware** for route protection
+
+## 9. Testing and Documentation Rules
+
+### **RULE 9.1: TESTING REQUIREMENTS**
+
+- **ALWAYS write tests** for new services and API endpoints
+- **ALWAYS test error conditions** not just happy paths
+- **NEVER commit code** without running existing tests
+- **ALWAYS update tests** when modifying existing functionality
+
+### **RULE 9.2: DOCUMENTATION STANDARDS**
+
+- **ALWAYS document new API endpoints** in appropriate files
+- **ALWAYS add JSDoc comments** for complex functions
+- **ALWAYS update README** when adding new features
+- **NEVER leave TODO comments** without GitHub issues
+
+## 10. Multi-Agent Coordination Rules
+
+### **RULE 10.1: AGENT COMMUNICATION PROTOCOLS**
+
+- **ALWAYS check recent commits** before starting work
+- **ALWAYS update Development Plan** with progress
+- **NEVER work on same files simultaneously** without coordination
+- **ALWAYS leave clear commit messages** describing changes
+
+### **RULE 10.2: CONFLICT PREVENTION**
+
+- **ALWAYS use codebase-retrieval** to check existing implementations
+- **NEVER assume functionality doesn't exist** - verify first
+- **ALWAYS follow established patterns** rather than creating new ones
+- **NEVER duplicate work** that's already in progress
+
+### **RULE 10.3: WORK ASSIGNMENT PROTOCOLS**
+
+- **Phase 1 (Pipeline Consolidation)**: Single agent only
+- **Phase 2 (Admin Dashboard)**: Can be parallel with Phase 1
+- **Phase 3 (Authentication)**: Requires coordination with other phases
+- **Database changes**: Single agent only, coordinate with others
+
+## 11. Performance and Security Rules
+
+### **RULE 11.1: PERFORMANCE STANDARDS**
+
+- **ALWAYS implement pagination** for large data sets
+- **ALWAYS use database indexes** for frequently queried fields
+- **NEVER load unnecessary data** in API responses
+- **ALWAYS implement caching** where appropriate
+
+### **RULE 11.2: SECURITY REQUIREMENTS**
+
+- **ALWAYS validate input** on both client and server
+- **NEVER expose environment variables** to client
+- **ALWAYS use HTTPS** for external API calls
+- **NEVER log sensitive information**
+
+## 12. Large-Scale Refactoring Prevention Rules
+
+### **RULE 12.1: MANDATORY LINTING SAFEGUARDS**
+
+**⚠️ CRITICAL: These steps are MANDATORY for any structural changes to prevent cascading linting errors**
+
+#### **Before Making Structural Changes**
+
+- **ALWAYS run baseline linting**: `npm run lint > lint-before.json` to capture current state
+- **ALWAYS identify affected files**: Use codebase-retrieval to find all files importing from targets
+- **ALWAYS plan import path changes**: Map old imports → new imports before starting
+- **ALWAYS create migration checklist**: Document each file requiring updates
+
+#### **During Structural Changes**
+
+- **ALWAYS make changes incrementally**: Update one service/file at a time
+- **ALWAYS fix imports immediately**: Update import paths as soon as files are moved/removed
+- **ALWAYS run linting frequently**: Check `npm run lint` after each major change
+- **ALWAYS commit working states**: Never let broken states accumulate
+
+#### **After Structural Changes**
+
+- **MANDATORY linting verification**: `npm run lint` MUST pass before completion
+- **MANDATORY type checking**: Ensure TypeScript compilation succeeds
+- **MANDATORY test execution**: Run relevant tests to ensure functionality
+- **ALWAYS update documentation**: Update any affected documentation
+
+### **RULE 12.2: FILE REMOVAL/CONSOLIDATION PROTOCOL**
+
+When removing or consolidating files:
+
+1. **IDENTIFY all imports**: Search codebase for imports from target files
+2. **UPDATE imports first**: Change import paths before removing files
+3. **VERIFY no broken references**: Ensure all imports resolve correctly
+4. **RUN linting after each step**: Catch issues immediately
+5. **COMMIT incrementally**: Don't accumulate multiple breaking changes
+
+### **RULE 12.3: IMPORT PATH STANDARDIZATION**
+
+When standardizing imports:
+
+1. **MAP old patterns to new**: Document the transformation clearly
+2. **UPDATE systematically**: Go file by file, don't skip any
+3. **VERIFY each change**: Ensure imports resolve and types match
+4. **TEST functionality**: Ensure behavior remains unchanged
+
+## 13. Deployment and Environment Rules
+
+### **RULE 13.1: ENVIRONMENT MANAGEMENT**
+
+- **ALWAYS test locally** before pushing to remote
+- **NEVER commit environment files** (.env, .env.local)
+- **ALWAYS use environment variables** for configuration
+- **NEVER hardcode URLs or secrets**
+
+### **RULE 13.2: VERCEL DEPLOYMENT STANDARDS**
+
+- **ALWAYS verify CRON jobs** work after deployment
+- **NEVER break existing API endpoints** during updates
+- **ALWAYS test production deployment** after major changes
+- **NEVER deploy without running tests**
+
+## 🔍 **VERIFICATION CHECKLIST FOR AGENTS**
+
+Before making any changes, agents MUST verify:
+
+### ✅ **Pre-Development Checklist**
+
+- [ ] Checked existing implementations using codebase-retrieval
+- [ ] Verified no duplicate services/routes exist
+- [ ] Reviewed applicable rules in this document
+- [ ] Confirmed work doesn't conflict with other agents
+
+### ✅ **During Development Checklist**
+
+- [ ] Following established patterns and conventions
+- [ ] Using centralized services from `lib/supabase.ts`
+- [ ] Not creating duplicate functionality
+- [ ] Implementing proper error handling
+
+### ✅ **Pre-Commit Checklist**
+
+- [ ] All tests pass
+- [ ] **MANDATORY: No linting errors** (`npm run lint` must pass)
+- [ ] **MANDATORY: TypeScript compilation** (`npm run type-check` if available)
+- [ ] Documentation updated if needed
+- [ ] Development plan updated with progress
+
+### ✅ **Post-Deployment Checklist**
+
+- [ ] Production deployment verified
+- [ ] No breaking changes introduced
+- [ ] CRON jobs still functioning
+- [ ] Admin dashboard still accessible
+
+## 📋 **CURRENT KNOWN DUPLICATIONS TO AVOID**
+
+### **Database Services** (Use `lib/supabase.ts` ONLY)
+
+- ❌ `app/api/pipeline/route.ts` - Contains duplicate services
+- ✅ `lib/supabase.ts` - Centralized services
+
+### **Pipeline Systems** (Use unified pipeline ONLY)
+
+- ❌ `/api/enhanced-pipeline` - Being deprecated
+- ❌ `/api/autonomous-discovery` - Being deprecated
+- ✅ `/api/pipeline` - Unified endpoint
+
+### **API Routes** (Check before creating)
+
+- ❌ `/api/scraper` - Demo code, should be removed
+- ✅ `/api/scrape` - Actual scraping endpoint
+
+---
+
+## 🚨 **EMERGENCY PROTOCOLS**
+
+### **If Duplicate Code is Discovered:**
+
+1. **STOP** current work immediately
+2. **ASSESS** which implementation is canonical
+3. **COORDINATE** with other agents if needed
+4. **CONSOLIDATE** to single implementation
+5. **UPDATE** all references
+
+### **If Conflicts Arise:**
+
+1. **COMMUNICATE** with other agents
+2. **REVIEW** recent commits and changes
+3. **COORDINATE** resolution approach
+4. **DOCUMENT** resolution in commit messages
+
+---
+
+_Last Updated: December 2024_
+_Version: 2.0 - Multi-Agent Coordination_

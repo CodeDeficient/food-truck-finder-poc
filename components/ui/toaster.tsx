@@ -9,8 +9,6 @@ import {
   ToastTitle,
   ToastViewport,
 } from '@/components/ui/Toast';
-// Remove unused import
-// import type { Toast as ToastType } from "@/components/ui/toast"
 import type { ToasterToast } from '@/hooks/UseToast';
 
 export function Toaster() {

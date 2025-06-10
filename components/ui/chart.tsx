@@ -174,7 +174,11 @@ const ChartTooltipContent = React.forwardRef<
             const key = `${nameKey || item.name || item.dataKey || 'value'}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
             const indicatorColor =
-              color || (item.payload as Record<string, unknown>)?.fill || item.color;
+              color ||
+              (item.payload && typeof item.payload === 'object' && 'fill' in item.payload
+                ? String((item.payload as Record<string, unknown>).fill)
+                : undefined) ||
+              item.color;
 
             return (
               <div
@@ -185,60 +189,60 @@ const ChartTooltipContent = React.forwardRef<
                 )}
               >
                 {' '}
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(
-                    item.value,
-                    item.name,
-                    item,
-                    index,
-                    item.payload as Record<string, unknown>[],
-                  )
-                ) : (
-                  <>
-                    {itemConfig?.icon ? (
-                      <itemConfig.icon />
-                    ) : (
-                      !hideIndicator && (
-                        <div
-                          className={cn(
-                            'shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]',
-                            {
-                              'h-2.5 w-2.5': indicator === 'dot',
-                              'w-1': indicator === 'line',
-                              'w-0 border-[1.5px] border-dashed bg-transparent':
-                                indicator === 'dashed',
-                              'my-0.5': nestLabel && indicator === 'dashed',
-                            },
-                          )}
-                          style={
-                            {
-                              '--color-bg': indicatorColor,
-                              '--color-border': indicatorColor,
-                            } as React.CSSProperties
-                          }
-                        />
-                      )
-                    )}
-                    <div
-                      className={cn(
-                        'flex flex-1 justify-between leading-none',
-                        nestLabel ? 'items-end' : 'items-center',
+                {(() => {
+                  if (formatter && item?.value !== undefined && item.name) {
+                    const payloadArray = Array.isArray(item.payload)
+                      ? (item.payload as Record<string, unknown>[])
+                      : [];
+                    return <>{formatter(item.value, item.name, item, index, payloadArray)}</>;
+                  }
+                  return (
+                    <>
+                      {itemConfig?.icon ? (
+                        <itemConfig.icon />
+                      ) : (
+                        !hideIndicator && (
+                          <div
+                            className={cn(
+                              'shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]',
+                              {
+                                'h-2.5 w-2.5': indicator === 'dot',
+                                'w-1': indicator === 'line',
+                                'w-0 border-[1.5px] border-dashed bg-transparent':
+                                  indicator === 'dashed',
+                                'my-0.5': nestLabel && indicator === 'dashed',
+                              },
+                            )}
+                            style={
+                              {
+                                '--color-bg': indicatorColor,
+                                '--color-border': indicatorColor,
+                              } as React.CSSProperties
+                            }
+                          />
+                        )
                       )}
-                    >
-                      <div className="grid gap-1.5">
-                        {nestLabel ? tooltipLabel : undefined}
-                        <span className="text-muted-foreground">
-                          {itemConfig?.label || item.name}
-                        </span>
+                      <div
+                        className={cn(
+                          'flex flex-1 justify-between leading-none',
+                          nestLabel ? 'items-end' : 'items-center',
+                        )}
+                      >
+                        <div className="grid gap-1.5">
+                          {nestLabel ? tooltipLabel : undefined}
+                          <span className="text-muted-foreground">
+                            {itemConfig?.label || item.name}
+                          </span>
+                        </div>
+                        {item.value && (
+                          <span className="font-mono font-medium tabular-nums text-foreground">
+                            {item.value.toLocaleString()}
+                          </span>
+                        )}
                       </div>
-                      {item.value && (
-                        <span className="font-mono font-medium tabular-nums text-foreground">
-                          {item.value.toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
+                    </>
+                  );
+                })()}
               </div>
             );
           })}
@@ -275,7 +279,8 @@ const ChartLegendContent = React.forwardRef<
       )}
     >
       {payload.map((item) => {
-        const key = `${nameKey || String(item.dataKey) || 'value'}`;
+        const keyValue = nameKey || (item.dataKey ? String(item.dataKey) : 'value');
+        const key = `${keyValue}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (
@@ -291,7 +296,7 @@ const ChartLegendContent = React.forwardRef<
               <div
                 className="h-2 w-2 shrink-0 rounded-[2px]"
                 style={{
-                  backgroundColor: item.color,
+                  backgroundColor: item.color ? String(item.color) : undefined,
                 }}
               />
             )}

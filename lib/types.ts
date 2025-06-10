@@ -147,6 +147,14 @@ export interface FoodTruckSchema {
   test_run_flag?: boolean;
 }
 
+// Database record type with additional fields
+export interface FoodTruck extends FoodTruckSchema {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  is_active?: boolean;
+}
+
 export interface GeminiResponse<T = unknown> {
   success: boolean;
   data?: T;

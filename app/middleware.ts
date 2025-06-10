@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
     if (userError || !user) {
       // Redirect unauthenticated users to login
       const redirectUrl = req.nextUrl.clone();
-      redirectUrl.pathname = '/login'; // Assuming a login page at /login
+      redirectUrl.pathname = '/login';
       redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
       return NextResponse.redirect(redirectUrl);
     }
@@ -25,13 +25,13 @@ export async function middleware(req: NextRequest) {
     const { data: profile, error: profileQueryError } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', user.id) // Removed unnecessary type assertion
+      .eq('id', user.id)
       .single();
 
     if (profileQueryError || profile?.role !== 'admin') {
-      // Redirect non-admin users to a forbidden page or home
+      // Redirect non-admin users to access denied page
       const redirectUrl = req.nextUrl.clone();
-      redirectUrl.pathname = '/forbidden'; // Assuming a forbidden page at /forbidden
+      redirectUrl.pathname = '/access-denied';
       return NextResponse.redirect(redirectUrl);
     }
   }

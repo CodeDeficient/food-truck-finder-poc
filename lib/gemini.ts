@@ -92,7 +92,7 @@ Return only valid json in this exact format:
         {
           "name": "item_name",
           "description": "item_description",
-          "price": 0.00,
+          "price": 0,
           "dietary_tags": ["vegetarian", "vegan", "gluten-free", "dairy-free", "spicy", "popular"]
         }
       ]
@@ -112,6 +112,7 @@ Rules:
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { temperature: 0 },
       });
       textOutput = sdkResponse.text || '';
 
@@ -119,7 +120,9 @@ Rules:
         sdkResponse.usageMetadata?.totalTokenCount ||
         Math.ceil((prompt.length + textOutput.length) / 4);
 
-      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
+      APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
+        console.warn('Failed to track API usage:', error);
+      });
 
       try {
         const parsedData = JSON.parse(textOutput.trim()) as { categories: MenuCategory[] };
@@ -129,8 +132,8 @@ Rules:
           tokensUsed,
         };
       } catch (parseError: unknown) {
-        console.warn('Gemini json parsing error:', parseError);
-        console.warn('Problematic Gemini raw response text:', textOutput.trim());
+        console.error('Gemini json parsing error:', parseError);
+        console.error('Problematic Gemini raw response text:', textOutput.trim());
         return {
           success: false,
           error: `Failed to parse Gemini response as json: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${textOutput.trim().slice(0, 200)}...`,
@@ -138,7 +141,7 @@ Rules:
         };
       }
     } catch (error: unknown) {
-      console.warn('Gemini menu processing error:', error);
+      console.error('Gemini menu processing error:', error);
       const tokensUsed = Math.ceil(
         (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
           4,
@@ -192,13 +195,16 @@ Rules:
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { temperature: 0 },
       });
       textOutput = sdkResponse.text || '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
         Math.ceil((prompt.length + textOutput.length) / 4);
-      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
+      APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
+        console.warn('Failed to track API usage:', error);
+      });
 
       try {
         const parsedData = JSON.parse(textOutput.trim()) as LocationData;
@@ -217,7 +223,7 @@ Rules:
         };
       }
     } catch (error: unknown) {
-      console.warn('Gemini location extraction error:', error);
+      console.error('Gemini location extraction error:', error);
       const tokensUsed = Math.ceil(
         (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
           4,
@@ -269,13 +275,16 @@ Rules:
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { temperature: 0 },
       });
       textOutput = sdkResponse.text || '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
         Math.ceil((prompt.length + textOutput.length) / 4);
-      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
+      APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
+        console.warn('Failed to track API usage:', error);
+      });
 
       try {
         const parsedData = JSON.parse(textOutput.trim()) as OperatingHours;
@@ -347,13 +356,16 @@ Rules:
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { temperature: 0 },
       });
       textOutput = sdkResponse.text || '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
         Math.ceil((prompt.length + textOutput.length) / 4);
-      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
+      APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
+        console.warn('Failed to track API usage:', error);
+      });
 
       try {
         const parsedData = JSON.parse(textOutput.trim()) as SentimentAnalysisResult;
@@ -436,7 +448,9 @@ Rules:
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
         Math.ceil((prompt.length + textOutput.length) / 4);
-      void APIUsageService.trackUsage('gemini', 1, tokensUsed);
+      APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
+        console.warn('Failed to track API usage:', error);
+      });
 
       try {
         const parsedData = JSON.parse(textOutput.trim()) as EnhancedFoodTruckData;
