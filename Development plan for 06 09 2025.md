@@ -288,8 +288,9 @@ _Updated: December 2024_
 #### **Infrastructure (COMPLETE)**
 
 - ✅ Vercel CRON jobs properly configured in `vercel.json`
-- ✅ Auto-scrape (every 4 hours) and quality-check (daily) endpoints
+- ✅ Auto-scrape (daily at 6 AM) and quality-check (daily at 8 AM) endpoints
 - ✅ CRON authentication using `CRON_SECRET`
+- ⚠️ **Updated for Vercel Hobby Plan**: Changed auto-scrape from every 4 hours to daily due to hobby plan limitations
 
 #### **Code Quality (MOSTLY COMPLETE)**
 
