@@ -94,7 +94,6 @@ interface ScrapeResult {
 // Core scraping engine with anti-detection measures
 export class ScraperEngine {
   private userAgents: string[];
-  private proxies: string[];
   private requestDelay: number;
   private maxRetries: number;
 
@@ -104,7 +103,6 @@ export class ScraperEngine {
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     ];
-    this.proxies = [];
     this.requestDelay = 2000;
     this.maxRetries = 3;
   }
@@ -177,7 +175,7 @@ export class ScraperEngine {
 
   async scrapeSocialMedia(platform: string, handle: string): Promise<ScrapeResult> {
     try {
-      await this.randomDelay(); // Mark as void to explicitly ignore promise
+      await this.randomDelay();
 
       switch (platform) {
         case 'instagram': {
@@ -205,7 +203,7 @@ export class ScraperEngine {
   }
 
   private async scrapeInstagram(handle: string): Promise<ScrapeResult> {
-    await this.randomDelay(); // Simulate network delay for social media scraping
+    await this.randomDelay();
     return {
       success: true,
       data: {
@@ -236,7 +234,7 @@ export class ScraperEngine {
   }
 
   private async scrapeFacebook(handle: string): Promise<ScrapeResult> {
-    await this.randomDelay(); // Simulate network delay for social media scraping
+    await this.randomDelay();
     return {
       success: true,
       data: {
@@ -272,7 +270,7 @@ export class ScraperEngine {
   }
 
   private async scrapeTwitter(handle: string): Promise<ScrapeResult> {
-    await this.randomDelay(); // Simulate network delay for social media scraping
+    await this.randomDelay();
     return {
       success: true,
       data: {
@@ -301,50 +299,6 @@ export class ScraperEngine {
     };
   }
 
-  // The extractDataFromHTML method is no longer directly used by scrapeWebsite's primary Firecrawl path.
-  // It might be used by a fallback or if direct HTML parsing is needed for other reasons.
-  // Removing the erroneously pasted social media scraping logic from here.
-  private extractDataFromHTML(html: string, selectors: Record<string, string>): ExtractedHTMLData {
-    const extractedData: ExtractedHTMLData = {};
-
-    for (const key of Object.keys(selectors)) {
-      switch (key) {
-        case 'name': {
-          extractedData.name = 'Sample Food Truck Name';
-          break;
-        }
-        case 'location': {
-          extractedData.location = '123 Sample St, San Francisco, CA';
-          break;
-        }
-        case 'phone': {
-          extractedData.phone = '+1-555-0123';
-          break;
-        }
-        case 'hours': {
-          extractedData.hours = 'Mon-Fri: 11AM-8PM, Sat-Sun: 12PM-9PM';
-          break;
-        }
-        case 'menu': {
-          extractedData.menu = [
-            { item: 'Burger', price: '$12.99' },
-            { item: 'Fries', price: '$4.99' },
-            { item: 'Drink', price: '$2.99' },
-          ];
-          break;
-        }
-        default: {
-          // This default case is problematic with a strict ExtractedHTMLData interface.
-          // If dynamic keys are truly needed, consider a more flexible type or
-          // re-evaluate the design. For now, removing the assignment to avoid error.
-          // extractedData[key] = `Sample ${key} data`;
-          break;
-        }
-      }
-    }
-
-    return extractedData;
-  }
   private getRandomUserAgent(): string {
     // Using Math.random() for non-cryptographic purposes (e.g., selecting a user agent) is acceptable.
     // eslint-disable-next-line sonarjs/pseudo-random
@@ -578,15 +532,15 @@ interface GeminiSentimentAnalysis {
 }
 
 export class GeminiDataProcessor {
-  private apiKey: string;
-  private baseUrl: string;
+  private _apiKey: string;
+  private _baseUrl: string;
   private requestCount: number;
   private tokenCount: number;
   private dailyLimit: { requests: number; tokens: number };
 
   constructor(apiKey: string) {
-    this.apiKey = apiKey;
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
+    this._apiKey = apiKey;
+    this._baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
     this.requestCount = 0;
     this.tokenCount = 0;
     this.dailyLimit = { requests: 1500, tokens: 32_000 };

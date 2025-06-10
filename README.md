@@ -57,3 +57,42 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 2.  Husky is initialized (via `pnpm husky init` or automatically by the `prepare` script in `package.json`).
 3.  The `.husky/pre-commit` hook is configured to run `pnpm exec lint-staged`.
 4.  The `lint-staged` configuration in `package.json` specifies which commands to run on which file types.
+
+# Food Truck Finder: Agentic Data Pipeline & Real-Time UI
+
+## System Overview
+
+This project implements an **agentic data pipeline** (autonomous web agent/data ingestion pipeline) that autonomously discovers, crawls, extracts, deduplicates, and ingests food truck data from the web. The system is designed for minimal manual intervention and leverages SOTA tools like Context7 and Tavily for discovery and extraction.
+
+## How the Data Pipeline Works
+
+- **Autonomous Discovery:** The backend agent regularly searches for new food truck directories and individual truck URLs using Firecrawl/Tavily.
+- **URL Management:** Discovered directories and truck URLs are stored in a database table (e.g., `discovered_sources` or `pending_scrapes`).
+- **Job Scheduling:** The agent schedules and triggers scraping jobs for new/unprocessed URLs.
+- **Deduplication:** Ingestion logic upserts (updates if exists, inserts if not) based on a unique identifier (website URL or business name) to prevent duplicates.
+- **Normalization:** Menu/category data is normalized to a canonical schema before DB insert.
+- **Monitoring:** The pipeline tracks API usage, crawl coverage, and ingestion success/failure rates, alerting on anomalies.
+
+## Real-Time Data Delivery to Users
+
+- **Live UI Updates:** The frontend is designed to dynamically display new food trucks as they are scraped and ingested by the backend agent.
+- **Tab-Based Navigation:** Each food truck is presented as a tab or card in the UI. As new trucks are discovered and processed, new tabs/cards appear in real time—no page reload required.
+- **Fresh Data Guarantee:** The UI fetches the latest data from the backend (Supabase/PostgREST) using real-time subscriptions or polling, ensuring users always see the most up-to-date truck listings and menus.
+- **Data Consistency:** As the agent updates or deduplicates truck entries, the UI reflects these changes instantly, providing a seamless, always-fresh experience.
+
+## Key Search/Reference Terms
+
+- "agentic data pipeline"
+- "autonomous web agent"
+- "autonomous data ingestion pipeline"
+- "self-updating data pipeline"
+- "web agent for data discovery and ingestion"
+
+## Why This Matters
+
+- This architecture enables a truly autonomous, scalable, and real-time food truck discovery platform.
+- Using the right terminology in documentation and code ensures alignment with SOTA best practices and makes it easier to find and apply relevant workflows from the broader AI/data engineering community.
+
+---
+
+_See `SUMMARY.md` for a detailed technical breakdown and ongoing context updates._
