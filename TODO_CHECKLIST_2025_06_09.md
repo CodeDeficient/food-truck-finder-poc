@@ -181,7 +181,7 @@ _Note: Many "multiple permissive policies" are actually intentional RBAC pattern
 
 - ⚠️ Multiple pipeline systems: `/api/pipeline`, `/api/enhanced-pipeline`, `/api/autonomous-discovery`
 - ⚠️ Duplicate Supabase clients in `app/api/pipeline/route.ts` (should use `lib/supabase.ts`)
-- ⚠️ Overlapping API routes: `/api/scrape` vs `/api/scraper`
+- ✅ Overlapping API routes: `/api/scrape` vs `/api/scraper` (resolved, /api/scraper removed)
 
 ### Data Validation
 

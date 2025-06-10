@@ -344,7 +344,7 @@ Before making any changes, agents MUST verify:
 
 ### **API Routes** (Check before creating)
 
-- ❌ `/api/scraper` - Demo code, should be removed
+- ✅ `/api/scraper` - Demo code, has been removed. Use `/api/scrape` for scraping functionalities.
 - ✅ `/api/scrape` - Actual scraping endpoint
 
 ---
