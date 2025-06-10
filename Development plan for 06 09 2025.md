@@ -31,14 +31,14 @@ _Updated: December 2024_
 
 - ✅ **Pipeline Consolidation**: 6 overlapping systems → 1 unified `/api/pipeline` endpoint
 - ✅ **Database Centralization**: All operations now use `lib/supabase.ts` exclusively
-- ✅ **Files Removed**: `lib/enhancedPipelineOrchestrator.ts`, `lib/autonomousScheduler.ts`, `/api/scraper`
+- ✅ **Files Removed**: `lib/enhancedPipelineOrchestrator.ts`, `lib/autonomousScheduler.ts`, `/api/scraper` (verified removed)
 - ✅ **Import Standardization**: Consistent patterns across entire codebase
 - ✅ **Governance Framework**: Multi-agent coordination rules established
 - ✅ **Migration Strategy**: Deprecated endpoints return proper HTTP 410 with guidance
 
 #### **1.3 API Route Cleanup**
 
-- [ ] **1.3.1** Resolve `/api/scrape` vs `/api/scraper` overlap
+- ✅ **1.3.1** Resolve `/api/scrape` vs `/api/scraper` overlap (verified `/api/scraper` removed, `/api/scrape` is primary)
 - [ ] **1.3.2** Standardize API endpoint naming conventions
 - [ ] **1.3.3** Remove duplicate API routes
 - [ ] **1.3.4** Update all API route references
