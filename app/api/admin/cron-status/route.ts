@@ -8,9 +8,9 @@ export function GET() {
       {
         id: 'auto-scrape',
         name: 'Auto Food Truck Scraping',
-        schedule: '0 */4 * * *',
-        lastRun: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        nextRun: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+        schedule: '0 6 * * *',
+        lastRun: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+        nextRun: new Date(Date.now() + 18 * 60 * 60 * 1000).toISOString(), // 18 hours from now
         status: 'idle' as const,
         lastResult: {
           success: true,
