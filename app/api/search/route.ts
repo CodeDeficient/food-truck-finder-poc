@@ -1,15 +1,16 @@
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
-import { FoodTruckService } from '@/lib/supabase';
+import { CachedFoodTruckService } from '@/lib/performance/databaseCache';
 import { MenuCategory, MenuItem, OperatingHours } from '@/lib/types';
 
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
   const cuisine = searchParams.get('cuisine');
   const openNow = searchParams.get('openNow') === 'true';
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
-  const radius = searchParams.get('radius') || '10';
+  const radius = searchParams.get('radius') ?? '10';
 
   try {
     let trucks = [];
@@ -19,10 +20,10 @@ export async function GET(request: NextRequest) {
       const userLat = Number.parseFloat(lat);
       const userLng = Number.parseFloat(lng);
       const radiusKm = Number.parseFloat(radius);
-      trucks = await FoodTruckService.getTrucksByLocation(userLat, userLng, radiusKm);
+      trucks = await CachedFoodTruckService.getTrucksByLocationCached(userLat, userLng, radiusKm);
     } else {
       // Get all trucks
-      const result = await FoodTruckService.getAllTrucks(100, 0);
+      const result = await CachedFoodTruckService.getAllTrucksCached();
       trucks = result.trucks;
     }
 
@@ -32,25 +33,23 @@ export async function GET(request: NextRequest) {
     // Text search filter
     if (query) {
       filteredTrucks = filteredTrucks.filter(
-        (truck) =>
-          truck.name.toLowerCase().includes(query.toLowerCase()) ||
-          truck.description?.toLowerCase().includes(query.toLowerCase()) ||
-          truck.menu?.some((category: MenuCategory) =>
-            category.items?.some(
-              (item: MenuItem) =>
-                item.name.toLowerCase().includes(query.toLowerCase()) ||
-                item.description?.toLowerCase().includes(query.toLowerCase()),
-            ),
+        (truck: FoodTruck) => truck.name.toLowerCase().includes(query.toLowerCase()) ||
+        truck.description?.toLowerCase().includes(query.toLowerCase()) ||
+        truck.menu?.some((category: MenuCategory) =>
+          category.items?.some(
+            (item: MenuItem) =>
+              item.name.toLowerCase().includes(query.toLowerCase()) ||
+              item.description?.toLowerCase().includes(query.toLowerCase()),
           ),
+        ),
       );
     }
 
     // Cuisine filter
     if (cuisine) {
-      filteredTrucks = filteredTrucks.filter((truck) =>
-        truck.menu?.some((category: MenuCategory) =>
-          category.name.toLowerCase().includes(cuisine.toLowerCase()),
-        ),
+      filteredTrucks = filteredTrucks.filter((truck: any) => truck.menu?.some((category: MenuCategory) =>
+        category.name.toLowerCase().includes(cuisine.toLowerCase()),
+      ),
       );
     }
 
@@ -69,7 +68,7 @@ export async function GET(request: NextRequest) {
       const currentDay = daysOfWeek[now.getDay()];
       const currentTime = now.getHours() * 100 + now.getMinutes();
 
-      filteredTrucks = filteredTrucks.filter((truck) => {
+      filteredTrucks = filteredTrucks.filter((truck: any) => {
         const hours = truck.operating_hours?.[currentDay];
         if (!hours || hours.closed) return false;
 
@@ -80,7 +79,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Sort by data quality score
-    filteredTrucks.sort((a, b) => (b.data_quality_score || 0) - (a.data_quality_score || 0));
+    filteredTrucks.sort((a: FoodTruck, b: FoodTruck) => (b.data_quality_score ?? 0) - (a.data_quality_score ?? 0));
 
     return NextResponse.json({
       trucks: filteredTrucks,

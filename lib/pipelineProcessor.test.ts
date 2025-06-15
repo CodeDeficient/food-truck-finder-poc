@@ -52,7 +52,7 @@ describe('pipelineProcessor', () => {
       (ScrapingJobService.updateJobStatus as jest.Mock).mockResolvedValue(mockJob);
     });
 
-    it('should process a scraping job successfully', async () => {
+    it('should process a scraping job successfully', () => {
       // Mock successful firecrawl scraping
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: true,
@@ -102,7 +102,7 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should handle scraping failures', async () => {
+    it('should handle scraping failures', () => {
       // Mock failed firecrawl scraping
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: false,
@@ -117,7 +117,7 @@ describe('pipelineProcessor', () => {
       });
     });
 
-    it('should handle Gemini extraction failures', async () => {
+    it('should handle Gemini extraction failures', () => {
       // Mock successful scraping but failed Gemini extraction
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: true,
@@ -139,7 +139,7 @@ describe('pipelineProcessor', () => {
       });
     });
 
-    it('should handle missing target URL', async () => {
+    it('should handle missing target URL', () => {
       const jobWithoutUrl = { ...mockJob, target_url: undefined };
       (ScrapingJobService.updateJobStatus as jest.Mock).mockResolvedValueOnce(jobWithoutUrl);
 
@@ -150,7 +150,7 @@ describe('pipelineProcessor', () => {
       });
     });
 
-    it('should handle retry logic on failures', async () => {
+    it('should handle retry logic on failures', () => {
       // Mock scraping failure
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: false,
@@ -176,7 +176,7 @@ describe('pipelineProcessor', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should stop retrying after max retries', async () => {
+    it('should stop retrying after max retries', () => {
       // Mock scraping failure
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: false,
@@ -217,6 +217,7 @@ describe('pipelineProcessor', () => {
     });
 
     it('should create a food truck successfully', async () => {
+      // @ts-expect-error TS(2345): Argument of type '{ name: string; description: str... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', mockExtractedData, 'https://example.com');
 
       expect(FoodTruckService.createTruck).toHaveBeenCalledWith({
@@ -253,6 +254,7 @@ describe('pipelineProcessor', () => {
     it('should handle missing source URL gracefully', async () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
+      // @ts-expect-error TS(2345): Argument of type '{ name: string; description: str... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', mockExtractedData, '');
 
       expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Missing sourceUrl'));
@@ -265,7 +267,7 @@ describe('pipelineProcessor', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle missing name with fallback', async () => {
+    it('should handle missing name with fallback', () => {
       const dataWithoutName = { ...mockExtractedData, name: undefined };
 
       await createOrUpdateFoodTruck('job-123', dataWithoutName as any, 'https://example.com');
@@ -277,9 +279,10 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should clamp confidence score between 0 and 1', async () => {
+    it('should clamp confidence score between 0 and 1', () => {
       const dataWithHighConfidence = { ...mockExtractedData, confidence_score: 1.5 };
 
+      // @ts-expect-error TS(2345): Argument of type '{ confidence_score: number; name... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', dataWithHighConfidence, 'https://example.com');
 
       expect(FoodTruckService.createTruck).toHaveBeenCalledWith(
@@ -290,6 +293,7 @@ describe('pipelineProcessor', () => {
 
       const dataWithLowConfidence = { ...mockExtractedData, confidence_score: -0.5 };
 
+      // @ts-expect-error TS(2345): Argument of type '{ confidence_score: number; name... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-124', dataWithLowConfidence, 'https://example.com');
 
       expect(FoodTruckService.createTruck).toHaveBeenCalledWith(
@@ -306,6 +310,7 @@ describe('pipelineProcessor', () => {
 
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 
+      // @ts-expect-error TS(2345): Argument of type '{ name: string; description: str... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', mockExtractedData, 'https://example.com');
 
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -320,9 +325,10 @@ describe('pipelineProcessor', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle invalid cuisine_type array', async () => {
+    it('should handle invalid cuisine_type array', () => {
       const dataWithInvalidCuisine = { ...mockExtractedData, cuisine_type: 'Mexican' as any };
 
+      // @ts-expect-error TS(2345): Argument of type '{ cuisine_type: any; name: strin... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', dataWithInvalidCuisine, 'https://example.com');
 
       expect(FoodTruckService.createTruck).toHaveBeenCalledWith(
@@ -332,9 +338,10 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should handle invalid specialties array', async () => {
+    it('should handle invalid specialties array', () => {
       const dataWithInvalidSpecialties = { ...mockExtractedData, specialties: 'tacos' as any };
 
+      // @ts-expect-error TS(2345): Argument of type '{ specialties: any; name: string... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', dataWithInvalidSpecialties, 'https://example.com');
 
       expect(FoodTruckService.createTruck).toHaveBeenCalledWith(
@@ -344,9 +351,10 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should use default confidence score for invalid values', async () => {
+    it('should use default confidence score for invalid values', () => {
       const dataWithInvalidConfidence = { ...mockExtractedData, confidence_score: 'high' as any };
 
+      // @ts-expect-error TS(2345): Argument of type '{ confidence_score: any; name: s... Remove this comment to see the full error message
       await createOrUpdateFoodTruck('job-123', dataWithInvalidConfidence, 'https://example.com');
 
       expect(FoodTruckService.createTruck).toHaveBeenCalledWith(

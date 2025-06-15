@@ -46,7 +46,7 @@ async function tavilySearch(
   query: string,
   options: Record<string, unknown> = {},
 ): Promise<TavilySearchResult[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3003';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3003';
   const response = await fetch(`${baseUrl}/api/tavily`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ async function tavilySearch(
       operation: 'search',
       params: {
         query,
-        limit: options.limit || 10,
+        limit: options.limit ?? 10,
         ...options,
       },
     }),
@@ -68,7 +68,7 @@ async function tavilySearch(
     data?: { results?: TavilySearchResult[] };
     results?: TavilySearchResult[];
   };
-  return result.data?.results || result.results || [];
+  return result.data?.results ?? result.results ?? [];
 }
 
 interface CrawlResult {
@@ -79,7 +79,7 @@ async function firecrawlCrawl(
   url: string,
   options: Record<string, unknown> = {},
 ): Promise<CrawlResult[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3003';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3003';
   const response = await fetch(`${baseUrl}/api/firecrawl`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -87,8 +87,8 @@ async function firecrawlCrawl(
       operation: 'crawl',
       url,
       options: {
-        maxDepth: options.maxDepth || 2,
-        limit: options.limit || 20,
+        maxDepth: options.maxDepth ?? 2,
+        limit: options.limit ?? 20,
         ...options,
       },
     }),
@@ -99,7 +99,7 @@ async function firecrawlCrawl(
   }
 
   const result = (await response.json()) as { data: CrawlResult[] };
-  return result.data || [];
+  return result.data ?? [];
 }
 
 export class FoodTruckDiscoveryEngine {
@@ -131,8 +131,8 @@ export class FoodTruckDiscoveryEngine {
       }
 
       // Extract URLs from content
-      if (result.content || result.raw_content) {
-        const content = result.content || result.raw_content || '';
+      if (result.content != undefined || result.raw_content != undefined) {
+        const content = result.content ?? result.raw_content ?? '';
         const extractedUrls = this.extractFoodTruckUrls(content);
         for (const url of extractedUrls) {
           if (await this.isFoodTruckUrl(url)) {
@@ -156,7 +156,7 @@ export class FoodTruckDiscoveryEngine {
           limit: DISCOVERY_CONFIG.searchResultsLimit,
         });
 
-        if (searchResults && searchResults.length > 0) {
+        if (searchResults != undefined && searchResults.length > 0) {
           await this.processSearchResults(searchResults, discoveredUrls);
         }
       } catch (error) {
@@ -209,12 +209,12 @@ export class FoodTruckDiscoveryEngine {
     crawlResults: unknown,
     discoveredUrls: Set<string>,
   ): Promise<void> {
-    if (crawlResults && Array.isArray(crawlResults) && crawlResults.length > 0) {
+    if (crawlResults != undefined && Array.isArray(crawlResults) && crawlResults.length > 0) {
       for (const result of crawlResults) {
         if (typeof result === 'object' && result !== null && 'url' in result) {
           const resultUrl = (result as { url?: string }).url;
           if (
-            resultUrl &&
+            resultUrl != undefined &&
             typeof resultUrl === 'string' &&
             (await this.isFoodTruckUrl(resultUrl))
           ) {
@@ -263,12 +263,12 @@ export class FoodTruckDiscoveryEngine {
     searchResults: unknown,
     discoveredUrls: Set<string>,
   ): Promise<void> {
-    if (searchResults && Array.isArray(searchResults) && searchResults.length > 0) {
+    if (searchResults != undefined && Array.isArray(searchResults) && searchResults.length > 0) {
       for (const result of searchResults) {
         if (typeof result === 'object' && result !== null && 'url' in result) {
           const resultUrl = (result as { url?: string }).url;
           if (
-            resultUrl &&
+            resultUrl != undefined &&
             typeof resultUrl === 'string' &&
             (await this.isFoodTruckUrl(resultUrl))
           ) {
@@ -342,7 +342,7 @@ export class FoodTruckDiscoveryEngine {
 
     // Look for URL patterns in content - using a safer regex to avoid backtracking
     const urlRegex = /https?:\/\/[^\s<>"']{1,200}/g;
-    const foundUrls = content.match(urlRegex) || [];
+    const foundUrls = content.match(urlRegex) ?? [];
 
     for (const url of foundUrls) {
       try {
@@ -409,7 +409,7 @@ export class FoodTruckDiscoveryEngine {
       }
 
       // Check if we already have this URL in discovered_urls
-      if (!supabaseAdmin) {
+      if (supabaseAdmin == undefined) {
         return false;
       }
 
@@ -419,7 +419,7 @@ export class FoodTruckDiscoveryEngine {
         .eq('url', url)
         .limit(1);
 
-      if (existingDiscovered && existingDiscovered.length > 0) {
+      if (existingDiscovered != undefined && existingDiscovered.length > 0) {
         return false; // Already discovered
       }
 
@@ -430,7 +430,7 @@ export class FoodTruckDiscoveryEngine {
         .contains('source_urls', [url])
         .limit(1);
 
-      if (existingTrucks && existingTrucks.length > 0) {
+      if (existingTrucks != undefined && existingTrucks.length > 0) {
         return false; // Already have this URL
       }
 
@@ -509,10 +509,10 @@ export class FoodTruckDiscoveryEngine {
     result: unknown,
     discoveredUrls: Set<string>,
   ): Promise<void> {
-    if (typeof result === 'object' && result !== null) {
+    if (typeof result === 'object' && result !== undefined) {
       const resultObj = result as { content?: string; raw_content?: string };
       if (resultObj.content || resultObj.raw_content) {
-        const content = resultObj.content || resultObj.raw_content || '';
+        const content = resultObj.content || resultObj.raw_content ?? '';
         const extractedUrls = this.extractFoodTruckUrls(content);
         for (const url of extractedUrls) {
           if (await this.isFoodTruckUrl(url)) {

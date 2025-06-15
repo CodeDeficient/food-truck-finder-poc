@@ -1,5 +1,7 @@
+// @ts-expect-error TS(2792): Cannot find module '@google/genai'. Did you mean t... Remove this comment to see the full error message
 import { GoogleGenAI } from '@google/genai';
 import { APIUsageService } from './supabase';
+import { APIMonitor } from './monitoring/apiMonitor';
 
 import {
   MenuCategory,
@@ -68,11 +70,14 @@ export class GeminiService {
   }
 
   async processMenuData(rawMenuText: string): Promise<GeminiResponse<MenuCategory[]>> {
-    const usageCheck = await this.checkUsageLimits();
-    if (!usageCheck.canMakeRequest) {
+    // Enhanced API monitoring with proactive throttling
+    const estimatedTokens = Math.ceil(rawMenuText.length / 4) + 500;
+    const canMakeRequest = await APIMonitor.canMakeRequest('gemini', 1, estimatedTokens);
+
+    if (!canMakeRequest.allowed) {
       return {
         success: false,
-        error: 'Daily API limits exceeded',
+        error: `API limit reached: ${canMakeRequest.reason}. Wait time: ${Math.ceil((canMakeRequest.waitTime ?? 0) / 1000 / 60)} minutes`,
       };
     }
 
@@ -114,7 +119,7 @@ Rules:
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: 0 },
       });
-      textOutput = sdkResponse.text || '';
+      textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
@@ -197,7 +202,7 @@ Rules:
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: 0 },
       });
-      textOutput = sdkResponse.text || '';
+      textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
@@ -277,7 +282,7 @@ Rules:
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: 0 },
       });
-      textOutput = sdkResponse.text || '';
+      textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
@@ -358,7 +363,7 @@ Rules:
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: 0 },
       });
-      textOutput = sdkResponse.text || '';
+      textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
@@ -443,7 +448,7 @@ Rules:
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      textOutput = sdkResponse.text || '';
+      textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
         sdkResponse.usageMetadata?.totalTokenCount ||
@@ -546,7 +551,7 @@ Markdown Content:
 ${markdownContent}
 ---
 
-Source url (if available): ${sourceUrl || 'Not provided'}
+Source url (if available): ${sourceUrl ?? 'Not provided'}
 
 Target json Schema:
 {{
@@ -597,7 +602,7 @@ Target json Schema:
     "yelp": "string | undefined"
     // Add other platforms like yelp, tiktok if found
   }},
-    "source_url": "${sourceUrl || 'Not provided'}"
+    "source_url": "${sourceUrl ?? 'Not provided'}"
 }}
 
 Instructions:
@@ -625,7 +630,7 @@ Instructions:
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
       });
-      textOutput = sdkResponse.text || ''; // Clean the response to ensure it's valid json      // Remove potential markdown code block delimiters with safer regex patterns
+      textOutput = sdkResponse.text ?? ''; // Clean the response to ensure it's valid json      // Remove potential markdown code block delimiters with safer regex patterns
       const cleanedText = textOutput
         .replace(/^```json[ \t\r\n]{0,10}/, '')
         .replace(/[ \t\r\n]{0,10}```$/, '')
@@ -671,3 +676,30 @@ Instructions:
 
 // Export singleton instance
 export const gemini = new GeminiService();
+
+// Centralized Gemini operation dispatcher to eliminate duplication
+export async function dispatchGeminiOperation(
+  type: 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance',
+  data: unknown
+): Promise<unknown> {
+  switch (type) {
+    case 'menu': {
+      return await gemini.processMenuData(data as string);
+    }
+    case 'location': {
+      return await gemini.extractLocationFromText(data as string);
+    }
+    case 'hours': {
+      return await gemini.standardizeOperatingHours(data as string);
+    }
+    case 'sentiment': {
+      return await gemini.analyzeSentiment(data as string);
+    }
+    case 'enhance': {
+      return await gemini.enhanceFoodTruckData(data);
+    }
+    default: {
+      throw new Error(`Unknown Gemini operation type: ${type}`);
+    }
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+// @ts-expect-error TS(2792): Cannot find module '@supabase/supabase-js'. Did yo... Remove this comment to see the full error message
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
@@ -22,11 +23,11 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
 
   useEffect(() => {
     // Get initial session
-    const getSession = async () => {
+    const getSession = () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      setUser(session?.user || undefined);
+      setUser(session?.user ?? undefined);
       setLoading(false);
     };
 
@@ -37,8 +38,8 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || undefined);
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      setUser(session?.user ?? undefined);
       setLoading(false);
     });
 

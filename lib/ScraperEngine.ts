@@ -115,21 +115,21 @@ export class ScraperEngine {
       });
 
       if (!firecrawlResult.success || !firecrawlResult.data) {
-        throw new Error(firecrawlResult.error || 'Firecrawl scraping failed to return data.');
+        throw new Error(firecrawlResult.error ?? 'Firecrawl scraping failed to return data.');
       }
 
       const returnedData: WebsiteScrapeData = {};
-      if (firecrawlResult.data.markdown) {
+      if (firecrawlResult.data.markdown != undefined && firecrawlResult.data.markdown !== '') {
         returnedData.markdown = firecrawlResult.data.markdown;
       }
-      if (firecrawlResult.data.html) {
+      if (firecrawlResult.data.html != undefined && firecrawlResult.data.html !== '') {
         returnedData.html = firecrawlResult.data.html;
       }
-      if (firecrawlResult.data.metadata) {
+      if (firecrawlResult.data.metadata != undefined) {
         returnedData.metadata = firecrawlResult.data.metadata;
       }
 
-      if (!returnedData.markdown && !returnedData.html) {
+      if ((returnedData.markdown == undefined || returnedData.markdown === '') && (returnedData.html == undefined || returnedData.html === '')) {
         throw new Error('Firecrawl returned no markdown or HTML content.');
       }
 
@@ -391,12 +391,12 @@ export class DataQualityAssessor {
     const issues: string[] = [];
     let score = 100;
 
-    if (!truckData.name || truckData.name.trim().length === 0) {
+    if (truckData.name == undefined || truckData.name.trim().length === 0) {
       issues.push('Missing or empty truck name');
       score -= 20;
     }
 
-    if (!truckData.location || !truckData.location.current) {
+    if (truckData.location?.current == undefined) {
       issues.push('Missing current location data');
       score -= 25;
     } else {
@@ -407,36 +407,36 @@ export class DataQualityAssessor {
         issues.push('Missing GPS coordinates');
         score -= 15;
       }
-      if (!truckData.location.current.address) {
+      if (truckData.location.current.address == undefined || truckData.location.current.address === '') {
         issues.push('Missing address information');
         score -= 10;
       }
     }
 
-    if (truckData.contact) {
-      if (!truckData.contact.phone && !truckData.contact.email) {
+    if (truckData.contact == undefined) {
+      issues.push('Missing contact information');
+      score -= 20;
+    } else {
+      if ((truckData.contact.phone == undefined || truckData.contact.phone === '') && (truckData.contact.email == undefined || truckData.contact.email === '')) {
         issues.push('No phone or email contact available');
         score -= 15;
       }
-      if (truckData.contact.phone && !this.isValidPhone(truckData.contact.phone)) {
+      if (truckData.contact.phone != undefined && truckData.contact.phone !== '' && !this.isValidPhone(truckData.contact.phone)) {
         issues.push('Invalid phone number format');
         score -= 5;
       }
-      if (truckData.contact.email && !this.isValidEmail(truckData.contact.email)) {
+      if (truckData.contact.email != undefined && truckData.contact.email !== '' && !this.isValidEmail(truckData.contact.email)) {
         issues.push('Invalid email format');
         score -= 5;
       }
-    } else {
-      issues.push('Missing contact information');
-      score -= 20;
     }
 
-    if (!truckData.operating_hours || Object.keys(truckData.operating_hours).length === 0) {
+    if (truckData.operating_hours == undefined || Object.keys(truckData.operating_hours).length === 0) {
       issues.push('Missing operating hours');
       score -= 15;
     }
 
-    if (!truckData.menu || truckData.menu.length === 0) {
+    if (truckData.menu == undefined || truckData.menu.length === 0) {
       issues.push('Missing menu information');
       score -= 10;
     } else {
@@ -445,7 +445,7 @@ export class DataQualityAssessor {
       score -= menuIssues.length * 2;
     }
 
-    if (truckData.last_updated) {
+    if (truckData.last_updated != undefined && truckData.last_updated !== '') {
       const lastUpdate = new Date(truckData.last_updated);
       const daysSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
 
@@ -469,19 +469,19 @@ export class DataQualityAssessor {
     const issues: string[] = [];
 
     for (const [categoryIndex, category] of menu.entries()) {
-      if (!category.category || category.category.trim().length === 0) {
+      if (category.category == undefined || category.category.trim().length === 0) {
         issues.push(`Menu category ${categoryIndex + 1} missing name`);
       }
 
-      if (!category.items || category.items.length === 0) {
-        issues.push(`Menu category "${category.category}" has no items`);
+      if (category.items == undefined || category.items.length === 0) {
+        issues.push(`Menu category "${category.category ?? 'Unknown'}" has no items`);
       } else {
         for (const [itemIndex, item] of category.items.entries()) {
-          if (!item.name || item.name.trim().length === 0) {
-            issues.push(`Menu item ${itemIndex + 1} in "${category.category}" missing name`);
+          if (item.name == undefined || item.name.trim().length === 0) {
+            issues.push(`Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`);
           }
           if (typeof item.price !== 'number' || item.price <= 0) {
-            issues.push(`Menu item "${item.name}" has invalid price`);
+            issues.push(`Menu item "${item.name ?? 'Unknown'}" has invalid price`);
           }
         }
       }

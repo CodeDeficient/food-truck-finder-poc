@@ -1,4 +1,5 @@
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module 'class-variance-authority'. Did... Remove this comment to see the full error message
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';

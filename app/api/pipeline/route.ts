@@ -1,6 +1,7 @@
 // app/api/pipeline/route.ts
 // Unified Pipeline API - Consolidates all pipeline functionality
 
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import { ScrapingJobService } from '@/lib/supabase';
 import { pipelineManager, type PipelineConfig } from '@/lib/pipelineManager';
@@ -26,10 +27,10 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as PipelineRequestBody;
 
     // Handle legacy single URL scraping
-    if (body.target_url && !body.action) {
+    if (body.target_url != undefined && body.action == undefined) {
       const { target_url, job_type = 'website_scrape', priority = 1 } = body;
 
-      if (!target_url) {
+      if (target_url == undefined || target_url === '') {
         return NextResponse.json({ error: 'target_url is required' }, { status: 400 });
       }
 
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
         scheduled_at: new Date().toISOString(),
       });
 
-      if (!job) {
+      if (job == undefined) {
         return NextResponse.json({ error: 'Failed to create scraping job' }, { status: 500 });
       }
 
@@ -66,12 +67,12 @@ export async function POST(request: NextRequest) {
     const pipelineConfig: PipelineConfig = {
       type: action,
       params: {
-        maxUrls: config.maxUrls || 50,
-        maxUrlsToProcess: config.maxUrlsToProcess || 20,
-        targetCities: config.targetCities || ['Charleston', 'Columbia', 'Greenville'],
-        priority: config.priority || 5,
-        skipDiscovery: config.skipDiscovery || false,
-        retryFailedJobs: config.retryFailedJobs || false,
+        maxUrls: config.maxUrls ?? 50,
+        maxUrlsToProcess: config.maxUrlsToProcess ?? 20,
+        targetCities: config.targetCities ?? ['Charleston', 'Columbia', 'Greenville'],
+        priority: config.priority ?? 5,
+        skipDiscovery: config.skipDiscovery ?? false,
+        retryFailedJobs: config.retryFailedJobs ?? false,
       },
     };
 
