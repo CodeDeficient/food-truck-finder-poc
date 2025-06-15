@@ -1,4 +1,6 @@
+// @ts-expect-error TS(2792): Cannot find module '@playwright/test'. Did you mea... Remove this comment to see the full error message
 import { test, expect } from '@playwright/test';
+// @ts-expect-error TS(2305): Module '"./utils/testUtils"' has no exported membe... Remove this comment to see the full error message
 import { DatabaseTestUtils, PipelineTestUtils } from './utils/testUtils';
 import { supabaseAdmin } from '../lib/supabase';
 
@@ -8,12 +10,15 @@ import { supabaseAdmin } from '../lib/supabase';
  */
 
 test.describe('Pipeline Health Monitoring', () => {
-  test('System Health Dashboard', async ({ request }) => {
+  test('System Health Dashboard', async ({
+    request
+  }: any) => {
     console.info('\n=== PIPELINE HEALTH CHECK ===');
 
     // 1. Database Health Check
     console.info('\n1. Database Health Check');
     try {
+      // @ts-expect-error TS(2339): Property 'getDatabaseStats' does not exist on type... Remove this comment to see the full error message
       const stats = await DatabaseTestUtils.getDatabaseStats();
       console.info('📊 Database Statistics:');
       console.info(`   Total Trucks: ${stats.totalTrucks}`);
@@ -71,6 +76,7 @@ test.describe('Pipeline Health Monitoring', () => {
     // 3. Data Quality Check
     console.log('\n3. Data Quality Check');
     try {
+      // @ts-expect-error TS(2339): Property 'validateDataQuality' does not exist on t... Remove this comment to see the full error message
       const qualityReport = await DatabaseTestUtils.validateDataQuality();
       console.log(`📋 Data Quality Report:`);
       console.log(`   Valid Trucks: ${qualityReport.validTrucks}`);
@@ -148,12 +154,15 @@ test.describe('Pipeline Health Monitoring', () => {
     console.log('\n=== HEALTH CHECK COMPLETE ===\n');
   });
 
-  test('Performance Baseline Check', async ({ request }) => {
+  test('Performance Baseline Check', async ({
+    request
+  }: any) => {
     console.log('\n=== PERFORMANCE BASELINE CHECK ===');
 
     const testUrl = 'https://www.rotirolls.com/';
 
     // Clean up existing data
+    // @ts-expect-error TS(2339): Property 'cleanupTestData' does not exist on type ... Remove this comment to see the full error message
     await DatabaseTestUtils.cleanupTestData({ specificUrls: [testUrl] });
 
     const startTime = Date.now();
@@ -166,6 +175,7 @@ test.describe('Pipeline Health Monitoring', () => {
     expect(response.ok()).toBeTruthy();
 
     // Wait for completion
+    // @ts-expect-error TS(2339): Property 'waitForProcessingComplete' does not exis... Remove this comment to see the full error message
     const truck = await DatabaseTestUtils.waitForProcessingComplete(testUrl, 300_000, 3000);
 
     const endTime = Date.now();
@@ -185,6 +195,7 @@ test.describe('Pipeline Health Monitoring', () => {
 
     // Validate truck data quality
     if (truck) {
+      // @ts-expect-error TS(2339): Property 'validateTruckData' does not exist on typ... Remove this comment to see the full error message
       const issues = DatabaseTestUtils.validateTruckData(truck);
       expect(issues.length).toBe(0);
       console.log('✅ Data quality validation passed');
@@ -194,7 +205,9 @@ test.describe('Pipeline Health Monitoring', () => {
     console.log('\n=== BASELINE CHECK COMPLETE ===\n');
   });
 
-  test('Error Rate Monitoring', async ({ request }) => {
+  test('Error Rate Monitoring', async ({
+    request
+  }: any) => {
     console.log('\n=== ERROR RATE MONITORING ===');
 
     const testRequests = 5;
@@ -213,6 +226,7 @@ test.describe('Pipeline Health Monitoring', () => {
       } catch (error) {
         results.push({
           success: false,
+          // @ts-expect-error TS(2571): Object is of type 'unknown'.
           error: error.message,
           attempt: i + 1,
         });
@@ -284,6 +298,7 @@ test.describe('Pipeline Alerts and Thresholds', () => {
   test('Critical Thresholds Check', async () => {
     console.log('\n=== CRITICAL THRESHOLDS CHECK ===');
 
+    // @ts-expect-error TS(2339): Property 'getDatabaseStats' does not exist on type... Remove this comment to see the full error message
     const stats = await DatabaseTestUtils.getDatabaseStats();
     const alerts = [];
 

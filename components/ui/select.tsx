@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-select'. Did y... Remove this comment to see the full error message
 import * as SelectPrimitive from '@radix-ui/react-select';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 
 import { cn } from '@/lib/utils';

@@ -99,8 +99,8 @@ export class PipelineManager {
       switch (config.type) {
         case 'discovery': {
           result = await this.runDiscovery({
-            cities: config.params.targetCities || [],
-            maxUrls: config.params.maxUrls || 50,
+            cities: config.params.targetCities ?? [],
+            maxUrls: config.params.maxUrls ?? 50,
             searchTerms: ['food truck', 'food cart', 'mobile food'],
           });
           break;
@@ -108,9 +108,9 @@ export class PipelineManager {
 
         case 'processing': {
           result = await this.processJobs({
-            maxJobs: config.params.maxUrlsToProcess || 20,
-            priority: config.params.priority || 5,
-            retryFailedJobs: config.params.retryFailedJobs || false,
+            maxJobs: config.params.maxUrlsToProcess ?? 20,
+            priority: config.params.priority ?? 5,
+            retryFailedJobs: config.params.retryFailedJobs ?? false,
           });
           break;
         }
@@ -214,7 +214,7 @@ export class PipelineManager {
 
       // Get pending jobs
       const pendingJobs = await ScrapingJobService.getJobsByStatus('pending');
-      if (!pendingJobs || pendingJobs.length === 0) {
+      if (pendingJobs == undefined || pendingJobs.length === 0) {
         console.info('No pending jobs to process');
         return {
           success: true,
@@ -299,29 +299,29 @@ export class PipelineManager {
     };
 
     // Step 1: Discovery (unless skipped)
-    if (!config.params.skipDiscovery) {
+    if (config.params.skipDiscovery !== true) {
       results.discovery = await this.runDiscovery({
-        cities: config.params.targetCities || ['Charleston', 'Columbia', 'Greenville'],
-        maxUrls: config.params.maxUrls || 50,
+        cities: config.params.targetCities ?? ['Charleston', 'Columbia', 'Greenville'],
+        maxUrls: config.params.maxUrls ?? 50,
         searchTerms: ['food truck', 'food cart', 'mobile food'],
       });
     }
 
     // Step 2: Processing
     results.processing = await this.processJobs({
-      maxJobs: config.params.maxUrlsToProcess || 20,
-      priority: config.params.priority || 5,
-      retryFailedJobs: config.params.retryFailedJobs || false,
+      maxJobs: config.params.maxUrlsToProcess ?? 20,
+      priority: config.params.priority ?? 5,
+      retryFailedJobs: config.params.retryFailedJobs ?? false,
     });
 
     // Combine results
     return {
-      urlsDiscovered: results.discovery?.urlsDiscovered || 0,
-      urlsStored: results.discovery?.urlsStored || 0,
-      urlsDuplicate: results.discovery?.urlsDuplicate || 0,
-      jobsProcessed: results.processing?.jobsProcessed || 0,
-      trucksCreated: results.processing?.trucksCreated || 0,
-      errors: [...(results.discovery?.errors || []), ...(results.processing?.errors || [])],
+      urlsDiscovered: results.discovery?.urlsDiscovered ?? 0,
+      urlsStored: results.discovery?.urlsStored ?? 0,
+      urlsDuplicate: results.discovery?.urlsDuplicate ?? 0,
+      jobsProcessed: results.processing?.jobsProcessed ?? 0,
+      trucksCreated: results.processing?.trucksCreated ?? 0,
+      errors: [...(results.discovery?.errors ?? []), ...(results.processing?.errors ?? [])],
     };
   }
 
@@ -343,7 +343,7 @@ export class PipelineManager {
         success: result.errors.length === 0,
         trucksProcessed: result.trucksProcessed,
         newTrucksFound: result.newTrucksFound,
-        errors: result.errors.map((e) => e.url + ': ' + (e.details || 'Unknown error')),
+        errors: result.errors.map((e) => e.url + ': ' + (e.details ?? 'Unknown error')),
         duration,
       };
     } catch (error) {

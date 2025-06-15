@@ -8,7 +8,7 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from '@/components/ui/Toast';
+} from '@/components/ui/toast';
 import type { ToasterToast } from '@/hooks/UseToast';
 
 export function Toaster() {

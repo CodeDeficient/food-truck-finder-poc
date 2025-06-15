@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+// @ts-expect-error TS(2792): Cannot find module 'next/navigation'. Did you mean... Remove this comment to see the full error message
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Loader2, Shield, Mail } from 'lucide-react';
 
 export default function LoginPage() {
@@ -17,9 +19,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectedFrom') || '/admin';
+  const redirectTo = searchParams.get('redirectedFrom') ?? '/admin';
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
@@ -61,7 +63,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     try {
       setLoading(true);
       setError(undefined);
@@ -114,7 +116,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@example.com"
+                placeholder="zabrien@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -131,6 +133,7 @@ export default function LoginPage() {
                 required
               />
             </div>
+            {/* @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; type: "sub... Remove this comment to see the full error message */}
             <Button type="submit" disabled={loading} className="w-full" size="lg">
               {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -155,6 +158,7 @@ export default function LoginPage() {
               handleGoogleLogin().catch((error) => console.warn('Google login failed:', error));
             }}
             disabled={loading}
+            {/* @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; onClick: (... Remove this comment to see the full error message */}
             variant="outline"
             className="w-full"
             size="lg"

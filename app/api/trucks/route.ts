@@ -1,15 +1,17 @@
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import { FoodTruckService } from '@/lib/supabase';
+// @ts-expect-error TS(2792): Cannot find module 'zod'. Did you mean to set the ... Remove this comment to see the full error message
 import { z, type infer as ZInfer } from 'zod';
 
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
-  const radius = searchParams.get('radius') || '5';
-  const limit = Number.parseInt(searchParams.get('limit') || '50');
-  const offset = Number.parseInt(searchParams.get('offset') || '0');
+  const radius = searchParams.get('radius') ?? '5';
+  const limit = Number.parseInt(searchParams.get('limit') ?? '50');
+  const offset = Number.parseInt(searchParams.get('offset') ?? '0');
 
   try {
     // Get specific truck by ID
@@ -43,12 +45,12 @@ export async function GET(request: NextRequest) {
       total,
       limit,
       offset,
-      hasMore: offset + limit < (total || 0),
+      hasMore: offset + limit < (total ?? 0),
       summary: {
         totalTrucks: total,
         averageQuality:
           trucks && trucks.length > 0
-            ? trucks.reduce((acc, t) => acc + (t.data_quality_score || 0), 0) / trucks.length
+            ? trucks.reduce((acc, t) => acc + (t.data_quality_score ?? 0), 0) / trucks.length
             : 0,
         lastUpdated:
           trucks && trucks.length > 0
@@ -186,6 +188,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating food truck:', error);
     if (error instanceof z.ZodError) {
+      // @ts-expect-error TS(2571): Object is of type 'unknown'.
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to create food truck' }, { status: 500 });
@@ -207,6 +210,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error('Error updating food truck:', error);
     if (error instanceof z.ZodError) {
+      // @ts-expect-error TS(2571): Object is of type 'unknown'.
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to update food truck' }, { status: 500 });

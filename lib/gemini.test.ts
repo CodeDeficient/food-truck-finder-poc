@@ -48,7 +48,7 @@ describe('GeminiService', () => {
       expect(service).toBeDefined();
     });
 
-    it('should call Gemini API with the correct prompt and return parsed data on success', async () => {
+    it('should call Gemini API with the correct prompt and return parsed data on success', () => {
       // Mock successful generateContent response with valid JSON string
       // Call extractFoodTruckDetailsFromMarkdown
       // Assert that generateContent was called with a prompt containing the sampleMarkdown
@@ -56,20 +56,20 @@ describe('GeminiService', () => {
       // Assert that APIUsageService.trackUsage was called
     });
 
-    it('should handle Gemini API errors gracefully', async () => {
+    it('should handle Gemini API errors gracefully', () => {
       // Mock generateContent to throw an error or return an error structure
       // Call extractFoodTruckDetailsFromMarkdown
       // Assert that the method returns success: false, an error message, and the promptSent
       // Assert that APIUsageService.trackUsage might still be called if tokens can be estimated or an attempt was made
     });
 
-    it('should handle JSON parsing errors from Gemini response', async () => {
+    it('should handle JSON parsing errors from Gemini response', () => {
       // Mock successful generateContent response but with malformed JSON
       // Call extractFoodTruckDetailsFromMarkdown
       // Assert that the method returns success: false, a parsing error message, and the promptSent
     });
 
-    it('should handle daily API limit exceeded', async () => {
+    it('should handle daily API limit exceeded', () => {
       // Mock APIUsageService.getTodayUsage to return limits as exceeded
       // Call extractFoodTruckDetailsFromMarkdown
       // Assert it returns success: false and an error about limits without calling generateContent

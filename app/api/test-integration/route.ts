@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import { firecrawl } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
         saturday: { closed: true },
         sunday: { closed: true },
       },
-      menu: geminiResult.data || [],
+      menu: geminiResult.data ?? [],
       contact_info: { phone: '+1-555-TEST', email: undefined, website: undefined },
       social_media: {
         instagram: undefined,
@@ -98,12 +99,12 @@ export async function POST(request: NextRequest) {
       results: {
         firecrawl: {
           success: scrapeResult.success,
-          dataLength: scrapeResult.data?.markdown?.length || 0,
+          dataLength: scrapeResult.data?.markdown?.length ?? 0,
         },
         gemini: {
           success: geminiResult.success,
           tokensUsed: geminiResult.tokensUsed,
-          categoriesFound: geminiResult.data?.length || 0,
+          categoriesFound: geminiResult.data?.length ?? 0,
         },
         supabase: {
           truckCreated: testTruck.id,

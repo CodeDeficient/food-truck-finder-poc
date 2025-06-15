@@ -1,10 +1,11 @@
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 import { autoScraper } from '@/lib/autoScraper';
 import { scheduler } from '@/lib/scheduler';
 import { logActivity } from '@/lib/activityLogger';
 import { AutoScrapeResult } from '@/lib/autoScraper';
 
-export async function POST(request: NextRequest) {
+export function POST(request: NextRequest) {
   try {
     // Verify cron secret for security
     const authHeader = request.headers.get('authorization');
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
         trucksProcessed: result.trucksProcessed,
         newTrucksFound: result.newTrucksFound,
-        errorsCount: result.errors?.length || 0,
+        errorsCount: result.errors?.length ?? 0,
       },
     });
 

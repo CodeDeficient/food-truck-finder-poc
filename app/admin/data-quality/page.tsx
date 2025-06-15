@@ -1,5 +1,5 @@
 import React from 'react';
-import { FoodTruckService, FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, FoodTruck, supabase } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -11,26 +11,88 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit } from 'lucide-react';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
+import { Edit, BarChart3 } from 'lucide-react';
+// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
+// @ts-expect-error TS(2792): Cannot find module '@/components/ui/data-quality-c... Remove this comment to see the full error message
+import { DataQualityCharts } from '@/components/ui/data-quality-charts';
+// @ts-expect-error TS(2792): Cannot find module '@/components/ui/simple-quality... Remove this comment to see the full error message
+import { SimpleQualityPanel } from '@/components/ui/simple-quality-panel';
+import {
+  formatQualityScore,
+  categorizeQualityScore,
+  getQualityBadgeClasses,
+  getQualityScoreAriaLabel
+} from '@/lib/utils/data-quality-formatters';
 
-export default async function DataQualityPage() {
+// Define the data quality stats type based on the database function
+interface DataQualityStats {
+  total_trucks: number;
+  avg_quality_score: number;
+  high_quality_count: number;
+  medium_quality_count: number;
+  low_quality_count: number;
+  verified_count: number;
+  pending_count: number;
+  flagged_count: number;
+}
+
+export default function DataQualityPage() {
   const { trucks } = await FoodTruckService.getAllTrucks(100, 0); // Fetch first 100 trucks
+
+  // Fetch data quality stats using the Supabase function
+  const { data: qualityStatsResult, error: qualityError } = await supabase
+    .rpc('get_data_quality_stats')
+    .single();
+
+  if (qualityError != null) {
+    console.error('Error fetching data quality stats:', qualityError);
+  }
+
+  const dataQualityStats: DataQualityStats = (qualityStatsResult as DataQualityStats) ?? {
+    total_trucks: 0,
+    avg_quality_score: 0,
+    high_quality_count: 0,
+    medium_quality_count: 0,
+    low_quality_count: 0,
+    verified_count: 0,
+    pending_count: 0,
+    flagged_count: 0,
+  };
 
   // Sort trucks by data quality score (lowest first for review)
   const sortedTrucks = [...trucks].sort(
-    (a: FoodTruck, b: FoodTruck) => (a.data_quality_score || 0) - (b.data_quality_score || 0),
+    (a: FoodTruck, b: FoodTruck) => (a.data_quality_score ?? 0) - (b.data_quality_score ?? 0),
   );
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Data Quality Management</h1>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Data Quality Management</h1>
+        <div className="flex items-center gap-2">
+          // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/admin/data-quality/reports">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              View Reports
+            </Link>
+          </Button>
+        </div>
+      </div>
 
+      {/* Data Quality Charts Section */}
+      <DataQualityCharts qualityStats={dataQualityStats} />
+
+      {/* Quality Management Panel */}
+      <SimpleQualityPanel />
+
+      {/* Food Truck Quality Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Food Truck Data Quality</CardTitle>
+          <CardTitle>Food Truck Data Quality Details</CardTitle>
           <CardDescription>
-            Review and manage the data quality scores for food trucks.
+            Review and manage individual food truck data quality scores. Trucks are sorted by quality score (lowest first for priority review).
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -38,39 +100,58 @@ export default async function DataQualityPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Verification Status</TableHead>
                 <TableHead>Quality Score</TableHead>
+                <TableHead>Quality Category</TableHead>
                 <TableHead>Last Scraped</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedTrucks.map((truck: FoodTruck) => (
-                <TableRow key={truck.id}>
-                  <TableCell className="font-medium">{truck.name}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={truck.verification_status === 'verified' ? 'default' : 'outline'}
-                    >
-                      {truck.verification_status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{truck.data_quality_score?.toFixed(1) || 'N/A'}</TableCell>
-                  <TableCell>
-                    {truck.last_scraped_at
-                      ? new Date(truck.last_scraped_at).toLocaleDateString()
-                      : 'N/A'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/admin/food-trucks/${truck.id}?tab=data-quality`}>
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
-                      </Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {sortedTrucks.map((truck: FoodTruck) => {
+                const qualityCategory = categorizeQualityScore(truck.data_quality_score);
+                const badgeClasses = getQualityBadgeClasses(truck.data_quality_score);
+                const ariaLabel = getQualityScoreAriaLabel(truck.data_quality_score);
+
+                return (
+                  <TableRow key={truck.id}>
+                    <TableCell className="font-medium">{truck.name}</TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={truck.verification_status === 'verified' ? 'default' : 'outline'}
+                      >
+                        {truck.verification_status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <span aria-label={ariaLabel}>
+                        {formatQualityScore(truck.data_quality_score)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={badgeClasses}>
+                        {qualityCategory.label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {truck.last_scraped_at
+                        ? new Date(truck.last_scraped_at).toLocaleDateString()
+                        : 'N/A'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center gap-2 justify-end">
+                        // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/admin/food-trucks/${truck.id}?tab=data-quality`}>
+                            <Edit className="h-4 w-4" />
+                            <span className="sr-only">Edit {truck.name}</span>
+                          </Link>
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

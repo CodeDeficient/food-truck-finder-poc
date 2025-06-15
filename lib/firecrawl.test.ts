@@ -20,17 +20,17 @@ describe('FirecrawlService', () => {
   });
 
   describe('scrapeUrl', () => {
-    it('should correctly call the Firecrawl API and return markdown data on success', async () => {
+    it('should correctly call the Firecrawl API and return markdown data on success', () => {
       // Mock successful fetch response for scrapeUrl
       // Assert that fetch was called with the correct URL, method, headers, and body
       // Assert that the method returns the expected data structure
     });
 
-    it('should handle API errors gracefully for scrapeUrl', async () => {
+    it('should handle API errors gracefully for scrapeUrl', () => {
       // Mock failed fetch response (e.g., 400, 500 error)
       // Assert that the method returns success: false and an error message
     });
-    it('should handle network errors gracefully for scrapeUrl', async () => {
+    it('should handle network errors gracefully for scrapeUrl', () => {
       // Mock fetch to throw a network error
       // Assert that the method returns success: false and an error message
     });
@@ -38,14 +38,14 @@ describe('FirecrawlService', () => {
 
   describe('scrapeFoodTruckWebsite', () => {
     // This method now primarily calls scrapeUrl and returns markdown + basic metadata
-    it('should call scrapeUrl with correct parameters and return its markdown and metadata', async () => {
+    it('should call scrapeUrl with correct parameters and return its markdown and metadata', () => {
       // Mock firecrawlService.scrapeUrl to return a successful response with markdown and metadata
       // Call scrapeFoodTruckWebsite
       // Assert that scrapeUrl was called with markdown format and other relevant options
       // Assert that scrapeFoodTruckWebsite returns the expected structure
     });
 
-    it('should return an error if scrapeUrl fails or returns no markdown', async () => {
+    it('should return an error if scrapeUrl fails or returns no markdown', () => {
       // Mock firecrawlService.scrapeUrl to return a failure or no markdown
       // Call scrapeFoodTruckWebsite
       // Assert that it returns success: false and an appropriate error message

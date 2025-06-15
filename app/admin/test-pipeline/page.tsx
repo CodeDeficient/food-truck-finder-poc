@@ -64,7 +64,7 @@ export default function TestPipelinePage() {
   const [results, setResults] = useState<TestPipelineResults | undefined>();
   const [error, setError] = useState<string | undefined>();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setResults(undefined);
@@ -85,7 +85,7 @@ export default function TestPipelinePage() {
       const data = (await response.json()) as TestPipelineResults;
 
       if (!response.ok) {
-        throw new Error(data.error || 'Test run failed');
+        throw new Error(data.error ?? 'Test run failed');
       }
       setResults(data);
     } catch (error_) {
@@ -110,17 +110,17 @@ export default function TestPipelinePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {result.error && (
+          {result.error != undefined && (
             <p className="text-red-500">
               <strong>Error:</strong> {result.error}
             </p>
           )}
-          {result.details && (
+          {result.details != undefined && (
             <p>
               <strong>Details:</strong> {result.details}
             </p>
           )}
-          {result.prompt && (
+          {result.prompt != undefined && (
             <div>
               <strong>Prompt:</strong>
               <Textarea
@@ -130,7 +130,7 @@ export default function TestPipelinePage() {
               />
             </div>
           )}
-          {result.rawContent && (
+          {result.rawContent != undefined && (
             <div>
               <strong>Raw Content (Firecrawl):</strong>
               <Textarea
@@ -140,7 +140,7 @@ export default function TestPipelinePage() {
               />
             </div>
           )}
-          {result.data && (
+          {result.data != undefined && (
             <div className="mt-2">
               <strong>Data Output:</strong>{' '}
               <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
@@ -149,7 +149,7 @@ export default function TestPipelinePage() {
               </pre>
             </div>
           )}
-          {result.preparedData && (
+          {result.preparedData != undefined && (
             <div className="mt-2">
               <strong>Data Prepared for Supabase:</strong>{' '}
               <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
@@ -158,17 +158,17 @@ export default function TestPipelinePage() {
               </pre>
             </div>
           )}
-          {result.recordId && (
+          {result.recordId != undefined && (
             <p>
               <strong>Supabase Record id:</strong> {result.recordId}
             </p>
           )}
-          {result.tokensUsed !== undefined && (
+          {result.tokensUsed !== undefined != undefined && (
             <p>
               <strong>Gemini Tokens Used:</strong> {result.tokensUsed}
             </p>
           )}
-          {result.metadata && (
+          {result.metadata != undefined && (
             <div>
               <strong>Metadata (Firecrawl):</strong>{' '}
               <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
@@ -216,7 +216,7 @@ export default function TestPipelinePage() {
               <Checkbox
                 id="use-raw-text-checkbox"
                 checked={useRawText}
-                onCheckedChange={(checked) => setUseRawText(Boolean(checked))}
+                onCheckedChange={(checked: any) => setUseRawText(Boolean(checked))}
                 disabled={isLoading}
               />
               <Label htmlFor="use-raw-text-checkbox">Use Raw Text Input Instead</Label>
@@ -238,7 +238,7 @@ export default function TestPipelinePage() {
               <Checkbox
                 id="dry-run-checkbox"
                 checked={isDryRun}
-                onCheckedChange={(checked) => setIsDryRun(Boolean(checked))}
+                onCheckedChange={(checked: any) => setIsDryRun(Boolean(checked))}
                 disabled={isLoading}
               />
               <Label htmlFor="dry-run-checkbox">Dry Run (Do not save to Supabase)</Label>
@@ -251,7 +251,7 @@ export default function TestPipelinePage() {
         </CardContent>
       </Card>
 
-      {error && (
+      {error != undefined && (
         <Card className="border-red-500">
           <CardHeader>
             <CardTitle className="text-red-600">Test Failed</CardTitle>
@@ -262,11 +262,11 @@ export default function TestPipelinePage() {
         </Card>
       )}
 
-      {results && !results.error && (
+      {results != undefined && !results.error && (
         <Card>
           <CardHeader>
             <CardTitle>Test Results</CardTitle>
-            {results.overallStatus && (
+            {results.overallStatus != undefined && (
               <CardDescription>Overall Status: {results.overallStatus}</CardDescription>
             )}
           </CardHeader>
@@ -293,7 +293,7 @@ export default function TestPipelinePage() {
                 {renderStageResult('Supabase Interaction Stage', results.supabase)}
               </TabsContent>
             </Tabs>
-            {results.logs && results.logs.length > 0 && (
+            {results.logs != undefined && results.logs.length > 0 && (
               <div className="mt-4">
                 <h3 className="text-lg font-semibold">Logs:</h3>
                 <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-800 rounded-md overflow-x-auto text-sm">

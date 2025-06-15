@@ -116,11 +116,11 @@ export class FirecrawlService {
         },
         body: JSON.stringify({
           url,
-          formats: options.formats || ['markdown'],
+          formats: options.formats ?? ['markdown'],
           includeTags: options.includeTags,
           excludeTags: options.excludeTags,
           onlyMainContent: options.onlyMainContent ?? true,
-          waitFor: options.waitFor || 0,
+          waitFor: options.waitFor ?? 0,
         }),
       });
 
@@ -256,7 +256,7 @@ export class FirecrawlService {
             source_url: result.data.metadata?.sourceURL,
           },
         }
-      : { success: false, error: result.error || 'Markdown content not found' };
+      : { success: false, error: result.error ?? 'Markdown content not found' };
   }
 
   private extractPattern(text: string, pattern: RegExp): string | undefined {
@@ -329,8 +329,8 @@ export class FirecrawlService {
       delay?: number;
     } = {},
   ): Promise<Array<{ url: string; result: FirecrawlResponse }>> {
-    const batchSize = options.batchSize || 5;
-    const delay = options.delay || 1000;
+    const batchSize = options.batchSize ?? 5;
+    const delay = options.delay ?? 1000;
     const results: Array<{ url: string; result: FirecrawlResponse }> = [];
 
     for (let i = 0; i < urls.length; i += batchSize) {
