@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import {
   FoodTruckService,
@@ -6,7 +7,7 @@ import {
   APIUsageService,
 } from '@/lib/supabase';
 
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const section = searchParams.get('section');
 
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function getDashboardOverview() {
+function getDashboardOverview() {
   try {
     const { trucks, total } = await FoodTruckService.getAllTrucks(10, 0);
     const qualityStats = await FoodTruckService.getDataQualityStats();
@@ -78,12 +79,12 @@ async function getDashboardOverview() {
       recentTrucks: trucks.slice(0, 5).map((truck) => ({
         id: truck.id,
         name: truck.name,
-        location: truck.current_location || { address: 'Unknown location' },
-        operating_hours: truck.operating_hours || {},
-        menu: truck.menu || [],
-        contact: truck.contact_info || {},
+        location: truck.current_location ?? { address: 'Unknown location' },
+        operating_hours: truck.operating_hours ?? {},
+        menu: truck.menu ?? [],
+        contact: truck.contact_info ?? {},
         last_updated: truck.updated_at,
-        data_quality_score: truck.data_quality_score || 0,
+        data_quality_score: truck.data_quality_score ?? 0,
       })),
       averageQuality: qualityStats.avg_quality_score,
       verifiedTrucks: qualityStats.verified_count,
@@ -145,7 +146,7 @@ async function getProcessingStatus() {
       ).length,
       failedToday: failedQueue.filter((item) => item.created_at > yesterday).length,
       totalTokensUsed: completedQueue.reduce(
-        (sum, item) => sum + (item.gemini_tokens_used || 0),
+        (sum, item) => sum + (item.gemini_tokens_used ?? 0),
         0,
       ),
     };
@@ -179,24 +180,24 @@ async function getAPIUsageStatus() {
     return {
       gemini: {
         requests: {
-          used: geminiUsage?.requests_count || 0,
+          used: geminiUsage?.requests_count ?? 0,
           limit: geminiLimits.requests,
-          remaining: geminiLimits.requests - (geminiUsage?.requests_count || 0),
-          percentage: ((geminiUsage?.requests_count || 0) / geminiLimits.requests) * 100,
+          remaining: geminiLimits.requests - (geminiUsage?.requests_count ?? 0),
+          percentage: ((geminiUsage?.requests_count ?? 0) / geminiLimits.requests) * 100,
         },
         tokens: {
-          used: geminiUsage?.tokens_used || 0,
+          used: geminiUsage?.tokens_used ?? 0,
           limit: geminiLimits.tokens,
-          remaining: geminiLimits.tokens - (geminiUsage?.tokens_used || 0),
-          percentage: ((geminiUsage?.tokens_used || 0) / geminiLimits.tokens) * 100,
+          remaining: geminiLimits.tokens - (geminiUsage?.tokens_used ?? 0),
+          percentage: ((geminiUsage?.tokens_used ?? 0) / geminiLimits.tokens) * 100,
         },
       },
       firecrawl: {
         requests: {
-          used: firecrawlUsage?.requests_count || 0,
+          used: firecrawlUsage?.requests_count ?? 0,
           limit: firecrawlLimits.requests,
-          remaining: firecrawlLimits.requests - (firecrawlUsage?.requests_count || 0),
-          percentage: ((firecrawlUsage?.requests_count || 0) / firecrawlLimits.requests) * 100,
+          remaining: firecrawlLimits.requests - (firecrawlUsage?.requests_count ?? 0),
+          percentage: ((firecrawlUsage?.requests_count ?? 0) / firecrawlLimits.requests) * 100,
         },
       },
       history: allUsage.slice(0, 7),

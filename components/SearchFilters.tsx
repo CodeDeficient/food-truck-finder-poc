@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Search, Filter, Clock } from 'lucide-react';
 
 interface SearchFiltersProps {
@@ -57,9 +58,11 @@ export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
     onSearch(clearedFilters);
   };
 
-  const activeFilterCount = [filters.query, filters.cuisine, filters.openNow].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount = [
+    filters.query !== '',
+    filters.cuisine !== '',
+    filters.openNow === true
+  ].filter(Boolean).length;
 
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">

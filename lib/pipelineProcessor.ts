@@ -2,6 +2,7 @@ import { firecrawl } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
 import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
 import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from './types';
+import { DuplicatePreventionService } from './data-quality/duplicatePrevention';
 
 // Background job processing function
 // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -20,9 +21,9 @@ export async function processScrapingJob(jobId: string) {
 
     if (!scrapeResult.success || !scrapeResult.data?.markdown) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
-        errors: [scrapeResult.error || 'Scraping failed or markdown content not found'],
+        errors: [scrapeResult.error ?? 'Scraping failed or markdown content not found'],
       });
-      throw new Error(scrapeResult.error || 'Scraping failed or markdown content not found');
+      throw new Error(scrapeResult.error ?? 'Scraping failed or markdown content not found');
     }
 
     console.info(`Scraping successful for ${job.target_url}, proceeding to Gemini extraction.`);
@@ -30,14 +31,14 @@ export async function processScrapingJob(jobId: string) {
     // Call Gemini to extract structured data
     const geminiResult = await gemini.extractFoodTruckDetailsFromMarkdown(
       scrapeResult.data.markdown,
-      scrapeResult.data.source_url || job.target_url,
+      scrapeResult.data.source_url ?? job.target_url,
     );
 
     if (!geminiResult.success || !geminiResult.data) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
-        errors: [geminiResult.error || 'Gemini data extraction failed'],
+        errors: [geminiResult.error ?? 'Gemini data extraction failed'],
       });
-      throw new Error(geminiResult.error || 'Gemini data extraction failed');
+      throw new Error(geminiResult.error ?? 'Gemini data extraction failed');
     }
 
     console.info(`Gemini extraction successful for ${job.target_url}.`);
@@ -52,7 +53,7 @@ export async function processScrapingJob(jobId: string) {
     await createOrUpdateFoodTruck(
       jobId,
       geminiResult.data,
-      scrapeResult.data.source_url || job.target_url,
+      scrapeResult.data.source_url ?? job.target_url,
     );
 
     // The call to processScrapedData is removed as Gemini now handles full extraction.
@@ -123,7 +124,7 @@ function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruck
 
 // Helper function to build location data
 function buildLocationData(extractedTruckData: ExtractedFoodTruckDetails) {
-  const locationData = extractedTruckData.current_location || {};
+  const locationData = extractedTruckData.current_location ?? {};
   const fullAddress = [
     locationData.address,
     locationData.city,
@@ -167,7 +168,7 @@ function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCat
           }
         }
         return {
-          name: itemData.name || 'Unknown Item',
+          name: itemData.name ?? 'Unknown Item',
           description: itemData.description ?? undefined,
           price: price,
           dietary_tags: Array.isArray(itemData.dietary_tags) ? itemData.dietary_tags : [],
@@ -175,7 +176,7 @@ function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCat
       },
     );
     return {
-      name: categoryData.category || categoryData.name || 'Uncategorized',
+      name: categoryData.category ?? categoryData.name ?? 'Uncategorized',
       items: items,
     };
   });
@@ -200,9 +201,9 @@ export async function createOrUpdateFoodTruck(
       console.warn(`Job ${jobId}: Missing sourceUrl for food truck data, proceeding without it.`);
     }
 
-    const name = extractedTruckData.name || 'Unknown Food Truck'; // Ensure name has a fallback
+    const name = extractedTruckData.name ?? 'Unknown Food Truck'; // Ensure name has a fallback
     console.info(
-      `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl || 'Unknown Source'}`,
+      `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl ?? 'Unknown Source'}`,
     );
 
     // Map Gemini output to FoodTruck schema with stricter type checking and defaults
@@ -267,12 +268,34 @@ export async function createOrUpdateFoodTruck(
       last_scraped_at: new Date().toISOString(),
     };
 
-    // Attempt to create/update the truck in Supabase
-    // For now, we focus on creation. Update/Upsert logic would be more complex.
-    // Consider checking if a truck with a similar name or sourceUrl already exists if upserting.
-    const truck = await FoodTruckService.createTruck(truckData);
+    // Check for duplicates before creating
+    console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
+    const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
+
+    let truck;
+    if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
+      const { bestMatch } = duplicateCheck;
+      console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
+
+      if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
+        // Merge with existing truck
+        truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
+        console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
+      } else if (bestMatch.recommendation === 'update') {
+        // Update existing truck with new data
+        truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
+        console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
+      } else {
+        // Create new truck but log the potential duplicate
+        truck = await FoodTruckService.createTruck(truckData);
+        console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason})`);
+      }
+    } else {
+      // No duplicates found, create new truck
+      truck = await FoodTruckService.createTruck(truckData);
+    }
     console.info(
-      `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl || 'Unknown Source'}`,
+      `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl ?? 'Unknown Source'}`,
     );
 
     // Link truck_id back to the scraping job
@@ -281,7 +304,7 @@ export async function createOrUpdateFoodTruck(
     });
   } catch (error: unknown) {
     console.error(
-      `Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl || 'Unknown Source'}:`,
+      `Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl ?? 'Unknown Source'}:`,
       error,
     );
     // Update the scraping job with this error information

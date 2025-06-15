@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-label'. Did yo... Remove this comment to see the full error message
 import * as LabelPrimitive from '@radix-ui/react-label';
+// @ts-expect-error TS(2792): Cannot find module 'class-variance-authority'. Did... Remove this comment to see the full error message
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';

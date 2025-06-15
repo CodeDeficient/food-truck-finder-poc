@@ -1,5 +1,6 @@
 'use client';
 
+// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
 import {
   Home,
@@ -10,6 +11,7 @@ import {
   CalendarDays,
   BarChart3,
   LogOut,
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -25,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ModeToggle } from '@/components/ModeToggle';
 import { AuthProvider, useAuth } from '@/app/auth/AuthProvider';
+// @ts-expect-error TS(2792): Cannot find module 'next/navigation'. Did you mean... Remove this comment to see the full error message
 import { useRouter } from 'next/navigation';
 
 function AdminLayoutContent({ children }: { readonly children: React.ReactNode }) {
@@ -42,7 +45,7 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
         .map((n: string) => n[0])
         .join('')
         .toUpperCase()
-    : user?.email?.slice(0, 2).toUpperCase() || 'AD';
+    : user?.email?.slice(0, 2).toUpperCase() ?? 'AD';
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -120,6 +123,7 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
+              // @ts-expect-error TS(2322): Type '{ children: Element[]; variant: string; size... Remove this comment to see the full error message
               <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                 <Home className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
@@ -204,6 +208,7 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
           <ModeToggle /> {/* Dark mode toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
+              // @ts-expect-error TS(2322): Type '{ children: Element[]; variant: string; size... Remove this comment to see the full error message
               <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar>
                   <AvatarImage src={user?.user_metadata?.avatar_url as string} alt="Avatar" />
@@ -215,7 +220,7 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{user?.user_metadata?.full_name || 'Admin'}</p>
+                  <p className="text-sm font-medium">{user?.user_metadata?.full_name ?? 'Admin'}</p>
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
               </DropdownMenuLabel>

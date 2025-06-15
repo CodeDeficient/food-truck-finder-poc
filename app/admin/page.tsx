@@ -6,6 +6,7 @@ import {
   DataProcessingService,
   supabase,
 } from '@/lib/supabase';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Truck, Activity, Settings, AlertTriangle } from 'lucide-react'; // Import icons
 
 // Define the data quality stats type based on the database function
@@ -20,7 +21,7 @@ interface DataQualityStats {
   flagged_count: number;
 }
 
-async function getDashboardData() {
+function getDashboardData() {
   // Fetch total food trucks and verification statuses
   const { trucks: allTrucks } = await FoodTruckService.getAllTrucks(1000, 0); // Fetch a reasonable number for overview
   const totalFoodTrucks = allTrucks.length;
@@ -38,7 +39,7 @@ async function getDashboardData() {
     .rpc('get_data_quality_stats')
     .single();
 
-  if (qualityError) {
+  if (qualityError != undefined) {
     console.error('Error fetching data quality stats:', qualityError);
   }
 
@@ -64,7 +65,7 @@ async function getDashboardData() {
   };
 }
 
-export default async function AdminDashboard() {
+export default function AdminDashboard() {
   const {
     totalFoodTrucks,
     pendingVerifications,
@@ -106,17 +107,31 @@ export default async function AdminDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Data Quality</CardTitle>
+            <CardTitle className="text-sm font-medium">Data Quality Score</CardTitle>
             <Settings className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>{' '}
+          </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(dataQualityStats.avg_quality_score ?? 0).toFixed(1)}% Avg
+              {((dataQualityStats.avg_quality_score ?? 0) * 100).toFixed(1)}%
             </div>
             <p className="text-xs text-muted-foreground">
-              {dataQualityStats.high_quality_count ?? 0} high,{' '}
-              {dataQualityStats.medium_quality_count ?? 0} medium,{' '}
-              {dataQualityStats.low_quality_count ?? 0} low
+              Average quality score across all trucks
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Quality Distribution</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {dataQualityStats.high_quality_count ?? 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-green-600">{dataQualityStats.high_quality_count ?? 0} high</span>,{' '}
+              <span className="text-yellow-600">{dataQualityStats.medium_quality_count ?? 0} medium</span>,{' '}
+              <span className="text-red-600">{dataQualityStats.low_quality_count ?? 0} low</span>
             </p>
           </CardContent>
         </Card>

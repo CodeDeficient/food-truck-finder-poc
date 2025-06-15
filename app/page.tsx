@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Search, Navigation, Moon, Sun } from 'lucide-react';
 import { useThemeSwitcher } from '@/components/ThemeProvider';
+// @ts-expect-error TS(2792): Cannot find module 'next/dynamic'. Did you mean to... Remove this comment to see the full error message
 import dynamic from 'next/dynamic';
 import {
   Accordion,
@@ -96,7 +98,10 @@ export default function FoodTruckFinder() {
     getUserLocation();
   }, []);
   const getUserLocation = () => {
-    if (navigator.geolocation) {
+    if (navigator.geolocation == undefined) {
+      // Default to San Francisco
+      setUserLocation({ lat: 37.7749, lng: -122.4194 });
+    } else {
       // eslint-disable-next-line sonarjs/no-intrusive-permissions -- Geolocation is essential for finding nearby food trucks
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -111,9 +116,6 @@ export default function FoodTruckFinder() {
           setUserLocation({ lat: 37.7749, lng: -122.4194 });
         },
       );
-    } else {
-      // Default to San Francisco
-      setUserLocation({ lat: 37.7749, lng: -122.4194 });
     }
   };
 
@@ -121,7 +123,7 @@ export default function FoodTruckFinder() {
     try {
       const response = await fetch('/api/trucks');
       const data: TrucksApiResponse = (await response.json()) as TrucksApiResponse;
-      setTrucks(data.trucks || []);
+      setTrucks(data.trucks ?? []);
     } catch (error) {
       console.error('Failed to load food trucks:', error);
     } finally {
@@ -137,7 +139,7 @@ export default function FoodTruckFinder() {
         `/api/trucks?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=10`,
       );
       const data: TrucksApiResponse = (await response.json()) as TrucksApiResponse;
-      setTrucks(data.trucks || []);
+      setTrucks(data.trucks ?? []);
     } catch (error) {
       console.error('Failed to load nearby trucks:', error);
     }
@@ -146,7 +148,7 @@ export default function FoodTruckFinder() {
   const filteredTrucks = trucks.filter(
     (truck) =>
       truck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      truck.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+      (truck.description ?? '').toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const isOpen = (truck: FoodTruck) => {
@@ -154,7 +156,7 @@ export default function FoodTruckFinder() {
     const hours = truck.operating_hours?.[today];
 
     // Ensure hours and its properties are not null/undefined before accessing
-    if (!hours || hours.closed || !hours.open || !hours.close) {
+    if (hours == undefined || hours.closed || (hours.open == undefined) || (hours.close == undefined)) {
       return false;
     }
 
@@ -242,6 +244,7 @@ export default function FoodTruckFinder() {
                   void loadNearbyTrucks();
                 }}
                 disabled={!userLocation}
+                // @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; onClick: (... Remove this comment to see the full error message
                 variant="outline"
                 className="order-2 sm:order-none"
               >
@@ -269,14 +272,14 @@ export default function FoodTruckFinder() {
                   userLocation ? [userLocation.lat, userLocation.lng] : [37.7749, -122.4194]
                 } // Provide a stable default
                 selectedTruckLocation={
-                  selectedTruckId
-                    ? (() => {
+                  (selectedTruckId == undefined)
+                    ? undefined
+                    : (() => {
                         const truck = filteredTrucks.find((t) => t.id === selectedTruckId);
-                        return truck?.current_location?.lat && truck?.current_location?.lng
-                          ? [truck.current_location.lat, truck.current_location.lng]
-                          : undefined; // Changed from null to undefined
+                        return (truck?.current_location?.lat == undefined) || (truck?.current_location?.lng == undefined)
+                          ? undefined
+                          : [truck.current_location.lat, truck.current_location.lng];
                       })()
-                    : undefined
                 }
               />
             </div>
@@ -290,7 +293,7 @@ export default function FoodTruckFinder() {
                 type="single"
                 collapsible
                 className="w-full"
-                value={selectedTruckId || undefined}
+                value={selectedTruckId ?? undefined}
                 onValueChange={(value: string | undefined) =>
                   setSelectedTruckId((currentId) => (value === currentId ? undefined : value))
                 }

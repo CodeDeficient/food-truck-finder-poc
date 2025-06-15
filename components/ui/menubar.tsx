@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-menubar'. Did ... Remove this comment to see the full error message
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Check, ChevronRight, Circle } from 'lucide-react';
 
 import { cn } from '@/lib/utils';

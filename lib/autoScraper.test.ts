@@ -44,16 +44,16 @@ describe('autoScraper', () => {
       mockProcessScrapingJob.mockClear();
     });
 
-    it('should trigger initial scrape if truck does not exist and no pending job', async () => {
+    it('should trigger initial scrape if truck does not exist and no pending job', () => {
       // Example of how to set specific mock behavior for a test:
-      // mockSupabaseAdmin.limit.mockResolvedValueOnce({ data: [], error: null });
+      // mockSupabaseAdmin.limit.mockResolvedValueOnce({ data: [], error: undefined });
       // mockScrapingJobService.getJobsByStatus.mockResolvedValueOnce([]);
       // mockScrapingJobService.createJob.mockResolvedValueOnce({ id: 'job123', status: 'pending' });
       // Call ensureDefaultTrucksAreScraped
       // Assertions
     });
 
-    it('should trigger re-scrape if truck data is stale and no pending job', async () => {
+    it('should trigger re-scrape if truck data is stale and no pending job', () => {
       // Mock supabaseAdmin.from...limit to return a stale truck
       // Mock ScrapingJobService.getJobsByStatus to return []
       // Mock ScrapingJobService.createJob
@@ -61,13 +61,13 @@ describe('autoScraper', () => {
       // Assert createJob and processScrapingJob were called
     });
 
-    it('should not scrape if truck data is fresh', async () => {
+    it('should not scrape if truck data is fresh', () => {
       // Mock supabaseAdmin.from...limit to return a fresh truck
       // Call ensureDefaultTrucksAreScraped
       // Assert createJob and processScrapingJob were NOT called
     });
 
-    it('should not trigger scrape if a pending/running job already exists', async () => {
+    it('should not trigger scrape if a pending/running job already exists', () => {
       // Mock supabaseAdmin.from...limit to return no truck (or stale truck)
       // Mock ScrapingJobService.getJobsByStatus to return an existing pending/running job
       // Call ensureDefaultTrucksAreScrape

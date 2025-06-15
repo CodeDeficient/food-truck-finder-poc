@@ -8,18 +8,18 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl) {
+if (supabaseUrl == undefined || supabaseUrl === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
-if (!supabaseAnonKey) {
+if (supabaseAnonKey == undefined || supabaseAnonKey === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Only create admin client on server side where service key is available
-export const supabaseAdmin = supabaseServiceKey
+export const supabaseAdmin = (supabaseServiceKey != undefined && supabaseServiceKey !== '')
   ? createClient(supabaseUrl, supabaseServiceKey)
   : undefined;
 
@@ -114,7 +114,7 @@ export const FoodTruckService = {
         .range(offset, offset + limit - 1);
 
       if (error) throw error;
-      const trucks: FoodTruck[] = (data || []).map((t: FoodTruck) => normalizeTruckLocation(t));
+      const trucks: FoodTruck[] = (data ?? []).map((t: FoodTruck) => normalizeTruckLocation(t));
 
       const truckIds = trucks.map((t) => t.id);
       let menuItems: {
@@ -128,21 +128,19 @@ export const FoodTruckService = {
         const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
           await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
         if (menuError) throw menuError;
-        menuItems = (items as typeof menuItems) || [];
+        menuItems = (items as typeof menuItems) ?? [];
       }
 
       const menuByTruck: Record<string, typeof menuItems> = {};
       for (const item of menuItems) {
-        if (!menuByTruck[item.food_truck_id]) {
-          menuByTruck[item.food_truck_id] = [];
-        }
+        menuByTruck[item.food_truck_id] ??= [];
         menuByTruck[item.food_truck_id].push(item);
       }
 
       for (const truck of trucks) {
-        truck.menu = groupMenuItems(menuByTruck[truck.id] || []);
+        truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []);
       }
-      return { trucks, total: count || 0 };
+      return { trucks, total: count ?? 0 };
     } catch (error: unknown) {
       console.warn('Error fetching trucks:', error);
       return { trucks: [], total: 0 };
@@ -161,7 +159,7 @@ export const FoodTruckService = {
       .select('*')
       .eq('food_truck_id', id);
     if (menuError) throw menuError;
-    truck.menu = groupMenuItems(items || []);
+    truck.menu = groupMenuItems(items ?? []);
     return truck;
   },
 
@@ -170,7 +168,7 @@ export const FoodTruckService = {
       const { trucks } = await FoodTruckService.getAllTrucks();
       const nearbyTrucks = trucks.filter((truck) => {
         if (
-          !truck.current_location ||
+          truck.current_location == undefined ||
           typeof truck.current_location.lat !== 'number' ||
           typeof truck.current_location.lng !== 'number'
         ) {
@@ -212,13 +210,13 @@ export const FoodTruckService = {
     // Insert menu items if they exist
     if (menuData && menuData.length > 0 && truck.id) {
       const menuItems = menuData.flatMap((category) =>
-        (category.items || []).map((item) => ({
+        (category.items ?? []).map((item) => ({
           food_truck_id: truck.id,
-          category: category.name || 'Uncategorized',
-          name: item.name || 'Unknown Item',
-          description: item.description || undefined,
+          category: category.name ?? 'Uncategorized',
+          name: item.name ?? 'Unknown Item',
+          description: item.description ?? undefined,
           price: typeof item.price === 'number' ? item.price : undefined,
-          dietary_tags: item.dietary_tags || [],
+          dietary_tags: item.dietary_tags ?? [],
         })),
       );
 
@@ -342,15 +340,15 @@ async function updateTruckMenu(id: string, menuData: MenuCategory[]): Promise<vo
   }
 
   // Insert new menu items if they exist
-  if (menuData && menuData.length > 0) {
+  if (menuData != undefined && menuData.length > 0) {
     const menuItems = menuData.flatMap((category) =>
-      (category.items || []).map((item) => ({
+      (category.items ?? []).map((item) => ({
         food_truck_id: id,
-        category: category.name || 'Uncategorized',
-        name: item.name || 'Unknown Item',
-        description: item.description || undefined,
+        category: category.name ?? 'Uncategorized',
+        name: item.name ?? 'Unknown Item',
+        description: item.description ?? undefined,
         price: typeof item.price === 'number' ? item.price : undefined,
-        dietary_tags: item.dietary_tags || [],
+        dietary_tags: item.dietary_tags ?? [],
       })),
     );
 
@@ -393,10 +391,8 @@ interface RawMenuItemFromDB {
 function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
   const byCategory: Record<string, MenuItem[]> = {}; // Stores processed MenuItems
   for (const rawItem of rawItems) {
-    const categoryName: string = rawItem.category || 'Uncategorized';
-    if (!byCategory[categoryName]) {
-      byCategory[categoryName] = [];
-    }
+    const categoryName: string = rawItem.category ?? 'Uncategorized';
+    byCategory[categoryName] ??= [];
     // Construct a MenuItem conforming to the MenuItem interface (no 'category' property)
     const menuItem: MenuItem = {
       name: rawItem.name,
@@ -421,7 +417,7 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
     address: 'Unknown',
     timestamp: new Date().toISOString(),
   };
-  const loc = truck.exact_location || truck.current_location || truck.city_location || {};
+  const loc = truck.exact_location ?? truck.current_location ?? truck.city_location ?? {};
   const lat = loc.lat ?? undefined;
   const lng = loc.lng ?? undefined;
   const address = loc.address;
@@ -429,12 +425,12 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
 
   truck.current_location =
     typeof lat !== 'number' || typeof lng !== 'number' || (lat === 0 && lng === 0)
-      ? { ...fallback, address: address || fallback.address }
+      ? { ...fallback, address: address ?? fallback.address }
       : {
           lat,
           lng,
-          address: address || fallback.address,
-          timestamp: timestamp || fallback.timestamp,
+          address: address ?? fallback.address,
+          timestamp: timestamp ?? fallback.timestamp,
         };
   return truck;
 }
@@ -475,7 +471,7 @@ export const ScrapingJobService = {
         .order('scheduled_at', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error: unknown) {
       console.warn('Error fetching jobs:', error);
       return [];
@@ -522,7 +518,7 @@ export const ScrapingJobService = {
 
     const { data, error }: PostgrestSingleResponse<ScrapingJob> = await supabaseAdmin
       .from('scraping_jobs')
-      .update({ retry_count: (current?.retry_count || 0) + 1 })
+      .update({ retry_count: (current?.retry_count ?? 0) + 1 })
       .eq('id', id)
       .select()
       .single();
@@ -582,7 +578,7 @@ export const DataProcessingService = {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error: unknown) {
       console.warn('Error fetching queue:', error);
       return [];
@@ -630,8 +626,8 @@ export const APIUsageService = {
         const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
           .from('api_usage')
           .update({
-            requests_count: (existing.requests_count || 0) + requests,
-            tokens_used: (existing.tokens_used || 0) + tokens,
+            requests_count: (existing.requests_count ?? 0) + requests,
+            tokens_used: (existing.tokens_used ?? 0) + tokens,
           })
           .eq('id', existing.id)
           .select()
@@ -689,7 +685,7 @@ export const APIUsageService = {
         .limit(30);
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error: unknown) {
       console.warn('Error getting usage stats:', error);
       throw error;

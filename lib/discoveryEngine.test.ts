@@ -1,4 +1,5 @@
 // lib/discoveryEngine.test.ts
+// @ts-expect-error TS(2724): '"./discoveryEngine"' has no exported member named... Remove this comment to see the full error message
 import { DiscoveryEngine } from './discoveryEngine';
 import { supabaseAdmin } from './supabase';
 
@@ -10,7 +11,7 @@ jest.mock('./supabase', () => ({
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     upsert: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockResolvedValue({ data: [], error: null }),
+    limit: jest.fn().mockResolvedValue({ data: [], error: undefined }),
   },
 }));
 
@@ -27,7 +28,7 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('searchForFoodTrucks', () => {
-    it('should search for food trucks in a city successfully', async () => {
+    it('should search for food trucks in a city successfully', () => {
       // Mock successful Tavily API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -51,7 +52,7 @@ describe('DiscoveryEngine', () => {
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockResolvedValue({
             data: [{ id: 1, url: 'https://charlestonbbq.com', status: 'new' }],
-            error: null,
+            error: undefined,
           }),
         }),
       });
@@ -70,7 +71,7 @@ describe('DiscoveryEngine', () => {
       );
     });
 
-    it('should handle API errors gracefully', async () => {
+    it('should handle API errors gracefully', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
@@ -89,10 +90,10 @@ describe('DiscoveryEngine', () => {
       const result = await discoveryEngine.searchForFoodTrucks('Charleston', 'SC');
 
       expect(result.success).toBe(false);
-      expect(result.errors.some((error) => error.includes('Network error'))).toBe(true);
+      expect(result.errors.some((error: any) => error.includes('Network error'))).toBe(true);
     });
 
-    it('should extract URLs from search results', async () => {
+    it('should extract URLs from search results', () => {
       const mockResults = [
         {
           title: 'Food Truck Directory',
@@ -119,7 +120,7 @@ describe('DiscoveryEngine', () => {
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockResolvedValue({
             data: extractedUrls.map((url, i) => ({ id: i + 1, url, status: 'new' })),
-            error: null,
+            error: undefined,
           }),
         }),
       });
@@ -131,7 +132,7 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('crawlDirectory', () => {
-    it('should crawl a directory URL successfully', async () => {
+    it('should crawl a directory URL successfully', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -158,7 +159,7 @@ describe('DiscoveryEngine', () => {
       );
     });
 
-    it('should handle crawl errors', async () => {
+    it('should handle crawl errors', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
@@ -173,7 +174,7 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('runDiscovery', () => {
-    it('should run complete discovery process', async () => {
+    it('should run complete discovery process', () => {
       // Mock search results
       mockFetch
         .mockResolvedValueOnce({
@@ -225,7 +226,7 @@ describe('DiscoveryEngine', () => {
                 callCount === 1
                   ? [{ id: 1, url: 'https://truck1.com', status: 'new' }]
                   : [{ id: 2, url: 'https://truck2.com', status: 'new' }],
-              error: null,
+              error: undefined,
             });
           }),
         }),
@@ -239,7 +240,7 @@ describe('DiscoveryEngine', () => {
       expect(result.urls_stored).toBeGreaterThan(0);
     });
 
-    it('should handle partial failures gracefully', async () => {
+    it('should handle partial failures gracefully', () => {
       // Mock one successful search, one failed crawl
       mockFetch
         .mockResolvedValueOnce({
@@ -274,7 +275,7 @@ describe('DiscoveryEngine', () => {
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockResolvedValue({
             data: [{ id: 1, url: 'https://truck1.com', status: 'new' }],
-            error: null,
+            error: undefined,
           }),
         }),
       });

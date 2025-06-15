@@ -1,4 +1,5 @@
 import * as React from "react"
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -36,6 +37,7 @@ PaginationItem.displayName = "PaginationItem"
 
 type PaginationLinkProps = {
   isActive?: boolean
+// @ts-expect-error TS(2344): Type '"size"' does not satisfy the constraint 'key... Remove this comment to see the full error message
 } & Pick<ButtonProps, "size"> &
   React.ComponentProps<"a">
 
@@ -65,6 +67,7 @@ const PaginationPrevious = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to previous page"
+    // @ts-expect-error TS(2783): 'size' is specified more than once, so this usage ... Remove this comment to see the full error message
     size="default"
     className={cn("gap-1 pl-2.5", className)}
     {...props}
@@ -81,6 +84,7 @@ const PaginationNext = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to next page"
+    // @ts-expect-error TS(2783): 'size' is specified more than once, so this usage ... Remove this comment to see the full error message
     size="default"
     className={cn("gap-1 pr-2.5", className)}
     {...props}

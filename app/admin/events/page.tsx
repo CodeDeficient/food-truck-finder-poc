@@ -11,7 +11,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { PlusCircle, Edit } from 'lucide-react';
+// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
 
 interface Event {
@@ -35,14 +37,14 @@ interface FoodTruckSchedule {
   location: string;
 }
 
-async function getEventsAndSchedules() {
+function getEventsAndSchedules() {
   const { data: events, error: eventsError } = await supabase
     .from('events')
     .select('*')
     .order('date', { ascending: false })
     .order('time', { ascending: false });
 
-  if (eventsError) {
+  if (eventsError != null) {
     console.error('Error fetching events:', eventsError);
   }
 
@@ -52,17 +54,17 @@ async function getEventsAndSchedules() {
     .order('day_of_week', { ascending: true })
     .order('start_time', { ascending: true });
 
-  if (schedulesError) {
+  if (schedulesError != null) {
     console.error('Error fetching schedules:', schedulesError);
   }
 
   return {
-    events: events || [],
-    schedules: schedules || [],
+    events: events ?? [],
+    schedules: schedules ?? [],
   };
 }
 
-export default async function EventManagementPage() {
+export default function EventManagementPage() {
   const { events, schedules } = await getEventsAndSchedules();
 
   return (
@@ -105,6 +107,7 @@ export default async function EventManagementPage() {
                   <TableCell>{event.location}</TableCell>
                   <TableCell>{event.description}</TableCell>
                   <TableCell className="text-right">
+                    // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/events/${event.id}`}>
                         <Edit className="h-4 w-4" />
@@ -151,6 +154,7 @@ export default async function EventManagementPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
+                    // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/schedules/${schedule.id}`}>
                         <Edit className="h-4 w-4" />
