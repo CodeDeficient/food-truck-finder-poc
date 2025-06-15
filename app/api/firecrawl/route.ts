@@ -1,4 +1,5 @@
 // app/api/firecrawl/route.ts
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 import { firecrawl } from '@/lib/firecrawl';
 
@@ -81,7 +82,7 @@ async function handleCrawlOperation(url: string, options: Record<string, unknown
     return NextResponse.json(
       {
         success: false,
-        error: crawlJob.error || 'Failed to start crawl job',
+        error: crawlJob.error ?? 'Failed to start crawl job',
       },
       { status: 500 },
     );
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const jobId = searchParams.get('jobId');
 

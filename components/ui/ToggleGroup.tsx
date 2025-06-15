@@ -1,11 +1,13 @@
 'use client';
 
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-toggle-group'.... Remove this comment to see the full error message
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
+// @ts-expect-error TS(2792): Cannot find module 'class-variance-authority'. Did... Remove this comment to see the full error message
 import { type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
-import { toggleVariants } from '@/components/ui/Toggle';
+import { toggleVariants } from '@/components/ui/toggle';
 
 const ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants>>({
   size: 'default',

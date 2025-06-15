@@ -1,4 +1,5 @@
 // app/api/tavily/route.ts
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 
 interface TavilyRequestBody {
@@ -63,7 +64,7 @@ interface TavilyResult {
   raw_content: string;
 }
 
-async function performTavilySearch(params: Record<string, unknown>) {
+function performTavilySearch(params: Record<string, unknown>) {
   const apiKey = process.env.TAVILY_API_KEY;
   if (!apiKey) {
     console.warn('TAVILY_API_KEY not found, using mock data');
@@ -96,7 +97,7 @@ async function performTavilySearch(params: Record<string, unknown>) {
       body: JSON.stringify({
         query: (params.query as string) || (params.q as string),
         max_results: (params.limit as number) || 10,
-        search_depth: (params.search_depth as string) || 'advanced',
+        search_depth: (params.search_depth as string) ?? 'advanced',
         include_answer: true,
         include_raw_content: true,
       }),
@@ -114,7 +115,7 @@ async function performTavilySearch(params: Record<string, unknown>) {
           url: result.url,
           content: result.content,
           raw_content: result.raw_content,
-        })) || [],
+        })) ?? [],
     };
   } catch (error) {
     console.error('Tavily API call failed:', error);

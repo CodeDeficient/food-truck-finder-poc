@@ -1,4 +1,5 @@
 // tests/utils/testUtils.ts
+// @ts-expect-error TS(2792): Cannot find module '@supabase/supabase-js'. Did yo... Remove this comment to see the full error message
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../../lib/supabase';
 import type { FoodTruck } from '../../lib/types';

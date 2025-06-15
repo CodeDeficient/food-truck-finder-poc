@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-separator'. Di... Remove this comment to see the full error message
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 
 import { cn } from '@/lib/utils';

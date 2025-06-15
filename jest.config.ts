@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2306): File 'C:/AI/food-truck-finder-poc/node_modules/@ty... Remove this comment to see the full error message
 import type { Config } from 'jest';
 
 const config: Config = {

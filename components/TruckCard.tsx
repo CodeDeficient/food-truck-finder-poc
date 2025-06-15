@@ -3,7 +3,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, ExternalLink, Star } from 'lucide-react';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
+import { MapPin, Phone, Star, Clock, Globe, Instagram, Facebook, Twitter, Eye } from 'lucide-react';
+// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
+import Link from 'next/link';
 
 interface FoodTruck {
   id: string;
@@ -16,7 +19,15 @@ interface FoodTruck {
   contact_info?: {
     phone?: string;
     website?: string;
+    email?: string;
   };
+  social_media?: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+  };
+  average_rating?: number;
+  review_count?: number;
   data_quality_score: number;
   verification_status: string;
   menu?: Array<{
@@ -43,13 +54,13 @@ export function TruckCard({
 }: TruckCardProps) {
   const getPopularItems = () => {
     if (!truck.menu || truck.menu.length === 0) return [];
-    return truck.menu[0]?.items?.slice(0, 3) || [];
+    return truck.menu[0]?.items?.slice(0, 3) ?? [];
   };
 
   // Helper to determine price range fallback
   const getPriceRange = () => {
     // Flatten all prices from all menu items
-    const prices = (truck.menu || [])
+    const prices = (truck.menu ?? [])
       .flatMap((cat) => cat.items)
       .map((item) => (typeof item.price === 'number' ? item.price : undefined))
       .filter((p): p is number => p !== undefined && !Number.isNaN(p));
@@ -65,8 +76,23 @@ export function TruckCard({
     return '$';
   };
 
+  // Helper to get today's operating hours
+  const getTodayHours = () => {
+    if (!truck.operating_hours) return;
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const todayKey = days[new Date().getDay()];
+    return truck.operating_hours[todayKey];
+  };
+
   const popularItems = getPopularItems();
   const priceRange = getPriceRange();
+  const todayHours = getTodayHours();
+
+  // Helper to format operating hours
+  const formatHours = (hours: { open: string; close: string; closed: boolean }) => {
+    if (hours.closed) return 'Closed';
+    return `${hours.open} - ${hours.close}`;
+  };
 
   return (
     <Card
@@ -101,49 +127,147 @@ export function TruckCard({
         {truck.description && (
           <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{truck.description}</p>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Popular Items</h4>
-            <div className="space-y-1">
-              {popularItems.map((item, idx) => (
-                <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
-                  <span className="truncate dark:text-gray-200">{item.name}</span>
-                  {typeof item.price === 'number' && item.price > 0 && (
-                    <span className="text-green-600 dark:text-green-400 ml-2">
-                      {formatPrice(item.price)}
+        <div className="space-y-4">
+          {/* Ratings & Hours Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Ratings */}
+            {truck.average_rating && (
+              <div>
+                <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Rating</h4>
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`h-4 w-4 ${
+                          star <= Math.round(truck.average_rating ?? 0)
+                            ? 'text-yellow-400 fill-current'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-medium dark:text-gray-200">
+                    {truck.average_rating.toFixed(1)}
+                  </span>
+                  {truck.review_count && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      ({truck.review_count} reviews)
                     </span>
                   )}
                 </div>
-              ))}
-              {popularItems.length === 0 && (
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Menu not available</p>
-              )}
+              </div>
+            )}
+
+            {/* Operating Hours */}
+            {todayHours && (
+              <div>
+                <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Today's Hours</h4>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3 w-3 text-gray-500" />
+                  <span className="text-sm dark:text-gray-300">
+                    {formatHours(todayHours)}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Menu & Contact Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Popular Items</h4>
+              <div className="space-y-1">
+                {popularItems.map((item, idx) => (
+                  <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
+                    <span className="truncate dark:text-gray-200">{item.name}</span>
+                    {typeof item.price === 'number' && item.price > 0 && (
+                      <span className="text-green-600 dark:text-green-400 ml-2">
+                        {formatPrice(item.price)}
+                      </span>
+                    )}
+                  </div>
+                ))}
+                {popularItems.length === 0 && (
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">Menu not available</p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
+              <div className="space-y-1 dark:text-gray-300">
+                {truck.contact_info?.phone && (
+                  <a
+                    href={`tel:${truck.contact_info.phone}`}
+                    className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    <Phone className="h-3 w-3 mr-1" />
+                    <span className="truncate">{truck.contact_info.phone}</span>
+                  </a>
+                )}
+                {truck.contact_info?.website && (
+                  <a
+                    href={truck.contact_info.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
+                  >
+                    <Globe className="h-3 w-3 mr-1" />
+                    <span className="truncate">Website</span>
+                  </a>
+                )}
+                {truck.verification_status && (
+                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                    <Star className="h-3 w-3 mr-1" />
+                    <span className="capitalize">{truck.verification_status}</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
-            <div className="space-y-1 dark:text-gray-300">
-              {truck.contact_info?.phone && (
-                <div className="flex items-center text-sm">
-                  <Phone className="h-3 w-3 mr-1" />
-                  <span className="truncate">{truck.contact_info.phone}</span>
-                </div>
-              )}
-              {truck.contact_info?.website && (
-                <div className="flex items-center text-sm">
-                  <ExternalLink className="h-3 w-3 mr-1" />
-                  <span className="truncate">Website</span>
-                </div>
-              )}
-              {truck.verification_status && (
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                  <Star className="h-3 w-3 mr-1" />
-                  <span className="capitalize">{truck.verification_status}</span>
-                </div>
-              )}
+          {/* Social Media */}
+          {truck.social_media && Object.keys(truck.social_media).length > 0 && (
+            <div>
+              <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Social Media</h4>
+              <div className="flex flex-wrap gap-2">
+                {truck.social_media.instagram && (
+                  <a
+                    href={`https://instagram.com/${truck.social_media.instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-xs hover:bg-pink-200 dark:bg-pink-900 dark:text-pink-200"
+                  >
+                    <Instagram className="h-3 w-3" />
+                    Instagram
+                  </a>
+                )}
+                {truck.social_media.facebook && (
+                  <a
+                    href={`https://facebook.com/${truck.social_media.facebook}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200"
+                  >
+                    <Facebook className="h-3 w-3" />
+                    Facebook
+                  </a>
+                )}
+                {truck.social_media.twitter && (
+                  <a
+                    href={`https://twitter.com/${truck.social_media.twitter}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-xs hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-200"
+                  >
+                    <Twitter className="h-3 w-3" />
+                    Twitter
+                  </a>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         {truck.verification_status && (
           <div className="mt-2">
@@ -153,13 +277,22 @@ export function TruckCard({
           </div>
         )}
       </CardContent>
-      {truck.verification_status === 'verified' && (
-        <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-          <Button className="w-full" variant="default" disabled>
-            Book Me
+      <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex gap-2">
+          {/* @ts-expect-error TS(2322): Type '{ children: Element; asChild: true; classNam... Remove this comment to see the full error message */}
+          <Button asChild className="flex-1" variant="outline">
+            <Link href={`/trucks/${truck.id}`}>
+              <Eye className="h-4 w-4 mr-2" />
+              View Details
+            </Link>
           </Button>
+          {truck.verification_status === 'verified' && (
+            <Button className="flex-1" variant="default" disabled>
+              Book Me
+            </Button>
+          )}
         </div>
-      )}
+      </div>
     </Card>
   );
 }

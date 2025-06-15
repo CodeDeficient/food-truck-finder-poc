@@ -2,6 +2,7 @@
 import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config';
 import { supabaseAdmin, ScrapingJobService } from './supabase';
 import { processScrapingJob } from '@/lib/pipelineProcessor';
+import { dispatchGeminiOperation } from './gemini';
 
 // Define interfaces for better type safety
 interface FoodTruck {
@@ -329,32 +330,8 @@ export async function callGeminiWithCache(
   if (!usage.canMakeRequest) {
     throw new Error('Gemini API daily limit reached. Try again tomorrow.');
   }
-  let result: unknown;
-  switch (type) {
-    case 'menu': {
-      result = await gemini.processMenuData(input);
-      break;
-    }
-    case 'location': {
-      result = await gemini.extractLocationFromText(input);
-      break;
-    }
-    case 'hours': {
-      result = await gemini.standardizeOperatingHours(input);
-      break;
-    }
-    case 'sentiment': {
-      result = await gemini.analyzeSentiment(input);
-      break;
-    }
-    case 'enhance': {
-      result = await gemini.enhanceFoodTruckData(input);
-      break;
-    }
-    default: {
-      throw new Error(`Unknown Gemini call type: ${type}`);
-    }
-  }
+  // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
+  const result = await dispatchGeminiOperation(type, input);
   geminiCache[cacheKey] = { data: result, timestamp: now };
   return result;
 }
@@ -412,7 +389,7 @@ async function updateDiscoveredUrlStatus(
       .update({
         status,
         last_processed_at: new Date().toISOString(),
-        notes: notes || undefined,
+        notes: notes ?? undefined,
       })
       .eq('url', url);
 

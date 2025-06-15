@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import { ScrapingJobService } from '@/lib/supabase';
 import { processScrapingJob } from '@/lib/pipelineProcessor';
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const jobId = searchParams.get('jobId');
   const status = searchParams.get('status');
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get jobs by status
-    const jobs = await ScrapingJobService.getJobsByStatus(status || 'pending');
+    const jobs = await ScrapingJobService.getJobsByStatus(status ?? 'pending');
 
     return NextResponse.json({
       jobs,

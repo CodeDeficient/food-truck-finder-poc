@@ -1,7 +1,9 @@
 'use client';
 
 import * as React from 'react';
+// @ts-expect-error TS(2792): Cannot find module 'embla-carousel-react'. Did you... Remove this comment to see the full error message
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
+// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -46,6 +48,7 @@ const Carousel = React.forwardRef<
 >(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
   const [carouselRef, api] = useEmblaCarousel(
     {
+      // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
       ...opts,
       axis: orientation === 'horizontal' ? 'x' : 'y',
     },
@@ -112,6 +115,7 @@ const Carousel = React.forwardRef<
         carouselRef,
         api: api,
         opts,
+        // @ts-expect-error TS(2571): Object is of type 'unknown'.
         orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
         scrollPrev,
         scrollNext,
@@ -177,12 +181,14 @@ const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
 CarouselItem.displayName = 'CarouselItem';
 
 const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
+  // @ts-expect-error TS(2339): Property 'variant' does not exist on type 'Omit<Bu... Remove this comment to see the full error message
   ({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
     const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
     return (
       <Button
         ref={ref}
+        // @ts-expect-error TS(2322): Type '{ children: Element[]; defaultChecked?: bool... Remove this comment to see the full error message
         variant={variant}
         size={size}
         className={cn(
@@ -205,12 +211,14 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
 CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
+  // @ts-expect-error TS(2339): Property 'variant' does not exist on type 'Omit<Bu... Remove this comment to see the full error message
   ({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
     const { orientation, scrollNext, canScrollNext } = useCarousel();
 
     return (
       <Button
         ref={ref}
+        // @ts-expect-error TS(2322): Type '{ children: Element[]; defaultChecked?: bool... Remove this comment to see the full error message
         variant={variant}
         size={size}
         className={cn(

@@ -24,7 +24,7 @@ describe('ScraperEngine', () => {
   });
 
   describe('scrapeWebsite', () => {
-    it('should scrape website using Firecrawl successfully', async () => {
+    it('should scrape website using Firecrawl successfully', () => {
       const mockFirecrawlResponse = {
         success: true,
         data: {
@@ -51,7 +51,7 @@ describe('ScraperEngine', () => {
       });
     });
 
-    it('should fallback to fetch when Firecrawl fails', async () => {
+    it('should fallback to fetch when Firecrawl fails', () => {
       const mockHtmlContent = '<html><body><h1>Food Truck</h1></body></html>';
 
       mockedFirecrawl.scrapeUrl.mockResolvedValue({

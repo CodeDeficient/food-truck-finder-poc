@@ -108,7 +108,7 @@ export class TaskScheduler {
     // Calculate interval in milliseconds
     const intervalMs = task.intervalMinutes * 60 * 1000; // Schedule the task
     const interval = setInterval(() => {
-      void (async () => {
+      void (() => {
         try {
           console.info(`Executing task: ${taskId}`);
           task.lastRun = new Date().toISOString();
@@ -324,7 +324,7 @@ export function createDefaultTasks(
       enabled: true,
       successCount: 0,
       errorCount: 0,
-      execute: async () => {
+      execute: () => {
         const websites = [
           'https://gourmetstreeteats.com',
           'https://tacoparadise.com',
@@ -356,7 +356,7 @@ export function createDefaultTasks(
       enabled: true,
       successCount: 0,
       errorCount: 0,
-      execute: async () => {
+      execute: () => {
         // Database connection to fetch trucks should be implemented here
         const trucks: FoodTruck[] = []; // Placeholder: fetch trucks from database
 
@@ -393,7 +393,7 @@ export function createDefaultTasks(
       enabled: true,
       successCount: 0,
       errorCount: 0,
-      execute: async () => {
+      execute: () => {
         // Check Gemini usage limits
         const usage = geminiProcessor.getUsageStats();
 
@@ -449,7 +449,7 @@ export function createDefaultTasks(
       enabled: true,
       successCount: 0,
       errorCount: 0,
-      execute: async () => {
+      execute: () => {
         // Get active trucks (those currently operating)
         const activeTrucks: FoodTruck[] = []; // Placeholder: fetch active trucks from database
 

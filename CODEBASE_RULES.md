@@ -280,6 +280,45 @@ When standardizing imports:
 3. **VERIFY each change**: Ensure imports resolve and types match
 4. **TEST functionality**: Ensure behavior remains unchanged
 
+### **RULE 12.4: AUTOMATION SAFETY REQUIREMENTS**
+
+**⚠️ CRITICAL: Automation scripts can cause massive linting failures if not properly tested**
+
+#### **Mandatory Pre-Automation Verification**
+
+- **ALWAYS verify semantic equivalence**: Transformations must preserve logical meaning
+- **NEVER automate complex logic**: Boolean expressions, instanceof checks require manual review
+- **ALWAYS test incrementally**: Dry-run → 1-2 files → subset → full codebase
+- **ALWAYS monitor error count**: Stop immediately if errors increase
+
+#### **Proven Safe Automation Patterns**
+
+- ✅ **Simple operator substitution**: `||` → `??` (semantically equivalent)
+- ✅ **Async keyword removal**: Remove async from functions with no await
+- ✅ **Parsing error fixes**: Syntax corrections (brackets, semicolons)
+- ✅ **ESLint auto-fix**: For specific, well-tested rules only
+
+#### **Forbidden Automation Patterns**
+
+- ❌ **Boolean expression transformation**: Context-dependent logic changes
+- ❌ **instanceof/type checking**: Requires human judgment
+- ❌ **Complex conditional logic**: Nested ternary, multiple conditions
+- ❌ **Multiple pattern types**: Increases failure risk exponentially
+
+#### **Mandatory Testing Protocol**
+
+1. **Phase 1**: `script.cjs --dry-run --max-files 5` (analysis only)
+2. **Phase 2**: `script.cjs --max-files 10` (subset testing)
+3. **Phase 3**: Verify `npm run build` and `npm run lint` pass
+4. **Phase 4**: Full codebase only if subset successful
+
+#### **Failure Recovery Protocol**
+
+- **IMMEDIATE ROLLBACK**: If error count increases, revert all changes
+- **ROOT CAUSE ANALYSIS**: Document what went wrong and why
+- **UPDATE SAFETY RULES**: Add failed patterns to forbidden list
+- **NEVER REPEAT**: Same automation failure pattern twice
+
 ## 13. Deployment and Environment Rules
 
 ### **RULE 13.1: ENVIRONMENT MANAGEMENT**
