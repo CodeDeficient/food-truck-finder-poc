@@ -104,7 +104,7 @@ export function TruckCard({
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-              {truck.current_location?.address && (
+              {(truck.current_location?.address != undefined) && (
                 <CardDescription className="flex items-center mt-1 dark:text-gray-400">
                   <MapPin className="h-4 w-4 mr-1" />
                   {truck.current_location.address}
@@ -131,7 +131,7 @@ export function TruckCard({
           {/* Ratings & Hours Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Ratings */}
-            {truck.average_rating && (
+            {(truck.average_rating != undefined) && (
               <div>
                 <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Rating</h4>
                 <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export function TruckCard({
                   <span className="text-sm font-medium dark:text-gray-200">
                     {truck.average_rating.toFixed(1)}
                   </span>
-                  {truck.review_count && (
+                  {(truck.review_count != undefined) && (
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       ({truck.review_count} reviews)
                     </span>
@@ -197,7 +197,7 @@ export function TruckCard({
             <div>
               <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
               <div className="space-y-1 dark:text-gray-300">
-                {truck.contact_info?.phone && (
+                {(truck.contact_info?.phone != undefined) && (
                   <a
                     href={`tel:${truck.contact_info.phone}`}
                     className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
@@ -206,7 +206,7 @@ export function TruckCard({
                     <span className="truncate">{truck.contact_info.phone}</span>
                   </a>
                 )}
-                {truck.contact_info?.website && (
+                {(truck.contact_info?.website != undefined) && (
                   <a
                     href={truck.contact_info.website}
                     target="_blank"
@@ -232,7 +232,7 @@ export function TruckCard({
             <div>
               <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Social Media</h4>
               <div className="flex flex-wrap gap-2">
-                {truck.social_media.instagram && (
+                {(truck.social_media.instagram != undefined) && (
                   <a
                     href={`https://instagram.com/${truck.social_media.instagram}`}
                     target="_blank"
@@ -243,7 +243,7 @@ export function TruckCard({
                     Instagram
                   </a>
                 )}
-                {truck.social_media.facebook && (
+                {(truck.social_media.facebook != undefined) && (
                   <a
                     href={`https://facebook.com/${truck.social_media.facebook}`}
                     target="_blank"
@@ -254,7 +254,7 @@ export function TruckCard({
                     Facebook
                   </a>
                 )}
-                {truck.social_media.twitter && (
+                {(truck.social_media.twitter != undefined) && (
                   <a
                     href={`https://twitter.com/${truck.social_media.twitter}`}
                     target="_blank"
