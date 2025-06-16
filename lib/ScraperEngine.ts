@@ -614,12 +614,8 @@ export class GeminiDataProcessor {
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
       const parsedResponse = JSON.parse(response) as GeminiLocationData;
-      if (parsedResponse.coordinates.lat == undefined) {
-        parsedResponse.coordinates.lat = undefined;
-      }
-      if (parsedResponse.coordinates.lng == undefined) {
-        parsedResponse.coordinates.lng = undefined;
-      }
+      parsedResponse.coordinates.lat ??= undefined;
+      parsedResponse.coordinates.lng ??= undefined;
       return parsedResponse;
     } catch (error) {
       console.error('Error extracting location with Gemini:', error);

@@ -90,7 +90,7 @@ async function handleFirecrawlStage(
         await firecrawl.scrapeFoodTruckWebsite(url);
       if (fcOutput.success && fcOutput.data?.markdown) {
         contentToProcess = fcOutput.data.markdown;
-        sourceUrlForProcessing = fcOutput.data.source_url || url;
+        sourceUrlForProcessing = fcOutput.data.source_url ?? url;
         firecrawlResult = {
           status: 'Success',
           rawContent: fcOutput.data.markdown,

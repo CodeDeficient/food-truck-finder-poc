@@ -512,7 +512,7 @@ export class FoodTruckDiscoveryEngine {
     if (typeof result === 'object' && result !== undefined) {
       const resultObj = result as { content?: string; raw_content?: string };
       if (resultObj.content || resultObj.raw_content) {
-        const content = resultObj.content || resultObj.raw_content ?? '';
+        const content = resultObj.content ?? resultObj.raw_content ?? '';
         const extractedUrls = this.extractFoodTruckUrls(content);
         for (const url of extractedUrls) {
           if (await this.isFoodTruckUrl(url)) {

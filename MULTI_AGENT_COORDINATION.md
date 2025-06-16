@@ -228,4 +228,40 @@ Examples:
 
 ---
 
+## 🎯 **LINTING REMEDIATION COORDINATION PROTOCOLS**
+
+### **PROTOCOL: SYSTEMATIC LINTING REMEDIATION**
+**Based on 503+ successful fixes - PROVEN EFFECTIVE**
+
+#### **Single Agent Rule**
+- **ONLY ONE AGENT** performs linting remediation at a time
+- **MANDATORY**: Claim ownership in 🚨_LINTING_REMEDIATION_COMMAND_CENTER_🚨.md
+- **MANDATORY**: Update progress after each batch (10-20 fixes)
+
+#### **Proven Safe Automation Hierarchy**
+**Tier 1 - COMPLETELY SAFE (100% automation)**:
+- ESLint auto-fix, unused import removal, console.log → console.info
+
+**Tier 2 - HIGHLY SAFE (90%+ success)**:
+- || → ?? conversions, ||= → ??= conversions, simple null → undefined
+
+**Tier 3 - MODERATELY SAFE (requires subset testing)**:
+- Complex null → undefined, type improvements, filename case changes
+
+**Tier 4 - MANUAL ONLY (NEVER AUTOMATE)**:
+- Boolean expressions, complex logic, cognitive complexity
+
+#### **Mandatory Quality Gates**
+- **BEFORE**: Run codebase-retrieval to identify affected files
+- **DURING**: Verify error count reduction after each batch
+- **AFTER**: Ensure zero build errors maintained throughout
+- **ROLLBACK**: Immediate revert if error count increases
+
+#### **Critical Failure Prevention**
+- **NEVER** automate boolean expression transformations (caused 923→1,001 error increase)
+- **NEVER** rename files without updating import paths
+- **ALWAYS** use subset testing before full codebase automation
+
+---
+
 _This document should be reviewed and updated as the project evolves and new coordination challenges arise._

@@ -39,7 +39,7 @@ const MapViewUpdater = ({
   const map = useMap();
   useEffect(() => {
     if (center) {
-      map.flyTo(center, zoom || map.getZoom());
+      map.flyTo(center, zoom ?? map.getZoom());
     }
   }, [center, zoom, map]);
   // Empty fragment instead of null
