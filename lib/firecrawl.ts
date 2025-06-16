@@ -128,7 +128,7 @@ export class FirecrawlService {
 
       if (!response.ok) {
         const errorData = data as { error?: string };
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        throw new Error(errorData.error ?? `HTTP ${response.status}`);
       }
 
       this.setCacheResult(cacheKey, data);
@@ -189,7 +189,7 @@ export class FirecrawlService {
 
       if (!response.ok) {
         const errorData = data as { error?: string };
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        throw new Error(errorData.error ?? `HTTP ${response.status}`);
       }
 
       this.setCacheResult(cacheKey, data);
@@ -221,7 +221,7 @@ export class FirecrawlService {
 
       if (!response.ok) {
         const errorData = data as { error?: string };
-        throw new Error(errorData.error || `HTTP ${response.status}`);
+        throw new Error(errorData.error ?? `HTTP ${response.status}`);
       }
 
       this.setCacheResult(cacheKey, data);
