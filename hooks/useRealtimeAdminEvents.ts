@@ -129,7 +129,7 @@ export function useRealtimeAdminEvents(
 
     try {
       // Get auth token from localStorage or context
-      const token = localStorage.getItem('supabase.auth.token') || 
+      const token = localStorage.getItem('supabase.auth.token') ??
                    sessionStorage.getItem('supabase.auth.token');
 
       if (!token) {

@@ -66,7 +66,7 @@ interface TavilyResult {
 
 function performTavilySearch(params: Record<string, unknown>) {
   const apiKey = process.env.TAVILY_API_KEY;
-  if (!apiKey) {
+  if (apiKey === undefined || apiKey === '') {
     console.warn('TAVILY_API_KEY not found, using mock data');
     return {
       results: [
@@ -95,8 +95,8 @@ function performTavilySearch(params: Record<string, unknown>) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        query: (params.query as string) || (params.q as string),
-        max_results: (params.limit as number) || 10,
+        query: (params.query as string) ?? (params.q as string),
+        max_results: (params.limit as number) ?? 10,
         search_depth: (params.search_depth as string) ?? 'advanced',
         include_answer: true,
         include_raw_content: true,

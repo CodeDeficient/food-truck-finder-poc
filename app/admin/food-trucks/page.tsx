@@ -57,16 +57,16 @@ export default function FoodTruckManagementPage() {
                   <TableCell className="font-medium">{truck.name}</TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      {truck.contact_info?.phone != undefined && (
+                      {truck.contact_info?.phone !== undefined && (
                         <div className="text-sm">📞 {truck.contact_info.phone}</div>
                       )}
-                      {truck.contact_info?.email != undefined && (
+                      {truck.contact_info?.email !== undefined && (
                         <div className="text-sm">✉️ {truck.contact_info.email}</div>
                       )}
-                      {truck.contact_info?.website != undefined && (
+                      {truck.contact_info?.website !== undefined && (
                         <div className="text-sm">🌐 {truck.contact_info.website}</div>
                       )}
-                      {(truck.contact_info?.phone == undefined) && (truck.contact_info?.email == undefined) && (truck.contact_info?.website == undefined) && (
+                      {(truck.contact_info?.phone === undefined) && (truck.contact_info?.email === undefined) && (truck.contact_info?.website === undefined) && (
                         <span className="text-muted-foreground">No contact info</span>
                       )}
                     </div>
@@ -100,7 +100,7 @@ export default function FoodTruckManagementPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {(truck.last_scraped_at == undefined)
+                    {(truck.last_scraped_at === undefined)
                       ? 'N/A'
                       : new Date(truck.last_scraped_at).toLocaleDateString()}
                   </TableCell>
