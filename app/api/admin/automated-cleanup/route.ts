@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
@@ -167,7 +166,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     switch (action) {
       case 'run_scheduled': {
-        // @ts-expect-error TS(2352): Conversion of type 'Record<string, unknown>' to ty... Remove this comment to see the full error message
         const { scheduleId } = options as RunScheduledOptions;
         const result = await runScheduledCleanup(scheduleId);
         return NextResponse.json({

@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
 
@@ -38,26 +37,26 @@ export async function GET(request: Request) {
   try {
     // Fetch real scraping metrics from database
     const [allJobs, todayJobs, recentTrucks] = await Promise.all([
-      // @ts-expect-error TS(2339): Property 'getAllJobs' does not exist on type '{ cr... Remove this comment to see the full error message
       ScrapingJobService.getAllJobs(100, 0), // Get last 100 jobs for metrics
-      // @ts-expect-error TS(2339): Property 'getJobsFromDate' does not exist on type ... Remove this comment to see the full error message
       ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours
       FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
     ]);
 
     const totalRuns = allJobs.length;
-    const successfulRuns = allJobs.filter((job: any) => job.status === 'completed').length;
-    const failedRuns = allJobs.filter((job: any) => job.status === 'failed').length;
+    const typedJobs = allJobs as Array<{ status?: string; started_at?: string; completed_at?: string }>;
+    const successfulRuns = typedJobs.filter(job => job.status === 'completed').length;
+    const failedRuns = typedJobs.filter(job => job.status === 'failed').length;
 
     // Calculate average run time from completed jobs
-    const completedJobs = allJobs.filter((job: any) => job.status === 'completed' && job.started_at && job.completed_at
+    const completedJobs = typedJobs.filter(job =>
+      job.status === 'completed' && job.started_at !== undefined && job.completed_at !== undefined
     );
 
     const averageRunTime = completedJobs.length > 0
       ? Math.round(
-          completedJobs.reduce((sum: any, job: any) => {
-            const start = new Date(job.started_at).getTime();
-            const end = new Date(job.completed_at).getTime();
+          completedJobs.reduce((sum: number, job) => {
+            const start = new Date(job.started_at ?? '').getTime();
+            const end = new Date(job.completed_at ?? '').getTime();
             return sum + (end - start) / 1000; // Convert to seconds
           }, 0) / completedJobs.length
         )

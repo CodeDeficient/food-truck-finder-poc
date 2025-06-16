@@ -1,6 +1,4 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest } from 'next/server';
-// @ts-expect-error TS(2305): Module '"@/lib/supabase"' has no exported member '... Remove this comment to see the full error message
 import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService, DataQualityService } from '@/lib/supabase';
 
 /**
@@ -71,8 +69,7 @@ export async function GET(request: NextRequest): Promise<Response> {
             id: generateEventId(),
             type: 'heartbeat',
             timestamp: new Date().toISOString(),
-            // @ts-expect-error TS(2322): Type 'RealtimeMetrics' is not assignable to type '... Remove this comment to see the full error message
-            data: metrics
+            data: metrics as Record<string, unknown>
           };
           
           controller.enqueue(encoder.encode(formatSSEMessage(event)));
@@ -156,13 +153,13 @@ async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
 async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   try {
     // Fetch scraping job metrics
-    // @ts-expect-error TS(2339): Property 'getAllJobs' does not exist on type '{ cr... Remove this comment to see the full error message
     const recentJobs = await ScrapingJobService.getAllJobs(50, 0);
+    const typedJobs = recentJobs as Array<{ status?: string }>;
     const scrapingMetrics = {
-      active: recentJobs.filter((job: any) => job.status === 'running').length,
-      completed: recentJobs.filter((job: any) => job.status === 'completed').length,
-      failed: recentJobs.filter((job: any) => job.status === 'failed').length,
-      pending: recentJobs.filter((job: any) => job.status === 'pending').length
+      active: typedJobs.filter(job => job.status === 'running').length,
+      completed: typedJobs.filter(job => job.status === 'completed').length,
+      failed: typedJobs.filter(job => job.status === 'failed').length,
+      pending: typedJobs.filter(job => job.status === 'pending').length
     };
 
     // Fetch data quality metrics
@@ -205,7 +202,6 @@ async function monitorDataChanges(
 ): Promise<void> {
   try {
     // Check for recent scraping job changes
-    // @ts-expect-error TS(2339): Property 'getJobsFromDate' does not exist on type ... Remove this comment to see the full error message
     const recentJobs = await ScrapingJobService.getJobsFromDate(
       new Date(Date.now() - 60_000) // Last minute
     );
@@ -216,12 +212,15 @@ async function monitorDataChanges(
         type: 'scraping_update',
         timestamp: new Date().toISOString(),
         data: {
-          recentJobs: recentJobs.map((job: any) => ({
-            id: job.id,
-            status: job.status,
-            started_at: job.started_at,
-            completed_at: job.completed_at
-          })),
+          recentJobs: recentJobs.map((job: unknown) => {
+            const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
+            return {
+              id: jobData.id,
+              status: jobData.status,
+              started_at: jobData.started_at,
+              completed_at: jobData.completed_at
+            };
+          }),
           count: recentJobs.length
         },
         severity: 'info'
@@ -284,41 +283,47 @@ export async function POST(request: NextRequest): Promise<Response> {
     switch (action) {
       case 'health_check': {
         const metrics = await fetchRealtimeMetrics();
-        // @ts-expect-error TS(2339): Property 'json' does not exist on type '{ new (bod... Remove this comment to see the full error message
-        return Response.json({
+        return new Response(JSON.stringify({
           success: true,
           status: 'healthy',
           metrics,
           timestamp: new Date().toISOString()
+        }), {
+          headers: { 'Content-Type': 'application/json' }
         });
       }
 
       case 'trigger_test_event': {
         // This would trigger a test event for debugging
-        // @ts-expect-error TS(2339): Property 'json' does not exist on type '{ new (bod... Remove this comment to see the full error message
-        return Response.json({
+        return new Response(JSON.stringify({
           success: true,
           message: 'Test event triggered',
           timestamp: new Date().toISOString()
+        }), {
+          headers: { 'Content-Type': 'application/json' }
         });
       }
 
       default: {
-        // @ts-expect-error TS(2339): Property 'json' does not exist on type '{ new (bod... Remove this comment to see the full error message
-        return Response.json({
+        return new Response(JSON.stringify({
           success: false,
           error: 'Unknown action',
           available_actions: ['health_check', 'trigger_test_event']
-        }, { status: 400 });
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
       }
     }
   } catch (error) {
     console.error('Realtime events POST error:', error);
-    // @ts-expect-error TS(2339): Property 'json' does not exist on type '{ new (bod... Remove this comment to see the full error message
-    return Response.json({
+    return new Response(JSON.stringify({
       success: false,
       error: 'Internal server error',
-      details: error instanceof Error == undefined ? 'Unknown error'  : error.message
-    }, { status: 500 });
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }

@@ -1,6 +1,5 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
-import { dispatchGeminiOperation } from '@/lib/gemini';
+import { dispatchGeminiOperation, gemini } from '@/lib/gemini';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +14,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Check usage limits
-    // @ts-expect-error TS(2304): Cannot find name 'gemini'.
     const usageCheck = await gemini.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return NextResponse.json(
@@ -27,8 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // @ts-expect-error TS(2345): Argument of type 'string' is not assignable to par... Remove this comment to see the full error message
-    const result = await dispatchGeminiOperation(type, data);
+    const result = await dispatchGeminiOperation(type as 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance', data);
     return NextResponse.json(result);
   } catch (error: unknown) {
     console.error('Gemini API error:', error);
@@ -37,15 +34,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
 
   try {
     if (action === 'usage') {
-      // @ts-expect-error TS(2304): Cannot find name 'gemini'.
       const usageCheck = await gemini.checkUsageLimits();
-      // @ts-expect-error TS(2304): Cannot find name 'gemini'.
       const stats = await gemini.getUsageStats();
 
       return NextResponse.json({

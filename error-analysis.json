@@ -1,8 +1,82 @@
 {
-  "timestamp": "2025-06-15T23:30:40.625Z",
-  "totalErrors": 0,
-  "errorCounts": {},
-  "automationCandidates": [],
+  "timestamp": "2025-06-16T00:50:48.833Z",
+  "totalErrors": 851,
+  "errorCounts": {
+    "unknown": 6,
+    "max-lines-per-function": 89,
+    "@typescript-eslint/strict-boolean-expressions": 203,
+    "@typescript-eslint/no-unsafe-assignment": 99,
+    "@typescript-eslint/no-unsafe-call": 67,
+    "@typescript-eslint/no-unsafe-member-access": 198,
+    "sonarjs/no-nested-conditional": 13,
+    "@typescript-eslint/no-unsafe-argument": 29,
+    "@typescript-eslint/no-explicit-any": 45,
+    "@typescript-eslint/await-thenable": 4,
+    "sonarjs/no-invalid-await": 4,
+    "sonarjs/void-use": 1,
+    "@typescript-eslint/require-await": 7,
+    "sonarjs/cognitive-complexity": 10,
+    "@typescript-eslint/no-unsafe-return": 19,
+    "@typescript-eslint/prefer-nullish-coalescing": 4,
+    "sonarjs/unused-import": 1,
+    "sonarjs/no-unused-vars": 2,
+    "sonarjs/no-dead-store": 2,
+    "max-depth": 4,
+    "unicorn/no-null": 1,
+    "sonarjs/no-nested-template-literals": 1,
+    "@typescript-eslint/no-misused-promises": 6,
+    "sonarjs/pseudo-random": 1,
+    "unicorn/no-array-reduce": 1,
+    "sonarjs/different-types-comparison": 11,
+    "sonarjs/no-use-of-empty-return-value": 3,
+    "sonarjs/no-all-duplicated-branches": 1,
+    "sonarjs/deprecation": 6,
+    "sonarjs/no-redundant-jump": 2,
+    "unicorn/consistent-function-scoping": 1,
+    "unicorn/prefer-add-event-listener": 2,
+    "@typescript-eslint/restrict-template-expressions": 2,
+    "max-params": 4,
+    "sonarjs/use-type-alias": 1,
+    "sonarjs/slow-regex": 1
+  },
+  "automationCandidates": [
+    {
+      "ruleId": "@typescript-eslint/no-unsafe-assignment",
+      "count": 99,
+      "confidence": "MEDIUM",
+      "method": "type-annotation",
+      "description": "Add type annotations for unsafe assignments",
+      "estimatedFixes": 29,
+      "priority": 58
+    },
+    {
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "count": 45,
+      "confidence": "MEDIUM",
+      "method": "pattern-replacement",
+      "description": "Replace any with unknown in safe contexts",
+      "estimatedFixes": 18,
+      "priority": 36
+    },
+    {
+      "ruleId": "@typescript-eslint/strict-boolean-expressions",
+      "count": 203,
+      "confidence": "LOW",
+      "method": "manual-review",
+      "description": "Complex boolean expression fixes",
+      "estimatedFixes": 20,
+      "priority": 20
+    },
+    {
+      "ruleId": "max-lines-per-function",
+      "count": 89,
+      "confidence": "LOW",
+      "method": "manual-refactor",
+      "description": "Function extraction and refactoring",
+      "estimatedFixes": 4,
+      "priority": 4
+    }
+  ],
   "recommendations": {
     "highConfidence": {
       "candidates": [],
@@ -10,9 +84,31 @@
       "methods": []
     },
     "mediumConfidence": {
-      "candidates": [],
-      "totalFixes": 0,
-      "methods": []
+      "candidates": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "count": 99,
+          "confidence": "MEDIUM",
+          "method": "type-annotation",
+          "description": "Add type annotations for unsafe assignments",
+          "estimatedFixes": 29,
+          "priority": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-explicit-any",
+          "count": 45,
+          "confidence": "MEDIUM",
+          "method": "pattern-replacement",
+          "description": "Replace any with unknown in safe contexts",
+          "estimatedFixes": 18,
+          "priority": 36
+        }
+      ],
+      "totalFixes": 47,
+      "methods": [
+        "type-annotation",
+        "pattern-replacement"
+      ]
     }
   }
 }
