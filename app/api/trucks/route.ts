@@ -15,13 +15,13 @@ export function GET(request: NextRequest) {
 
   try {
     // Get specific truck by ID
-    if (id !== undefined && id !== '') {
+    if (id != undefined && id != '') {
       const truck = await FoodTruckService.getTruckById(id);
       return NextResponse.json({ truck });
     }
 
     // Get trucks by location
-    if (lat !== undefined && lat !== '' && lng !== undefined && lng !== '') {
+    if (lat != undefined && lat != '' && lng != undefined && lng != '') {
       const userLat = Number.parseFloat(lat);
       const userLng = Number.parseFloat(lng);
       const radiusKm = Number.parseFloat(radius);
@@ -49,11 +49,11 @@ export function GET(request: NextRequest) {
       summary: {
         totalTrucks: total,
         averageQuality:
-          trucks !== undefined && trucks.length > 0
+          trucks != undefined && trucks.length > 0
             ? trucks.reduce((acc, t) => acc + (t.data_quality_score ?? 0), 0) / trucks.length
             : 0,
         lastUpdated:
-          trucks !== undefined && trucks.length > 0
+          trucks != undefined && trucks.length > 0
             ? Math.max(...trucks.map((t) => new Date(t.updated_at).getTime()))
             : 0,
       },
@@ -188,7 +188,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating food truck:', error);
     if (error instanceof z.ZodError) {
-      // @ts-expect-error TS(2571): Object is of type 'unknown'.
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to create food truck' }, { status: 500 });
@@ -210,7 +209,6 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error('Error updating food truck:', error);
     if (error instanceof z.ZodError) {
-      // @ts-expect-error TS(2571): Object is of type 'unknown'.
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to update food truck' }, { status: 500 });
