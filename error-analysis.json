@@ -1,23 +1,23 @@
 {
-  "timestamp": "2025-06-16T00:50:48.833Z",
-  "totalErrors": 851,
+  "timestamp": "2025-06-16T03:16:57.156Z",
+  "totalErrors": 625,
   "errorCounts": {
-    "unknown": 6,
-    "max-lines-per-function": 89,
-    "@typescript-eslint/strict-boolean-expressions": 203,
-    "@typescript-eslint/no-unsafe-assignment": 99,
-    "@typescript-eslint/no-unsafe-call": 67,
-    "@typescript-eslint/no-unsafe-member-access": 198,
-    "sonarjs/no-nested-conditional": 13,
-    "@typescript-eslint/no-unsafe-argument": 29,
-    "@typescript-eslint/no-explicit-any": 45,
+    "unknown": 5,
+    "max-lines-per-function": 90,
+    "@typescript-eslint/strict-boolean-expressions": 190,
+    "@typescript-eslint/no-unsafe-assignment": 70,
+    "@typescript-eslint/no-unsafe-call": 44,
+    "@typescript-eslint/no-unsafe-member-access": 95,
+    "sonarjs/different-types-comparison": 13,
+    "sonarjs/no-nested-conditional": 11,
     "@typescript-eslint/await-thenable": 4,
     "sonarjs/no-invalid-await": 4,
     "sonarjs/void-use": 1,
+    "@typescript-eslint/no-explicit-any": 10,
     "@typescript-eslint/require-await": 7,
     "sonarjs/cognitive-complexity": 10,
-    "@typescript-eslint/no-unsafe-return": 19,
-    "@typescript-eslint/prefer-nullish-coalescing": 4,
+    "@typescript-eslint/no-unsafe-argument": 15,
+    "@typescript-eslint/prefer-nullish-coalescing": 3,
     "sonarjs/unused-import": 1,
     "sonarjs/no-unused-vars": 2,
     "sonarjs/no-dead-store": 2,
@@ -27,12 +27,12 @@
     "@typescript-eslint/no-misused-promises": 6,
     "sonarjs/pseudo-random": 1,
     "unicorn/no-array-reduce": 1,
-    "sonarjs/different-types-comparison": 11,
+    "@typescript-eslint/no-unsafe-return": 11,
     "sonarjs/no-use-of-empty-return-value": 3,
     "sonarjs/no-all-duplicated-branches": 1,
-    "sonarjs/deprecation": 6,
     "sonarjs/no-redundant-jump": 2,
     "unicorn/consistent-function-scoping": 1,
+    "unicorn/no-useless-undefined": 6,
     "unicorn/prefer-add-event-listener": 2,
     "@typescript-eslint/restrict-template-expressions": 2,
     "max-params": 4,
@@ -42,39 +42,41 @@
   "automationCandidates": [
     {
       "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 99,
+      "count": 70,
       "confidence": "MEDIUM",
       "method": "type-annotation",
       "description": "Add type annotations for unsafe assignments",
-      "estimatedFixes": 29,
-      "priority": 58
-    },
-    {
-      "ruleId": "@typescript-eslint/no-explicit-any",
-      "count": 45,
-      "confidence": "MEDIUM",
-      "method": "pattern-replacement",
-      "description": "Replace any with unknown in safe contexts",
-      "estimatedFixes": 18,
-      "priority": 36
+      "estimatedFixes": 21,
+      "priority": 42
     },
     {
       "ruleId": "@typescript-eslint/strict-boolean-expressions",
-      "count": 203,
+      "count": 190,
       "confidence": "LOW",
       "method": "manual-review",
       "description": "Complex boolean expression fixes",
-      "estimatedFixes": 20,
-      "priority": 20
+      "estimatedFixes": 19,
+      "priority": 19
+    },
+    {
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "count": 10,
+      "confidence": "MEDIUM",
+      "method": "pattern-replacement",
+      "description": "Replace any with unknown in safe contexts",
+      "estimatedFixes": 4,
+      "priority": 8
     },
     {
       "ruleId": "max-lines-per-function",
-      "count": 89,
-      "confidence": "LOW",
-      "method": "manual-refactor",
-      "description": "Function extraction and refactoring",
-      "estimatedFixes": 4,
-      "priority": 4
+      "count": 90,
+      "confidence": "MANUAL_ONLY",
+      "method": "manual-ide-refactor",
+      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment due to semantic complexity, variable scope changes, and control flow preservation. Use VS Code Extract Method with comprehensive testing.",
+      "estimatedFixes": 0,
+      "priority": 5,
+      "automationRisk": "HIGH",
+      "researchEvidence": "Academic studies show 47% failure rate in automated extraction, semantic errors common"
     }
   ],
   "recommendations": {
@@ -87,24 +89,24 @@
       "candidates": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 99,
+          "count": 70,
           "confidence": "MEDIUM",
           "method": "type-annotation",
           "description": "Add type annotations for unsafe assignments",
-          "estimatedFixes": 29,
-          "priority": 58
+          "estimatedFixes": 21,
+          "priority": 42
         },
         {
           "ruleId": "@typescript-eslint/no-explicit-any",
-          "count": 45,
+          "count": 10,
           "confidence": "MEDIUM",
           "method": "pattern-replacement",
           "description": "Replace any with unknown in safe contexts",
-          "estimatedFixes": 18,
-          "priority": 36
+          "estimatedFixes": 4,
+          "priority": 8
         }
       ],
-      "totalFixes": 47,
+      "totalFixes": 25,
       "methods": [
         "type-annotation",
         "pattern-replacement"
