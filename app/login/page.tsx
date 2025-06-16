@@ -98,7 +98,7 @@ export default function LoginPage() {
           <CardDescription>Sign in to access the admin dashboard</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error && (
+          {error != undefined && error !== '' && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -107,7 +107,7 @@ export default function LoginPage() {
           {/* Email Login Form */}
           <form
             onSubmit={(e) => {
-              handleEmailLogin(e).catch((error) => console.warn('Login failed:', error));
+              void handleEmailLogin(e);
             }}
             className="space-y-4"
           >
@@ -133,7 +133,6 @@ export default function LoginPage() {
                 required
               />
             </div>
-            {/* @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; type: "sub... Remove this comment to see the full error message */}
             <Button type="submit" disabled={loading} className="w-full" size="lg">
               {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -155,7 +154,7 @@ export default function LoginPage() {
 
           <Button
             onClick={() => {
-              handleGoogleLogin().catch((error) => console.warn('Google login failed:', error));
+              void handleGoogleLogin();
             }}
             disabled={loading}
             variant="outline"
