@@ -117,7 +117,6 @@ export class DuplicatePreventionService {
     
     // Location similarity
     const locationSimilarity = this.calculateLocationSimilarity(
-      // @ts-expect-error TS(2345): Argument of type 'FoodTruckLocation | undefined' i... Remove this comment to see the full error message
       candidate.current_location,
       existing.current_location
     );
