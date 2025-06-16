@@ -2,13 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logActivity } from '@/lib/activityLogger';
 import { DataQualityService, FoodTruckService } from '@/lib/supabase';
 
+// Type definitions for quality assessment
+interface QualityAssessment {
+  score: number;
+  issues: unknown[];
+}
+
+interface QualityService {
+  calculateQualityScore: (truck: unknown) => QualityAssessment;
+  categorizeQualityScore: (score: number) => string;
+  batchUpdateQualityScores: (limit: number) => Promise<unknown>;
+}
+
 export function POST(request: NextRequest) {
   try {
     // Verify cron secret for security
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
 
-    if (cronSecret == undefined) {
+    if (cronSecret === undefined) {
       console.error('CRON_SECRET not configured');
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
@@ -87,10 +99,10 @@ async function performDataQualityCheck() {
 
     // Assess each truck using SOTA algorithm
     for (const truck of trucks) {
-      const assessment = DataQualityService.calculateQualityScore(truck);
+      const assessment = (DataQualityService as QualityService).calculateQualityScore(truck);
       totalQualityScore += assessment.score;
 
-      const category = DataQualityService.categorizeQualityScore(assessment.score);
+      const category = (DataQualityService as QualityService).categorizeQualityScore(assessment.score);
       (qualityBreakdown as Record<string, number>)[category]++;
 
       if (assessment.issues.length > 0) {
@@ -114,7 +126,7 @@ async function performDataQualityCheck() {
     const averageQualityScore = trucks.length > 0 ? totalQualityScore / trucks.length : 0;
 
     // Update quality scores for trucks that need it (batch update)
-    const updateResults = await DataQualityService.batchUpdateQualityScores(100);
+    const updateResults = await (DataQualityService as QualityService).batchUpdateQualityScores(100);
 
     return {
       totalTrucks: total,
