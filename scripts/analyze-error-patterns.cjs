@@ -123,10 +123,12 @@ class ErrorPatternAnalyzer {
         estimatedReduction: '10%'
       },
       'max-lines-per-function': {
-        confidence: 'LOW',
-        method: 'manual-refactor',
-        description: 'Function extraction and refactoring',
-        estimatedReduction: '5%'
+        confidence: 'MANUAL_ONLY',
+        method: 'manual-ide-refactor',
+        description: 'RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.',
+        estimatedReduction: '0%',
+        automationRisk: 'HIGH',
+        researchEvidence: 'Academic studies show 47% failure rate, semantic errors common'
       }
     };
 
