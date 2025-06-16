@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import {
   FoodTruckService,
@@ -7,7 +6,7 @@ import {
   APIUsageService,
 } from '@/lib/supabase';
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const section = searchParams.get('section');
 
@@ -69,7 +68,7 @@ export function GET(request: NextRequest) {
   }
 }
 
-function getDashboardOverview() {
+async function getDashboardOverview() {
   try {
     const { trucks, total } = await FoodTruckService.getAllTrucks(10, 0);
     const qualityStats = await FoodTruckService.getDataQualityStats();
@@ -108,7 +107,7 @@ async function getScrapingStatus() {
 
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const recentCompleted = completedJobs.filter(
-      (job) => job.completed_at && job.completed_at > yesterday,
+      (job) => job.completed_at != undefined && job.completed_at > yesterday,
     );
     const recentFailed = failedJobs.filter((job) => job.created_at > yesterday);
     const totalRecent = recentCompleted.length + recentFailed.length;
@@ -142,7 +141,7 @@ async function getProcessingStatus() {
       pending: pendingQueue.length,
       processing: processingQueue.length,
       completedToday: completedQueue.filter(
-        (item) => item.processed_at && item.processed_at > yesterday,
+        (item) => item.processed_at != undefined && item.processed_at > yesterday,
       ).length,
       failedToday: failedQueue.filter((item) => item.created_at > yesterday).length,
       totalTokensUsed: completedQueue.reduce(
