@@ -11,9 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { PlusCircle } from 'lucide-react';
-// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
 
 export default function FoodTruckManagementPage() {
@@ -92,10 +90,8 @@ export default function FoodTruckManagementPage() {
                         }
                         className="text-xs"
                       >
-                        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                        {truck.data_quality_score >= 0.8 ? 'High' :
-                         // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                         truck.data_quality_score >= 0.6 ? 'Medium' : 'Low'}
+                        {(truck.data_quality_score ?? 0) >= 0.8 ? 'High' :
+                         (truck.data_quality_score ?? 0) >= 0.6 ? 'Medium' : 'Low'}
                       </Badge>
                     </div>
                   </TableCell>
@@ -105,7 +101,6 @@ export default function FoodTruckManagementPage() {
                       : new Date(truck.last_scraped_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    {/* @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message */}
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/food-trucks/${truck.id}`}>Edit</Link>
                     </Button>

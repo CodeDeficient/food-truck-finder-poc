@@ -28,8 +28,8 @@ export const CachedFoodTruckService = {
   getAllTrucksCached : unstable_cache(
     async (): Promise<{ trucks: FoodTruck[]; count: number }> => {
       console.info('CachedFoodTruckService: Cache miss - fetching all trucks from database');
-      // @ts-expect-error TS(2741): Property 'count' is missing in type '{ trucks: Foo... Remove this comment to see the full error message
-      return await FoodTruckService.getAllTrucks();
+      const result = await FoodTruckService.getAllTrucks();
+      return { trucks: result.trucks, count: result.total };
     },
     ['all-trucks'],
     {
@@ -45,7 +45,6 @@ export const CachedFoodTruckService = {
   getTrucksByLocationCached : unstable_cache(
     async (lat: number, lng: number, radiusKm: number): Promise<FoodTruck[]> => {
       console.info(`CachedFoodTruckService: Cache miss - fetching trucks near ${lat},${lng} (${radiusKm}km)`);
-      // @ts-expect-error TS(2322): Type 'import("C:/AI/food-truck-finder-poc/lib/supa... Remove this comment to see the full error message
       return await FoodTruckService.getTrucksByLocation(lat, lng, radiusKm);
     },
     ['trucks-by-location'],
@@ -62,7 +61,6 @@ export const CachedFoodTruckService = {
   getTruckByIdCached : unstable_cache(
     async (id: string): Promise<FoodTruck | null> => {
       console.info(`CachedFoodTruckService: Cache miss - fetching truck ${id} from database`);
-      // @ts-expect-error TS(2322): Type 'import("C:/AI/food-truck-finder-poc/lib/supa... Remove this comment to see the full error message
       return await FoodTruckService.getTruckById(id);
     },
     ['truck-by-id'],
@@ -132,13 +130,12 @@ export const CachedFoodTruckService = {
         const currentTime = now.getHours() * 100 + now.getMinutes(); // HHMM format
 
         results = results.filter((truck: FoodTruck) => {
-          // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-          const hours = truck.operating_hours?.[currentDay];
+          const hours = truck.operating_hours?.[currentDay as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined;
           if (!hours || hours.closed) return false;
-          
-          const openTime = parseTimeString(hours.open);
-          const closeTime = parseTimeString(hours.close);
-          
+
+          const openTime = parseTimeString(hours.open ?? '');
+          const closeTime = parseTimeString(hours.close ?? '');
+
           return currentTime >= openTime && currentTime <= closeTime;
         });
       }
@@ -176,15 +173,15 @@ export const CachedFoodTruckService = {
         throw new Error(`Quality stats query failed: ${error.message}`);
       }
 
-      const scores = trucks?.map((t: any) => t.data_quality_score ?? 0) || [];
-      const averageScore = scores.length > 0 
-        ? scores.reduce((sum: any, score: any) => sum + score, 0) / scores.length 
+      const scores = trucks?.map((t: { data_quality_score?: number }) => t.data_quality_score ?? 0) || [];
+      const averageScore = scores.length > 0
+        ? scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length
         : 0;
 
       const distribution = {
-        high: scores.filter((s: any) => s >= 0.8).length,
-        medium: scores.filter((s: any) => s >= 0.6 && s < 0.8).length,
-        low: scores.filter((s: any) => s < 0.6).length
+        high: scores.filter((s: number) => s >= 0.8).length,
+        medium: scores.filter((s: number) => s >= 0.6 && s < 0.8).length,
+        low: scores.filter((s: number) => s < 0.6).length
       };
 
       return {
