@@ -3,21 +3,16 @@ import { FoodTruckService } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Globe, 
-  Clock, 
-  Star, 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Clock,
+  Star,
   Users,
-  Instagram,
-  Facebook,
-  Twitter,
   ArrowLeft
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 } from 'lucide-react';
-// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
 
 interface FoodTruckDetailPageProps {
@@ -55,7 +50,6 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              {/* @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message */}
               <Button variant="outline" size="sm" asChild>
                 <Link href="/">
                   <ArrowLeft className="h-4 w-4 mr-2" />
@@ -187,35 +181,35 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Social Media</label>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {truck.social_media.instagram && (
-                        <a 
+                        <a
                           href={`https://instagram.com/${truck.social_media.instagram}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-sm hover:bg-pink-200 dark:bg-pink-900 dark:text-pink-200"
                         >
-                          <Instagram className="h-3 w-3" />
+                          <Globe className="h-3 w-3" />
                           Instagram
                         </a>
                       )}
                       {truck.social_media.facebook && (
-                        <a 
+                        <a
                           href={`https://facebook.com/${truck.social_media.facebook}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200"
                         >
-                          <Facebook className="h-3 w-3" />
+                          <Globe className="h-3 w-3" />
                           Facebook
                         </a>
                       )}
                       {truck.social_media.twitter && (
-                        <a 
+                        <a
                           href={`https://twitter.com/${truck.social_media.twitter}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-sm hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-200"
                         >
-                          <Twitter className="h-3 w-3" />
+                          <Globe className="h-3 w-3" />
                           Twitter
                         </a>
                       )}
@@ -268,8 +262,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                 {truck.operating_hours && Object.keys(truck.operating_hours).length > 0 ? (
                   <div className="space-y-2">
                     {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-                      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-                      const dayData = truck.operating_hours?.[day];
+                      const dayData = truck.operating_hours?.[day as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined;
                       const dayName = day.charAt(0).toUpperCase() + day.slice(1);
                       
                       return (
@@ -290,8 +283,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
           </div>
 
           {/* Ratings & Reviews */}
-          {/* @ts-expect-error TS(2339): Property 'average_rating' does not exist on type '... Remove this comment to see the full error message */}
-          {truck.average_rating && (
+          {(truck as { average_rating?: number }).average_rating && (
             <Card className="dark:bg-slate-800 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 dark:text-gray-100">
@@ -308,23 +300,19 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                         <Star
                           key={star}
                           className={`h-6 w-6 ${
-                            /* @ts-expect-error TS(2339): Property 'average_rating' does not exist on type '... Remove this comment to see the full error message */
-                            star <= Math.round(truck.average_rating ?? 0)
+                            star <= Math.round((truck as { average_rating?: number }).average_rating ?? 0)
                               ? 'text-yellow-400 fill-current'
                               : 'text-gray-300'
                           }`}
                         />
                       ))}
                     </div>
-                    {/* @ts-expect-error TS(2339): Property 'average_rating' does not exist on type '... Remove this comment to see the full error message */}
-                    <span className="text-xl font-semibold dark:text-gray-100">{truck.average_rating.toFixed(1)}</span>
+                    <span className="text-xl font-semibold dark:text-gray-100">{((truck as { average_rating?: number }).average_rating ?? 0).toFixed(1)}</span>
                   </div>
-                  {/* @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message */}
-                  {truck.review_count && (
+                  {(truck as { review_count?: number }).review_count && (
                     <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                       <Users className="h-4 w-4" />
-                      {/* @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message */}
-                      <span className="text-sm">{truck.review_count} reviews</span>
+                      <span className="text-sm">{(truck as { review_count?: number }).review_count} reviews</span>
                     </div>
                   )}
                 </div>

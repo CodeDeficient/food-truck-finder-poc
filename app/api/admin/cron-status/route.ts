@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService, supabase, supabaseAdmin } from '@/lib/supabase';
 
@@ -57,8 +56,7 @@ export async function GET(request: Request) {
   try {
     // Fetch real cron job data from database
     const [recentJobs, todayTrucks] = await Promise.all([
-      // @ts-expect-error TS(2339): Property 'getJobsFromDate' does not exist on type ... Remove this comment to see the full error message
-      ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours
+        ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours
       FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
     ]);
 
@@ -83,10 +81,14 @@ export async function GET(request: Request) {
     };
 
     // Filter jobs by type/purpose for cron status
-    const autoScrapeJobs = recentJobs.filter((job: any) => job.job_type === 'auto_scrape' || job.target_url?.includes('auto')
-    );
-    const qualityCheckJobs = recentJobs.filter((job: any) => job.job_type === 'quality_check' || job.target_url?.includes('quality')
-    );
+    const autoScrapeJobs = recentJobs.filter((job: unknown) => {
+      const jobData = job as { job_type?: string; target_url?: string };
+      return jobData.job_type === 'auto_scrape' || (jobData.target_url?.includes('auto') ?? false);
+    });
+    const qualityCheckJobs = recentJobs.filter((job: unknown) => {
+      const jobData = job as { job_type?: string; target_url?: string };
+      return jobData.job_type === 'quality_check' || (jobData.target_url?.includes('quality') ?? false);
+    });
 
     // Count today's new trucks
     const today = new Date();
@@ -103,17 +105,23 @@ export async function GET(request: Request) {
         schedule: '0 6 * * *', // Daily at 6 AM
         lastRun: getLastCronRun(6),
         nextRun: getNextCronRun(6),
-        status: autoScrapeJobs.some((job: any) => job.status === 'running') ? 'running' as const : 'idle' as const,
+        status: autoScrapeJobs.some((job: unknown) => {
+          const jobData = job as { status?: string };
+          return jobData.status === 'running';
+        }) ? 'running' as const : 'idle' as const,
         lastResult: {
-          success: autoScrapeJobs.length > 0 ? autoScrapeJobs[0].status === 'completed' : true,
-          message: autoScrapeJobs.length > 0 && autoScrapeJobs[0].status === 'completed'
+          success: autoScrapeJobs.length > 0 ? (autoScrapeJobs[0] as { status?: string }).status === 'completed' : true,
+          message: autoScrapeJobs.length > 0 && (autoScrapeJobs[0] as { status?: string }).status === 'completed'
             ? 'Successfully processed food trucks'
-            : autoScrapeJobs.length > 0 && autoScrapeJobs[0].status === 'failed'
+            : autoScrapeJobs.length > 0 && (autoScrapeJobs[0] as { status?: string }).status === 'failed'
             ? 'Scraping job failed'
             : 'No recent scraping jobs',
           trucksProcessed: todayTrucks.total,
           newTrucksFound: newTrucksToday,
-          errors: autoScrapeJobs.filter((job: any) => job.status === 'failed').length,
+          errors: autoScrapeJobs.filter((job: unknown) => {
+            const jobData = job as { status?: string };
+            return jobData.status === 'failed';
+          }).length,
         },
       },
       {
@@ -122,17 +130,23 @@ export async function GET(request: Request) {
         schedule: '0 8 * * *', // Daily at 8 AM
         lastRun: getLastCronRun(8),
         nextRun: getNextCronRun(8),
-        status: qualityCheckJobs.some((job: any) => job.status === 'running') ? 'running' as const : 'idle' as const,
+        status: qualityCheckJobs.some((job: unknown) => {
+          const jobData = job as { status?: string };
+          return jobData.status === 'running';
+        }) ? 'running' as const : 'idle' as const,
         lastResult: {
-          success: qualityCheckJobs.length > 0 ? qualityCheckJobs[0].status === 'completed' : true,
-          message: qualityCheckJobs.length > 0 && qualityCheckJobs[0].status === 'completed'
+          success: qualityCheckJobs.length > 0 ? (qualityCheckJobs[0] as { status?: string }).status === 'completed' : true,
+          message: qualityCheckJobs.length > 0 && (qualityCheckJobs[0] as { status?: string }).status === 'completed'
             ? 'Quality check completed successfully'
-            : qualityCheckJobs.length > 0 && qualityCheckJobs[0].status === 'failed'
+            : qualityCheckJobs.length > 0 && (qualityCheckJobs[0] as { status?: string }).status === 'failed'
             ? 'Quality check failed'
             : 'No recent quality checks',
           trucksProcessed: todayTrucks.total,
           newTrucksFound: 0, // Quality checks don't find new trucks
-          errors: qualityCheckJobs.filter((job: any) => job.status === 'failed').length,
+          errors: qualityCheckJobs.filter((job: unknown) => {
+            const jobData = job as { status?: string };
+            return jobData.status === 'failed';
+          }).length,
         },
       },
     ];

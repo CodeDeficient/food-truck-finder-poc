@@ -13,9 +13,7 @@ import {
   Users,
   Edit,
   ArrowLeft
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 } from 'lucide-react';
-// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
 import { 
   formatQualityScore, 
@@ -32,7 +30,7 @@ interface FoodTruckDetailPageProps {
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck = await FoodTruckService.getTruckById(params.id);
 
-  if (truck == undefined) {
+  if (truck === undefined) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <h1 className="text-2xl font-bold text-gray-900">Food Truck Not Found</h1>
@@ -55,7 +53,6 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          {/* @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message */}
           <Button variant="outline" size="sm" asChild>
             <Link href="/admin/food-trucks">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -262,7 +259,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               <p className="text-gray-400 text-sm">No address available</p>
             )}
 
-            {truck.current_location?.lat != undefined && truck.current_location?.lng && (
+            {truck.current_location?.lat !== undefined && truck.current_location?.lng !== undefined && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Coordinates</label>
                 <p className="text-gray-900 font-mono text-sm">
@@ -271,7 +268,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.current_location?.timestamp != undefined && (
+            {truck.current_location?.timestamp !== undefined && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Last Updated</label>
                 <p className="text-gray-900">
@@ -332,8 +329,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Customer feedback and ratings</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            // @ts-expect-error TS(2339): Property 'average_rating' does not exist on type '... Remove this comment to see the full error message
-            {truck.average_rating ? (
+            {(truck as { average_rating?: number }).average_rating ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="flex">
@@ -341,21 +337,19 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       <Star
                         key={star}
                         className={`h-5 w-5 ${
-                          star <= Math.round((truck as any).average_rating ?? 0)
+                          star <= Math.round((truck as { average_rating?: number }).average_rating ?? 0)
                             ? 'text-yellow-400 fill-current'
                             : 'text-gray-300'
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-lg font-semibold">{((truck as any).average_rating ?? 0).toFixed(1)}</span>
+                  <span className="text-lg font-semibold">{((truck as { average_rating?: number }).average_rating ?? 0).toFixed(1)}</span>
                 </div>
-                {/* @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message */}
-                {(truck as any).review_count && (
+                {(truck as { review_count?: number }).review_count && (
                   <div className="flex items-center gap-1 text-gray-600">
                     <Users className="h-4 w-4" />
-                    {/* @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message */}
-                    <span className="text-sm">{(truck as any).review_count} reviews</span>
+                    <span className="text-sm">{(truck as { review_count?: number }).review_count} reviews</span>
                   </div>
                 )}
               </div>

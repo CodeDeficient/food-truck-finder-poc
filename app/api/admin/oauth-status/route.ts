@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, supabaseAdmin } from '@/lib/supabase';
 
@@ -35,7 +34,7 @@ interface OAuthStatus {
   overall_status: 'ready' | 'partial' | 'not_configured' | 'error';
 }
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const status: OAuthStatus = {
       timestamp: new Date().toISOString(),
