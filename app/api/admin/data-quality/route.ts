@@ -1,11 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataQualityService, FoodTruckService, supabase } from '@/lib/supabase';
 
+// Type definitions for API responses
+interface QualityThresholds {
+  excellent: number;
+  good: number;
+  fair: number;
+  poor: number;
+}
+
+interface QualityAssessment {
+  score: number;
+  breakdown: Record<string, number>;
+  recommendations: string[];
+}
+
+interface TruckData {
+  id: string;
+  name: string;
+  data_quality_score: number;
+  verification_status: string;
+}
+
+interface QualityCategory {
+  label: string;
+  color: string;
+  description: string;
+}
+
 // Security check for admin API endpoints
 async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (!authHeader) return false;
+    if (authHeader == undefined) return false;
 
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -43,8 +70,12 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'stats': {
         // Get comprehensive quality statistics
-        const qualityStats = await FoodTruckService.getDataQualityStats();
-        const thresholds = DataQualityService.getQualityThresholds();
+        const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
+        const thresholdsRaw = DataQualityService.getQualityThresholds();
+
+        // Type-safe casting
+        const qualityStats = qualityStatsRaw as Record<string, unknown>;
+        const thresholds = thresholdsRaw as QualityThresholds;
         
         return NextResponse.json({
           success: true,
@@ -57,7 +88,7 @@ export async function GET(request: NextRequest) {
       }
 
       case 'assess': {
-        if (!truckId) {
+        if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required for assessment' },
             { status: 400 }
@@ -65,8 +96,12 @@ export async function GET(request: NextRequest) {
         }
 
         // Get truck and assess quality
-        const truck = await FoodTruckService.getTruckById(truckId);
-        const assessment = DataQualityService.calculateQualityScore(truck);
+        const truckRaw = await FoodTruckService.getTruckById(truckId);
+        const assessmentRaw = DataQualityService.calculateQualityScore(truckRaw);
+
+        // Type-safe casting
+        const truck = truckRaw as TruckData;
+        const assessment = assessmentRaw as QualityAssessment;
         
         return NextResponse.json({
           success: true,
@@ -75,7 +110,7 @@ export async function GET(request: NextRequest) {
             truckName: truck.name,
             currentScore: truck.data_quality_score,
             newAssessment: assessment,
-            category: DataQualityService.categorizeQualityScore(assessment.score),
+            category: DataQualityService.categorizeQualityScore(assessment.score) as QualityCategory,
             timestamp: new Date().toISOString()
           }
         });
@@ -120,14 +155,15 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'update_single': {
-        if (!truckId) {
+        if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required' },
             { status: 400 }
           );
         }
 
-        const updatedTruck = await DataQualityService.updateTruckQualityScore(truckId);
+        const updatedTruckRaw = await DataQualityService.updateTruckQualityScore(truckId);
+        const updatedTruck = updatedTruckRaw as TruckData;
         
         return NextResponse.json({
           success: true,
@@ -144,7 +180,8 @@ export async function POST(request: NextRequest) {
 
       case 'batch_update': {
         const batchLimit = limit ?? 100;
-        const results = await DataQualityService.batchUpdateQualityScores(batchLimit);
+        const resultsRaw = await DataQualityService.batchUpdateQualityScores(batchLimit);
+        const results = resultsRaw as Record<string, unknown>;
         
         return NextResponse.json({
           success: true,
@@ -165,10 +202,10 @@ export async function POST(request: NextRequest) {
 
         for (const truck of trucks) {
           try {
-            await DataQualityService.updateTruckQualityScore(truck.id);
+            await DataQualityService.updateTruckQualityScore((truck as TruckData).id);
             updated++;
-          } catch (error) {
-            console.error(`Failed to update truck ${truck.id}:`, error);
+          } catch (error: unknown) {
+            console.error(`Failed to update truck ${(truck as TruckData).id}:`, error);
             errors++;
           }
         }

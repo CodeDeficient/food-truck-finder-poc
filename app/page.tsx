@@ -7,10 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Search, Navigation, Moon, Sun } from 'lucide-react';
 import { useThemeSwitcher } from '@/components/ThemeProvider';
-// @ts-expect-error TS(2792): Cannot find module 'next/dynamic'. Did you mean to... Remove this comment to see the full error message
 import dynamic from 'next/dynamic';
 import {
   Accordion,
@@ -244,7 +242,6 @@ export default function FoodTruckFinder() {
                   void loadNearbyTrucks();
                 }}
                 disabled={!userLocation}
-                // @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; onClick: (... Remove this comment to see the full error message
                 variant="outline"
                 className="order-2 sm:order-none"
               >
