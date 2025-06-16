@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module 'recharts'. Did you mean to set... Remove this comment to see the full error message
 import * as RechartsPrimitive from 'recharts';
 // Remove unused imports
 // import {
@@ -62,7 +61,6 @@ const ChartContainer = React.forwardRef<
         )}
         {...props}
       >
-        // @ts-expect-error TS(2786): 'ChartStyle' cannot be used as a JSX component.
         <ChartStyle id={chartId} config={config} />
         <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
       </div>
@@ -72,9 +70,9 @@ const ChartContainer = React.forwardRef<
 ChartContainer.displayName = 'Chart';
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([_, config]) => config.theme ?? config.color);
+  const colorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig.theme ?? itemConfig.color);
   if (colorConfig.length === 0) {
-    return;
+    return undefined;
   }
 
   return (
@@ -112,7 +110,6 @@ const ChartTooltipContent = React.forwardRef<
       labelKey?: string;
     }
 >(
-  // @ts-expect-error TS(2345): Argument of type '({ active, payload, className, i... Remove this comment to see the full error message
   (
     {
       active,
@@ -135,7 +132,7 @@ const ChartTooltipContent = React.forwardRef<
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
-        return;
+        return undefined;
       }
 
       const [item] = payload;
@@ -151,14 +148,14 @@ const ChartTooltipContent = React.forwardRef<
       }
 
       if (!value) {
-        return;
+        return undefined;
       }
 
       return <div className={cn('font-medium', labelClassName)}>{value}</div>;
     }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
 
     if (!active || !payload?.length) {
-      return;
+      return undefined;
     }
 
     const nestLabel = payload.length === 1 && indicator !== 'dot';
@@ -173,19 +170,20 @@ const ChartTooltipContent = React.forwardRef<
       >
         {nestLabel ? undefined : tooltipLabel}
         <div className="grid gap-1.5">
-          {payload.map((item: any, index: any) => {
-            const key = `${nameKey ?? item.name ?? item.dataKey ?? 'value'}`;
+          {payload.map((item: unknown, index: number) => {
+            const itemData = item as { name?: string; dataKey?: string; payload?: unknown; color?: string; value?: number };
+            const key = `${nameKey ?? itemData.name ?? itemData.dataKey ?? 'value'}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
             const indicatorColor =
               color ??
-              (item.payload && typeof item.payload === 'object' && 'fill' in item.payload
-                ? String((item.payload as Record<string, unknown>).fill)
+              (itemData.payload && typeof itemData.payload === 'object' && 'fill' in itemData.payload
+                ? String((itemData.payload as Record<string, unknown>).fill)
                 : undefined) ??
-              item.color;
+              itemData.color;
 
             return (
               <div
-                key={item.dataKey}
+                key={itemData.dataKey}
                 className={cn(
                   'flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground',
                   indicator === 'dot' && 'items-center',
@@ -193,11 +191,11 @@ const ChartTooltipContent = React.forwardRef<
               >
                 {' '}
                 {(() => {
-                  if (formatter && item?.value !== undefined && item.name) {
-                    const payloadArray = Array.isArray(item.payload)
-                      ? (item.payload as Record<string, unknown>[])
+                  if (formatter && itemData?.value !== undefined && itemData.name) {
+                    const payloadArray = Array.isArray(itemData.payload)
+                      ? (itemData.payload as Record<string, unknown>[])
                       : [];
-                    return <>{formatter(item.value, item.name, item, index, payloadArray)}</>;
+                    return <>{formatter(itemData.value, itemData.name, item, index, payloadArray)}</>;
                   }
                   return (
                     <>
@@ -234,12 +232,12 @@ const ChartTooltipContent = React.forwardRef<
                         <div className="grid gap-1.5">
                           {nestLabel ? tooltipLabel : undefined}
                           <span className="text-muted-foreground">
-                            {itemConfig?.label ?? item.name}
+                            {itemConfig?.label ?? itemData.name}
                           </span>
                         </div>
-                        {item.value && (
+                        {itemData.value && (
                           <span className="font-mono font-medium tabular-nums text-foreground">
-                            {item.value.toLocaleString()}
+                            {itemData.value.toLocaleString()}
                           </span>
                         )}
                       </div>
@@ -265,12 +263,11 @@ const ChartLegendContent = React.forwardRef<
       hideIcon?: boolean;
       nameKey?: string;
     }
-// @ts-expect-error TS(2345): Argument of type '({ className, hideIcon, payload,... Remove this comment to see the full error message
 >(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
   const { config } = useChart();
 
   if (!payload?.length) {
-    return;
+    return undefined;
   }
 
   return (
@@ -282,14 +279,15 @@ const ChartLegendContent = React.forwardRef<
         className,
       )}
     >
-      {payload.map((item: any) => {
-        const keyValue = nameKey ?? (item.dataKey ? String(item.dataKey) : 'value');
+      {payload.map((item: unknown) => {
+        const itemData = item as { dataKey?: string; value?: string; color?: string };
+        const keyValue = nameKey ?? (itemData.dataKey ? String(itemData.dataKey) : 'value');
         const key = `${keyValue}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (
           <div
-            key={item.value as string}
+            key={itemData.value as string}
             className={cn(
               'flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground',
             )}
@@ -300,7 +298,7 @@ const ChartLegendContent = React.forwardRef<
               <div
                 className="h-2 w-2 shrink-0 rounded-[2px]"
                 style={{
-                  backgroundColor: item.color ? String(item.color) : undefined,
+                  backgroundColor: itemData.color ? String(itemData.color) : undefined,
                 }}
               />
             )}
@@ -316,12 +314,12 @@ ChartLegendContent.displayName = 'ChartLegend';
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
   if (typeof payload !== 'object' || payload === undefined) {
-    return;
+    return undefined;
   }
 
   const payloadPayload =
-    'payload' in payload && typeof (payload as any).payload === 'object' && (payload as any).payload !== undefined
-      ? (payload as any).payload
+    'payload' in payload && typeof (payload as Record<string, unknown>).payload === 'object' && (payload as Record<string, unknown>).payload !== undefined
+      ? (payload as Record<string, unknown>).payload
       : undefined;
 
   let configLabelKey: string = key;

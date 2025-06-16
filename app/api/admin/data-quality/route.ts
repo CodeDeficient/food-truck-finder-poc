@@ -1,6 +1,4 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
-// @ts-expect-error TS(2305): Module '"@/lib/supabase"' has no exported member '... Remove this comment to see the full error message
 import { DataQualityService, FoodTruckService, supabase } from '@/lib/supabase';
 
 // Security check for admin API endpoints

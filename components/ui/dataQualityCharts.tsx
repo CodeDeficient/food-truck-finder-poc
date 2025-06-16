@@ -12,7 +12,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-// @ts-expect-error TS(2792): Cannot find module 'recharts'. Did you mean to set... Remove this comment to see the full error message
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 

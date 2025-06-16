@@ -1,5 +1,4 @@
 // app/api/autonomous-discovery/route.ts
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 
 // ⚠️ DEPRECATED: This endpoint has been consolidated into /api/pipeline

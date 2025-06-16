@@ -17,7 +17,6 @@ import {
   Phone,
   MapPin,
   Star
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 } from 'lucide-react';
 
 interface CleanupOperation {
@@ -44,7 +43,7 @@ interface CleanupResult {
 export function DataCleanupDashboard() {
   const [isRunning, setIsRunning] = useState(false);
   const [lastResult, setLastResult] = useState<CleanupResult | undefined>();
-  const [previewData, setPreviewData] = useState<any>();
+  const [previewData, setPreviewData] = useState<unknown>();
   const [selectedOperations, setSelectedOperations] = useState<string[]>([
     'remove_placeholders',
     'normalize_phone',

@@ -3,7 +3,6 @@
  * Implements automated data quality improvements and cleanup operations
  */
 
-// @ts-expect-error TS(2305): Module '"@/lib/supabase"' has no exported member '... Remove this comment to see the full error message
 import { FoodTruckService, DataQualityService, type FoodTruck } from '@/lib/supabase';
 import { DuplicatePreventionService } from './duplicatePrevention';
 
@@ -67,8 +66,7 @@ export class BatchCleanupService {
     try {
       // Get all trucks for processing
       const allTrucks = await FoodTruckService.getAllTrucks();
-      // @ts-expect-error TS(2339): Property 'count' does not exist on type '{ trucks:... Remove this comment to see the full error message
-      result.totalProcessed = allTrucks.count;
+      result.totalProcessed = allTrucks.total;
       
       // Process trucks in batches
       for (let i = 0; i < allTrucks.trucks.length; i += batchSize) {
@@ -169,15 +167,13 @@ export class BatchCleanupService {
       }
       
       // Check description
-      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      if (truck.description && placeholderPatterns.some(pattern => pattern.test(truck.description))) {
+      if (truck.description && typeof truck.description === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.description))) {
         updates.description = undefined;
         needsUpdate = true;
       }
-      
+
       // Check price range
-      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      if (truck.price_range && placeholderPatterns.some(pattern => pattern.test(truck.price_range))) {
+      if (truck.price_range && typeof truck.price_range === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.price_range))) {
         updates.price_range = undefined;
         needsUpdate = true;
       }
@@ -187,20 +183,17 @@ export class BatchCleanupService {
         const cleanContact = { ...truck.contact_info };
         let contactUpdated = false;
         
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        if (cleanContact.phone && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone))) {
+        if (cleanContact.phone && typeof cleanContact.phone === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone))) {
           cleanContact.phone = undefined;
           contactUpdated = true;
         }
-        
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        if (cleanContact.website && placeholderPatterns.some(pattern => pattern.test(cleanContact.website))) {
+
+        if (cleanContact.website && typeof cleanContact.website === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.website))) {
           cleanContact.website = undefined;
           contactUpdated = true;
         }
-        
-        // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-        if (cleanContact.email && placeholderPatterns.some(pattern => pattern.test(cleanContact.email))) {
+
+        if (cleanContact.email && typeof cleanContact.email === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.email))) {
           cleanContact.email = undefined;
           contactUpdated = true;
         }
@@ -212,8 +205,7 @@ export class BatchCleanupService {
       }
       
       // Check address
-      // @ts-expect-error TS(2345): Argument of type 'string | undefined' is not assig... Remove this comment to see the full error message
-      if (truck.current_location?.address && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address))) {
+      if (truck.current_location?.address && typeof truck.current_location.address === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address))) {
         updates.current_location = {
           ...truck.current_location,
           address: undefined
@@ -299,14 +291,14 @@ export class BatchCleanupService {
         const updates: Partial<FoodTruck['current_location']> = {};
         
         // Fix invalid coordinates (0,0 or null)
-        if (!lat || lat === 0 || !lng || lng === 0) {
+        if (lat === undefined || lat === 0 || lng === undefined || lng === 0) {
           updates.lat = defaultLat;
           updates.lng = defaultLng;
           needsUpdate = true;
         }
-        
+
         // Fix coordinates outside reasonable bounds for Charleston area
-        if (lat && lng && (lat < 32 || lat > 34 || lng > -79 || lng < -81)) {
+        if (lat !== undefined && lng !== undefined && (lat < 32 || lat > 34 || lng > -79 || lng < -81)) {
           updates.lat = defaultLat;
           updates.lng = defaultLng;
           needsUpdate = true;
