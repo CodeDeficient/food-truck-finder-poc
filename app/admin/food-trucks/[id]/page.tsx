@@ -15,10 +15,11 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import Link from 'next/link';
-import { 
-  formatQualityScore, 
-  categorizeQualityScore, 
-  getQualityBadgeClasses 
+import {
+  formatQualityScore,
+  categorizeQualityScore,
+  getQualityBadgeClasses,
+  type QualityCategory
 } from '@/lib/utils/data-quality-formatters';
 
 interface FoodTruckDetailPageProps {
@@ -30,7 +31,7 @@ interface FoodTruckDetailPageProps {
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck = await FoodTruckService.getTruckById(params.id);
 
-  if (truck === undefined) {
+  if (truck == undefined) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <h1 className="text-2xl font-bold text-gray-900">Food Truck Not Found</h1>
@@ -45,8 +46,10 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
     );
   }
 
-  const qualityCategory = categorizeQualityScore(truck.data_quality_score);
-  const badgeClasses = getQualityBadgeClasses(truck.data_quality_score);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score);
 
   return (
     <div className="flex flex-col gap-6">
@@ -68,6 +71,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
         </div>
         <div className="flex items-center gap-2">
           <Badge className={badgeClasses}>
+            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
             {qualityCategory.label} Quality
           </Badge>
           <Button asChild>
@@ -92,7 +96,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               <p className="text-lg font-semibold">{truck.name}</p>
             </div>
             
-            {truck.description && truck.description !== '' && (
+            {(truck.description != undefined) && truck.description !== '' && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Description</label>
                 <p className="text-gray-900">{truck.description}</p>
@@ -144,7 +148,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Phone, email, website, and social media</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {truck.contact_info?.phone && truck.contact_info.phone !== '' ? (
+            {(truck.contact_info?.phone != undefined) && truck.contact_info.phone !== '' ? (
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-gray-500" />
                 <div>
@@ -159,7 +163,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.contact_info?.email && truck.contact_info.email !== '' ? (
+            {(truck.contact_info?.email != undefined) && truck.contact_info.email !== '' ? (
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-gray-500" />
                 <div>
@@ -174,7 +178,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.contact_info?.website && truck.contact_info.website !== '' ? (
+            {(truck.contact_info?.website != undefined) && truck.contact_info.website !== '' ? (
               <div className="flex items-center gap-3">
                 <Globe className="h-4 w-4 text-gray-500" />
                 <div>
@@ -197,11 +201,11 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             )}
 
             {/* Social Media */}
-            {truck.social_media && Object.keys(truck.social_media).length > 0 && (
+            {(truck.social_media != undefined) && Object.keys(truck.social_media).length > 0 && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Social Media</label>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {truck.social_media.instagram && truck.social_media.instagram !== '' && (
+                  {(truck.social_media.instagram != undefined) && truck.social_media.instagram !== '' && (
                     <a
                       href={`https://instagram.com/${truck.social_media.instagram}`}
                       target="_blank"
@@ -212,7 +216,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       Instagram
                     </a>
                   )}
-                  {truck.social_media.facebook && truck.social_media.facebook !== '' && (
+                  {(truck.social_media.facebook != undefined) && truck.social_media.facebook !== '' && (
                     <a
                       href={`https://facebook.com/${truck.social_media.facebook}`}
                       target="_blank"
@@ -223,7 +227,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       Facebook
                     </a>
                   )}
-                  {truck.social_media.twitter && truck.social_media.twitter !== '' && (
+                  {(truck.social_media.twitter != undefined) && truck.social_media.twitter !== '' && (
                     <a
                       href={`https://twitter.com/${truck.social_media.twitter}`}
                       target="_blank"
@@ -250,13 +254,13 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Current location and address details</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {truck.current_location?.address ? (
+            {(truck.current_location?.address == undefined) ? (
+              <p className="text-gray-400 text-sm">No address available</p>
+            ) : (
               <div>
                 <label className="text-sm font-medium text-gray-500">Address</label>
                 <p className="text-gray-900">{truck.current_location.address}</p>
               </div>
-            ) : (
-              <p className="text-gray-400 text-sm">No address available</p>
             )}
 
             {truck.current_location?.lat !== undefined && truck.current_location?.lng !== undefined && (
@@ -268,7 +272,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.current_location?.timestamp !== undefined && (
+            {truck.current_location?.timestamp != undefined && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Last Updated</label>
                 <p className="text-gray-900">
@@ -289,7 +293,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Daily operating schedule</CardDescription>
           </CardHeader>
           <CardContent>
-            {truck.operating_hours && Object.keys(truck.operating_hours).length > 0 ? (
+            {(truck.operating_hours != undefined) && Object.keys(truck.operating_hours).length > 0 ? (
               <div className="space-y-2">
                 {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
                   const dayData = truck.operating_hours ? truck.operating_hours[day as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined : undefined;
@@ -298,8 +302,8 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   return (
                     <div key={day} className="flex justify-between items-center py-1">
                       <span className="font-medium text-gray-700">{dayName}</span>
-                      {dayData && typeof dayData === 'object' ? (
-                        dayData.closed ? (
+                      {(dayData != undefined) && typeof dayData === 'object' ? (
+                        (dayData.closed === true) ? (
                           <span className="text-red-600 text-sm">Closed</span>
                         ) : (
                           <span className="text-gray-900 text-sm">
@@ -329,7 +333,9 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Customer feedback and ratings</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {(truck as { average_rating?: number }).average_rating ? (
+            {((truck as { average_rating?: number }).average_rating == undefined) ? (
+              <p className="text-gray-400 text-sm">No ratings available</p>
+            ) : (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="flex">
@@ -346,17 +352,12 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   </div>
                   <span className="text-lg font-semibold">{((truck as { average_rating?: number }).average_rating ?? 0).toFixed(1)}</span>
                 </div>
-                {(truck as { review_count?: number }).review_count && (
+                {((truck as { review_count?: number }).review_count != undefined) && (
                   <div className="flex items-center gap-1 text-gray-600">
                     <Users className="h-4 w-4" />
                     <span className="text-sm">{(truck as { review_count?: number }).review_count} reviews</span>
                   </div>
                 )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 text-gray-400">
-                <Star className="h-4 w-4" />
-                <span className="text-sm">No ratings available</span>
               </div>
             )}
           </CardContent>
@@ -368,7 +369,9 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
         <CardHeader>
           <CardTitle>Data Quality Assessment</CardTitle>
           <CardDescription>
-            Quality score: {formatQualityScore(truck.data_quality_score)} 
+            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+            Quality score: {formatQualityScore(truck.data_quality_score)}
+            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
             ({qualityCategory.label} quality)
           </CardDescription>
         </CardHeader>
@@ -376,6 +379,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
+                {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
                 {formatQualityScore(truck.data_quality_score)}
               </div>
               <div className="text-sm text-gray-500">Overall Score</div>
