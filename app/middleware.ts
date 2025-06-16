@@ -11,7 +11,7 @@ export function middleware(req: NextRequest) {
 
   // Extract request metadata for security logging
   const requestMetadata = {
-    ip: req.ip || req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') ?? 'unknown',
+    ip: req.ip ?? req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown',
     userAgent: req.headers.get('user-agent') ?? 'unknown',
     url: req.nextUrl.pathname,
     method: req.method

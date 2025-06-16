@@ -122,7 +122,7 @@ Rules:
       textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
-        sdkResponse.usageMetadata?.totalTokenCount ||
+        sdkResponse.usageMetadata?.totalTokenCount ??
         Math.ceil((prompt.length + textOutput.length) / 4);
 
       APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
@@ -205,7 +205,7 @@ Rules:
       textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
-        sdkResponse.usageMetadata?.totalTokenCount ||
+        sdkResponse.usageMetadata?.totalTokenCount ??
         Math.ceil((prompt.length + textOutput.length) / 4);
       APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
         console.warn('Failed to track API usage:', error);
@@ -285,7 +285,7 @@ Rules:
       textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
-        sdkResponse.usageMetadata?.totalTokenCount ||
+        sdkResponse.usageMetadata?.totalTokenCount ??
         Math.ceil((prompt.length + textOutput.length) / 4);
       APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
         console.warn('Failed to track API usage:', error);
@@ -366,7 +366,7 @@ Rules:
       textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
-        sdkResponse.usageMetadata?.totalTokenCount ||
+        sdkResponse.usageMetadata?.totalTokenCount ??
         Math.ceil((prompt.length + textOutput.length) / 4);
       APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
         console.warn('Failed to track API usage:', error);
@@ -451,7 +451,7 @@ Rules:
       textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
-        sdkResponse.usageMetadata?.totalTokenCount ||
+        sdkResponse.usageMetadata?.totalTokenCount ??
         Math.ceil((prompt.length + textOutput.length) / 4);
       APIUsageService.trackUsage('gemini', 1, tokensUsed).catch((error) => {
         console.warn('Failed to track API usage:', error);
@@ -637,7 +637,7 @@ Instructions:
         .trim();
 
       const tokensUsed =
-        sdkResponse.usageMetadata?.totalTokenCount ||
+        sdkResponse.usageMetadata?.totalTokenCount ??
         Math.ceil((prompt.length + cleanedText.length) / 4);
       void APIUsageService.trackUsage('gemini', 1, tokensUsed);
 

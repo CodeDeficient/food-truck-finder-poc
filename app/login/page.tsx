@@ -158,7 +158,6 @@ export default function LoginPage() {
               handleGoogleLogin().catch((error) => console.warn('Google login failed:', error));
             }}
             disabled={loading}
-            {/* @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; onClick: (... Remove this comment to see the full error message */}
             variant="outline"
             className="w-full"
             size="lg"

@@ -9,7 +9,7 @@ export function logActivity(entry: ActivityLogEntry): void {
   try {
     const logEntry = {
       ...entry,
-      timestamp: entry.timestamp || new Date().toISOString(),
+      timestamp: entry.timestamp ?? new Date().toISOString(),
       id: generateId(),
     };
 
