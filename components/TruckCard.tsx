@@ -3,8 +3,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
-import { MapPin, Phone, Star, Clock, Globe, Instagram, Facebook, Twitter, Eye } from 'lucide-react';
+{/* @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message */}
+import { MapPin, Phone, Star, Clock, Globe, Eye } from 'lucide-react';
 // @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
 
@@ -44,6 +44,12 @@ interface TruckCardProps {
   readonly userLocation?: { lat: number; lng: number };
   readonly hideHeader?: boolean; // Add option to hide header when used in accordion
 }
+
+// Helper to format operating hours
+const formatHours = (hours: { open: string; close: string; closed: boolean }) => {
+  if (hours.closed) return 'Closed';
+  return `${hours.open} - ${hours.close}`;
+};
 
 export function TruckCard({
   truck,
@@ -88,12 +94,6 @@ export function TruckCard({
   const priceRange = getPriceRange();
   const todayHours = getTodayHours();
 
-  // Helper to format operating hours
-  const formatHours = (hours: { open: string; close: string; closed: boolean }) => {
-    if (hours.closed) return 'Closed';
-    return `${hours.open} - ${hours.close}`;
-  };
-
   return (
     <Card
       className={`hover:shadow-md transition-shadow cursor-pointer dark:bg-slate-800 dark:border-slate-700 ${hideHeader ? 'shadow-none border-none bg-transparent dark:bg-transparent' : ''}`}
@@ -104,7 +104,7 @@ export function TruckCard({
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-              {(truck.current_location?.address != undefined) && (
+              {(truck.current_location?.address !== undefined) && (
                 <CardDescription className="flex items-center mt-1 dark:text-gray-400">
                   <MapPin className="h-4 w-4 mr-1" />
                   {truck.current_location.address}
@@ -131,7 +131,7 @@ export function TruckCard({
           {/* Ratings & Hours Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Ratings */}
-            {(truck.average_rating != undefined) && (
+            {(truck.average_rating !== undefined) && (
               <div>
                 <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Rating</h4>
                 <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export function TruckCard({
                   <span className="text-sm font-medium dark:text-gray-200">
                     {truck.average_rating.toFixed(1)}
                   </span>
-                  {(truck.review_count != undefined) && (
+                  {(truck.review_count !== undefined) && (
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       ({truck.review_count} reviews)
                     </span>
@@ -197,7 +197,7 @@ export function TruckCard({
             <div>
               <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
               <div className="space-y-1 dark:text-gray-300">
-                {(truck.contact_info?.phone != undefined) && (
+                {(truck.contact_info?.phone !== undefined) && (
                   <a
                     href={`tel:${truck.contact_info.phone}`}
                     className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
@@ -206,7 +206,7 @@ export function TruckCard({
                     <span className="truncate">{truck.contact_info.phone}</span>
                   </a>
                 )}
-                {(truck.contact_info?.website != undefined) && (
+                {(truck.contact_info?.website !== undefined) && (
                   <a
                     href={truck.contact_info.website}
                     target="_blank"
@@ -232,36 +232,36 @@ export function TruckCard({
             <div>
               <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Social Media</h4>
               <div className="flex flex-wrap gap-2">
-                {(truck.social_media.instagram != undefined) && (
+                {(truck.social_media.instagram !== undefined) && (
                   <a
                     href={`https://instagram.com/${truck.social_media.instagram}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-xs hover:bg-pink-200 dark:bg-pink-900 dark:text-pink-200"
                   >
-                    <Instagram className="h-3 w-3" />
+                    <Globe className="h-3 w-3" />
                     Instagram
                   </a>
                 )}
-                {(truck.social_media.facebook != undefined) && (
+                {(truck.social_media.facebook !== undefined) && (
                   <a
                     href={`https://facebook.com/${truck.social_media.facebook}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200"
                   >
-                    <Facebook className="h-3 w-3" />
+                    <Globe className="h-3 w-3" />
                     Facebook
                   </a>
                 )}
-                {(truck.social_media.twitter != undefined) && (
+                {(truck.social_media.twitter !== undefined) && (
                   <a
                     href={`https://twitter.com/${truck.social_media.twitter}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-xs hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-200"
                   >
-                    <Twitter className="h-3 w-3" />
+                    <Globe className="h-3 w-3" />
                     Twitter
                   </a>
                 )}

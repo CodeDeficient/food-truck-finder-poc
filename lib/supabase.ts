@@ -8,18 +8,18 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (supabaseUrl == undefined || supabaseUrl === '') {
+if (supabaseUrl === undefined || supabaseUrl === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
-if (supabaseAnonKey == undefined || supabaseAnonKey === '') {
+if (supabaseAnonKey === undefined || supabaseAnonKey === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Only create admin client on server side where service key is available
-export const supabaseAdmin = (supabaseServiceKey != undefined && supabaseServiceKey !== '')
+export const supabaseAdmin = (supabaseServiceKey !== undefined && supabaseServiceKey !== '')
   ? createClient(supabaseUrl, supabaseServiceKey)
   : undefined;
 
