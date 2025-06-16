@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, supabaseAdmin } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 /**
  * OAuth Configuration Status Endpoint
@@ -34,7 +34,7 @@ interface OAuthStatus {
   overall_status: 'ready' | 'partial' | 'not_configured' | 'error';
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const status: OAuthStatus = {
       timestamp: new Date().toISOString(),
@@ -44,9 +44,9 @@ export async function GET(request: NextRequest) {
         projectId: 'zkwliyjjkdnigizidlln'
       },
       environment_variables: {
-        supabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-        supabaseAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-        supabaseServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL != undefined,
+        supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY != undefined,
+        supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY != undefined
       },
       oauth_flow: {
         loginPageExists: true, // We know this exists from our codebase
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     // Test Supabase connection
     try {
-      const { data, error } = await supabase.from('profiles').select('count').limit(1);
+      const { error } = await supabase.from('profiles').select('count').limit(1);
 
       if (error == undefined) {
         status.supabase.connected = true;
@@ -73,15 +73,19 @@ export async function GET(request: NextRequest) {
     // Try to get Supabase auth settings
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (supabaseUrl != undefined) {
+      if (supabaseUrl != undefined && supabaseUrl !== '') {
         const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
 
-        if (settingsResponse.ok != undefined) {
-          const settings = await settingsResponse.json();
+        if (settingsResponse.ok === true) {
+          const settings = await settingsResponse.json() as {
+            external?: { google?: boolean };
+            disable_signup?: boolean;
+            autoconfirm?: boolean;
+          };
           status.supabase.authSettings = {
             googleEnabled: settings.external?.google ?? false,
-            signupEnabled: !settings.disable_signup,
-            autoconfirm: settings.autoconfirm || false
+            signupEnabled: !(settings.disable_signup === true),
+            autoconfirm: settings.autoconfirm ?? false
           };
 
           if (settings.external?.google != undefined) {
@@ -121,7 +125,7 @@ export async function GET(request: NextRequest) {
       legacy_format: {
         oauth_status: status.overall_status,
         message: getStatusMessage(status.overall_status),
-        configuration_steps: status.overall_status === 'ready' ? null : [
+        configuration_steps: status.overall_status === 'ready' ? undefined : [
           '1. Go to Supabase Dashboard > Authentication > Providers',
           '2. Enable Google provider',
           '3. Add Google OAuth Client ID and Secret',
@@ -157,7 +161,7 @@ function generateRecommendations(status: OAuthStatus): string[] {
   // Supabase connection check
   if (!status.supabase.connected) {
     recommendations.push('❌ Fix Supabase connection issue');
-    if (status.supabase.error != undefined) {
+    if (status.supabase.error != undefined && status.supabase.error !== '') {
       recommendations.push(`   Error: ${status.supabase.error}`);
     }
   }
@@ -166,10 +170,10 @@ function generateRecommendations(status: OAuthStatus): string[] {
   if (status.supabase.authSettings == undefined) {
     recommendations.push('🔧 Configure Google OAuth in Supabase Dashboard', '   1. Create Google Cloud Console OAuth credentials', '   2. Add credentials to Supabase Auth settings');
   } else {
-    if (status.supabase.authSettings.googleEnabled == undefined) {
-      recommendations.push('🔧 Enable Google OAuth provider in Supabase Dashboard', '   Go to: Authentication > Providers > Google');
-    } else {
+    if (status.supabase.authSettings.googleEnabled === true) {
       recommendations.push('✅ Google OAuth provider is enabled');
+    } else {
+      recommendations.push('🔧 Enable Google OAuth provider in Supabase Dashboard', '   Go to: Authentication > Providers > Google');
     }
   }
 
@@ -188,7 +192,7 @@ function generateRecommendations(status: OAuthStatus): string[] {
 
 function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not_configured' | 'error' {
   // Error state
-  if (!status.supabase.connected || status.supabase.error) {
+  if (status.supabase.connected !== true || (status.supabase.error != undefined && status.supabase.error !== '')) {
     return 'error';
   }
 
@@ -199,12 +203,12 @@ function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not
   }
 
   // Check OAuth configuration
-  if (status.supabase.authSettings?.googleEnabled != undefined && status.oauth_flow.authProviderConfigured) {
+  if (status.supabase.authSettings?.googleEnabled === true && status.oauth_flow.authProviderConfigured === true) {
     return 'ready';
   }
 
   // Partial configuration
-  if (status.supabase.connected != undefined && envVarsComplete) {
+  if (status.supabase.connected === true && envVarsComplete) {
     return 'partial';
   }
 
