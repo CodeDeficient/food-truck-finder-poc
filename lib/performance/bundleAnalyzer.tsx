@@ -3,6 +3,8 @@
  * Provides insights and recommendations for bundle optimization
  */
 
+import React from 'react';
+
 export interface BundleAnalysis {
   totalSize: number;
   gzippedSize: number;
@@ -85,7 +87,7 @@ export function checkPerformanceBudget(analysis: Partial<BundleAnalysis>): {
   }> = [];
 
   // Check total bundle size
-  if (analysis.totalSize && analysis.totalSize > PERFORMANCE_BUDGETS.maxBundleSize * 1024) {
+  if (analysis.totalSize != undefined && analysis.totalSize > PERFORMANCE_BUDGETS.maxBundleSize * 1024) {
     violations.push({
       metric: 'Total Bundle Size',
       actual: Math.round(analysis.totalSize / 1024),
@@ -124,7 +126,6 @@ export const DynamicImports = {
   Analytics: () => import('@/app/admin/analytics/page'),
   
   // Chart components (heavy dependencies)
-  // @ts-expect-error TS(2792): Cannot find module 'recharts'. Did you mean to set... Remove this comment to see the full error message
   Charts: () => import('recharts'),
   
   // Authentication components
@@ -141,29 +142,20 @@ export const OptimizedImports = {
   // Lucide React - only import needed icons
   icons: {
     // Core icons
-    // @ts-expect-error TS(2792): Cannot find module 'lucide-react/dist/esm/icons/me... Remove this comment to see the full error message
-    Menu: () => import('lucide-react/dist/esm/icons/menu').then(mod => mod.Menu),
-    // @ts-expect-error TS(2792): Cannot find module 'lucide-react/dist/esm/icons/se... Remove this comment to see the full error message
-    Search: () => import('lucide-react/dist/esm/icons/search').then(mod => mod.Search),
-    // @ts-expect-error TS(2792): Cannot find module 'lucide-react/dist/esm/icons/us... Remove this comment to see the full error message
-    User: () => import('lucide-react/dist/esm/icons/user').then(mod => mod.User),
-    
+    Menu: () => import('lucide-react/dist/esm/icons/menu').then(mod => (mod as { Menu: React.ComponentType }).Menu),
+    Search: () => import('lucide-react/dist/esm/icons/search').then(mod => (mod as { Search: React.ComponentType }).Search),
+    User: () => import('lucide-react/dist/esm/icons/user').then(mod => (mod as { User: React.ComponentType }).User),
+
     // Admin icons
-    // @ts-expect-error TS(2792): Cannot find module 'lucide-react/dist/esm/icons/ba... Remove this comment to see the full error message
-    BarChart3: () => import('lucide-react/dist/esm/icons/bar-chart-3').then(mod => mod.BarChart3),
-    // @ts-expect-error TS(2792): Cannot find module 'lucide-react/dist/esm/icons/se... Remove this comment to see the full error message
-    Settings: () => import('lucide-react/dist/esm/icons/settings').then(mod => mod.Settings),
-    // @ts-expect-error TS(2792): Cannot find module 'lucide-react/dist/esm/icons/da... Remove this comment to see the full error message
-    Database: () => import('lucide-react/dist/esm/icons/database').then(mod => mod.Database),
+    BarChart3: () => import('lucide-react/dist/esm/icons/bar-chart-3').then(mod => (mod as { BarChart3: React.ComponentType }).BarChart3),
+    Settings: () => import('lucide-react/dist/esm/icons/settings').then(mod => (mod as { Settings: React.ComponentType }).Settings),
+    Database: () => import('lucide-react/dist/esm/icons/database').then(mod => (mod as { Database: React.ComponentType }).Database),
   },
   
   // Radix UI - optimized imports
   ui: {
-    // @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-slot'. Did you... Remove this comment to see the full error message
     Button: () => import('@radix-ui/react-slot').then(mod => ({ Slot: mod.Slot })),
-    // @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-dialog'. Did y... Remove this comment to see the full error message
     Dialog: () => import('@radix-ui/react-dialog'),
-    // @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-dropdown-menu'... Remove this comment to see the full error message
     DropdownMenu: () => import('@radix-ui/react-dropdown-menu'),
   }
 };
@@ -209,29 +201,25 @@ export class BundlePerformanceMonitor {
 /**
  * Code splitting helper for React components
  */
-export function createLazyComponent<T extends React.ComponentType<any>>(
+export function createLazyComponent<T extends React.ComponentType<Record<string, unknown>>>(
   importFn: () => Promise<{ default: T }>,
   fallback?: React.ComponentType
 ) {
-  // @ts-expect-error TS(2686): 'React' refers to a UMD global, but the current fi... Remove this comment to see the full error message
   const LazyComponent = React.lazy(importFn);
-  
+
   return function WrappedComponent(props: React.ComponentProps<T>) {
     const startTime = performance.now();
-    
-    // @ts-expect-error TS(2686): 'React' refers to a UMD global, but the current fi... Remove this comment to see the full error message
+
     React.useEffect(() => {
       BundlePerformanceMonitor.trackChunkLoad(
         importFn.toString().slice(0, 50), // Use function string as identifier
         startTime
       );
     }, []);
-    
+
     return (
-      // @ts-expect-error TS(2686): 'React' refers to a UMD global, but the current fi... Remove this comment to see the full error message
       <React.Suspense fallback={fallback ? React.createElement(fallback) : <div>Loading...</div>}>
         <LazyComponent {...props} />
-      // @ts-expect-error TS(2686): 'React' refers to a UMD global, but the current fi... Remove this comment to see the full error message
       </React.Suspense>
     );
   };
