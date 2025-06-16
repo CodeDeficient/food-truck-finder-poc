@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-// @ts-expect-error TS(2792): Cannot find module 'next/navigation'. Did you mean... Remove this comment to see the full error message
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Loader2, Shield, Mail } from 'lucide-react';
 
 export default function LoginPage() {
@@ -21,7 +19,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectedFrom') ?? '/admin';
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
@@ -63,7 +61,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     try {
       setLoading(true);
       setError(undefined);
@@ -98,7 +96,7 @@ export default function LoginPage() {
           <CardDescription>Sign in to access the admin dashboard</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {error != undefined && error !== '' && (
+          {error !== undefined && error !== '' && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -107,7 +105,9 @@ export default function LoginPage() {
           {/* Email Login Form */}
           <form
             onSubmit={(e) => {
-              void handleEmailLogin(e);
+              handleEmailLogin(e).catch((error) => {
+                console.warn('Failed to handle email login:', error);
+              });
             }}
             className="space-y-4"
           >
@@ -154,7 +154,9 @@ export default function LoginPage() {
 
           <Button
             onClick={() => {
-              void handleGoogleLogin();
+              handleGoogleLogin().catch((error) => {
+                console.warn('Failed to handle Google login:', error);
+              });
             }}
             disabled={loading}
             variant="outline"

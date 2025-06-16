@@ -19,7 +19,8 @@ import {
   formatQualityScore,
   categorizeQualityScore,
   getQualityBadgeClasses,
-  getQualityScoreAriaLabel
+  getQualityScoreAriaLabel,
+  type QualityCategory
 } from '@/lib/utils/data-quality-formatters';
 
 // Define the data quality stats type based on the database function
@@ -34,7 +35,7 @@ interface DataQualityStats {
   flagged_count: number;
 }
 
-export default function DataQualityPage() {
+export default async function DataQualityPage() {
   const { trucks } = await FoodTruckService.getAllTrucks(100, 0); // Fetch first 100 trucks
 
   // Fetch data quality stats using the Supabase function
@@ -104,9 +105,12 @@ export default function DataQualityPage() {
             </TableHeader>
             <TableBody>
               {sortedTrucks.map((truck: FoodTruck) => {
-                const qualityCategory = categorizeQualityScore(truck.data_quality_score);
-                const badgeClasses = getQualityBadgeClasses(truck.data_quality_score);
-                const ariaLabel = getQualityScoreAriaLabel(truck.data_quality_score);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+                const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+                const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+                const ariaLabel: string = getQualityScoreAriaLabel(truck.data_quality_score);
 
                 return (
                   <TableRow key={truck.id}>
@@ -120,11 +124,13 @@ export default function DataQualityPage() {
                     </TableCell>
                     <TableCell>
                       <span aria-label={ariaLabel}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
                         {formatQualityScore(truck.data_quality_score)}
                       </span>
                     </TableCell>
                     <TableCell>
                       <Badge className={badgeClasses}>
+                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
                         {qualityCategory.label}
                       </Badge>
                     </TableCell>

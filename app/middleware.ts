@@ -9,10 +9,15 @@ export async function middleware(req: NextRequest) {
 
   // Extract request metadata for security logging
   const requestMetadata = {
-    ip: req.ip ?? req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown',
+    ip: (req.ip as string | undefined) ?? req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown',
     userAgent: req.headers.get('user-agent') ?? 'unknown',
     url: req.nextUrl.pathname,
     method: req.method
+  } as {
+    ip: string;
+    userAgent: string;
+    url: string;
+    method: string;
   };
 
   const {
@@ -34,7 +39,7 @@ export async function middleware(req: NextRequest) {
           error: userError?.message
         },
         severity: 'warning'
-      });
+      } as Parameters<typeof AuditLogger.logSecurityEvent>[0]);
 
       // Redirect unauthenticated users to login
       const redirectUrl = req.nextUrl.clone();
@@ -65,7 +70,7 @@ export async function middleware(req: NextRequest) {
           error: profileQueryError?.message
         },
         severity: 'error'
-      });
+      } as Parameters<typeof AuditLogger.logSecurityEvent>[0]);
 
       // Redirect non-admin users to access denied page
       const redirectUrl = req.nextUrl.clone();
@@ -84,7 +89,7 @@ export async function middleware(req: NextRequest) {
         {
           ip: requestMetadata.ip,
           userAgent: requestMetadata.userAgent
-        }
+        } as Parameters<typeof AuditLogger.logDataAccess>[5]
       );
     }
   }
