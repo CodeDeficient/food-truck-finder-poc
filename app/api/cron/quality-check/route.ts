@@ -1,7 +1,5 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextRequest, NextResponse } from 'next/server';
 import { logActivity } from '@/lib/activityLogger';
-// @ts-expect-error TS(2305): Module '"@/lib/supabase"' has no exported member '... Remove this comment to see the full error message
 import { DataQualityService, FoodTruckService } from '@/lib/supabase';
 
 export function POST(request: NextRequest) {
@@ -10,7 +8,7 @@ export function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
 
-    if (!cronSecret) {
+    if (cronSecret == undefined) {
       console.error('CRON_SECRET not configured');
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
@@ -76,7 +74,7 @@ export function POST(request: NextRequest) {
   }
 }
 
-function performDataQualityCheck() {
+async function performDataQualityCheck() {
   try {
     // Get all trucks for quality assessment
     const { trucks, total } = await FoodTruckService.getAllTrucks(1000, 0);
@@ -93,8 +91,7 @@ function performDataQualityCheck() {
       totalQualityScore += assessment.score;
 
       const category = DataQualityService.categorizeQualityScore(assessment.score);
-      // @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-      qualityBreakdown[category]++;
+      (qualityBreakdown as Record<string, number>)[category]++;
 
       if (assessment.issues.length > 0) {
         trucksWithMissingData++;
