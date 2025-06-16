@@ -17,7 +17,7 @@ interface WebVitalMetric {
 
 export async function POST(request: NextRequest) {
   try {
-    const metric: WebVitalMetric = await request.json();
+    const metric = await request.json() as WebVitalMetric;
 
     // Validate metric data
     if (!metric.name || typeof metric.value !== 'number' || !metric.url) {
@@ -96,7 +96,7 @@ export function GET(request: NextRequest) {
       .order('recorded_at', { ascending: false });
 
     // Filter by page if specified
-    if (page) {
+    if (page != undefined && page !== '') {
       query = query.ilike('page_url', `%${page}%`);
     }
 
@@ -107,7 +107,7 @@ export function GET(request: NextRequest) {
     }
 
     // Calculate summary statistics
-    const summary = calculateMetricsSummary(metrics ?? []);
+    const summary = calculateMetricsSummary((metrics ?? []) as Array<{ metric_name: string; metric_value: number; rating: string }>);
 
     return NextResponse.json({
       success: true,
@@ -133,9 +133,18 @@ export function GET(request: NextRequest) {
 /**
  * Calculate summary statistics for metrics
  */
-function calculateMetricsSummary(metrics: any[]) {
+function calculateMetricsSummary(metrics: Array<{ metric_name: string; metric_value: number; rating: string }>) {
   const metricTypes = ['LCP', 'FID', 'CLS', 'FCP', 'TTFB'];
-  const summary: Record<string, any> = {};
+  const summary: Record<string, {
+    count: number;
+    average: number | undefined;
+    median: number | undefined;
+    p75: number | undefined;
+    p95: number | undefined;
+    goodCount: number;
+    needsImprovementCount: number;
+    poorCount: number;
+  }> = {};
 
   for (const metricName of metricTypes) {
     const metricData = metrics.filter(m => m.metric_name === metricName);
@@ -159,7 +168,7 @@ function calculateMetricsSummary(metrics: any[]) {
 
     summary[metricName] = {
       count: metricData.length,
-      average: Math.round(values.reduce((sum, val) => sum + val, 0) / values.length),
+      average: Math.round(values.reduce((sum: number, val: number) => sum + val, 0) / values.length),
       median: getPercentile(values, 50),
       p75: getPercentile(values, 75),
       p95: getPercentile(values, 95),

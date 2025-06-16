@@ -97,8 +97,7 @@ export function useRealtimeAdminEvents(
     // Handle different event types
     switch (event.type) {
       case 'heartbeat': {
-        if (event.data && typeof event.data === 'object') {
-          // @ts-expect-error TS(2352): Conversion of type 'Record<string, unknown>' to ty... Remove this comment to see the full error message
+        if (event.data != undefined && typeof event.data === 'object') {
           setLatestMetrics(event.data as RealtimeMetrics);
         }
         break;
@@ -132,7 +131,7 @@ export function useRealtimeAdminEvents(
       const token = localStorage.getItem('supabase.auth.token') ??
                    sessionStorage.getItem('supabase.auth.token');
 
-      if (!token) {
+      if (token == undefined || token === '') {
         throw new Error('No authentication token available');
       }
 
@@ -149,16 +148,16 @@ export function useRealtimeAdminEvents(
         setConnectionAttempts(0);
       });
 
-      eventSource.onmessage = (event) => {
+      eventSource.addEventListener('message', (event: MessageEvent) => {
         try {
-          const adminEvent: AdminEvent = JSON.parse(event.data);
+          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
           handleEvent(adminEvent);
         } catch (error) {
           console.warn('Failed to parse admin event:', error);
         }
-      };
+      });
 
-      eventSource.onerror = (error) => {
+      eventSource.addEventListener('error', (error) => {
         console.error('Real-time admin events error:', error);
         setIsConnected(false);
         setIsConnecting(false);
@@ -176,39 +175,39 @@ export function useRealtimeAdminEvents(
         } else if (connectionAttempts >= maxReconnectAttempts) {
           setConnectionError('Max reconnection attempts reached');
         }
-      };
+      });
 
       // Handle specific event types
-      eventSource.addEventListener('heartbeat', (event) => {
+      eventSource.addEventListener('heartbeat', (event: MessageEvent) => {
         try {
-          const adminEvent: AdminEvent = JSON.parse(event.data);
+          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
           handleEvent(adminEvent);
         } catch (error) {
           console.warn('Failed to parse heartbeat event:', error);
         }
       });
 
-      eventSource.addEventListener('scraping_update', (event) => {
+      eventSource.addEventListener('scraping_update', (event: MessageEvent) => {
         try {
-          const adminEvent: AdminEvent = JSON.parse(event.data);
+          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
           handleEvent(adminEvent);
         } catch (error) {
           console.warn('Failed to parse scraping update event:', error);
         }
       });
 
-      eventSource.addEventListener('data_quality_change', (event) => {
+      eventSource.addEventListener('data_quality_change', (event: MessageEvent) => {
         try {
-          const adminEvent: AdminEvent = JSON.parse(event.data);
+          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
           handleEvent(adminEvent);
         } catch (error) {
           console.warn('Failed to parse data quality change event:', error);
         }
       });
 
-      eventSource.addEventListener('system_alert', (event) => {
+      eventSource.addEventListener('system_alert', (event: MessageEvent) => {
         try {
-          const adminEvent: AdminEvent = JSON.parse(event.data);
+          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
           handleEvent(adminEvent);
         } catch (error) {
           console.warn('Failed to parse system alert event:', error);
