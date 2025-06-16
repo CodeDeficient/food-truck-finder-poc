@@ -528,7 +528,7 @@ Rules:
 
   async getUsageStats(): Promise<{ requests_count: number; tokens_used: number } | undefined> {
     const usage = await APIUsageService.getTodayUsage('gemini');
-    return usage === undefined ? undefined : usage;
+    return usage ?? undefined;
   }
 
   async extractFoodTruckDetailsFromMarkdown(

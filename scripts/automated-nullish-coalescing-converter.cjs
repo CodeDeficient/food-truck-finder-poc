@@ -183,24 +183,24 @@ class NullishCoalescingConverter {
       maxFiles = null 
     } = options;
 
-    console.log('🚀 Starting Automated Nullish Coalescing Converter');
-    console.log('================================================');
-    
+    console.info('🚀 Starting Automated Nullish Coalescing Converter');
+    console.info('================================================');
+
     if (dryRun) {
-      console.log('🔍 DRY RUN MODE - No files will be modified');
+      console.info('🔍 DRY RUN MODE - No files will be modified');
     }
 
     // Get baseline error count
     const initialErrors = this.getCurrentErrorCount();
-    console.log(`📊 Initial error count: ${initialErrors}`);
+    console.info(`📊 Initial error count: ${initialErrors}`);
 
     // Find files to process
     const files = this.findTSFiles(directories);
     const filesToProcess = maxFiles ? files.slice(0, maxFiles) : files;
-    
-    console.log(`📁 Found ${files.length} TypeScript files`);
-    console.log(`🎯 Processing ${filesToProcess.length} files`);
-    console.log('');
+
+    console.info(`📁 Found ${files.length} TypeScript files`);
+    console.info(`🎯 Processing ${filesToProcess.length} files`);
+    console.info('');
 
     // Process files
     let filesChanged = 0;
@@ -222,7 +222,7 @@ class NullishCoalescingConverter {
         });
         
         if (potentialChanges > 0) {
-          console.log(`  Would make ${potentialChanges} conversion(s)`);
+          console.info(`  Would make ${potentialChanges} conversion(s)`);
           filesChanged++;
         }
       }
@@ -235,18 +235,18 @@ class NullishCoalescingConverter {
     const errorReduction = initialErrors - finalErrors;
 
     // Print summary
-    console.log('');
-    console.log('📈 CONVERSION SUMMARY');
-    console.log('====================');
-    console.log(`Files processed: ${this.stats.filesProcessed}`);
-    console.log(`Files changed: ${filesChanged}`);
-    console.log(`Total conversions: ${this.stats.conversionsApplied}`);
-    console.log(`Unsafe patterns preserved: ${this.stats.unsafePatternsSaved}`);
-    console.log(`Errors encountered: ${this.stats.errors.length}`);
-    console.log('');
-    console.log(`Initial errors: ${initialErrors}`);
-    console.log(`Final errors: ${finalErrors}`);
-    console.log(`Error reduction: ${errorReduction} (${((errorReduction/initialErrors)*100).toFixed(1)}%)`);
+    console.info('');
+    console.info('📈 CONVERSION SUMMARY');
+    console.info('====================');
+    console.info(`Files processed: ${this.stats.filesProcessed}`);
+    console.info(`Files changed: ${filesChanged}`);
+    console.info(`Total conversions: ${this.stats.conversionsApplied}`);
+    console.info(`Unsafe patterns preserved: ${this.stats.unsafePatternsSaved}`);
+    console.info(`Errors encountered: ${this.stats.errors.length}`);
+    console.info('');
+    console.info(`Initial errors: ${initialErrors}`);
+    console.info(`Final errors: ${finalErrors}`);
+    console.info(`Error reduction: ${errorReduction} (${((errorReduction/initialErrors)*100).toFixed(1)}%)`);
 
     if (this.stats.errors.length > 0) {
       console.log('');

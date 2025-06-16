@@ -55,7 +55,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
+          {/* @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message */}
           <Button variant="outline" size="sm" asChild>
             <Link href="/admin/food-trucks">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -95,14 +95,14 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               <p className="text-lg font-semibold">{truck.name}</p>
             </div>
             
-            {truck.description != null != null && truck.description !== '' && (
+            {truck.description && truck.description !== '' && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Description</label>
                 <p className="text-gray-900">{truck.description}</p>
               </div>
             )}
 
-            {truck.cuisine_type != null != null && truck.cuisine_type.length > 0 && (
+            {truck.cuisine_type && truck.cuisine_type.length > 0 && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Cuisine Type</label>
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -115,14 +115,14 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.price_range != null != null && truck.price_range !== '' && (
+            {truck.price_range && truck.price_range !== '' && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Price Range</label>
                 <p className="text-gray-900">{truck.price_range}</p>
               </div>
             )}
 
-            {truck.specialties != null != null && truck.specialties.length > 0 && (
+            {truck.specialties && truck.specialties.length > 0 && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Specialties</label>
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -147,7 +147,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Phone, email, website, and social media</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {truck.contact_info?.phone != null != null && truck.contact_info.phone !== '' ? (
+            {truck.contact_info?.phone && truck.contact_info.phone !== '' ? (
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-gray-500" />
                 <div>
@@ -162,7 +162,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.contact_info?.email != null != null && truck.contact_info.email !== '' ? (
+            {truck.contact_info?.email && truck.contact_info.email !== '' ? (
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-gray-500" />
                 <div>
@@ -177,7 +177,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.contact_info?.website != null != null && truck.contact_info.website !== '' ? (
+            {truck.contact_info?.website && truck.contact_info.website !== '' ? (
               <div className="flex items-center gap-3">
                 <Globe className="h-4 w-4 text-gray-500" />
                 <div>
@@ -200,11 +200,11 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             )}
 
             {/* Social Media */}
-            {truck.social_media != null != null && Object.keys(truck.social_media).length > 0 && (
+            {truck.social_media && Object.keys(truck.social_media).length > 0 && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Social Media</label>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {truck.social_media.instagram != null != null && truck.social_media.instagram !== '' && (
+                  {truck.social_media.instagram && truck.social_media.instagram !== '' && (
                     <a
                       href={`https://instagram.com/${truck.social_media.instagram}`}
                       target="_blank"
@@ -215,7 +215,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       Instagram
                     </a>
                   )}
-                  {truck.social_media.facebook != null != null && truck.social_media.facebook !== '' && (
+                  {truck.social_media.facebook && truck.social_media.facebook !== '' && (
                     <a
                       href={`https://facebook.com/${truck.social_media.facebook}`}
                       target="_blank"
@@ -226,7 +226,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       Facebook
                     </a>
                   )}
-                  {truck.social_media.twitter != null != null && truck.social_media.twitter !== '' && (
+                  {truck.social_media.twitter && truck.social_media.twitter !== '' && (
                     <a
                       href={`https://twitter.com/${truck.social_media.twitter}`}
                       target="_blank"
@@ -262,7 +262,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               <p className="text-gray-400 text-sm">No address available</p>
             )}
 
-            {truck.current_location?.lat != null && truck.current_location?.lng && (
+            {truck.current_location?.lat != undefined && truck.current_location?.lng && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Coordinates</label>
                 <p className="text-gray-900 font-mono text-sm">
@@ -271,7 +271,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
               </div>
             )}
 
-            {truck.current_location?.timestamp != null && (
+            {truck.current_location?.timestamp != undefined && (
               <div>
                 <label className="text-sm font-medium text-gray-500">Last Updated</label>
                 <p className="text-gray-900">
@@ -292,7 +292,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
             <CardDescription>Daily operating schedule</CardDescription>
           </CardHeader>
           <CardContent>
-            {truck.operating_hours != null && Object.keys(truck.operating_hours).length > 0 ? (
+            {truck.operating_hours && Object.keys(truck.operating_hours).length > 0 ? (
               <div className="space-y-2">
                 {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
                   const dayData = truck.operating_hours ? truck.operating_hours[day as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined : undefined;
@@ -301,7 +301,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   return (
                     <div key={day} className="flex justify-between items-center py-1">
                       <span className="font-medium text-gray-700">{dayName}</span>
-                      {dayData != null && typeof dayData === 'object' ? (
+                      {dayData && typeof dayData === 'object' ? (
                         dayData.closed ? (
                           <span className="text-red-600 text-sm">Closed</span>
                         ) : (
@@ -350,12 +350,12 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   </div>
                   <span className="text-lg font-semibold">{((truck as any).average_rating ?? 0).toFixed(1)}</span>
                 </div>
-                // @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message
-                {truck.review_count != null && (
+                {/* @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message */}
+                {(truck as any).review_count && (
                   <div className="flex items-center gap-1 text-gray-600">
                     <Users className="h-4 w-4" />
-                    // @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message
-                    <span className="text-sm">{truck.review_count} reviews</span>
+                    {/* @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message */}
+                    <span className="text-sm">{(truck as any).review_count} reviews</span>
                   </div>
                 )}
               </div>

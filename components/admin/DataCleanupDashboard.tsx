@@ -43,8 +43,8 @@ interface CleanupResult {
 
 export function DataCleanupDashboard() {
   const [isRunning, setIsRunning] = useState(false);
-  const [lastResult, setLastResult] = useState<CleanupResult | undefined>(undefined);
-  const [previewData, setPreviewData] = useState<any>(undefined);
+  const [lastResult, setLastResult] = useState<CleanupResult | undefined>();
+  const [previewData, setPreviewData] = useState<any>();
   const [selectedOperations, setSelectedOperations] = useState<string[]>([
     'remove_placeholders',
     'normalize_phone',
