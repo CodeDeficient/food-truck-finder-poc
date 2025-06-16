@@ -100,9 +100,9 @@ export function DataCleanupDashboard() {
         })
       });
 
-      const data = await response.json();
-      
-      if (data.success) {
+      const data = await response.json() as { success: boolean; result?: CleanupResult; error?: string };
+
+      if (data.success === true) {
         setLastResult(data.result);
       } else {
         console.error('Cleanup failed:', data.error);
@@ -117,9 +117,9 @@ export function DataCleanupDashboard() {
   const loadPreview = async () => {
     try {
       const response = await fetch('/api/admin/data-cleanup?action=preview');
-      const data = await response.json();
-      
-      if (data.success) {
+      const data = await response.json() as { success: boolean; preview?: unknown };
+
+      if (data.success === true) {
         setPreviewData(data.preview);
       }
     } catch (error) {
@@ -146,17 +146,15 @@ export function DataCleanupDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
-          {/* @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; variant: s... Remove this comment to see the full error message */}
-          <Button variant="outline" onClick={loadPreview} disabled={isRunning}>
+          <Button variant="outline" onClick={() => { void loadPreview(); }} disabled={isRunning}>
             <Eye className="h-4 w-4 mr-2" />
             Preview Changes
           </Button>
-          {/* @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; variant: s... Remove this comment to see the full error message */}
-          <Button variant="outline" onClick={() => runCleanup(true)} disabled={isRunning}>
+          <Button variant="outline" onClick={() => { void runCleanup(true); }} disabled={isRunning}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isRunning ? 'animate-spin' : ''}`} />
             Dry Run
           </Button>
-          <Button onClick={() => runCleanup(false)} disabled={isRunning}>
+          <Button onClick={() => { void runCleanup(false); }} disabled={isRunning}>
             <Play className="h-4 w-4 mr-2" />
             Run Cleanup
           </Button>
@@ -200,7 +198,7 @@ export function DataCleanupDashboard() {
       </Card>
 
       {/* Preview Data */}
-      {previewData && (
+      {previewData != undefined && (
         <Card>
           <CardHeader>
             <CardTitle>Cleanup Preview</CardTitle>
@@ -212,25 +210,25 @@ export function DataCleanupDashboard() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {previewData.estimated_improvements}
+                  {(previewData as { estimated_improvements: number }).estimated_improvements}
                 </div>
                 <div className="text-sm text-muted-foreground">Trucks to Improve</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {previewData.estimated_duplicates}
+                  {(previewData as { estimated_duplicates: number }).estimated_duplicates}
                 </div>
                 <div className="text-sm text-muted-foreground">Duplicates Found</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {previewData.operations?.length ?? 0}
+                  {(previewData as { operations?: unknown[] }).operations?.length ?? 0}
                 </div>
                 <div className="text-sm text-muted-foreground">Operations Ready</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-yellow-600">
-                  ~{Math.round((previewData.estimated_improvements / 10) * 100)}%
+                  ~{Math.round(((previewData as { estimated_improvements: number }).estimated_improvements / 10) * 100)}%
                 </div>
                 <div className="text-sm text-muted-foreground">Improvement Rate</div>
               </div>
