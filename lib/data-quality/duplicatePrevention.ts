@@ -364,23 +364,23 @@ export class DuplicatePreventionService {
     
     // Merge logic: prefer non-null, more complete data
     const mergedData: Partial<FoodTruck> = {
-      name: target.name || source.name,
-      description: target.description || source.description,
+      name: target.name ?? source.name,
+      description: target.description ?? source.description,
       cuisine_type: target.cuisine_type?.length ? target.cuisine_type : source.cuisine_type,
-      price_range: target.price_range || source.price_range,
-      current_location: target.current_location || source.current_location,
+      price_range: target.price_range ?? source.price_range,
+      current_location: target.current_location ?? source.current_location,
       contact_info: {
         ...source.contact_info,
         ...target.contact_info // Target takes precedence
       },
-      operating_hours: target.operating_hours || source.operating_hours,
+      operating_hours: target.operating_hours ?? source.operating_hours,
       menu: target.menu?.length ? target.menu : source.menu,
       social_media: {
         ...source.social_media,
         ...target.social_media
       },
       // @ts-expect-error TS(2322): Type '{ name: string; description: string | undefi... Remove this comment to see the full error message
-      average_rating: target.average_rating || source.average_rating,
+      average_rating: target.average_rating ?? source.average_rating,
       // @ts-expect-error TS(2339): Property 'review_count' does not exist on type 'Fo... Remove this comment to see the full error message
       review_count: Math.max(target.review_count ?? 0, source.review_count ?? 0),
       source_urls: [...new Set([...(target.source_urls ?? []), ...(source.source_urls ?? [])])],

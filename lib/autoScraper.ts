@@ -279,7 +279,7 @@ async function handleExistingTruck(
     return {
       url,
       status: triggerResult.success ? 're-scraping_triggered' : 'error',
-      details: triggerResult.error || triggerResult.message,
+      details: triggerResult.error ?? triggerResult.message,
       jobId: triggerResult.jobId,
     };
   } else {
@@ -296,7 +296,7 @@ async function handleNewTruck(
   return {
     url,
     status: triggerResult.success ? 'initial_scrape_triggered' : 'error',
-    details: triggerResult.error || triggerResult.message,
+    details: triggerResult.error ?? triggerResult.message,
     jobId: triggerResult.jobId,
   };
 }
