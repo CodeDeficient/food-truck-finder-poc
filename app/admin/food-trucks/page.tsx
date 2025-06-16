@@ -79,19 +79,22 @@ export default function FoodTruckManagementPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                      <span>{(truck.data_quality_score * 100).toFixed(0)}%</span>
+                      <span>{((truck.data_quality_score ?? 0) * 100).toFixed(0)}%</span>
                       <Badge
-                        variant={
-                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                          truck.data_quality_score >= 0.8 ? 'default' :
-                          // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-                          truck.data_quality_score >= 0.6 ? 'secondary' : 'destructive'
-                        }
+                        variant={(() => {
+                          const score = truck.data_quality_score ?? 0;
+                          if (score >= 0.8) return 'default';
+                          if (score >= 0.6) return 'secondary';
+                          return 'destructive';
+                        })()}
                         className="text-xs"
                       >
-                        {(truck.data_quality_score ?? 0) >= 0.8 ? 'High' :
-                         (truck.data_quality_score ?? 0) >= 0.6 ? 'Medium' : 'Low'}
+                        {(() => {
+                          const score = truck.data_quality_score ?? 0;
+                          if (score >= 0.8) return 'High';
+                          if (score >= 0.6) return 'Medium';
+                          return 'Low';
+                        })()}
                       </Badge>
                     </div>
                   </TableCell>

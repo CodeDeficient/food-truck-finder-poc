@@ -11,13 +11,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Edit, BarChart3 } from 'lucide-react';
-// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
-// @ts-expect-error TS(2792): Cannot find module '@/components/ui/data-quality-c... Remove this comment to see the full error message
 import { DataQualityCharts } from '@/components/ui/data-quality-charts';
-// @ts-expect-error TS(2792): Cannot find module '@/components/ui/simple-quality... Remove this comment to see the full error message
 import { SimpleQualityPanel } from '@/components/ui/simple-quality-panel';
 import {
   formatQualityScore,
@@ -46,7 +42,7 @@ export default function DataQualityPage() {
     .rpc('get_data_quality_stats')
     .single();
 
-  if (qualityError != null) {
+  if (qualityError != undefined) {
     console.error('Error fetching data quality stats:', qualityError);
   }
 
@@ -71,7 +67,6 @@ export default function DataQualityPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Data Quality Management</h1>
         <div className="flex items-center gap-2">
-          // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
           <Button variant="outline" size="sm" asChild>
             <Link href="/admin/data-quality/reports">
               <BarChart3 className="h-4 w-4 mr-2" />
@@ -134,13 +129,12 @@ export default function DataQualityPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {truck.last_scraped_at
-                        ? new Date(truck.last_scraped_at).toLocaleDateString()
-                        : 'N/A'}
+                      {(truck.last_scraped_at === undefined)
+                        ? 'N/A'
+                        : new Date(truck.last_scraped_at).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center gap-2 justify-end">
-                        // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/admin/food-trucks/${truck.id}?tab=data-quality`}>
                             <Edit className="h-4 w-4" />
