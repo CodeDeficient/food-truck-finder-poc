@@ -21,7 +21,7 @@ export class GeminiService {
 
   constructor() {
     const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    if (apiKey == undefined || apiKey === '') {
       throw new Error('GEMINI_API_KEY environment variable is not set or is empty.');
     }
     console.info(`GEMINI_API_KEY found, starts with: ${apiKey.slice(0, 5)}...`);
@@ -699,7 +699,7 @@ export async function dispatchGeminiOperation(
       return await gemini.enhanceFoodTruckData(data);
     }
     default: {
-      throw new Error(`Unknown Gemini operation type: ${type}`);
+      throw new Error(`Unknown Gemini operation type: ${String(type)}`);
     }
   }
 }

@@ -72,7 +72,7 @@ ChartContainer.displayName = 'Chart';
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(([_, itemConfig]) => itemConfig.theme ?? itemConfig.color);
   if (colorConfig.length === 0) {
-    return undefined;
+    return;
   }
 
   return (
@@ -132,7 +132,7 @@ const ChartTooltipContent = React.forwardRef<
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
-        return undefined;
+        return;
       }
 
       const [item] = payload;
@@ -148,14 +148,14 @@ const ChartTooltipContent = React.forwardRef<
       }
 
       if (!value) {
-        return undefined;
+        return;
       }
 
       return <div className={cn('font-medium', labelClassName)}>{value}</div>;
     }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
 
     if (!active || !payload?.length) {
-      return undefined;
+      return;
     }
 
     const nestLabel = payload.length === 1 && indicator !== 'dot';
@@ -267,7 +267,7 @@ const ChartLegendContent = React.forwardRef<
   const { config } = useChart();
 
   if (!payload?.length) {
-    return undefined;
+    return;
   }
 
   return (
@@ -314,7 +314,7 @@ ChartLegendContent.displayName = 'ChartLegend';
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
   if (typeof payload !== 'object' || payload === undefined) {
-    return undefined;
+    return;
   }
 
   const payloadPayload =
