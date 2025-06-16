@@ -15,13 +15,13 @@ export function GET(request: NextRequest) {
 
   try {
     // Get specific truck by ID
-    if (id) {
+    if (id !== undefined && id !== '') {
       const truck = await FoodTruckService.getTruckById(id);
       return NextResponse.json({ truck });
     }
 
     // Get trucks by location
-    if (lat && lng) {
+    if (lat !== undefined && lat !== '' && lng !== undefined && lng !== '') {
       const userLat = Number.parseFloat(lat);
       const userLng = Number.parseFloat(lng);
       const radiusKm = Number.parseFloat(radius);
@@ -49,11 +49,11 @@ export function GET(request: NextRequest) {
       summary: {
         totalTrucks: total,
         averageQuality:
-          trucks && trucks.length > 0
+          trucks !== undefined && trucks.length > 0
             ? trucks.reduce((acc, t) => acc + (t.data_quality_score ?? 0), 0) / trucks.length
             : 0,
         lastUpdated:
-          trucks && trucks.length > 0
+          trucks !== undefined && trucks.length > 0
             ? Math.max(...trucks.map((t) => new Date(t.updated_at).getTime()))
             : 0,
       },
