@@ -206,19 +206,19 @@ export class DuplicatePreventionService {
     loc1: FoodTruck['current_location'],
     loc2: FoodTruck['current_location']
   ): number {
-    if (!loc1 || !loc2) return 0;
+    if (loc1 == undefined || loc2 == undefined) return 0;
     
     let similarity = 0;
     let factors = 0;
     
     // Address similarity
-    if (loc1.address && loc2.address) {
+    if (loc1.address != undefined && loc2.address != undefined) {
       similarity += this.calculateStringSimilarity(loc1.address, loc2.address);
       factors++;
     }
     
     // GPS coordinate similarity (within 100 meters = high similarity)
-    if (loc1.lat && loc1.lng && loc2.lat && loc2.lng) {
+    if (loc1.lat != undefined && loc1.lng != undefined && loc2.lat != undefined && loc2.lng != undefined) {
       const distance = this.calculateGPSDistance(
         loc1.lat, loc1.lng,
         loc2.lat, loc2.lng
@@ -261,7 +261,7 @@ export class DuplicatePreventionService {
     let total = 0;
     
     // Phone number exact match
-    if (contact1.phone && contact2.phone) {
+    if (contact1.phone != undefined && contact2.phone != undefined) {
       const phone1 = contact1.phone.replaceAll(/\D/g, ''); // Remove non-digits
       const phone2 = contact2.phone.replaceAll(/\D/g, '');
       if (phone1 === phone2) matches++;
@@ -269,7 +269,7 @@ export class DuplicatePreventionService {
     }
     
     // Website exact match
-    if (contact1.website && contact2.website) {
+    if (contact1.website != undefined && contact2.website != undefined) {
       const url1 = contact1.website.toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
       const url2 = contact2.website.toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
       if (url1 === url2) matches++;
@@ -277,7 +277,7 @@ export class DuplicatePreventionService {
     }
     
     // Email similarity
-    if (contact1.email && contact2.email) {
+    if (contact1.email != undefined && contact2.email != undefined) {
       if (contact1.email.toLowerCase() === contact2.email.toLowerCase()) matches++;
       total++;
     }
@@ -326,7 +326,7 @@ export class DuplicatePreventionService {
   /**
    * Determine action based on matches
    */
-  private static determineAction(matches: DuplicateMatch[], candidate: Partial<FoodTruck>): 'create' | 'update' | 'merge' | 'manual_review' {
+  private static determineAction(matches: DuplicateMatch[], _candidate: Partial<FoodTruck>): 'create' | 'update' | 'merge' | 'manual_review' {
     if (matches.length === 0) return 'create';
     
     const bestMatch = matches[0];
@@ -345,7 +345,7 @@ export class DuplicatePreventionService {
   /**
    * Generate human-readable reason
    */
-  private static generateReason(matches: DuplicateMatch[], candidate: Partial<FoodTruck>): string {
+  private static generateReason(matches: DuplicateMatch[], _candidate: Partial<FoodTruck>): string {
     if (matches.length === 0) {
       return 'No duplicates found - safe to create new truck entry';
     }
@@ -367,7 +367,7 @@ export class DuplicatePreventionService {
     const mergedData: Partial<FoodTruck> = {
       name: target.name ?? source.name,
       description: target.description ?? source.description,
-      cuisine_type: target.cuisine_type?.length ? target.cuisine_type : source.cuisine_type,
+      cuisine_type: (target.cuisine_type?.length ?? 0) > 0 ? target.cuisine_type : source.cuisine_type,
       price_range: target.price_range ?? source.price_range,
       current_location: target.current_location ?? source.current_location,
       contact_info: {
@@ -375,7 +375,7 @@ export class DuplicatePreventionService {
         ...target.contact_info // Target takes precedence
       },
       operating_hours: target.operating_hours ?? source.operating_hours,
-      menu: target.menu?.length ? target.menu : source.menu,
+      menu: (target.menu?.length ?? 0) > 0 ? target.menu : source.menu,
       social_media: {
         ...source.social_media,
         ...target.social_media

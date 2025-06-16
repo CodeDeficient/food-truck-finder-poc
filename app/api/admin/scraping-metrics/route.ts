@@ -5,7 +5,7 @@ import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
 async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (!authHeader) return false;
+    if (authHeader == undefined) return false;
 
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -36,9 +36,9 @@ export async function GET(request: Request) {
 
   try {
     // Fetch real scraping metrics from database
-    const [allJobs, todayJobs, recentTrucks] = await Promise.all([
+    const [allJobs, , recentTrucks] = await Promise.all([
       ScrapingJobService.getAllJobs(100, 0), // Get last 100 jobs for metrics
-      ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours
+      ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours (unused but kept for potential future use)
       FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
     ]);
 
@@ -52,21 +52,23 @@ export async function GET(request: Request) {
       job.status === 'completed' && job.started_at !== undefined && job.completed_at !== undefined
     );
 
+    let totalRunTime = 0;
+    for (const job of completedJobs) {
+      const start = new Date(job.started_at ?? '').getTime();
+      const end = new Date(job.completed_at ?? '').getTime();
+      totalRunTime += (end - start) / 1000; // Convert to seconds
+    }
+
     const averageRunTime = completedJobs.length > 0
-      ? Math.round(
-          completedJobs.reduce((sum: number, job) => {
-            const start = new Date(job.started_at ?? '').getTime();
-            const end = new Date(job.completed_at ?? '').getTime();
-            return sum + (end - start) / 1000; // Convert to seconds
-          }, 0) / completedJobs.length
-        )
+      ? Math.round(totalRunTime / completedJobs.length)
       : 0;
 
     // Count trucks processed today and new trucks
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const newTrucksToday = recentTrucks.trucks.filter(truck => {
+    const typedTrucks = recentTrucks.trucks as Array<{ created_at: string }>;
+    const newTrucksToday = typedTrucks.filter(truck => {
       const createdAt = new Date(truck.created_at);
       return createdAt >= today;
     }).length;
@@ -84,7 +86,7 @@ export async function GET(request: Request) {
       success: true,
       metrics,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching scraping metrics:', error);
     return NextResponse.json(
       {
