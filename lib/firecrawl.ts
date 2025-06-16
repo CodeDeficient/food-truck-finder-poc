@@ -75,7 +75,7 @@ export class FirecrawlService {
       }
     }
     if (
-      firecrawlCache[cacheKey] &&
+      firecrawlCache[cacheKey] != undefined &&
       now - firecrawlCache[cacheKey].timestamp < FIRECRAWL_CACHE_TTL_MS
     ) {
       console.info(`FirecrawlService: Cache hit for ${cacheKey}`);
@@ -247,7 +247,7 @@ export class FirecrawlService {
       waitFor: 2000,
     });
 
-    return result.success && result.data?.markdown
+    return result.success && result.data?.markdown != undefined
       ? {
           success: true,
           data: {
@@ -366,7 +366,7 @@ export class FirecrawlService {
         }
 
         // If it's a rate limit error, wait longer
-        if (result.error?.includes('rate limit')) {
+        if (result.error?.includes('rate limit') === true) {
           const waitTime = backoffMs * Math.pow(2, attempt);
           console.info(`Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${maxRetries}`);
           await new Promise((resolve) => setTimeout(resolve, waitTime));
