@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
         const thresholdsRaw = DataQualityService.getQualityThresholds();
 
-        // Type-safe casting
+        // Type-safe casting with proper error handling
         const qualityStats = qualityStatsRaw as Record<string, unknown>;
         const thresholds = thresholdsRaw as QualityThresholds;
         
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
         });
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching data quality information:', error);
     return NextResponse.json(
       {
@@ -202,10 +202,12 @@ export async function POST(request: NextRequest) {
 
         for (const truck of trucks) {
           try {
-            await DataQualityService.updateTruckQualityScore((truck as TruckData).id);
+            const truckData = truck as TruckData;
+            await DataQualityService.updateTruckQualityScore(truckData.id);
             updated++;
           } catch (error: unknown) {
-            console.error(`Failed to update truck ${(truck as TruckData).id}:`, error);
+            const truckData = truck as TruckData;
+            console.error(`Failed to update truck ${truckData.id}:`, error);
             errors++;
           }
         }
@@ -229,7 +231,7 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error updating data quality:', error);
     return NextResponse.json(
       {

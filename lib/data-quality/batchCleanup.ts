@@ -126,7 +126,7 @@ export class BatchCleanupService {
           return await this.mergeDuplicates(trucks, dryRun, operation);
         }
         default: {
-          operation.errors.push(`Unknown operation type: ${type}`);
+          operation.errors.push(`Unknown operation type: ${String(type)}`);
           return operation;
         }
       }
@@ -167,7 +167,7 @@ export class BatchCleanupService {
       }
       
       // Check description
-      if (truck.description && typeof truck.description === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.description))) {
+      if (truck.description != undefined && typeof truck.description === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.description))) {
         updates.description = undefined;
         needsUpdate = true;
       }
@@ -183,17 +183,17 @@ export class BatchCleanupService {
         const cleanContact = { ...truck.contact_info };
         let contactUpdated = false;
         
-        if (cleanContact.phone && typeof cleanContact.phone === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone))) {
+        if (cleanContact.phone != undefined && typeof cleanContact.phone === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone))) {
           cleanContact.phone = undefined;
           contactUpdated = true;
         }
 
-        if (cleanContact.website && typeof cleanContact.website === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.website))) {
+        if (cleanContact.website != undefined && typeof cleanContact.website === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.website))) {
           cleanContact.website = undefined;
           contactUpdated = true;
         }
 
-        if (cleanContact.email && typeof cleanContact.email === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.email))) {
+        if (cleanContact.email != undefined && typeof cleanContact.email === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.email))) {
           cleanContact.email = undefined;
           contactUpdated = true;
         }
@@ -205,7 +205,7 @@ export class BatchCleanupService {
       }
       
       // Check address
-      if (truck.current_location?.address && typeof truck.current_location.address === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address))) {
+      if (truck.current_location?.address != undefined && typeof truck.current_location.address === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address))) {
         updates.current_location = {
           ...truck.current_location,
           address: undefined
@@ -242,11 +242,11 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
     for (const truck of trucks) {
-      if (truck.contact_info?.phone) {
+      if (truck.contact_info?.phone != undefined) {
         const originalPhone = truck.contact_info.phone;
         const normalizedPhone = this.normalizePhone(originalPhone);
         
-        if (normalizedPhone && normalizedPhone !== originalPhone) {
+        if (normalizedPhone != undefined && normalizedPhone !== originalPhone) {
           operation.affectedCount++;
           
           if (dryRun) {
@@ -285,7 +285,7 @@ export class BatchCleanupService {
     const defaultLng = -79.9311;
     
     for (const truck of trucks) {
-      if (truck.current_location) {
+      if (truck.current_location != undefined) {
         const { lat, lng } = truck.current_location;
         let needsUpdate = false;
         const updates: Partial<FoodTruck['current_location']> = {};
