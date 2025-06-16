@@ -1,11 +1,9 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextResponse } from 'next/server';
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import type { NextRequest } from 'next/server';
 import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
 import { AuditLogger } from '@/lib/security/auditLogger';
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
   const supabase = createSupabaseMiddlewareClient(req, res);
 
@@ -82,7 +80,7 @@ export function middleware(req: NextRequest) {
         user.email ?? 'unknown',
         'admin_panel',
         req.nextUrl.pathname,
-        req.method === 'GET' ? 'read' : 'read',
+        req.method === 'GET' ? 'read' : 'write',
         {
           ip: requestMetadata.ip,
           userAgent: requestMetadata.userAgent
