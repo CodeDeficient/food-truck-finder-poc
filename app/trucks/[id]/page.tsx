@@ -24,7 +24,7 @@ interface FoodTruckDetailPageProps {
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck = await FoodTruckService.getTruckById(params.id);
 
-  if (!truck) {
+  if (truck == undefined) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="container mx-auto px-4 py-8">
@@ -78,7 +78,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   <p className="text-lg font-semibold dark:text-gray-100">{truck.name}</p>
                 </div>
                 
-                {truck.description && (
+                {truck.description != undefined && (
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</label>
                     <p className="text-gray-900 dark:text-gray-200">{truck.description}</p>
@@ -113,7 +113,12 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                 <CardDescription className="dark:text-gray-400">Get in touch</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {truck.contact_info?.phone ? (
+                {truck.contact_info?.phone == undefined ? (
+                  <div className="flex items-center gap-3 text-gray-400">
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm">No phone number available</span>
+                  </div>
+                ) : (
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-gray-500" />
                     <div>
@@ -126,14 +131,14 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       </a>
                     </div>
                   </div>
-                ) : (
-                  <div className="flex items-center gap-3 text-gray-400">
-                    <Phone className="h-4 w-4" />
-                    <span className="text-sm">No phone number available</span>
-                  </div>
                 )}
 
-                {truck.contact_info?.email ? (
+                {truck.contact_info?.email == undefined ? (
+                  <div className="flex items-center gap-3 text-gray-400">
+                    <Mail className="h-4 w-4" />
+                    <span className="text-sm">No email available</span>
+                  </div>
+                ) : (
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-gray-500" />
                     <div>
@@ -146,14 +151,14 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       </a>
                     </div>
                   </div>
-                ) : (
-                  <div className="flex items-center gap-3 text-gray-400">
-                    <Mail className="h-4 w-4" />
-                    <span className="text-sm">No email available</span>
-                  </div>
                 )}
 
-                {truck.contact_info?.website ? (
+                {truck.contact_info?.website == undefined ? (
+                  <div className="flex items-center gap-3 text-gray-400">
+                    <Globe className="h-4 w-4" />
+                    <span className="text-sm">No website available</span>
+                  </div>
+                ) : (
                   <div className="flex items-center gap-3">
                     <Globe className="h-4 w-4 text-gray-500" />
                     <div>
@@ -168,11 +173,6 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                       </a>
                     </div>
                   </div>
-                ) : (
-                  <div className="flex items-center gap-3 text-gray-400">
-                    <Globe className="h-4 w-4" />
-                    <span className="text-sm">No website available</span>
-                  </div>
                 )}
 
                 {/* Social Media */}
@@ -180,7 +180,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Social Media</label>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {truck.social_media.instagram && (
+                      {truck.social_media.instagram != undefined && (
                         <a
                           href={`https://instagram.com/${truck.social_media.instagram}`}
                           target="_blank"
@@ -191,7 +191,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                           Instagram
                         </a>
                       )}
-                      {truck.social_media.facebook && (
+                      {truck.social_media.facebook != undefined && (
                         <a
                           href={`https://facebook.com/${truck.social_media.facebook}`}
                           target="_blank"
@@ -202,7 +202,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                           Facebook
                         </a>
                       )}
-                      {truck.social_media.twitter && (
+                      {truck.social_media.twitter != undefined && (
                         <a
                           href={`https://twitter.com/${truck.social_media.twitter}`}
                           target="_blank"
@@ -229,16 +229,16 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                 <CardDescription className="dark:text-gray-400">Current location</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {truck.current_location?.address ? (
+                {truck.current_location?.address == undefined ? (
+                  <p className="text-gray-400 text-sm">No address available</p>
+                ) : (
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Address</label>
                     <p className="text-gray-900 dark:text-gray-200">{truck.current_location.address}</p>
                   </div>
-                ) : (
-                  <p className="text-gray-400 text-sm">No address available</p>
                 )}
 
-                {truck.current_location?.lat && truck.current_location?.lng && (
+                {truck.current_location?.lat != undefined && truck.current_location?.lng != undefined && (
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Coordinates</label>
                     <p className="text-gray-900 dark:text-gray-200 text-sm">
@@ -269,7 +269,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                         <div key={day} className="flex justify-between items-center">
                           <span className="text-sm font-medium dark:text-gray-200">{dayName}</span>
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {dayData?.closed ? 'Closed' : `${dayData?.open ?? 'N/A'} - ${dayData?.close ?? 'N/A'}`}
+                            {dayData?.closed === true ? 'Closed' : `${dayData?.open ?? 'N/A'} - ${dayData?.close ?? 'N/A'}`}
                           </span>
                         </div>
                       );
@@ -283,7 +283,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
           </div>
 
           {/* Ratings & Reviews */}
-          {(truck as { average_rating?: number }).average_rating && (
+          {(truck as { average_rating?: number }).average_rating != undefined && (
             <Card className="dark:bg-slate-800 dark:border-slate-700">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 dark:text-gray-100">
@@ -309,7 +309,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                     </div>
                     <span className="text-xl font-semibold dark:text-gray-100">{((truck as { average_rating?: number }).average_rating ?? 0).toFixed(1)}</span>
                   </div>
-                  {(truck as { review_count?: number }).review_count && (
+                  {(truck as { review_count?: number }).review_count != undefined && (
                     <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                       <Users className="h-4 w-4" />
                       <span className="text-sm">{(truck as { review_count?: number }).review_count} reviews</span>
