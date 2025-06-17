@@ -12,6 +12,6 @@ export async function getFoodTruckDetails(id: string): Promise<FoodTruckWithRati
     return truck as FoodTruckWithRatings;
   } catch (error) {
     console.error('Error fetching food truck details:', error);
-    return null;
+    return undefined;
   }
 }

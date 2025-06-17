@@ -1,30 +1,33 @@
 {
-  "timestamp": "2025-06-17T04:01:20.653Z",
-  "totalErrors": 145,
+  "timestamp": "2025-06-17T19:09:47.251Z",
+  "totalErrors": 173,
   "errorCounts": {
-    "max-lines-per-function": 94,
-    "@typescript-eslint/await-thenable": 2,
-    "sonarjs/no-invalid-await": 2,
-    "sonarjs/no-nested-conditional": 3,
+    "unknown": 1,
+    "max-lines-per-function": 83,
+    "@typescript-eslint/no-explicit-any": 2,
+    "@typescript-eslint/no-unsafe-member-access": 24,
+    "@typescript-eslint/no-unsafe-assignment": 3,
+    "@typescript-eslint/no-unsafe-argument": 1,
+    "sonarjs/no-identical-functions": 1,
+    "@typescript-eslint/strict-boolean-expressions": 8,
     "@typescript-eslint/no-unsafe-call": 1,
     "sonarjs/no-use-of-empty-return-value": 1,
-    "@typescript-eslint/strict-boolean-expressions": 13,
     "sonarjs/cognitive-complexity": 8,
-    "sonarjs/no-inverted-boolean-check": 1,
     "max-depth": 4,
     "sonarjs/no-nested-template-literals": 1,
-    "@typescript-eslint/no-misused-promises": 2,
-    "@typescript-eslint/no-unsafe-assignment": 3,
-    "@typescript-eslint/require-await": 2,
-    "sonarjs/no-redundant-jump": 2,
-    "max-params": 4,
+    "@typescript-eslint/no-misused-promises": 1,
+    "unicorn/no-null": 10,
+    "sonarjs/prefer-read-only-props": 14,
+    "sonarjs/unused-import": 1,
+    "@typescript-eslint/unbound-method": 4,
     "@typescript-eslint/no-unsafe-return": 1,
+    "max-params": 3,
     "sonarjs/slow-regex": 1
   },
   "automationCandidates": [
     {
       "ruleId": "max-lines-per-function",
-      "count": 94,
+      "count": 83,
       "confidence": "MANUAL_ONLY",
       "method": "manual-ide-refactor",
       "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.",
@@ -32,20 +35,41 @@
       "priority": null
     },
     {
+      "ruleId": "unicorn/no-null",
+      "count": 10,
+      "confidence": "HIGH",
+      "method": "pattern-replacement",
+      "description": "Replace null with undefined",
+      "estimatedFixes": 8,
+      "priority": 24
+    },
+    {
       "ruleId": "@typescript-eslint/strict-boolean-expressions",
-      "count": 13,
+      "count": 8,
       "confidence": "LOW",
       "method": "manual-review",
       "description": "Complex boolean expression fixes",
-      "estimatedFixes": 1,
-      "priority": 1
+      "estimatedFixes": 0,
+      "priority": 0
     }
   ],
   "recommendations": {
     "highConfidence": {
-      "candidates": [],
-      "totalFixes": 0,
-      "methods": []
+      "candidates": [
+        {
+          "ruleId": "unicorn/no-null",
+          "count": 10,
+          "confidence": "HIGH",
+          "method": "pattern-replacement",
+          "description": "Replace null with undefined",
+          "estimatedFixes": 8,
+          "priority": 24
+        }
+      ],
+      "totalFixes": 8,
+      "methods": [
+        "pattern-replacement"
+      ]
     },
     "mediumConfidence": {
       "candidates": [],
