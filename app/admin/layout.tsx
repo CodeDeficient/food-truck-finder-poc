@@ -39,13 +39,13 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
     router.push('/');
   };
 
-  const userInitials = user?.user_metadata?.full_name
-    ? (user.user_metadata.full_name as string)
+  const userInitials = user?.user_metadata?.full_name == undefined
+    ? user?.email?.slice(0, 2).toUpperCase() ?? 'AD'
+    : (user.user_metadata.full_name as string)
         .split(' ')
         .map((n: string) => n[0])
         .join('')
-        .toUpperCase()
-    : user?.email?.slice(0, 2).toUpperCase() ?? 'AD';
+        .toUpperCase();
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">

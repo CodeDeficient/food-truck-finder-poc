@@ -263,7 +263,7 @@ export default function AutoScrapingDashboard() {
                     {job.lastRun == undefined ? 'Never' : new Date(job.lastRun).toLocaleString()}
                   </TableCell>
                   <TableCell>
-                    {job.nextRun ? new Date(job.nextRun).toLocaleString() : 'Unknown'}
+                    {job.nextRun == undefined ? 'Unknown' : new Date(job.nextRun).toLocaleString()}
                   </TableCell>
                   <TableCell>
                     {job.lastResult ? (

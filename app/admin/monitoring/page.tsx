@@ -2,7 +2,6 @@ import React from 'react';
 import { APIMonitoringDashboard } from '@/components/monitoring/ApiMonitoringDashboard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Activity, Shield, Zap, TrendingUp } from 'lucide-react';
 
 /**

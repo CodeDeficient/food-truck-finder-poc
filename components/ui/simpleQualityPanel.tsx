@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { RefreshCw, Settings, Loader2 } from 'lucide-react';
 
 interface SimpleQualityPanelProps {
@@ -61,7 +60,6 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
             onClick={handleRecalculateAll}
             disabled={isRecalculating}
             className="flex items-center gap-2"
-            // @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; onClick: (... Remove this comment to see the full error message
             variant="default"
           >
             {isRecalculating ? (

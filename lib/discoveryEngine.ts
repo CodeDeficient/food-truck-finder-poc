@@ -509,7 +509,7 @@ export class FoodTruckDiscoveryEngine {
     result: unknown,
     discoveredUrls: Set<string>,
   ): Promise<void> {
-    if (typeof result === 'object' && result !== undefined) {
+    if (typeof result === 'object' && result != undefined) {
       const resultObj = result as { content?: string; raw_content?: string };
       if (resultObj.content || resultObj.raw_content) {
         const content = resultObj.content ?? resultObj.raw_content ?? '';

@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'update_single': {
-        if (truckId === undefined) {
+        if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required' },
             { status: 400 }

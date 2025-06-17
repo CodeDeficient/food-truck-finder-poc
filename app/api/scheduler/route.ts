@@ -11,7 +11,7 @@ interface SchedulerTask {
   lastSuccess: string;
   successCount: number;
   errorCount: number;
-  nextRun: string | null | undefined;
+  nextRun: string | undefined;
   lastError?: string;
 }
 

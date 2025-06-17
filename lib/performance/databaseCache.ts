@@ -107,14 +107,14 @@ export const CachedFoodTruckService = {
       let results = trucks ?? [];
 
       // Apply location filter if provided
-      if (filters?.lat && filters?.lng && filters?.radius) {
+      if (filters?.lat != undefined && filters?.lng != undefined && filters?.radius != undefined) {
         results = results.filter((truck: FoodTruck) => {
-          if (!truck.current_location?.lat || !truck.current_location?.lng) {
+          if (truck.current_location?.lat == undefined || truck.current_location?.lng == undefined) {
             return false;
           }
           const distance = calculateDistance(
-            filters.lat!,
-            filters.lng!,
+            filters.lat,
+            filters.lng,
             truck.current_location.lat,
             truck.current_location.lng
           );
@@ -123,15 +123,14 @@ export const CachedFoodTruckService = {
       }
 
       // Apply openNow filter if provided
-      if (filters?.openNow) {
+      if (filters?.openNow === true) {
         const now = new Date();
-        // @ts-expect-error TS(2339): Property 'toLocaleLowerCase' does not exist on typ... Remove this comment to see the full error message
-        const currentDay = now.toLocaleLowerCase().slice(0, 3); // 'mon', 'tue', etc.
+        const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(); // 'mon', 'tue', etc.
         const currentTime = now.getHours() * 100 + now.getMinutes(); // HHMM format
 
         results = results.filter((truck: FoodTruck) => {
           const hours = truck.operating_hours?.[currentDay as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined;
-          if (!hours || hours.closed) return false;
+          if (hours == undefined || hours.closed === true) return false;
 
           const openTime = parseTimeString(hours.open ?? '');
           const closeTime = parseTimeString(hours.close ?? '');
@@ -260,7 +259,7 @@ function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: numbe
 }
 
 function parseTimeString(timeStr: string): number {
-  if (!timeStr) return 0;
+  if (timeStr == undefined || timeStr === '') return 0;
   const [hours, minutes] = timeStr.split(':').map(Number);
   return hours * 100 + (minutes ?? 0);
 }

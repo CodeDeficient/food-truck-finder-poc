@@ -83,7 +83,7 @@ export const reducer = (state: State, action: Action): State => {
 
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
-      if (toastId) {
+      if (toastId != undefined && toastId !== '') {
         addToRemoveQueue(toastId);
       } else {
         for (const toast of state.toasts) {
@@ -147,7 +147,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      onOpenChange: (open: any) => {
+      onOpenChange: (open: boolean) => {
         if (!open) dismiss();
       },
     },

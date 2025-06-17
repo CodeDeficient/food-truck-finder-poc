@@ -82,6 +82,8 @@ interface AutomatedCleanupStatus {
   };
 }
 
+type CleanupOperationType = 'normalize_phone' | 'fix_coordinates' | 'remove_placeholders' | 'update_quality_scores' | 'merge_duplicates';
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // Verify admin access
@@ -183,8 +185,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         } = options as RunImmediateOptions;
 
         const result = await BatchCleanupService.runFullCleanup({
-          // @ts-expect-error TS(2322): Type 'string[]' is not assignable to type '("remov... Remove this comment to see the full error message
-          operations,
+          operations: operations as CleanupOperationType[],
           batchSize,
           dryRun
         });
@@ -361,16 +362,26 @@ interface PreviewResult {
 async function previewCleanupOperations(operations: string[]): Promise<PreviewResult> {
   try {
     const result = await BatchCleanupService.runFullCleanup({
-      // @ts-expect-error TS(2322): Type 'string[]' is not assignable to type '("remov... Remove this comment to see the full error message
-      operations,
+      operations: operations as CleanupOperationType[],
       batchSize: 10,
       dryRun: true
     });
 
     return {
       estimatedChanges: result.summary as Record<string, unknown>,
-      // @ts-expect-error TS(2352): Conversion of type 'CleanupOperation[]' to type 'R... Remove this comment to see the full error message
-      operationDetails: result.operations as Record<string, unknown>,
+      operationDetails: (() => {
+        const details: Record<string, unknown> = {};
+        for (const [index, op] of result.operations.entries()) {
+          details[`operation_${index}`] = {
+            type: op.type,
+            description: op.description,
+            affectedCount: op.affectedCount,
+            successCount: op.successCount,
+            errorCount: op.errorCount
+          };
+        }
+        return details;
+      })(),
       estimatedDuration: result.duration,
       affectedTrucks: result.totalProcessed
     };
@@ -392,8 +403,7 @@ async function runScheduledCleanup(scheduleId: string): Promise<Record<string, u
   }
 
   const result = await BatchCleanupService.runFullCleanup({
-    // @ts-expect-error TS(2322): Type 'string[]' is not assignable to type '("remov... Remove this comment to see the full error message
-    operations: schedule.operations,
+    operations: schedule.operations as CleanupOperationType[],
     batchSize: 50,
     dryRun: false
   });

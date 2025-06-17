@@ -6,7 +6,6 @@ import {
   DataProcessingService,
   supabase,
 } from '@/lib/supabase';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Truck, Activity, Settings, AlertTriangle } from 'lucide-react'; // Import icons
 
 // Define the data quality stats type based on the database function
@@ -21,7 +20,7 @@ interface DataQualityStats {
   flagged_count: number;
 }
 
-function getDashboardData() {
+async function getDashboardData() {
   // Fetch total food trucks and verification statuses
   const { trucks: allTrucks } = await FoodTruckService.getAllTrucks(1000, 0); // Fetch a reasonable number for overview
   const totalFoodTrucks = allTrucks.length;
@@ -65,7 +64,7 @@ function getDashboardData() {
   };
 }
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
   const {
     totalFoodTrucks,
     pendingVerifications,
