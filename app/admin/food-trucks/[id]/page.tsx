@@ -302,17 +302,19 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
                   return (
                     <div key={day} className="flex justify-between items-center py-1">
                       <span className="font-medium text-gray-700">{dayName}</span>
-                      {(dayData !== undefined) && typeof dayData === 'object' ? (
-                        (dayData.closed === true) ? (
-                          <span className="text-red-600 text-sm">Closed</span>
-                        ) : (
-                          <span className="text-gray-900 text-sm">
-                            {dayData.open ?? 'N/A'} - {dayData.close ?? 'N/A'}
-                          </span>
-                        )
-                      ) : (
-                        <span className="text-gray-400 text-sm">Not specified</span>
-                      )}
+                      {(() => {
+                        if (dayData !== undefined && typeof dayData === 'object') {
+                          if (dayData.closed === true) {
+                            return <span className="text-red-600 text-sm">Closed</span>;
+                          }
+                          return (
+                            <span className="text-gray-900 text-sm">
+                              {dayData.open ?? 'N/A'} - {dayData.close ?? 'N/A'}
+                            </span>
+                          );
+                        }
+                        return <span className="text-gray-400 text-sm">Not specified</span>;
+                      })()}
                     </div>
                   );
                 })}
