@@ -80,6 +80,181 @@ interface TrucksApiResponse {
   // Add other properties if your API returns more, e.g., total, page, etc.
 }
 
+// App Header component
+function AppHeader({
+  mounted,
+  resolvedTheme,
+  setTheme,
+  searchTerm,
+  setSearchTerm,
+  userLocation,
+  loadNearbyTrucks
+}: {
+  readonly mounted: boolean;
+  readonly resolvedTheme: string | undefined;
+  readonly setTheme: (theme: string) => void;
+  readonly searchTerm: string;
+  readonly setSearchTerm: (term: string) => void;
+  readonly userLocation: { lat: number; lng: number } | undefined;
+  readonly loadNearbyTrucks: () => Promise<void>;
+}) {
+  return (
+    <div className="bg-white dark:bg-slate-800 shadow-sm border-b dark:border-slate-700">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              🚚 Food Truck Finder
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Discover amazing food trucks near you
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:space-x-4">
+            <div className="flex items-center space-x-2 order-1 sm:order-none">
+              {mounted &&
+                (resolvedTheme === 'dark' ? (
+                  <Sun className="h-5 w-5 text-yellow-400" />
+                ) : (
+                  <Moon className="h-5 w-5 text-slate-500" />
+                ))}
+              <Switch
+                id="theme-switcher"
+                checked={mounted && resolvedTheme === 'dark'}
+                onCheckedChange={(checked: boolean) => {
+                  setTheme(checked ? 'dark' : 'light');
+                }}
+                aria-label="Switch between dark and light mode"
+                disabled={!mounted}
+              />
+              <Label
+                htmlFor="theme-switcher"
+                className="hidden sm:block text-sm text-gray-700 dark:text-gray-300"
+              >
+                {mounted && (resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode')}
+              </Label>
+            </div>
+            <div className="relative order-3 sm:order-none w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
+              <Input
+                placeholder="Search food trucks..."
+                value={searchTerm}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchTerm(e.target.value)
+                }
+                className="pl-10 w-full bg-white dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400"
+              />
+            </div>
+            <Button
+              onClick={() => {
+                void loadNearbyTrucks();
+              }}
+              disabled={!userLocation}
+              variant="outline"
+              className="order-2 sm:order-none"
+            >
+              <Navigation className="h-4 w-4 mr-2" />
+              Find Nearby
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main Content component
+function MainContent({
+  filteredTrucks,
+  userLocation,
+  selectedTruckId,
+  setSelectedTruckId,
+  isOpen
+}: {
+  readonly filteredTrucks: FoodTruck[];
+  readonly userLocation: { lat: number; lng: number } | undefined;
+  readonly selectedTruckId: string | undefined;
+  readonly setSelectedTruckId: (id: string | undefined) => void;
+  readonly isOpen: (truck: FoodTruck) => boolean;
+}) {
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Real Map */}
+          <div
+            key="map-container-parent"
+            className="lg:col-span-2 h-80 min-h-[320px] sm:h-96 sm:min-h-[400px] dark:bg-slate-800 rounded-lg shadow"
+          >
+            <MapDisplay
+              trucks={filteredTrucks}
+              userLocation={userLocation}
+              onSelectTruck={setSelectedTruckId}
+              defaultCenter={
+                userLocation ? [userLocation.lat, userLocation.lng] : [37.7749, -122.4194]
+              }
+              selectedTruckLocation={
+                (selectedTruckId == undefined)
+                  ? undefined
+                  : (() => {
+                      const truck = filteredTrucks.find((t) => t.id === selectedTruckId);
+                      return (truck?.current_location?.lat == undefined) || (truck?.current_location?.lng == undefined)
+                        ? undefined
+                        : [truck.current_location.lat, truck.current_location.lng];
+                    })()
+              }
+            />
+          </div>
+
+          {/* Combined Truck List and Details */}
+          <div className="lg:col-span-1 space-y-4">
+            <h3 className="text-lg font-semibold dark:text-gray-100">
+              Nearby Trucks ({filteredTrucks.length})
+            </h3>
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              value={selectedTruckId ?? undefined}
+              onValueChange={(value: string | undefined) =>
+                setSelectedTruckId((currentId) => (value === currentId ? undefined : value))
+              }
+            >
+              {filteredTrucks.map((truck) => (
+                <AccordionItem value={truck.id} key={truck.id}>
+                  <AccordionTrigger className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md">
+                    <div className="flex-1 text-left">
+                      <h4 className="font-medium dark:text-gray-100">{truck.name}</h4>
+                      {truck.current_location?.address && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">
+                          {truck.current_location.address}
+                        </p>
+                      )}
+                    </div>
+                    <Badge variant={isOpen(truck) ? 'default' : 'secondary'}>
+                      {isOpen(truck) ? 'Open' : 'Closed'}
+                    </Badge>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <TruckCard
+                      truck={truck}
+                      isOpen={isOpen(truck)}
+                      onSelectTruck={() => setSelectedTruckId(truck.id)}
+                      userLocation={userLocation}
+                      formatPrice={formatPrice}
+                      hideHeader={true}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FoodTruckFinder() {
   const [trucks, setTrucks] = useState<FoodTruck[]>([]);
   const [loading, setLoading] = useState(true);
@@ -184,149 +359,23 @@ export default function FoodTruckFinder() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-slate-800 shadow-sm border-b dark:border-slate-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                🚚 Food Truck Finder
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Discover amazing food trucks near you
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-end gap-2 sm:space-x-4">
-              {' '}
-              {/* Added flex-wrap, justify-end, gap-2. Removed space-x-4 for sm screens */}
-              <div className="flex items-center space-x-2 order-1 sm:order-none">
-                {' '}
-                {/* Control order for small screens if needed */}
-                {mounted &&
-                  (resolvedTheme === 'dark' ? (
-                    <Sun className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <Moon className="h-5 w-5 text-slate-500" />
-                  ))}
-                <Switch
-                  id="theme-switcher"
-                  checked={mounted && resolvedTheme === 'dark'}
-                  onCheckedChange={(checked: boolean) => {
-                    setTheme(checked ? 'dark' : 'light');
-                  }}
-                  aria-label="Switch between dark and light mode"
-                  disabled={!mounted}
-                />
-                <Label
-                  htmlFor="theme-switcher"
-                  className="hidden sm:block text-sm text-gray-700 dark:text-gray-300"
-                >
-                  {mounted && (resolvedTheme === 'dark' ? 'Light Mode' : 'Dark Mode')}
-                </Label>
-              </div>
-              <div className="relative order-3 sm:order-none w-full sm:w-64">
-                {' '}
-                {/* Full width on small, fixed on sm+ */}
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
-                <Input
-                  placeholder="Search food trucks..."
-                  value={searchTerm}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSearchTerm(e.target.value)
-                  }
-                  className="pl-10 w-full bg-white dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400" // w-full for responsiveness
-                />
-              </div>
-              <Button
-                onClick={() => {
-                  void loadNearbyTrucks();
-                }}
-                disabled={!userLocation}
-                variant="outline"
-                className="order-2 sm:order-none"
-              >
-                <Navigation className="h-4 w-4 mr-2" />
-                Find Nearby
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AppHeader
+        mounted={mounted}
+        resolvedTheme={resolvedTheme}
+        setTheme={setTheme}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        userLocation={userLocation}
+        loadNearbyTrucks={loadNearbyTrucks}
+      />
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Real Map */}
-            <div
-              key="map-container-parent"
-              className="lg:col-span-2 h-80 min-h-[320px] sm:h-96 sm:min-h-[400px] dark:bg-slate-800 rounded-lg shadow"
-            >
-              <MapDisplay
-                trucks={filteredTrucks}
-                userLocation={userLocation}
-                onSelectTruck={setSelectedTruckId}
-                defaultCenter={
-                  userLocation ? [userLocation.lat, userLocation.lng] : [37.7749, -122.4194]
-                } // Provide a stable default
-                selectedTruckLocation={
-                  (selectedTruckId == undefined)
-                    ? undefined
-                    : (() => {
-                        const truck = filteredTrucks.find((t) => t.id === selectedTruckId);
-                        return (truck?.current_location?.lat == undefined) || (truck?.current_location?.lng == undefined)
-                          ? undefined
-                          : [truck.current_location.lat, truck.current_location.lng];
-                      })()
-                }
-              />
-            </div>
-
-            {/* Combined Truck List and Details */}
-            <div className="lg:col-span-1 space-y-4">
-              <h3 className="text-lg font-semibold dark:text-gray-100">
-                Nearby Trucks ({filteredTrucks.length})
-              </h3>
-              <Accordion
-                type="single"
-                collapsible
-                className="w-full"
-                value={selectedTruckId ?? undefined}
-                onValueChange={(value: string | undefined) =>
-                  setSelectedTruckId((currentId) => (value === currentId ? undefined : value))
-                }
-              >
-                {filteredTrucks.map((truck) => (
-                  <AccordionItem value={truck.id} key={truck.id}>
-                    <AccordionTrigger className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md">
-                      <div className="flex-1 text-left">
-                        <h4 className="font-medium dark:text-gray-100">{truck.name}</h4>
-                        {truck.current_location?.address && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">
-                            {truck.current_location.address}
-                          </p>
-                        )}
-                      </div>
-                      <Badge variant={isOpen(truck) ? 'default' : 'secondary'}>
-                        {isOpen(truck) ? 'Open' : 'Closed'}
-                      </Badge>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <TruckCard
-                        truck={truck}
-                        isOpen={isOpen(truck)}
-                        onSelectTruck={() => setSelectedTruckId(truck.id)}
-                        userLocation={userLocation}
-                        formatPrice={formatPrice}
-                        hideHeader={true}
-                      />
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MainContent
+        filteredTrucks={filteredTrucks}
+        userLocation={userLocation}
+        selectedTruckId={selectedTruckId}
+        setSelectedTruckId={setSelectedTruckId}
+        isOpen={isOpen}
+      />
     </div>
   );
 }
