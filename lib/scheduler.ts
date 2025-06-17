@@ -11,7 +11,7 @@ export class TaskScheduler {
   }
 
   start(): void {
-    if (this.isRunning) {
+    if (this.isRunning === true) {
       console.info('Scheduler is already running');
       return;
     }
@@ -21,14 +21,14 @@ export class TaskScheduler {
 
     // Start all scheduled tasks
     for (const [taskId, task] of this.tasks.entries()) {
-      if (task.enabled) {
+      if (task.enabled === true) {
         this.scheduleTask(taskId, task);
       }
     }
   }
 
   stop(): void {
-    if (!this.isRunning) {
+    if (this.isRunning !== true) {
       console.info('Scheduler is not running');
       return;
     }
@@ -48,7 +48,7 @@ export class TaskScheduler {
   addTask(task: ScheduledTask): void {
     this.tasks.set(task.id, task);
 
-    if (this.isRunning && task.enabled) {
+    if (this.isRunning === true && task.enabled === true) {
       this.scheduleTask(task.id, task);
     }
 
