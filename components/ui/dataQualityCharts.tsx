@@ -64,7 +64,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
       </div>
     );
   }
-  return null;
+  return undefined;
 };
 
 // Quality Distribution Pie Chart Component

@@ -441,7 +441,7 @@ function OperatingHoursCard({ truck }: { readonly truck: { operating_hours?: Rec
         {(truck.operating_hours !== undefined) && Object.keys(truck.operating_hours).length > 0 ? (
           <div className="space-y-2">
             {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-              const dayData = truck.operating_hours ? truck.operating_hours[day as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined : undefined;
+              const dayData = truck.operating_hours ? truck.operating_hours[day] as { closed?: boolean; open?: string; close?: string } | undefined : undefined;
               const dayName = day.charAt(0).toUpperCase() + day.slice(1);
 
               return (
