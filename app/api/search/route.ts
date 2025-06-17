@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     let trucks: FoodTruck[] = [];
 
     // Get trucks by location if coordinates provided
-    if (lat && lng) {
+    if (lat !== undefined && lng !== undefined) {
       const userLat = Number.parseFloat(lat);
       const userLng = Number.parseFloat(lng);
       const radiusKm = Number.parseFloat(radius);
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     let filteredTrucks = trucks;
 
     // Text search filter
-    if (query) {
+    if (query !== undefined && query !== '') {
       filteredTrucks = filteredTrucks.filter(
         (truck: FoodTruck) => truck.name.toLowerCase().includes(query.toLowerCase()) ||
         truck.description?.toLowerCase().includes(query.toLowerCase()) ||
@@ -38,14 +38,14 @@ export async function GET(request: NextRequest) {
           category.items?.some(
             (item: MenuItem) =>
               item.name.toLowerCase().includes(query.toLowerCase()) ||
-              item.description?.toLowerCase().includes(query.toLowerCase()),
-          ),
-        ),
+              (item.description?.toLowerCase().includes(query.toLowerCase()) ?? false),
+          ) ?? false,
+        ) ?? false,
       );
     }
 
     // Cuisine filter
-    if (cuisine) {
+    if (cuisine !== undefined && cuisine !== '') {
       filteredTrucks = filteredTrucks.filter((truck: FoodTruck) => truck.menu?.some((category: MenuCategory) =>
         category.name.toLowerCase().includes(cuisine.toLowerCase()),
       ),
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
         cuisine,
         openNow,
         location:
-          lat && lng ? { lat: Number.parseFloat(lat), lng: Number.parseFloat(lng) } : undefined,
+          lat !== undefined && lng !== undefined ? { lat: Number.parseFloat(lat), lng: Number.parseFloat(lng) } : undefined,
         radius: Number.parseFloat(radius),
       },
     });

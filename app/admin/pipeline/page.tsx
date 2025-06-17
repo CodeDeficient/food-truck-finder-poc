@@ -143,16 +143,14 @@ export default function PipelineMonitoringPage() {
                     </TableCell>
                     <TableCell>{new Date(job.scheduled_at).toLocaleString()}</TableCell>
                     <TableCell>
-                      {job.completed_at != null ? new Date(job.completed_at).toLocaleString()  : 'N/A'}
+                      {job.completed_at == undefined ? 'N/A'  : new Date(job.completed_at).toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
                       {job.status === 'failed' && (
-                        // @ts-expect-error TS(2322): Type '{ children: string; variant: string; size: s... Remove this comment to see the full error message
                         <Button variant="outline" size="sm" className="mr-2">
                           Retry
                         </Button>
                       )}
-                      // @ts-expect-error TS(2322): Type '{ children: string; variant: string; size: s... Remove this comment to see the full error message
                       <Button variant="outline" size="sm">
                         View Logs
                       </Button>
@@ -192,7 +190,6 @@ export default function PipelineMonitoringPage() {
                   </TableCell>
                   <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                   <TableCell className="text-right">
-                    // @ts-expect-error TS(2322): Type '{ children: string; variant: string; size: s... Remove this comment to see the full error message
                     <Button variant="outline" size="sm">
                       View Details
                     </Button>
