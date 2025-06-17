@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-switch'. Did y... Remove this comment to see the full error message
 import * as SwitchPrimitives from '@radix-ui/react-switch';
 
 import { cn } from '@/lib/utils';

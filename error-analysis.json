@@ -1,115 +1,122 @@
 {
-  "timestamp": "2025-06-16T03:16:57.156Z",
-  "totalErrors": 625,
+  "timestamp": "2025-06-17T01:00:51.692Z",
+  "totalErrors": 248,
   "errorCounts": {
-    "unknown": 5,
-    "max-lines-per-function": 90,
-    "@typescript-eslint/strict-boolean-expressions": 190,
-    "@typescript-eslint/no-unsafe-assignment": 70,
-    "@typescript-eslint/no-unsafe-call": 44,
-    "@typescript-eslint/no-unsafe-member-access": 95,
-    "sonarjs/different-types-comparison": 13,
-    "sonarjs/no-nested-conditional": 11,
-    "@typescript-eslint/await-thenable": 4,
-    "sonarjs/no-invalid-await": 4,
+    "max-lines-per-function": 94,
+    "@typescript-eslint/strict-boolean-expressions": 55,
+    "@typescript-eslint/await-thenable": 3,
+    "sonarjs/no-invalid-await": 3,
+    "sonarjs/no-nested-conditional": 3,
     "sonarjs/void-use": 1,
-    "@typescript-eslint/no-explicit-any": 10,
-    "@typescript-eslint/require-await": 7,
-    "sonarjs/cognitive-complexity": 10,
-    "@typescript-eslint/no-unsafe-argument": 15,
-    "@typescript-eslint/prefer-nullish-coalescing": 3,
-    "sonarjs/unused-import": 1,
-    "sonarjs/no-unused-vars": 2,
-    "sonarjs/no-dead-store": 2,
+    "@typescript-eslint/no-explicit-any": 6,
+    "sonarjs/cognitive-complexity": 8,
+    "sonarjs/no-inverted-boolean-check": 1,
     "max-depth": 4,
-    "unicorn/no-null": 1,
     "sonarjs/no-nested-template-literals": 1,
-    "@typescript-eslint/no-misused-promises": 6,
-    "sonarjs/pseudo-random": 1,
-    "unicorn/no-array-reduce": 1,
-    "@typescript-eslint/no-unsafe-return": 11,
-    "sonarjs/no-use-of-empty-return-value": 3,
-    "sonarjs/no-all-duplicated-branches": 1,
+    "@typescript-eslint/no-misused-promises": 3,
+    "@typescript-eslint/no-unsafe-assignment": 7,
+    "sonarjs/different-types-comparison": 18,
+    "@typescript-eslint/prefer-nullish-coalescing": 1,
+    "@typescript-eslint/no-unsafe-call": 8,
+    "sonarjs/no-use-of-empty-return-value": 1,
+    "@typescript-eslint/no-unsafe-argument": 3,
+    "@typescript-eslint/no-unsafe-member-access": 15,
     "sonarjs/no-redundant-jump": 2,
-    "unicorn/consistent-function-scoping": 1,
-    "unicorn/no-useless-undefined": 6,
-    "unicorn/prefer-add-event-listener": 2,
-    "@typescript-eslint/restrict-template-expressions": 2,
+    "unicorn/no-null": 5,
     "max-params": 4,
-    "sonarjs/use-type-alias": 1,
+    "@typescript-eslint/no-unsafe-return": 1,
     "sonarjs/slow-regex": 1
   },
   "automationCandidates": [
     {
-      "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 70,
-      "confidence": "MEDIUM",
-      "method": "type-annotation",
-      "description": "Add type annotations for unsafe assignments",
-      "estimatedFixes": 21,
-      "priority": 42
+      "ruleId": "max-lines-per-function",
+      "count": 94,
+      "confidence": "MANUAL_ONLY",
+      "method": "manual-ide-refactor",
+      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.",
+      "estimatedFixes": 0,
+      "priority": null
+    },
+    {
+      "ruleId": "unicorn/no-null",
+      "count": 5,
+      "confidence": "HIGH",
+      "method": "pattern-replacement",
+      "description": "Replace null with undefined",
+      "estimatedFixes": 4,
+      "priority": 12
     },
     {
       "ruleId": "@typescript-eslint/strict-boolean-expressions",
-      "count": 190,
+      "count": 55,
       "confidence": "LOW",
       "method": "manual-review",
       "description": "Complex boolean expression fixes",
-      "estimatedFixes": 19,
-      "priority": 19
+      "estimatedFixes": 5,
+      "priority": 5
     },
     {
       "ruleId": "@typescript-eslint/no-explicit-any",
-      "count": 10,
+      "count": 6,
       "confidence": "MEDIUM",
       "method": "pattern-replacement",
       "description": "Replace any with unknown in safe contexts",
-      "estimatedFixes": 4,
-      "priority": 8
+      "estimatedFixes": 2,
+      "priority": 4
     },
     {
-      "ruleId": "max-lines-per-function",
-      "count": 90,
-      "confidence": "MANUAL_ONLY",
-      "method": "manual-ide-refactor",
-      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment due to semantic complexity, variable scope changes, and control flow preservation. Use VS Code Extract Method with comprehensive testing.",
-      "estimatedFixes": 0,
-      "priority": 5,
-      "automationRisk": "HIGH",
-      "researchEvidence": "Academic studies show 47% failure rate in automated extraction, semantic errors common"
+      "ruleId": "@typescript-eslint/no-unsafe-assignment",
+      "count": 7,
+      "confidence": "MEDIUM",
+      "method": "type-annotation",
+      "description": "Add type annotations for unsafe assignments",
+      "estimatedFixes": 2,
+      "priority": 4
     }
   ],
   "recommendations": {
     "highConfidence": {
-      "candidates": [],
-      "totalFixes": 0,
-      "methods": []
+      "candidates": [
+        {
+          "ruleId": "unicorn/no-null",
+          "count": 5,
+          "confidence": "HIGH",
+          "method": "pattern-replacement",
+          "description": "Replace null with undefined",
+          "estimatedFixes": 4,
+          "priority": 12
+        }
+      ],
+      "totalFixes": 4,
+      "methods": [
+        "pattern-replacement"
+      ]
     },
     "mediumConfidence": {
       "candidates": [
         {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 70,
-          "confidence": "MEDIUM",
-          "method": "type-annotation",
-          "description": "Add type annotations for unsafe assignments",
-          "estimatedFixes": 21,
-          "priority": 42
-        },
-        {
           "ruleId": "@typescript-eslint/no-explicit-any",
-          "count": 10,
+          "count": 6,
           "confidence": "MEDIUM",
           "method": "pattern-replacement",
           "description": "Replace any with unknown in safe contexts",
-          "estimatedFixes": 4,
-          "priority": 8
+          "estimatedFixes": 2,
+          "priority": 4
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "count": 7,
+          "confidence": "MEDIUM",
+          "method": "type-annotation",
+          "description": "Add type annotations for unsafe assignments",
+          "estimatedFixes": 2,
+          "priority": 4
         }
       ],
-      "totalFixes": 25,
+      "totalFixes": 4,
       "methods": [
-        "type-annotation",
-        "pattern-replacement"
+        "pattern-replacement",
+        "type-annotation"
       ]
     }
   }

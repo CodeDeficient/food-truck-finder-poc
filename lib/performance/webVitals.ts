@@ -43,10 +43,14 @@ function getRating(name: MetricName, value: number): 'good' | 'needs-improvement
  * Processes and stores a web vital metric
  */
 function handleMetric(metric: Metric) {
+  // Type-safe casting with validation
+  const metricName = String((metric as { name: string }).name) as MetricName;
+  const metricValue = Number((metric as { value: number }).value);
+
   const performanceMetric: PerformanceMetric = {
-    name: metric.name as MetricName,
-    value: metric.value,
-    rating: getRating(metric.name as MetricName, metric.value),
+    name: metricName,
+    value: metricValue,
+    rating: getRating(metricName, metricValue),
     timestamp: Date.now(),
     url: globalThis.location.href,
     userAgent: navigator.userAgent
@@ -62,9 +66,9 @@ function handleMetric(metric: Metric) {
 
   // Log performance issues
   if (performanceMetric.rating === 'poor') {
-    console.warn(`Poor ${metric.name} performance:`, {
-      value: metric.value,
-      threshold: PERFORMANCE_THRESHOLDS[metric.name as MetricName],
+    console.warn(`Poor ${metricName} performance:`, {
+      value: metricValue,
+      threshold: PERFORMANCE_THRESHOLDS[metricName],
       url: performanceMetric.url
     });
   }
@@ -84,7 +88,7 @@ async function sendMetricToAnalytics(metric: PerformanceMetric): Promise<void> {
     });
   } catch (error) {
     // Silently fail - don't impact user experience
-    console.debug('Analytics endpoint unavailable:', error);
+    console.info('Analytics endpoint unavailable:', error);
   }
 }
 
@@ -94,11 +98,19 @@ async function sendMetricToAnalytics(metric: PerformanceMetric): Promise<void> {
  */
 export function initWebVitalsMonitoring(): void {
   try {
-    getCLS(handleMetric);
-    getFCP(handleMetric);
-    getFID(handleMetric);
-    getLCP(handleMetric);
-    getTTFB(handleMetric);
+    // Type-safe metric handlers with explicit casting
+    const safeHandleMetric = (metric: Metric) => handleMetric(metric);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    getCLS(safeHandleMetric);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    getFCP(safeHandleMetric);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    getFID(safeHandleMetric);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    getLCP(safeHandleMetric);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    getTTFB(safeHandleMetric);
   } catch (error) {
     console.warn('Failed to initialize web vitals monitoring:', error);
   }
@@ -140,8 +152,7 @@ export function getPerformanceMetrics(): {
       const average = metricData.reduce((sum, m) => sum + m.value, 0) / metricData.length;
       
       summary[name] = {
-        // @ts-expect-error TS(2532): Object is possibly 'undefined'.
-        latest: latest.value,
+        latest: latest?.value ?? undefined,
         average: Math.round(average),
         rating: getRating(name, average),
         count: metricData.length
@@ -177,7 +188,7 @@ export function checkPerformanceBudget(): {
 
   for (const [metricName, data] of Object.entries(summary)) {
     const name = metricName as MetricName;
-    if (data.latest === undefined) continue;
+    if (data.latest == undefined) continue;
 
     const thresholds = PERFORMANCE_THRESHOLDS[name];
     

@@ -195,7 +195,9 @@ export default function TestPipelinePage() {
         <CardContent>
           <form
             onSubmit={(e) => {
-              void handleSubmit(e);
+              handleSubmit(e).catch(error => {
+                console.warn('Form submission failed:', error);
+              });
             }}
             className="space-y-6"
           >
@@ -216,7 +218,7 @@ export default function TestPipelinePage() {
               <Checkbox
                 id="use-raw-text-checkbox"
                 checked={useRawText}
-                onCheckedChange={(checked: any) => setUseRawText(Boolean(checked))}
+                onCheckedChange={(checked: boolean) => setUseRawText(Boolean(checked))}
                 disabled={isLoading}
               />
               <Label htmlFor="use-raw-text-checkbox">Use Raw Text Input Instead</Label>
@@ -238,7 +240,7 @@ export default function TestPipelinePage() {
               <Checkbox
                 id="dry-run-checkbox"
                 checked={isDryRun}
-                onCheckedChange={(checked: any) => setIsDryRun(Boolean(checked))}
+                onCheckedChange={(checked: boolean) => setIsDryRun(Boolean(checked))}
                 disabled={isLoading}
               />
               <Label htmlFor="dry-run-checkbox">Dry Run (Do not save to Supabase)</Label>

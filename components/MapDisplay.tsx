@@ -71,7 +71,7 @@ const MapDisplay = ({
 
   const validTrucks = trucks.filter(
     (truck) =>
-      truck.current_location !== undefined &&
+      truck.current_location != undefined &&
       typeof truck.current_location.lat === 'number' &&
       typeof truck.current_location.lng === 'number',
   );
@@ -133,7 +133,7 @@ const MapDisplay = ({
         >
           <Popup>
             <h4 className="font-bold">{truck.name}</h4>
-            {truck.current_location.address !== undefined && truck.current_location.address !== '' && <div>{truck.current_location.address}</div>}
+            {truck.current_location.address != undefined && truck.current_location.address != '' && <div>{truck.current_location.address}</div>}
           </Popup>
         </Marker>
       ))}
