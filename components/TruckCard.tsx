@@ -56,7 +56,7 @@ function RatingSection({ averageRating, reviewCount }: {
   readonly averageRating?: number;
   readonly reviewCount?: number;
 }) {
-  if (averageRating === undefined) return undefined;
+  if (averageRating === undefined) return;
 
   return (
     <div>
@@ -158,7 +158,7 @@ function ContactSection({ contactInfo, verificationStatus }: {
 function SocialMediaSection({ socialMedia }: {
   readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }) {
-  if (!socialMedia || Object.keys(socialMedia).length === 0) return undefined;
+  if (!socialMedia || Object.keys(socialMedia).length === 0) return;
 
   return (
     <div>
