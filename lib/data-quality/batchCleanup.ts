@@ -137,14 +137,10 @@ export class BatchCleanupService {
   }
   
   /**
-   * Remove placeholder and mock data
+   * Get placeholder detection patterns
    */
-  private static async removePlaceholders(
-    trucks: FoodTruck[],
-    dryRun: boolean,
-    operation: CleanupOperation
-  ): Promise<CleanupOperation> {
-    const placeholderPatterns = [
+  private static getPlaceholderPatterns(): RegExp[] {
+    return [
       /undefined/i,
       /placeholder/i,
       /example\.com/i,
@@ -155,34 +151,55 @@ export class BatchCleanupService {
       /^0+$/,
       /^null$/i
     ];
-    
-    for (const truck of trucks) {
-      let needsUpdate = false;
-      const updates: Partial<FoodTruck> = {};
-      
-      // Check name
-      if (truck.name && placeholderPatterns.some(pattern => pattern.test(truck.name))) {
-        updates.name = undefined;
-        needsUpdate = true;
-      }
-      
-      // Check description
-      if (truck.description !== undefined && typeof truck.description === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.description))) {
-        updates.description = undefined;
-        needsUpdate = true;
-      }
+  }
 
-      // Check price range
-      if (truck.price_range && typeof truck.price_range === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.price_range))) {
-        updates.price_range = undefined;
-        needsUpdate = true;
-      }
-      
+  /**
+   * Check if truck data needs placeholder cleanup
+   */
+  private static checkForPlaceholders(truck: FoodTruck, patterns: RegExp[]): { updates: Partial<FoodTruck>; needsUpdate: boolean } {
+    const updates: Partial<FoodTruck> = {};
+    let needsUpdate = false;
+
+    // Check name
+    if (truck.name && patterns.some(pattern => pattern.test(truck.name))) {
+      updates.name = undefined;
+      needsUpdate = true;
+    }
+
+    // Check description
+    if (truck.description !== undefined && typeof truck.description === 'string' && patterns.some(pattern => pattern.test(truck.description))) {
+      updates.description = undefined;
+      needsUpdate = true;
+    }
+
+    // Check price range
+    if (truck.price_range !== undefined && typeof truck.price_range === 'string' && patterns.some(pattern => pattern.test(truck.price_range))) {
+      updates.price_range = undefined;
+      needsUpdate = true;
+    }
+
+    return { updates, needsUpdate };
+  }
+
+  /**
+   * Remove placeholder and mock data
+   */
+  private static async removePlaceholders(
+    trucks: FoodTruck[],
+    dryRun: boolean,
+    operation: CleanupOperation
+  ): Promise<CleanupOperation> {
+    const placeholderPatterns = this.getPlaceholderPatterns();
+
+    for (const truck of trucks) {
+      const { updates, needsUpdate: initialNeedsUpdate } = this.checkForPlaceholders(truck, placeholderPatterns);
+      let needsUpdate = initialNeedsUpdate;
+
       // Check contact info
       if (truck.contact_info) {
         const cleanContact = { ...truck.contact_info };
         let contactUpdated = false;
-        
+
         if (cleanContact.phone !== undefined && typeof cleanContact.phone === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone))) {
           cleanContact.phone = undefined;
           contactUpdated = true;
@@ -197,13 +214,13 @@ export class BatchCleanupService {
           cleanContact.email = undefined;
           contactUpdated = true;
         }
-        
+
         if (contactUpdated) {
           updates.contact_info = cleanContact;
           needsUpdate = true;
         }
       }
-      
+
       // Check address
       if (truck.current_location?.address !== undefined && typeof truck.current_location.address === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address))) {
         updates.current_location = {
@@ -285,13 +302,13 @@ export class BatchCleanupService {
     const defaultLng = -79.9311;
     
     for (const truck of trucks) {
-      if (truck.current_location !== undefined) {
+      if (truck.current_location != undefined) {
         const { lat, lng } = truck.current_location;
         let needsUpdate = false;
         const updates: Partial<FoodTruck['current_location']> = {};
 
         // Fix invalid coordinates (0,0 or null)
-        if (lat === undefined || lat === 0 || lng === undefined || lng === 0) {
+        if (lat == undefined || lat === 0 || lng == undefined || lng === 0) {
           updates.lat = defaultLat;
           updates.lng = defaultLng;
           needsUpdate = true;

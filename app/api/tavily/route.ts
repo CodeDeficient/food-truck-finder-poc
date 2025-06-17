@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as TavilyRequestBody;
     const { operation, params } = body;
 
-    if (!operation || !params) {
+    if (operation == undefined || params == undefined) {
       return NextResponse.json({ error: 'Missing operation or params' }, { status: 400 });
     }
 
@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
       }
 
       case 'crawl': {
-        result = performTavilyCrawl(params);
+        result = await performTavilyCrawl(params);
         break;
       }
 
       case 'map': {
-        result = performTavilyMap(params);
+        result = await performTavilyMap(params);
         break;
       }
 
@@ -123,7 +123,7 @@ function performTavilySearch(params: Record<string, unknown>) {
   }
 }
 
-function performTavilyCrawl(params: Record<string, unknown>) {
+async function performTavilyCrawl(params: Record<string, unknown>) {
   console.info('Mock Tavily crawl with params:', params);
 
   return {
@@ -137,7 +137,7 @@ function performTavilyCrawl(params: Record<string, unknown>) {
   };
 }
 
-function performTavilyMap(params: Record<string, unknown>) {
+async function performTavilyMap(params: Record<string, unknown>) {
   console.info('Mock Tavily map with params:', params);
 
   return {

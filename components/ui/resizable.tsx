@@ -1,8 +1,6 @@
 "use client"
 
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { GripVertical } from "lucide-react"
-// @ts-expect-error TS(2792): Cannot find module 'react-resizable-panels'. Did y... Remove this comment to see the full error message
 import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"

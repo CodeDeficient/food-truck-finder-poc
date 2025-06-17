@@ -110,9 +110,9 @@ export default async function UserManagementPage() {
                   </TableCell>
                   <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    {user.last_sign_in_at
-                      ? new Date(user.last_sign_in_at).toLocaleDateString()
-                      : 'N/A'}
+                    {user.last_sign_in_at == undefined
+                      ? 'N/A'
+                      : new Date(user.last_sign_in_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" asChild>

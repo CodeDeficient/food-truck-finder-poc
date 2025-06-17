@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
 import { FoodTruckService, FoodTruck } from '@/lib/supabase';
 
@@ -6,7 +5,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     const truck = await FoodTruckService.getTruckById(params.id);
 
-    if (truck === undefined || truck === null) {
+    if (truck == undefined || truck == undefined) {
       return NextResponse.json({ error: 'Food truck not found' }, { status: 404 });
     }
 
