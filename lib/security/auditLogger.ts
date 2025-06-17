@@ -5,6 +5,9 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 
+// Type alias for severity levels to comply with sonarjs/use-type-alias
+type SeverityLevel = 'info' | 'warning' | 'error' | 'critical';
+
 export interface AuditLogEntry {
   user_id: string;
   user_email: string;
@@ -16,7 +19,7 @@ export interface AuditLogEntry {
   user_agent?: string;
   session_id?: string;
   timestamp: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: SeverityLevel;
 }
 
 export interface SecurityEvent {
@@ -26,7 +29,7 @@ export interface SecurityEvent {
   ip_address?: string;
   user_agent?: string;
   details?: Record<string, unknown>;
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: SeverityLevel;
 }
 
 /**
@@ -69,7 +72,7 @@ export class AuditLogger {
     console.info('Admin Action Audit:', {
       user: userEmail,
       action,
-      resource: (resourceId == undefined) ? resourceType : `${resourceType}:${resourceId}`,
+      resource: (resourceId === undefined) ? resourceType : `${resourceType}:${resourceId}`,
       timestamp: auditEntry.timestamp
     });
   }
@@ -182,7 +185,7 @@ export class AuditLogger {
   /**
    * Determine severity based on action and resource type
    */
-  private static determineSeverity(action: string, resourceType: string): 'info' | 'warning' | 'error' | 'critical' {
+  private static determineSeverity(action: string, resourceType: string): SeverityLevel {
     // Critical actions
     if (action.includes('delete') || action.includes('remove')) {
       return 'critical';
@@ -227,6 +230,7 @@ export class AuditLogger {
         return [];
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data ?? [];
     } catch (error) {
       console.error('Error fetching user audit logs:', error);
@@ -239,8 +243,8 @@ export class AuditLogger {
    */
   static async getRecentSecurityEvents(
     hours: number = 24,
-    severity?: 'info' | 'warning' | 'error' | 'critical'
-  ): Promise<any[]> {
+    severity?: SeverityLevel
+  ): Promise<Record<string, unknown>[]> {
     try {
       if (!supabaseAdmin) {
         return [];
@@ -266,6 +270,7 @@ export class AuditLogger {
         return [];
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data ?? [];
     } catch (error) {
       console.error('Error fetching security events:', error);
@@ -293,6 +298,7 @@ export const SecurityMonitor = {
       // Check recent failed login attempts
       const recentEvents = await AuditLogger.getRecentSecurityEvents(1, 'warning');
       const failedLogins = recentEvents.filter(
+         
         event => event.event_type === 'login_failure' && event.user_id === userId
       );
 

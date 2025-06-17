@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as { type?: string; data?: unknown };
     const { type, data } = body;
 
-    if (!type || !data || typeof type !== 'string' || typeof data !== 'string') {
+    if (type === undefined || type === '' || data === undefined || typeof type !== 'string' || typeof data !== 'string') {
       return NextResponse.json(
         { error: 'Type must be a string and data must be a string' },
         { status: 400 },

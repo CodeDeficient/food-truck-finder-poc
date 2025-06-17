@@ -11,7 +11,7 @@ export function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
 
-    if (!cronSecret) {
+    if (cronSecret === undefined || cronSecret === '') {
       console.error('CRON_SECRET not configured');
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }

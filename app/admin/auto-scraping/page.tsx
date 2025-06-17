@@ -260,7 +260,7 @@ export default function AutoScrapingDashboard() {
                   <TableCell className="font-mono text-sm">{job.schedule}</TableCell>
                   <TableCell>{getStatusBadge(job.status)}</TableCell>
                   <TableCell>
-                    {job.lastRun ? new Date(job.lastRun).toLocaleString() : 'Never'}
+                    {job.lastRun == undefined ? 'Never' : new Date(job.lastRun).toLocaleString()}
                   </TableCell>
                   <TableCell>
                     {job.nextRun ? new Date(job.nextRun).toLocaleString() : 'Unknown'}

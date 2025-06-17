@@ -272,7 +272,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
+    if (authHeader?.startsWith('Bearer ') !== true) {
       return false;
     }
 
@@ -318,9 +318,9 @@ async function getCleanupStatus(): Promise<AutomatedCleanupStatus> {
   };
 }
 
-async function getCleanupSchedules(): Promise<CleanupSchedule[]> {
-  // Default cleanup schedules
-  return [
+function getCleanupSchedules(): Promise<CleanupSchedule[]> {
+  return Promise.resolve([
+    // Default cleanup schedules
     {
       id: 'daily-maintenance',
       name: 'Daily Maintenance Cleanup',
@@ -343,12 +343,12 @@ async function getCleanupSchedules(): Promise<CleanupSchedule[]> {
       successCount: 4,
       errorCount: 0
     }
-  ];
+  ]);
 }
 
-async function getCleanupHistory(limit: number): Promise<CleanupResult[]> {
+function getCleanupHistory(_limit: number): Promise<CleanupResult[]> {
   // This would fetch from a cleanup_history table
-  return [];
+  return Promise.resolve([]);
 }
 
 interface PreviewResult {
@@ -435,57 +435,57 @@ interface DuplicateAnalysisResult {
   analysisTime: string;
 }
 
-async function createCleanupSchedule(
+function createCleanupSchedule(
   name: string,
   operations: string[],
   schedule: string,
   enabled: boolean
 ): Promise<ScheduleCreateResult> {
   // This would create a new schedule in the database
-  return {
+  return Promise.resolve({
     id: `schedule-${Date.now()}`,
     name,
     operations,
     schedule,
     enabled,
     created: new Date().toISOString()
-  };
+  });
 }
 
-async function updateCleanupSchedule(scheduleId: string, updates: Record<string, unknown>): Promise<ScheduleUpdateResult> {
+function updateCleanupSchedule(scheduleId: string, updates: Record<string, unknown>): Promise<ScheduleUpdateResult> {
   // This would update the schedule in the database
-  return {
+  return Promise.resolve({
     scheduleId,
     updates,
     updated: new Date().toISOString()
-  };
+  });
 }
 
-async function deleteCleanupSchedule(scheduleId: string): Promise<ScheduleDeleteResult> {
+function deleteCleanupSchedule(scheduleId: string): Promise<ScheduleDeleteResult> {
   // This would delete the schedule from the database
-  return {
+  return Promise.resolve({
     scheduleId,
     deleted: new Date().toISOString()
-  };
+  });
 }
 
-async function analyzeDuplicates(threshold: number): Promise<DuplicateAnalysisResult> {
+function analyzeDuplicates(threshold: number): Promise<DuplicateAnalysisResult> {
   try {
     // This would run a comprehensive duplicate analysis
-    return {
+    return Promise.resolve({
       threshold,
       potentialDuplicates: 0,
       highConfidenceMatches: 0,
       mediumConfidenceMatches: 0,
       lowConfidenceMatches: 0,
       analysisTime: new Date().toISOString()
-    };
+    });
   } catch (error) {
     throw new Error(`Duplicate analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
-async function logCleanupOperation(type: string, result: Record<string, unknown>, options: Record<string, unknown>): Promise<void> {
+function logCleanupOperation(type: string, result: Record<string, unknown>, options: Record<string, unknown>): Promise<void> {
   try {
     // This would log the cleanup operation to a database table
     console.info(`Cleanup operation completed:`, {
@@ -494,7 +494,9 @@ async function logCleanupOperation(type: string, result: Record<string, unknown>
       options,
       timestamp: new Date().toISOString()
     });
+    return Promise.resolve();
   } catch (error) {
     console.warn('Failed to log cleanup operation:', error);
+    return Promise.resolve();
   }
 }

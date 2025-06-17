@@ -20,7 +20,7 @@ function mapExtractedDataToTruckSchema(
   sourceUrl: string,
   isDryRun: boolean,
 ): FoodTruckSchema {
-  if (!extractedData || typeof extractedData !== 'object') {
+  if (extractedData === undefined || typeof extractedData !== 'object') {
     throw new Error('Invalid extractedData for mapping.');
   }
 
@@ -83,12 +83,12 @@ async function handleFirecrawlStage(
   let contentToProcess: string | undefined;
   let sourceUrlForProcessing: string = url ?? 'raw_text_input';
 
-  if (url && !rawText) {
+  if (url !== undefined && url !== '' && (rawText === undefined || rawText === '')) {
     logs.push(`Starting Firecrawl scrape for URL: ${url}`);
     try {
       const fcOutput: GeminiResponse<FirecrawlOutputData> =
         await firecrawl.scrapeFoodTruckWebsite(url);
-      if (fcOutput.success && fcOutput.data?.markdown) {
+      if (fcOutput.success && fcOutput.data?.markdown !== undefined && fcOutput.data.markdown !== '') {
         contentToProcess = fcOutput.data.markdown;
         sourceUrlForProcessing = fcOutput.data.source_url ?? url;
         firecrawlResult = {
@@ -109,7 +109,7 @@ async function handleFirecrawlStage(
       logs.push(`Firecrawl error: ${errorMessage}`);
       firecrawlResult = { status: 'Error', error: errorMessage };
     }
-  } else if (rawText) {
+  } else if (rawText !== undefined && rawText !== '') {
     logs.push('Using raw text input for processing.');
     contentToProcess = rawText;
     firecrawlResult = {
@@ -121,7 +121,7 @@ async function handleFirecrawlStage(
     throw new Error('Either a URL or raw text must be provided for testing.');
   }
 
-  if (!contentToProcess) {
+  if (contentToProcess === undefined || contentToProcess === '') {
     logs.push('Content to process is empty after Firecrawl/raw text stage.');
     throw new Error('Content to process is empty.');
   }
@@ -189,7 +189,7 @@ async function handleSupabaseStage(
     } else {
       logs.push('Attempting to save to Supabase (Dry Run is FALSE).');
       const createdTruck = await FoodTruckService.createTruck(truckDataToSave);
-      if (!createdTruck) {
+      if (createdTruck === undefined) {
         throw new Error('Failed to create truck in Supabase.');
       }
       supabaseResult = {

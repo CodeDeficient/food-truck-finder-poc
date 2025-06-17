@@ -57,7 +57,7 @@ const FoodTruckCard = ({ truck }: { truck: FoodTruck }) => {
             {truck.events.slice(0, 3).map((event) => (
               <li key={event.id} className="mb-1">
                 <span className="font-medium">{event.title}</span> &mdash; {event.event_date}
-                {event.location_address && (
+                {event.location_address !== undefined && event.location_address !== '' && (
                   <span className="ml-2 text-gray-500">@ {event.location_address}</span>
                 )}
               </li>
