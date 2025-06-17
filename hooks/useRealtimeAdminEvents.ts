@@ -7,6 +7,30 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
+// Utility function for parsing event data
+function parseEventData(eventData: string, eventType: string): AdminEvent | null {
+  try {
+    return JSON.parse(eventData) as AdminEvent;
+  } catch (error) {
+    console.warn(`Failed to parse ${eventType} event:`, error);
+    return null;
+  }
+}
+
+// Setup event listeners for different event types
+function setupEventListeners(eventSource: EventSource, handleEvent: (event: AdminEvent) => void) {
+  const eventTypes = ['heartbeat', 'scraping_update', 'data_quality_change', 'system_alert'];
+
+  eventTypes.forEach(eventType => {
+    eventSource.addEventListener(eventType, (event: MessageEvent) => {
+      const adminEvent = parseEventData(event.data as string, eventType);
+      if (adminEvent) {
+        handleEvent(adminEvent);
+      }
+    });
+  });
+}
+
 interface AdminEvent {
   id: string;
   type: 'scraping_update' | 'data_quality_change' | 'system_alert' | 'user_activity' | 'heartbeat';
@@ -61,6 +85,119 @@ interface UseRealtimeAdminEventsReturn {
   lastEventTime: Date | null;
 }
 
+// Connection state management hook
+function useConnectionState() {
+  const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | undefined>();
+  const [latestMetrics, setLatestMetrics] = useState<RealtimeMetrics | undefined>();
+  const [recentEvents, setRecentEvents] = useState<AdminEvent[]>([]);
+  const [connectionAttempts, setConnectionAttempts] = useState(0);
+  const [lastEventTime, setLastEventTime] = useState<Date | undefined>();
+
+  return {
+    isConnected, setIsConnected,
+    isConnecting, setIsConnecting,
+    connectionError, setConnectionError,
+    latestMetrics, setLatestMetrics,
+    recentEvents, setRecentEvents,
+    connectionAttempts, setConnectionAttempts,
+    lastEventTime, setLastEventTime
+  };
+}
+
+// Event source connection management
+function createEventSourceConnection({
+  eventSourceRef,
+  isConnecting,
+  isManuallyDisconnectedRef,
+  connectionAttempts,
+  maxReconnectAttempts,
+  reconnectInterval,
+  reconnectTimeoutRef,
+  handleEvent,
+  connectionState,
+  connect
+}: {
+  eventSourceRef: React.MutableRefObject<EventSource | undefined>;
+  isConnecting: boolean;
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean>;
+  connectionAttempts: number;
+  maxReconnectAttempts: number;
+  reconnectInterval: number;
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>;
+  handleEvent: (event: AdminEvent) => void;
+  connectionState: ReturnType<typeof useConnectionState>;
+  connect: () => void;
+}) {
+  if (eventSourceRef.current || isConnecting) {
+    return;
+  }
+
+  const { setIsConnecting, setConnectionError, setIsConnected, setConnectionAttempts } = connectionState;
+
+  setIsConnecting(true);
+  setConnectionError(undefined);
+  isManuallyDisconnectedRef.current = false;
+
+  try {
+    // Get auth token from localStorage or context
+    const token = localStorage.getItem('supabase.auth.token') ??
+                 sessionStorage.getItem('supabase.auth.token');
+
+    if (token == undefined || token === '') {
+      throw new Error('No authentication token available');
+    }
+
+    const eventSource = new EventSource('/api/admin/realtime-events');
+
+    eventSource.addEventListener('open', () => {
+      console.info('Real-time admin events connected');
+      setIsConnected(true);
+      setIsConnecting(false);
+      setConnectionError(undefined);
+      setConnectionAttempts(0);
+    });
+
+    eventSource.addEventListener('message', (event: MessageEvent) => {
+      const adminEvent = parseEventData(event.data as string, 'message');
+      if (adminEvent) {
+        handleEvent(adminEvent);
+      }
+    });
+
+    eventSource.addEventListener('error', (error) => {
+      console.error('Real-time admin events error:', error);
+      setIsConnected(false);
+      setIsConnecting(false);
+      setConnectionError('Connection error occurred');
+
+      // Attempt reconnection if not manually disconnected
+      if (!isManuallyDisconnectedRef.current && connectionAttempts < maxReconnectAttempts) {
+        setConnectionAttempts(prev => prev + 1);
+
+        reconnectTimeoutRef.current = setTimeout(() => {
+          if (!isManuallyDisconnectedRef.current) {
+            connect();
+          }
+        }, reconnectInterval);
+      } else if (connectionAttempts >= maxReconnectAttempts) {
+        setConnectionError('Max reconnection attempts reached');
+      }
+    });
+
+    // Handle specific event types
+    setupEventListeners(eventSource, handleEvent);
+
+    eventSourceRef.current = eventSource;
+
+  } catch (error) {
+    console.error('Failed to establish real-time connection:', error);
+    setIsConnecting(false);
+    setConnectionError(error instanceof Error ? error.message : 'Connection failed');
+  }
+}
+
 export function useRealtimeAdminEvents(
   options: UseRealtimeAdminEventsOptions = {}
 ): UseRealtimeAdminEventsReturn {
@@ -71,14 +208,17 @@ export function useRealtimeAdminEvents(
     eventFilter
   } = options;
 
-  // State
-  const [isConnected, setIsConnected] = useState(false);
-  const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | undefined>();
-  const [latestMetrics, setLatestMetrics] = useState<RealtimeMetrics | undefined>();
-  const [recentEvents, setRecentEvents] = useState<AdminEvent[]>([]);
-  const [connectionAttempts, setConnectionAttempts] = useState(0);
-  const [lastEventTime, setLastEventTime] = useState<Date | undefined>();
+  // State management
+  const connectionState = useConnectionState();
+  const {
+    isConnected, setIsConnected,
+    isConnecting, setIsConnecting,
+    connectionError, setConnectionError,
+    latestMetrics, setLatestMetrics,
+    recentEvents, setRecentEvents,
+    connectionAttempts, setConnectionAttempts,
+    lastEventTime, setLastEventTime
+  } = connectionState;
 
   // Refs
   const eventSourceRef = useRef<EventSource | undefined>(undefined);
@@ -118,110 +258,19 @@ export function useRealtimeAdminEvents(
 
   // Connection management
   const connect = useCallback(() => {
-    if (eventSourceRef.current || isConnecting) {
-      return;
-    }
-
-    setIsConnecting(true);
-    setConnectionError(undefined);
-    isManuallyDisconnectedRef.current = false;
-
-    try {
-      // Get auth token from localStorage or context
-      const token = localStorage.getItem('supabase.auth.token') ??
-                   sessionStorage.getItem('supabase.auth.token');
-
-      if (token == undefined || token === '') {
-        throw new Error('No authentication token available');
-      }
-
-      const eventSource = new EventSource('/api/admin/realtime-events', {
-        // Note: EventSource doesn't support custom headers directly
-        // We'll need to pass the token via query parameter or use a different approach
-      });
-
-      eventSource.addEventListener('open', () => {
-        console.info('Real-time admin events connected');
-        setIsConnected(true);
-        setIsConnecting(false);
-        setConnectionError(undefined);
-        setConnectionAttempts(0);
-      });
-
-      eventSource.addEventListener('message', (event: MessageEvent) => {
-        try {
-          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
-          handleEvent(adminEvent);
-        } catch (error) {
-          console.warn('Failed to parse admin event:', error);
-        }
-      });
-
-      eventSource.addEventListener('error', (error) => {
-        console.error('Real-time admin events error:', error);
-        setIsConnected(false);
-        setIsConnecting(false);
-        setConnectionError('Connection error occurred');
-
-        // Attempt reconnection if not manually disconnected
-        if (!isManuallyDisconnectedRef.current && connectionAttempts < maxReconnectAttempts) {
-          setConnectionAttempts(prev => prev + 1);
-          
-          reconnectTimeoutRef.current = setTimeout(() => {
-            if (!isManuallyDisconnectedRef.current) {
-              connect();
-            }
-          }, reconnectInterval);
-        } else if (connectionAttempts >= maxReconnectAttempts) {
-          setConnectionError('Max reconnection attempts reached');
-        }
-      });
-
-      // Handle specific event types
-      eventSource.addEventListener('heartbeat', (event: MessageEvent) => {
-        try {
-          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
-          handleEvent(adminEvent);
-        } catch (error) {
-          console.warn('Failed to parse heartbeat event:', error);
-        }
-      });
-
-      eventSource.addEventListener('scraping_update', (event: MessageEvent) => {
-        try {
-          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
-          handleEvent(adminEvent);
-        } catch (error) {
-          console.warn('Failed to parse scraping update event:', error);
-        }
-      });
-
-      eventSource.addEventListener('data_quality_change', (event: MessageEvent) => {
-        try {
-          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
-          handleEvent(adminEvent);
-        } catch (error) {
-          console.warn('Failed to parse data quality change event:', error);
-        }
-      });
-
-      eventSource.addEventListener('system_alert', (event: MessageEvent) => {
-        try {
-          const adminEvent = JSON.parse(event.data as string) as AdminEvent;
-          handleEvent(adminEvent);
-        } catch (error) {
-          console.warn('Failed to parse system alert event:', error);
-        }
-      });
-
-      eventSourceRef.current = eventSource;
-
-    } catch (error) {
-      console.error('Failed to establish real-time connection:', error);
-      setIsConnecting(false);
-      setConnectionError(error instanceof Error ? error.message : 'Connection failed');
-    }
-  }, [handleEvent, connectionAttempts, maxReconnectAttempts, reconnectInterval]);
+    createEventSourceConnection({
+      eventSourceRef,
+      isConnecting,
+      isManuallyDisconnectedRef,
+      connectionAttempts,
+      maxReconnectAttempts,
+      reconnectInterval,
+      reconnectTimeoutRef,
+      handleEvent,
+      connectionState,
+      connect: () => connect()
+    });
+  }, [handleEvent, connectionAttempts, maxReconnectAttempts, reconnectInterval, isConnecting, connectionState]);
 
   const disconnect = useCallback(() => {
     isManuallyDisconnectedRef.current = true;
