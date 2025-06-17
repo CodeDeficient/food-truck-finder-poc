@@ -72,7 +72,7 @@ ChartContainer.displayName = 'Chart';
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined);
   if (colorConfig.length === 0) {
-    return undefined;
+    return;
   }
 
   return (
@@ -132,11 +132,12 @@ const ChartTooltipContent = React.forwardRef<
 
     const tooltipLabel = React.useMemo(() => {
       if (hideLabel === true || (payload?.length ?? 0) === 0) {
-        return undefined;
+        return;
       }
 
       const [item] = payload;
-      const key = `${labelKey ?? (item).dataKey ?? (item).name ?? 'value'}`;
+       
+      const key = `${labelKey ?? (item as { dataKey?: string; name?: string }).dataKey ?? (item as { dataKey?: string; name?: string }).name ?? 'value'}`;
       const itemConfig = getPayloadConfigFromPayload(config, item, key);
       const value =
         (!labelKey && typeof label === 'string') ? config[label]?.label ?? label : itemConfig?.label;

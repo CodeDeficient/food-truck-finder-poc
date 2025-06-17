@@ -5,7 +5,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     const truck = await FoodTruckService.getTruckById(params.id);
 
-    if (truck == undefined || truck == undefined) {
+    if (truck == undefined) {
       return NextResponse.json({ error: 'Food truck not found' }, { status: 404 });
     }
 

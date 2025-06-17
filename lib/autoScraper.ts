@@ -359,7 +359,7 @@ async function getUrlsToScrape(): Promise<string[]> {
 
     if (error) {
       console.warn('AutoScraper: Error fetching discovered URLs:', error.message);
-    } else if (discoveredUrls) {
+    } else if (discoveredUrls != undefined) {
       for (const { url } of discoveredUrls) urls.add(url as string);
       console.info(`AutoScraper: Added ${discoveredUrls.length} discovered URLs to scraping queue`);
     }
