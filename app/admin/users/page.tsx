@@ -33,7 +33,7 @@ async function getUsersData(): Promise<UserDisplayData[]> {
 
   const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 
-  if (error != null) {
+  if (error != undefined) {
     console.error('Error fetching users:', error);
     return [];
   }
@@ -50,7 +50,7 @@ async function getUsersData(): Promise<UserDisplayData[]> {
     .from('profiles')
     .select('id, role')) as { data: Profile[] | null; error: PostgrestError | null };
 
-  if (profilesError != null) {
+  if (profilesError != undefined) {
     console.error('Error fetching profiles:', profilesError);
     // Continue with users data even if profiles fetch fails
   }
@@ -115,7 +115,6 @@ export default async function UserManagementPage() {
                       : 'N/A'}
                   </TableCell>
                   <TableCell className="text-right">
-                    // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/users/${user.id}`}>Edit</Link>
                     </Button>

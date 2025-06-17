@@ -123,7 +123,6 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
-              // @ts-expect-error TS(2322): Type '{ children: Element[]; variant: string; size... Remove this comment to see the full error message
               <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                 <Home className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
@@ -208,7 +207,6 @@ function AdminLayoutContent({ children }: { readonly children: React.ReactNode }
           <ModeToggle /> {/* Dark mode toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              // @ts-expect-error TS(2322): Type '{ children: Element[]; variant: string; size... Remove this comment to see the full error message
               <Button variant="secondary" size="icon" className="rounded-full">
                 <Avatar>
                   <AvatarImage src={user?.user_metadata?.avatar_url as string} alt="Avatar" />

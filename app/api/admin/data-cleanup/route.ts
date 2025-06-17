@@ -28,8 +28,7 @@ export async function POST(request: NextRequest) {
       case 'full-cleanup': {
         const result = await BatchCleanupService.runFullCleanup({
           batchSize: options.batchSize ?? 50,
-          dryRun: options.dryRun || false,
-          // @ts-expect-error TS(2322): Type 'string[] | undefined' is not assignable to t... Remove this comment to see the full error message
+          dryRun: options.dryRun ?? false,
           operations: options.operations
         });
         
@@ -61,7 +60,7 @@ export async function POST(request: NextRequest) {
 
       case 'merge-duplicates': {
         const { targetId, sourceId } = options;
-        if (!targetId || !sourceId) {
+        if (targetId === undefined || sourceId === undefined) {
           return NextResponse.json(
             { success: false, error: 'Missing targetId or sourceId for merge operation' },
             { status: 400 }
@@ -79,7 +78,6 @@ export async function POST(request: NextRequest) {
       }
 
       case 'dry-run': {
-        // @ts-expect-error TS(2345): Argument of type '{ dryRun: true; batchSize?: numb... Remove this comment to see the full error message
         const result = await BatchCleanupService.runFullCleanup({
           ...options,
           dryRun: true

@@ -98,7 +98,7 @@ export function GET(request: NextRequest) {
           summary: {
             totalTasks: schedulerTasks.length,
             enabledTasks: schedulerTasks.filter((t) => t.enabled).length,
-            runningTasks: schedulerTasks.filter((t) => t.enabled && t.nextRun).length,
+            runningTasks: schedulerTasks.filter((t) => t.enabled && t.nextRun !== undefined).length,
             totalSuccesses: schedulerTasks.reduce((acc, t) => acc + t.successCount, 0),
             totalErrors: schedulerTasks.reduce((acc, t) => acc + t.errorCount, 0),
           },
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'execute': {
-        if (!taskId) {
+        if (taskId === undefined || taskId === '') {
           return NextResponse.json({ error: 'Task ID is required for execution' }, { status: 400 });
         }
 
@@ -249,8 +249,8 @@ export async function PUT(request: NextRequest) {
     };
 
     // Update next run time if interval changed
-    if (config.intervalMinutes && schedulerTasks[taskIndex].enabled) {
-      const lastRun = new Date(schedulerTasks[taskIndex].lastRun || Date.now());
+    if (config.intervalMinutes !== undefined && config.intervalMinutes > 0 && schedulerTasks[taskIndex].enabled) {
+      const lastRun = new Date(schedulerTasks[taskIndex].lastRun ?? Date.now());
       const nextRun = new Date(lastRun.getTime() + config.intervalMinutes * 60 * 1000);
       schedulerTasks[taskIndex].nextRun = nextRun.toISOString();
     }
