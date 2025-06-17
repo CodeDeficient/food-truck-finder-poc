@@ -25,7 +25,6 @@ import {
   Wifi,
   WifiOff,
   Zap
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 } from 'lucide-react';
 import { useRealtimeAdminEvents } from '@/hooks/useRealtimeAdminEvents';
 
@@ -83,7 +82,7 @@ export function RealtimeStatusIndicator() {
   // Process recent events into alerts
   useEffect(() => {
     const newAlerts = recentEvents
-      .filter(event => event.severity != undefined && event.severity !== 'info')
+      .filter(event => event.severity != undefined && event.severity != 'info')
       .map(event => ({
         id: event.id,
         type: event.severity as 'warning' | 'error' | 'critical',
@@ -100,8 +99,16 @@ export function RealtimeStatusIndicator() {
   const systemMetrics: StatusMetric[] = [
     {
       label: 'Connection Status',
-      value: isConnected ? 'Connected' : isConnecting ? 'Connecting...' : 'Disconnected',
-      status: isConnected ? 'healthy' : (connectionError == undefined ? 'warning' : 'error'),
+      value: (() => {
+        if (isConnected) return 'Connected';
+        if (isConnecting) return 'Connecting...';
+        return 'Disconnected';
+      })(),
+      status: (() => {
+        if (isConnected) return 'healthy';
+        if (connectionError == undefined) return 'warning';
+        return 'error';
+      })(),
       icon: isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />
     },
     {
@@ -186,14 +193,17 @@ export function RealtimeStatusIndicator() {
                 </div>
               )}
               <Button
-                // @ts-expect-error TS(2322): Type '{ children: (string | Element)[]; variant: s... Remove this comment to see the full error message
                 variant="outline"
                 size="sm"
                 onClick={isConnected ? disconnect : connect}
                 disabled={isConnecting}
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${isConnecting ? 'animate-spin' : ''}`} />
-                {isConnected ? 'Disconnect' : isConnecting ? 'Connecting...' : 'Connect'}
+                {(() => {
+                  if (isConnected) return 'Disconnect';
+                  if (isConnecting) return 'Connecting...';
+                  return 'Connect';
+                })()}
               </Button>
             </div>
           </div>
@@ -282,7 +292,6 @@ export function RealtimeStatusIndicator() {
                       </div>
                       {alert.acknowledged !== true && (
                         <Button
-                          // @ts-expect-error TS(2322): Type '{ children: string; variant: string; size: s... Remove this comment to see the full error message
                           variant="ghost"
                           size="sm"
                           onClick={() => acknowledgeAlert(alert.id)}
@@ -299,7 +308,6 @@ export function RealtimeStatusIndicator() {
               </div>
               {alerts.length > 3 && (
                 <Button
-                  // @ts-expect-error TS(2322): Type '{ children: (string | number)[]; variant: st... Remove this comment to see the full error message
                   variant="outline"
                   size="sm"
                   className="mt-2"
@@ -314,7 +322,6 @@ export function RealtimeStatusIndicator() {
           {/* Event Controls */}
           <div className="mt-4 flex items-center gap-2">
             <Button
-              // @ts-expect-error TS(2322): Type '{ children: (string | number)[]; variant: st... Remove this comment to see the full error message
               variant="outline"
               size="sm"
               onClick={clearEvents}

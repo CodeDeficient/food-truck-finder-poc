@@ -19,7 +19,7 @@ export async function processScrapingJob(jobId: string) {
     console.info(`Starting scrape for ${job.target_url}`);
     const scrapeResult = await firecrawl.scrapeFoodTruckWebsite(job.target_url); // Simplified call
 
-    if (!scrapeResult.success || !scrapeResult.data?.markdown) {
+    if (!scrapeResult.success || scrapeResult.data?.markdown == undefined) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [scrapeResult.error ?? 'Scraping failed or markdown content not found'],
       });
@@ -34,7 +34,7 @@ export async function processScrapingJob(jobId: string) {
       scrapeResult.data.source_url ?? job.target_url,
     );
 
-    if (!geminiResult.success || !geminiResult.data) {
+    if (!geminiResult.success || geminiResult.data == undefined) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [geminiResult.error ?? 'Gemini data extraction failed'],
       });
@@ -88,7 +88,7 @@ export async function processScrapingJob(jobId: string) {
       const jobAfterRetryIncrement = await ScrapingJobService.incrementRetryCount(jobId);
       // Ensure jobAfterRetryIncrement and its properties are valid before using them
       if (
-        jobAfterRetryIncrement &&
+        jobAfterRetryIncrement != undefined &&
         typeof jobAfterRetryIncrement.retry_count === 'number' &&
         typeof jobAfterRetryIncrement.max_retries === 'number'
       ) {

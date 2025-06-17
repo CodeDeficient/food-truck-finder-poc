@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const redirectTo = searchParams.get('redirectTo') ?? '/admin';
 
-  if (code !== undefined && code !== '') {
+  if (code != undefined && code != '') {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
