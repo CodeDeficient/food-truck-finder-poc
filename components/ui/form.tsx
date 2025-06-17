@@ -49,7 +49,7 @@ const useFormField = () => {
 
   const fieldState = getFieldState(fieldContext.name, formState);
 
-  if (!fieldContext) {
+  if (fieldContext == undefined) {
     throw new Error('useFormField should be used within <FormField>');
   }
 
@@ -110,7 +110,7 @@ const FormControl = React.forwardRef<HTMLDivElement, React.ComponentPropsWithout
         ref={ref}
         id={formItemId}
         aria-describedby={error ? `${formDescriptionId} ${formMessageId}` : `${formDescriptionId}`}
-        aria-invalid={!!error}
+        aria-invalid={error != undefined}
         {...props}
       />
     );
@@ -138,13 +138,12 @@ FormDescription.displayName = 'FormDescription';
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
-// @ts-expect-error TS(2345): Argument of type '({ className, children, ...props... Remove this comment to see the full error message
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField();
   const body = error ? String(error?.message) : children;
 
-  if (!body) {
-    return;
+  if (body == undefined || body === '') {
+    return null;
   }
 
   return (
