@@ -115,7 +115,7 @@ export async function processScrapingJob(jobId: string) {
 
 // Helper function to validate input data
 function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruckDetails): boolean {
-  if (!extractedTruckData || typeof extractedTruckData !== 'object') {
+  if (extractedTruckData == undefined || typeof extractedTruckData !== 'object') {
     console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`);
     return false;
   }
@@ -223,7 +223,7 @@ export async function createOrUpdateFoodTruck(
             timestamp: new Date().toISOString(),
           }))
         : undefined,
-      operating_hours: extractedTruckData.operating_hours
+      operating_hours: extractedTruckData.operating_hours != undefined
         ? {
             monday: extractedTruckData.operating_hours.monday ?? { closed: true },
             tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
@@ -264,7 +264,7 @@ export async function createOrUpdateFoodTruck(
         : [],
       data_quality_score: 0.5, // Default score - confidence_score not available in type
       verification_status: 'pending',
-      source_urls: sourceUrl ? [sourceUrl] : [], // Ensure source_urls is always an array
+      source_urls: sourceUrl != undefined && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
       last_scraped_at: new Date().toISOString(),
     };
 

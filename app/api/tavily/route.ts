@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       case 'search': {
         // Use Tavily MCP search tool through server-side execution
         // This would be called from the discovery engine
-        result = await performTavilySearch(params);
+        result = performTavilySearch(params);
         break;
       }
 
@@ -123,7 +123,7 @@ function performTavilySearch(params: Record<string, unknown>) {
   }
 }
 
-async function performTavilyCrawl(params: Record<string, unknown>) {
+function performTavilyCrawl(params: Record<string, unknown>) {
   console.info('Mock Tavily crawl with params:', params);
 
   return {
@@ -137,7 +137,7 @@ async function performTavilyCrawl(params: Record<string, unknown>) {
   };
 }
 
-async function performTavilyMap(params: Record<string, unknown>) {
+function performTavilyMap(params: Record<string, unknown>) {
   console.info('Mock Tavily map with params:', params);
 
   return {
