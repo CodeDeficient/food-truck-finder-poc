@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
       }
 
       case 'crawl': {
-        result = await performTavilyCrawl(params);
+        result = performTavilyCrawl(params);
         break;
       }
 
       case 'map': {
-        result = await performTavilyMap(params);
+        result = performTavilyMap(params);
         break;
       }
 

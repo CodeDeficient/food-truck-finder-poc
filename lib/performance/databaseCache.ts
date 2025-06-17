@@ -172,7 +172,7 @@ export const CachedFoodTruckService = {
         throw new Error(`Quality stats query failed: ${error.message}`);
       }
 
-      const scores = trucks != undefined ? trucks.map((t: { data_quality_score?: number }) => t.data_quality_score ?? 0) : [];
+      const scores = trucks == undefined ? [] : trucks.map((t: { data_quality_score?: number }) => t.data_quality_score ?? 0);
       const averageScore = scores.length > 0
         ? scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length
         : 0;

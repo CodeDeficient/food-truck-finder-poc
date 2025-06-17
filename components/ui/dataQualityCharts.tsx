@@ -172,11 +172,24 @@ const VerificationStatusChart: React.FC<{ qualityStats: DataQualityStats }> = ({
   );
 };
 
+// Helper function to get score color
+const getScoreColor = (score: number): string => {
+  if (score >= 0.8) return 'text-green-600';
+  if (score >= 0.6) return 'text-yellow-600';
+  return 'text-red-600';
+};
+
+// Helper function to get quality threshold label
+const getQualityThreshold = (score: number): string => {
+  if (score >= 0.8) return 'High';
+  if (score >= 0.6) return 'Medium';
+  return 'Low';
+};
+
 // Quality Score Overview Component
 const QualityScoreOverview: React.FC<{ qualityStats: DataQualityStats }> = ({ qualityStats }) => {
   const averageScore = (qualityStats.avg_quality_score * 100).toFixed(1);
-  const scoreColor = qualityStats.avg_quality_score >= 0.8 ? 'text-green-600' : 
-                    qualityStats.avg_quality_score >= 0.6 ? 'text-yellow-600' : 'text-red-600';
+  const scoreColor = getScoreColor(qualityStats.avg_quality_score);
 
   return (
     <Card>
@@ -198,8 +211,7 @@ const QualityScoreOverview: React.FC<{ qualityStats: DataQualityStats }> = ({ qu
             <div className="flex justify-between items-center">
               <span>Quality Threshold:</span>
               <span className="font-medium">
-                {qualityStats.avg_quality_score >= 0.8 ? 'High' : 
-                 qualityStats.avg_quality_score >= 0.6 ? 'Medium' : 'Low'}
+                {getQualityThreshold(qualityStats.avg_quality_score)}
               </span>
             </div>
           </div>
