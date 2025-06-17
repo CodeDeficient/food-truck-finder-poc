@@ -223,17 +223,8 @@ export async function createOrUpdateFoodTruck(
             timestamp: new Date().toISOString(),
           }))
         : undefined,
-      operating_hours: extractedTruckData.operating_hours != undefined
+      operating_hours: extractedTruckData.operating_hours == undefined
         ? {
-            monday: extractedTruckData.operating_hours.monday ?? { closed: true },
-            tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
-            wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
-            thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
-            friday: extractedTruckData.operating_hours.friday ?? { closed: true },
-            saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
-            sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
-          }
-        : {
             monday: { closed: true },
             tuesday: { closed: true },
             wednesday: { closed: true },
@@ -241,6 +232,15 @@ export async function createOrUpdateFoodTruck(
             friday: { closed: true },
             saturday: { closed: true },
             sunday: { closed: true },
+          }
+        : {
+            monday: extractedTruckData.operating_hours.monday ?? { closed: true },
+            tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
+            wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
+            thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
+            friday: extractedTruckData.operating_hours.friday ?? { closed: true },
+            saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
+            sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
           },
       menu: processMenuData(extractedTruckData),
       contact_info: {

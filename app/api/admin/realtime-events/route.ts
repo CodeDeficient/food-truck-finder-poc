@@ -62,33 +62,35 @@ export async function GET(request: NextRequest): Promise<Response> {
       controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
 
       // Set up periodic updates
-      const intervalId = setInterval(async () => {
-        try {
-          const metrics = await fetchRealtimeMetrics();
-          const event: AdminEvent = {
-            id: generateEventId(),
-            type: 'heartbeat',
-            timestamp: new Date().toISOString(),
-            data: metrics as Record<string, unknown>
-          };
-          
-          controller.enqueue(encoder.encode(formatSSEMessage(event)));
-        } catch (error) {
-          console.error('Error fetching realtime metrics:', error);
-          
-          const errorEvent: AdminEvent = {
-            id: generateEventId(),
-            type: 'system_alert',
-            timestamp: new Date().toISOString(),
-            data: {
-              error: 'Failed to fetch metrics',
-              details: error instanceof Error ? error.message : 'Unknown error'
-            },
-            severity: 'error'
-          };
-          
-          controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
-        }
+      const intervalId = setInterval(() => {
+        void (async () => {
+          try {
+            const metrics = await fetchRealtimeMetrics();
+            const event: AdminEvent = {
+              id: generateEventId(),
+              type: 'heartbeat',
+              timestamp: new Date().toISOString(),
+              data: metrics as Record<string, unknown>
+            };
+
+            controller.enqueue(encoder.encode(formatSSEMessage(event)));
+          } catch (error) {
+            console.error('Error fetching realtime metrics:', error);
+
+            const errorEvent: AdminEvent = {
+              id: generateEventId(),
+              type: 'system_alert',
+              timestamp: new Date().toISOString(),
+              data: {
+                error: 'Failed to fetch metrics',
+                details: error instanceof Error ? error.message : 'Unknown error'
+              },
+              severity: 'error'
+            };
+
+            controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
+          }
+        })();
       }, 5000); // Update every 5 seconds
 
       // Set up data change monitoring

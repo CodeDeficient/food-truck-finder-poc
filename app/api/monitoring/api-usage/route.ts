@@ -35,8 +35,11 @@ export function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         service,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         canMakeRequest: canMakeRequest.allowed,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         reason: canMakeRequest.reason,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         waitTime: canMakeRequest.waitTime,
         usage,
         timestamp: new Date().toISOString()
