@@ -51,6 +51,157 @@ const formatHours = (hours: { open: string; close: string; closed: boolean }) =>
   return `${hours.open} - ${hours.close}`;
 };
 
+// Rating section component
+function RatingSection({ averageRating, reviewCount }: {
+  readonly averageRating?: number;
+  readonly reviewCount?: number;
+}) {
+  if (averageRating === undefined) return null;
+
+  return (
+    <div>
+      <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Rating</h4>
+      <div className="flex items-center gap-2">
+        <div className="flex">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`h-4 w-4 ${
+                star <= Math.round(averageRating ?? 0)
+                  ? 'text-yellow-400 fill-current'
+                  : 'text-gray-300'
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-sm font-medium dark:text-gray-200">
+          {averageRating.toFixed(1)}
+        </span>
+        {(reviewCount !== undefined) && (
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            ({reviewCount} reviews)
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Menu section component
+function MenuSection({ popularItems, formatPrice }: {
+  readonly popularItems: Array<{ name: string; price?: number }>;
+  readonly formatPrice: (price: number) => string;
+}) {
+  return (
+    <div>
+      <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Popular Items</h4>
+      <div className="space-y-1">
+        {popularItems.map((item, idx) => (
+          <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
+            <span className="truncate dark:text-gray-200">{item.name}</span>
+            {typeof item.price === 'number' && item.price > 0 && (
+              <span className="text-green-600 dark:text-green-400 ml-2">
+                {formatPrice(item.price)}
+              </span>
+            )}
+          </div>
+        ))}
+        {popularItems.length === 0 && (
+          <p className="text-gray-500 dark:text-gray-400 text-sm">Menu not available</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Contact section component
+function ContactSection({ contactInfo, verificationStatus }: {
+  readonly contactInfo?: { phone?: string; website?: string };
+  readonly verificationStatus?: string;
+}) {
+  return (
+    <div>
+      <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
+      <div className="space-y-1 dark:text-gray-300">
+        {(contactInfo?.phone !== undefined) && (
+          <a
+            href={`tel:${contactInfo.phone}`}
+            className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
+          >
+            <Phone className="h-3 w-3 mr-1" />
+            <span className="truncate">{contactInfo.phone}</span>
+          </a>
+        )}
+        {(contactInfo?.website !== undefined) && (
+          <a
+            href={contactInfo.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
+          >
+            <Globe className="h-3 w-3 mr-1" />
+            <span className="truncate">Website</span>
+          </a>
+        )}
+        {verificationStatus && (
+          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+            <Star className="h-3 w-3 mr-1" />
+            <span className="capitalize">{verificationStatus}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Social Media section component
+function SocialMediaSection({ socialMedia }: {
+  readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
+}) {
+  if (!socialMedia || Object.keys(socialMedia).length === 0) return null;
+
+  return (
+    <div>
+      <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Social Media</h4>
+      <div className="flex flex-wrap gap-2">
+        {(socialMedia.instagram !== undefined) && (
+          <a
+            href={`https://instagram.com/${socialMedia.instagram}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-xs hover:bg-pink-200 dark:bg-pink-900 dark:text-pink-200"
+          >
+            <Globe className="h-3 w-3" />
+            Instagram
+          </a>
+        )}
+        {(socialMedia.facebook !== undefined) && (
+          <a
+            href={`https://facebook.com/${socialMedia.facebook}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200"
+          >
+            <Globe className="h-3 w-3" />
+            Facebook
+          </a>
+        )}
+        {(socialMedia.twitter !== undefined) && (
+          <a
+            href={`https://twitter.com/${socialMedia.twitter}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-xs hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-200"
+          >
+            <Globe className="h-3 w-3" />
+            Twitter
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function TruckCard({
   truck,
   isOpen,
@@ -130,34 +281,7 @@ export function TruckCard({
         <div className="space-y-4">
           {/* Ratings & Hours Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Ratings */}
-            {(truck.average_rating !== undefined) && (
-              <div>
-                <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Rating</h4>
-                <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`h-4 w-4 ${
-                          star <= Math.round(truck.average_rating ?? 0)
-                            ? 'text-yellow-400 fill-current'
-                            : 'text-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm font-medium dark:text-gray-200">
-                    {truck.average_rating.toFixed(1)}
-                  </span>
-                  {(truck.review_count !== undefined) && (
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      ({truck.review_count} reviews)
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
+            <RatingSection averageRating={truck.average_rating} reviewCount={truck.review_count} />
 
             {/* Operating Hours */}
             {todayHours && (
@@ -175,99 +299,12 @@ export function TruckCard({
 
           {/* Menu & Contact Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Popular Items</h4>
-              <div className="space-y-1">
-                {popularItems.map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
-                    <span className="truncate dark:text-gray-200">{item.name}</span>
-                    {typeof item.price === 'number' && item.price > 0 && (
-                      <span className="text-green-600 dark:text-green-400 ml-2">
-                        {formatPrice(item.price)}
-                      </span>
-                    )}
-                  </div>
-                ))}
-                {popularItems.length === 0 && (
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">Menu not available</p>
-                )}
-              </div>
-            </div>
+            <MenuSection popularItems={popularItems} formatPrice={formatPrice} />
 
-            <div>
-              <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
-              <div className="space-y-1 dark:text-gray-300">
-                {(truck.contact_info?.phone !== undefined) && (
-                  <a
-                    href={`tel:${truck.contact_info.phone}`}
-                    className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    <Phone className="h-3 w-3 mr-1" />
-                    <span className="truncate">{truck.contact_info.phone}</span>
-                  </a>
-                )}
-                {(truck.contact_info?.website !== undefined) && (
-                  <a
-                    href={truck.contact_info.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    <Globe className="h-3 w-3 mr-1" />
-                    <span className="truncate">Website</span>
-                  </a>
-                )}
-                {truck.verification_status && (
-                  <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                    <Star className="h-3 w-3 mr-1" />
-                    <span className="capitalize">{truck.verification_status}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            <ContactSection contactInfo={truck.contact_info} verificationStatus={truck.verification_status} />
           </div>
 
-          {/* Social Media */}
-          {truck.social_media && Object.keys(truck.social_media).length > 0 && (
-            <div>
-              <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Social Media</h4>
-              <div className="flex flex-wrap gap-2">
-                {(truck.social_media.instagram !== undefined) && (
-                  <a
-                    href={`https://instagram.com/${truck.social_media.instagram}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-xs hover:bg-pink-200 dark:bg-pink-900 dark:text-pink-200"
-                  >
-                    <Globe className="h-3 w-3" />
-                    Instagram
-                  </a>
-                )}
-                {(truck.social_media.facebook !== undefined) && (
-                  <a
-                    href={`https://facebook.com/${truck.social_media.facebook}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200"
-                  >
-                    <Globe className="h-3 w-3" />
-                    Facebook
-                  </a>
-                )}
-                {(truck.social_media.twitter !== undefined) && (
-                  <a
-                    href={`https://twitter.com/${truck.social_media.twitter}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-xs hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-200"
-                  >
-                    <Globe className="h-3 w-3" />
-                    Twitter
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
+          <SocialMediaSection socialMedia={truck.social_media} />
         </div>
         {truck.verification_status && (
           <div className="mt-2">
