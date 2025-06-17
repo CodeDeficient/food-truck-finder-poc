@@ -245,7 +245,7 @@ export class PipelineManager {
             jobs?.find((j) => j.id === job.id),
           );
 
-          if (updatedJob?.data_collected?.truck_id) {
+          if (updatedJob?.data_collected?.truck_id != undefined) {
             trucksCreated++;
           }
 

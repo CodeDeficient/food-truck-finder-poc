@@ -213,7 +213,7 @@ async function findExistingTruck(url: string): Promise<{ truck?: FoodTruck; erro
   }
 
   const truck: FoodTruck | undefined =
-    existingTrucks && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
+    existingTrucks != undefined && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
 
   return { truck };
 }
@@ -233,7 +233,7 @@ export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult>
 
       const { truck, error } = await findExistingTruck(url);
 
-      if (error) {
+      if (error != undefined) {
         errors.push({ url, details: error });
         continue;
       }
@@ -322,7 +322,7 @@ export async function callGeminiWithCache(
       delete geminiCache[key];
     }
   }
-  if (geminiCache[cacheKey] && now - geminiCache[cacheKey].timestamp < GEMINI_CACHE_TTL_MS) {
+  if (geminiCache[cacheKey] != undefined && now - geminiCache[cacheKey].timestamp < GEMINI_CACHE_TTL_MS) {
     return geminiCache[cacheKey].data;
   }
   // Check Gemini usage limits before making a call
@@ -393,7 +393,7 @@ async function updateDiscoveredUrlStatus(
       })
       .eq('url', url);
 
-    if (error) {
+    if (error != undefined) {
       console.warn(`AutoScraper: Failed to update status for ${url}:`, error.message);
     }
   } catch (error) {

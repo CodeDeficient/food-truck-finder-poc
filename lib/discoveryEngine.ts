@@ -290,7 +290,7 @@ export class FoodTruckDiscoveryEngine {
           search_context: 'full_discovery',
           discovery_timestamp: new Date().toISOString(),
         });
-        if (stored.isNew) {
+        if (stored.isNew === true) {
           results.urls_stored++;
         } else {
           results.urls_duplicates++;
@@ -538,7 +538,7 @@ export class FoodTruckDiscoveryEngine {
           target_city: city,
           target_state: state,
         });
-        if (stored.isNew) {
+        if (stored.isNew === true) {
           results.urls_stored++;
         } else {
           results.urls_duplicates++;
@@ -581,7 +581,7 @@ export class FoodTruckDiscoveryEngine {
     for (const url of urls) {
       try {
         const stored = await this.storeDiscoveredUrl(url, discoveryMethod, metadata);
-        if (stored.isNew) {
+        if (stored.isNew === true) {
           result.urls_stored++;
         } else {
           result.urls_duplicates++;
