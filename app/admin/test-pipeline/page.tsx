@@ -253,7 +253,7 @@ export default function TestPipelinePage() {
         </CardContent>
       </Card>
 
-      {error != undefined && (
+      {error != undefined && error !== '' && (
         <Card className="border-red-500">
           <CardHeader>
             <CardTitle className="text-red-600">Test Failed</CardTitle>

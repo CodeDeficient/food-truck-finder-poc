@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
 
   useEffect(() => {
     // Get initial session
-    const getSession = () => {
+    const getSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
       setLoading(false);
     };
 
-    getSession().catch((error) => {
+    void getSession().catch((error) => {
       console.warn('Failed to get initial session:', error);
     });
 
@@ -39,7 +39,8 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: unknown, session: unknown) => {
-      setUser(session?.user ?? undefined);
+       
+      setUser((session as { user?: User })?.user ?? undefined);
       setLoading(false);
     });
 
