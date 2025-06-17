@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-06-17T19:09:47.251Z",
-  "totalErrors": 173,
+  "timestamp": "2025-06-17T19:23:18.705Z",
+  "totalErrors": 171,
   "errorCounts": {
     "unknown": 1,
     "max-lines-per-function": 83,
@@ -16,7 +16,7 @@
     "max-depth": 4,
     "sonarjs/no-nested-template-literals": 1,
     "@typescript-eslint/no-misused-promises": 1,
-    "unicorn/no-null": 10,
+    "unicorn/no-useless-undefined": 8,
     "sonarjs/prefer-read-only-props": 14,
     "sonarjs/unused-import": 1,
     "@typescript-eslint/unbound-method": 4,
@@ -35,15 +35,6 @@
       "priority": null
     },
     {
-      "ruleId": "unicorn/no-null",
-      "count": 10,
-      "confidence": "HIGH",
-      "method": "pattern-replacement",
-      "description": "Replace null with undefined",
-      "estimatedFixes": 8,
-      "priority": 24
-    },
-    {
       "ruleId": "@typescript-eslint/strict-boolean-expressions",
       "count": 8,
       "confidence": "LOW",
@@ -55,21 +46,9 @@
   ],
   "recommendations": {
     "highConfidence": {
-      "candidates": [
-        {
-          "ruleId": "unicorn/no-null",
-          "count": 10,
-          "confidence": "HIGH",
-          "method": "pattern-replacement",
-          "description": "Replace null with undefined",
-          "estimatedFixes": 8,
-          "priority": 24
-        }
-      ],
-      "totalFixes": 8,
-      "methods": [
-        "pattern-replacement"
-      ]
+      "candidates": [],
+      "totalFixes": 0,
+      "methods": []
     },
     "mediumConfidence": {
       "candidates": [],
