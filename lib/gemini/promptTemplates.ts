@@ -114,7 +114,7 @@ Enhance and standardize the following food truck data.
 Fill in missing information where possible and improve data quality.
 
 Raw data:
-${JSON.stringify(rawData, null, 2)}
+${JSON.stringify(rawData, undefined, 2)}
 
 Expected JSON format:
 {
