@@ -59,44 +59,14 @@ interface SystemAlert {
   acknowledged?: boolean;
 }
 
-export function RealtimeStatusIndicator() {
-  const {
-    isConnected,
-    isConnecting,
-    connectionError,
-    latestMetrics,
-    recentEvents,
-    connect,
-    disconnect,
-    clearEvents,
-    lastEventTime
-  } = useRealtimeAdminEvents({
-    autoConnect: true,
-    reconnectInterval: 5000,
-    maxReconnectAttempts: 10
-  });
-
-  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
-  const [showDetails, setShowDetails] = useState(false);
-
-  // Process recent events into alerts
-  useEffect(() => {
-    const newAlerts = recentEvents
-      .filter(event => event.severity != undefined && event.severity != 'info')
-      .map(event => ({
-        id: event.id,
-        type: event.severity as 'warning' | 'error' | 'critical',
-        message: typeof event.data.message === 'string' && event.data.message !== '' ? event.data.message : 'System event occurred',
-        timestamp: event.timestamp,
-        acknowledged: false
-      }))
-      .slice(0, 5); // Keep only latest 5 alerts
-
-    setAlerts(newAlerts);
-  }, [recentEvents]);
-
-  // Calculate system metrics
-  const systemMetrics: StatusMetric[] = [
+// Custom hook for system metrics calculation
+function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics }: {
+  isConnected: boolean;
+  isConnecting: boolean;
+  connectionError?: string;
+  latestMetrics?: any;
+}): StatusMetric[] {
+  return [
     {
       label: 'Connection Status',
       value: (() => {
@@ -142,6 +112,188 @@ export function RealtimeStatusIndicator() {
       icon: <Database className="h-4 w-4" />
     }
   ];
+}
+
+// System Metrics Grid Component
+function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIcon }: {
+  metrics: StatusMetric[];
+  getStatusColor: (status: string) => string;
+  getStatusIcon: (status: string) => JSX.Element;
+  getTrendIcon: (trend?: string) => JSX.Element | undefined;
+}) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {metrics.map((metric, index) => (
+        <div
+          key={index}
+          className={`p-3 rounded-lg border ${getStatusColor(metric.status)}`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              {metric.icon}
+              <span className="text-sm font-medium">{metric.label}</span>
+            </div>
+            {getStatusIcon(metric.status)}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold">
+              {metric.value}{metric.unit}
+            </span>
+            {getTrendIcon(metric.trend)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Scraping Jobs Status Component
+function ScrapingJobsStatus({ scrapingJobs }: { scrapingJobs?: any }) {
+  if (!scrapingJobs) return;
+
+  return (
+    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+      <h4 className="text-sm font-medium text-blue-900 mb-2">Scraping Jobs Status</h4>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div>
+          <span className="text-blue-600">Active:</span>
+          <span className="ml-1 font-medium">{scrapingJobs.active}</span>
+        </div>
+        <div>
+          <span className="text-green-600">Completed:</span>
+          <span className="ml-1 font-medium">{scrapingJobs.completed}</span>
+        </div>
+        <div>
+          <span className="text-yellow-600">Pending:</span>
+          <span className="ml-1 font-medium">{scrapingJobs.pending}</span>
+        </div>
+        <div>
+          <span className="text-red-600">Failed:</span>
+          <span className="ml-1 font-medium">{scrapingJobs.failed}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// System Alerts Component
+function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: {
+  alerts: SystemAlert[];
+  showDetails: boolean;
+  onToggleDetails: () => void;
+  onAcknowledgeAlert: (alertId: string) => void;
+}) {
+  if (alerts.length === 0) return;
+
+  return (
+    <div className="mt-4">
+      <h4 className="text-sm font-medium text-gray-900 mb-2">Recent Alerts</h4>
+      <div className="space-y-2">
+        {alerts.slice(0, 3).map((alert) => (
+          <div
+            key={alert.id}
+            className={`p-2 rounded border-l-4 ${(() => {
+              if (alert.type === 'critical') return 'border-l-red-500 bg-red-50';
+              if (alert.type === 'error') return 'border-l-red-400 bg-red-50';
+              return 'border-l-yellow-400 bg-yellow-50';
+            })()} ${alert.acknowledged === true ? 'opacity-50' : ''}`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Badge variant={alert.type === 'critical' ? 'destructive' : 'secondary'}>
+                  {alert.type}
+                </Badge>
+                <span className="text-sm">{alert.message}</span>
+              </div>
+              {alert.acknowledged !== true && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onAcknowledgeAlert(alert.id)}
+                >
+                  Acknowledge
+                </Button>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {new Date(alert.timestamp).toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
+      {alerts.length > 3 && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-2"
+          onClick={onToggleDetails}
+        >
+          {showDetails ? 'Hide' : 'Show'} {alerts.length - 3} more alerts
+        </Button>
+      )}
+    </div>
+  );
+}
+
+// Event Controls Component
+function EventControls({ recentEventsCount, onClearEvents }: {
+  recentEventsCount: number;
+  onClearEvents: () => void;
+}) {
+  return (
+    <div className="mt-4 flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onClearEvents}
+        disabled={recentEventsCount === 0}
+      >
+        Clear Events ({recentEventsCount})
+      </Button>
+      <Badge variant="secondary">
+        {recentEventsCount} events in buffer
+      </Badge>
+    </div>
+  );
+}
+
+export function RealtimeStatusIndicator() {
+  const {
+    isConnected,
+    isConnecting,
+    connectionError,
+    latestMetrics,
+    recentEvents,
+    connect,
+    disconnect,
+    clearEvents,
+    lastEventTime
+  } = useRealtimeAdminEvents({
+    autoConnect: true,
+    reconnectInterval: 5000,
+    maxReconnectAttempts: 10
+  });
+
+  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Process recent events into alerts
+  useEffect(() => {
+    const newAlerts = recentEvents
+      .filter(event => event.severity != undefined && event.severity != 'info')
+      .map(event => ({
+        id: event.id,
+        type: event.severity as 'warning' | 'error' | 'critical',
+        message: typeof event.data.message === 'string' && event.data.message !== '' ? event.data.message : 'System event occurred',
+        timestamp: event.timestamp,
+        acknowledged: false
+      }))
+      .slice(0, 5); // Keep only latest 5 alerts
+
+    setAlerts(newAlerts);
+  }, [recentEvents]);
+
+  const systemMetrics = useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics });
 
 
 
@@ -220,119 +372,26 @@ export function RealtimeStatusIndicator() {
             </div>
           )}
 
-          {/* System Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {systemMetrics.map((metric, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg border ${getStatusColor(metric.status)}`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    {metric.icon}
-                    <span className="text-sm font-medium">{metric.label}</span>
-                  </div>
-                  {getStatusIcon(metric.status)}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold">
-                    {metric.value}{metric.unit}
-                  </span>
-                  {getTrendIcon(metric.trend)}
-                </div>
-              </div>
-            ))}
-          </div>
+          <SystemMetricsGrid
+            metrics={systemMetrics}
+            getStatusColor={getStatusColor}
+            getStatusIcon={getStatusIcon}
+            getTrendIcon={getTrendIcon}
+          />
 
-          {/* Scraping Jobs Progress */}
-          {latestMetrics?.scrapingJobs && (
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">Scraping Jobs Status</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div>
-                  <span className="text-blue-600">Active:</span>
-                  <span className="ml-1 font-medium">{latestMetrics.scrapingJobs.active}</span>
-                </div>
-                <div>
-                  <span className="text-green-600">Completed:</span>
-                  <span className="ml-1 font-medium">{latestMetrics.scrapingJobs.completed}</span>
-                </div>
-                <div>
-                  <span className="text-yellow-600">Pending:</span>
-                  <span className="ml-1 font-medium">{latestMetrics.scrapingJobs.pending}</span>
-                </div>
-                <div>
-                  <span className="text-red-600">Failed:</span>
-                  <span className="ml-1 font-medium">{latestMetrics.scrapingJobs.failed}</span>
-                </div>
-              </div>
-            </div>
-          )}
+          <ScrapingJobsStatus scrapingJobs={latestMetrics?.scrapingJobs} />
 
-          {/* System Alerts */}
-          {alerts.length > 0 && (
-            <div className="mt-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">Recent Alerts</h4>
-              <div className="space-y-2">
-                {alerts.slice(0, 3).map((alert) => (
-                  <div
-                    key={alert.id}
-                    className={`p-2 rounded border-l-4 ${(() => {
-                      if (alert.type === 'critical') return 'border-l-red-500 bg-red-50';
-                      if (alert.type === 'error') return 'border-l-red-400 bg-red-50';
-                      return 'border-l-yellow-400 bg-yellow-50';
-                    })()} ${alert.acknowledged === true ? 'opacity-50' : ''}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Badge variant={alert.type === 'critical' ? 'destructive' : 'secondary'}>
-                          {alert.type}
-                        </Badge>
-                        <span className="text-sm">{alert.message}</span>
-                      </div>
-                      {alert.acknowledged !== true && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => acknowledgeAlert(alert.id)}
-                        >
-                          Acknowledge
-                        </Button>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(alert.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              {alerts.length > 3 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2"
-                  onClick={() => setShowDetails(!showDetails)}
-                >
-                  {showDetails ? 'Hide' : 'Show'} {alerts.length - 3} more alerts
-                </Button>
-              )}
-            </div>
-          )}
+          <SystemAlerts
+            alerts={alerts}
+            showDetails={showDetails}
+            onToggleDetails={() => setShowDetails(!showDetails)}
+            onAcknowledgeAlert={acknowledgeAlert}
+          />
 
-          {/* Event Controls */}
-          <div className="mt-4 flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearEvents}
-              disabled={recentEvents.length === 0}
-            >
-              Clear Events ({recentEvents.length})
-            </Button>
-            <Badge variant="secondary">
-              {recentEvents.length} events in buffer
-            </Badge>
-          </div>
+          <EventControls
+            recentEventsCount={recentEvents.length}
+            onClearEvents={clearEvents}
+          />
         </CardContent>
       </Card>
     </div>
