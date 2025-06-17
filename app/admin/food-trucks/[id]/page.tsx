@@ -117,7 +117,7 @@ function BasicInfoCard({ truck }: { readonly truck: { name: string; description?
 
 // Cuisine type section component
 function CuisineTypeSection({ cuisineType }: { readonly cuisineType?: string[] }) {
-  if ((cuisineType == undefined) || cuisineType.length === 0) return undefined;
+  if ((cuisineType == undefined) || cuisineType.length === 0) return;
 
   return (
     <div>
@@ -135,7 +135,7 @@ function CuisineTypeSection({ cuisineType }: { readonly cuisineType?: string[] }
 
 // Price range section component
 function PriceRangeSection({ priceRange }: { readonly priceRange?: string }) {
-  if ((priceRange == undefined) || priceRange === '') return undefined;
+  if ((priceRange == undefined) || priceRange === '') return;
 
   return (
     <div>
@@ -147,7 +147,7 @@ function PriceRangeSection({ priceRange }: { readonly priceRange?: string }) {
 
 // Specialties section component
 function SpecialtiesSection({ specialties }: { readonly specialties?: string[] }) {
-  if ((specialties == undefined) || specialties.length === 0) return undefined;
+  if ((specialties == undefined) || specialties.length === 0) return;
 
   return (
     <div>
@@ -273,6 +273,305 @@ function ContactInfoCard({ truck }: { readonly truck: any }) {
   );
 }
 
+// Contact Information card component
+function ContactInfoCard({ truck }: { readonly truck: { contact_info?: { phone?: string; email?: string; website?: string }; social_media?: { instagram?: string; facebook?: string; twitter?: string } } }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Phone className="h-5 w-5" />
+          Contact Information
+        </CardTitle>
+        <CardDescription>Phone, email, website, and social media</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {(truck.contact_info?.phone !== undefined) && truck.contact_info.phone !== '' ? (
+          <div className="flex items-center gap-3">
+            <Phone className="h-4 w-4 text-gray-500" />
+            <div>
+              <label className="text-sm font-medium text-gray-500">Phone</label>
+              <p className="text-gray-900">{truck.contact_info.phone}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 text-gray-400">
+            <Phone className="h-4 w-4" />
+            <span className="text-sm">No phone number available</span>
+          </div>
+        )}
+
+        {(truck.contact_info?.email !== undefined) && truck.contact_info.email !== '' ? (
+          <div className="flex items-center gap-3">
+            <Mail className="h-4 w-4 text-gray-500" />
+            <div>
+              <label className="text-sm font-medium text-gray-500">Email</label>
+              <p className="text-gray-900">{truck.contact_info.email}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 text-gray-400">
+            <Mail className="h-4 w-4" />
+            <span className="text-sm">No email address available</span>
+          </div>
+        )}
+
+        {(truck.contact_info?.website !== undefined) && truck.contact_info.website !== '' ? (
+          <div className="flex items-center gap-3">
+            <Globe className="h-4 w-4 text-gray-500" />
+            <div>
+              <label className="text-sm font-medium text-gray-500">Website</label>
+              <a
+                href={truck.contact_info.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                {truck.contact_info.website}
+              </a>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 text-gray-400">
+            <Globe className="h-4 w-4" />
+            <span className="text-sm">No website available</span>
+          </div>
+        )}
+
+        {/* Social Media */}
+        {(truck.social_media !== undefined) && Object.keys(truck.social_media).length > 0 && (
+          <div>
+            <label className="text-sm font-medium text-gray-500">Social Media</label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {(truck.social_media.instagram !== undefined) && truck.social_media.instagram !== '' && (
+                <a
+                  href={`https://instagram.com/${truck.social_media.instagram}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-sm hover:bg-pink-200"
+                >
+                  <Globe className="h-3 w-3" />
+                  Instagram
+                </a>
+              )}
+              {(truck.social_media.facebook !== undefined) && truck.social_media.facebook !== '' && (
+                <a
+                  href={`https://facebook.com/${truck.social_media.facebook}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm hover:bg-blue-200"
+                >
+                  <Globe className="h-3 w-3" />
+                  Facebook
+                </a>
+              )}
+              {(truck.social_media.twitter !== undefined) && truck.social_media.twitter !== '' && (
+                <a
+                  href={`https://twitter.com/${truck.social_media.twitter}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-sm hover:bg-sky-200"
+                >
+                  <Globe className="h-3 w-3" />
+                  Twitter
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Location Information card component
+function LocationInfoCard({ truck }: { readonly truck: { current_location?: { address?: string; lat?: number; lng?: number; timestamp?: string } } }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="h-5 w-5" />
+          Location Information
+        </CardTitle>
+        <CardDescription>Current location and address details</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {(truck.current_location?.address === undefined) ? (
+          <p className="text-gray-400 text-sm">No address available</p>
+        ) : (
+          <div>
+            <label className="text-sm font-medium text-gray-500">Address</label>
+            <p className="text-gray-900">{truck.current_location.address}</p>
+          </div>
+        )}
+
+        {truck.current_location?.lat !== undefined && truck.current_location?.lng !== undefined && (
+          <div>
+            <label className="text-sm font-medium text-gray-500">Coordinates</label>
+            <p className="text-gray-900 font-mono text-sm">
+              {truck.current_location.lat.toFixed(6)}, {truck.current_location.lng.toFixed(6)}
+            </p>
+          </div>
+        )}
+
+        {truck.current_location?.timestamp != undefined && (
+          <div>
+            <label className="text-sm font-medium text-gray-500">Last Updated</label>
+            <p className="text-gray-900">
+              {new Date(truck.current_location.timestamp).toLocaleString()}
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Operating Hours card component
+function OperatingHoursCard({ truck }: { readonly truck: { operating_hours?: Record<string, { closed?: boolean; open?: string; close?: string }> } }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Clock className="h-5 w-5" />
+          Operating Hours
+        </CardTitle>
+        <CardDescription>Daily operating schedule</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {(truck.operating_hours !== undefined) && Object.keys(truck.operating_hours).length > 0 ? (
+          <div className="space-y-2">
+            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+              const dayData = truck.operating_hours ? truck.operating_hours[day as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined : undefined;
+              const dayName = day.charAt(0).toUpperCase() + day.slice(1);
+
+              return (
+                <div key={day} className="flex justify-between items-center py-1">
+                  <span className="font-medium text-gray-700">{dayName}</span>
+                  {(() => {
+                    if (dayData !== undefined && typeof dayData === 'object') {
+                      if (dayData.closed === true) {
+                        return <span className="text-red-600 text-sm">Closed</span>;
+                      }
+                      return (
+                        <span className="text-gray-900 text-sm">
+                          {dayData.open ?? 'N/A'} - {dayData.close ?? 'N/A'}
+                        </span>
+                      );
+                    }
+                    return <span className="text-gray-400 text-sm">Not specified</span>;
+                  })()}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-gray-400 text-sm">No operating hours available</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Ratings & Reviews card component
+function RatingsReviewsCard({ truck }: { readonly truck: { average_rating?: number; review_count?: number } }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Star className="h-5 w-5" />
+          Ratings & Reviews
+        </CardTitle>
+        <CardDescription>Customer feedback and ratings</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {((truck as { average_rating?: number }).average_rating === undefined) ? (
+          <p className="text-gray-400 text-sm">No ratings available</p>
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="flex">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-5 w-5 ${
+                      star <= Math.round((truck as { average_rating?: number }).average_rating ?? 0)
+                        ? 'text-yellow-400 fill-current'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-lg font-semibold">{((truck as { average_rating?: number }).average_rating ?? 0).toFixed(1)}</span>
+            </div>
+            {((truck as { review_count?: number }).review_count !== undefined) && (
+              <div className="flex items-center gap-1 text-gray-600">
+                <Users className="h-4 w-4" />
+                <span className="text-sm">{(truck as { review_count?: number }).review_count} reviews</span>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Data Quality card component
+function DataQualityCard({ truck, qualityCategory }: {
+  readonly truck: {
+    data_quality_score?: number;
+    verification_status?: string;
+    created_at?: string;
+    updated_at?: string
+  };
+  readonly qualityCategory: QualityCategory
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Data Quality Assessment</CardTitle>
+        <CardDescription>
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+          Quality score: {formatQualityScore(truck.data_quality_score)}
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+          ({qualityCategory.label} quality)
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">
+              {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+              {formatQualityScore(truck.data_quality_score)}
+            </div>
+            <div className="text-sm text-gray-500">Overall Score</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-semibold">
+              <Badge variant={truck.verification_status === 'verified' ? 'default' : 'outline'}>
+                {truck.verification_status}
+              </Badge>
+            </div>
+            <div className="text-sm text-gray-500">Status</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-semibold text-gray-900">
+              {truck.created_at ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
+            </div>
+            <div className="text-sm text-gray-500">Created</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-semibold text-gray-900">
+              {truck.updated_at ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
+            </div>
+            <div className="text-sm text-gray-500">Updated</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck = await FoodTruckService.getTruckById(params.id);
 
@@ -292,277 +591,16 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BasicInfoCard truck={truck} />
 
-        {/* Contact Information - Enhanced for Task 4.1.1-4.1.4 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5" />
-              Contact Information
-            </CardTitle>
-            <CardDescription>Phone, email, website, and social media</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {(truck.contact_info?.phone !== undefined) && truck.contact_info.phone !== '' ? (
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-gray-500" />
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Phone</label>
-                  <p className="text-gray-900">{truck.contact_info.phone}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 text-gray-400">
-                <Phone className="h-4 w-4" />
-                <span className="text-sm">No phone number available</span>
-              </div>
-            )}
+        <ContactInfoCard truck={truck} />
 
-            {(truck.contact_info?.email !== undefined) && truck.contact_info.email !== '' ? (
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-gray-500" />
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Email</label>
-                  <p className="text-gray-900">{truck.contact_info.email}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 text-gray-400">
-                <Mail className="h-4 w-4" />
-                <span className="text-sm">No email address available</span>
-              </div>
-            )}
+        <LocationInfoCard truck={truck} />
 
-            {(truck.contact_info?.website !== undefined) && truck.contact_info.website !== '' ? (
-              <div className="flex items-center gap-3">
-                <Globe className="h-4 w-4 text-gray-500" />
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Website</label>
-                  <a
-                    href={truck.contact_info.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline"
-                  >
-                    {truck.contact_info.website}
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 text-gray-400">
-                <Globe className="h-4 w-4" />
-                <span className="text-sm">No website available</span>
-              </div>
-            )}
+        <OperatingHoursCard truck={truck} />
 
-            {/* Social Media */}
-            {(truck.social_media !== undefined) && Object.keys(truck.social_media).length > 0 && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Social Media</label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {(truck.social_media.instagram !== undefined) && truck.social_media.instagram !== '' && (
-                    <a
-                      href={`https://instagram.com/${truck.social_media.instagram}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-sm hover:bg-pink-200"
-                    >
-                      <Globe className="h-3 w-3" />
-                      Instagram
-                    </a>
-                  )}
-                  {(truck.social_media.facebook !== undefined) && truck.social_media.facebook !== '' && (
-                    <a
-                      href={`https://facebook.com/${truck.social_media.facebook}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm hover:bg-blue-200"
-                    >
-                      <Globe className="h-3 w-3" />
-                      Facebook
-                    </a>
-                  )}
-                  {(truck.social_media.twitter !== undefined) && truck.social_media.twitter !== '' && (
-                    <a
-                      href={`https://twitter.com/${truck.social_media.twitter}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-sm hover:bg-sky-200"
-                    >
-                      <Globe className="h-3 w-3" />
-                      Twitter
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Location Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Location Information
-            </CardTitle>
-            <CardDescription>Current location and address details</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {(truck.current_location?.address === undefined) ? (
-              <p className="text-gray-400 text-sm">No address available</p>
-            ) : (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Address</label>
-                <p className="text-gray-900">{truck.current_location.address}</p>
-              </div>
-            )}
-
-            {truck.current_location?.lat !== undefined && truck.current_location?.lng !== undefined && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Coordinates</label>
-                <p className="text-gray-900 font-mono text-sm">
-                  {truck.current_location.lat.toFixed(6)}, {truck.current_location.lng.toFixed(6)}
-                </p>
-              </div>
-            )}
-
-            {truck.current_location?.timestamp != undefined && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Last Updated</label>
-                <p className="text-gray-900">
-                  {new Date(truck.current_location.timestamp).toLocaleString()}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Operating Hours - Enhanced for Task 4.1.1-4.1.4 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Operating Hours
-            </CardTitle>
-            <CardDescription>Daily operating schedule</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {(truck.operating_hours !== undefined) && Object.keys(truck.operating_hours).length > 0 ? (
-              <div className="space-y-2">
-                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-                  const dayData = truck.operating_hours ? truck.operating_hours[day as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined : undefined;
-                  const dayName = day.charAt(0).toUpperCase() + day.slice(1);
-
-                  return (
-                    <div key={day} className="flex justify-between items-center py-1">
-                      <span className="font-medium text-gray-700">{dayName}</span>
-                      {(() => {
-                        if (dayData !== undefined && typeof dayData === 'object') {
-                          if (dayData.closed === true) {
-                            return <span className="text-red-600 text-sm">Closed</span>;
-                          }
-                          return (
-                            <span className="text-gray-900 text-sm">
-                              {dayData.open ?? 'N/A'} - {dayData.close ?? 'N/A'}
-                            </span>
-                          );
-                        }
-                        return <span className="text-gray-400 text-sm">Not specified</span>;
-                      })()}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-gray-400 text-sm">No operating hours available</p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Ratings & Reviews - Enhanced for Task 4.1.1-4.1.4 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Star className="h-5 w-5" />
-              Ratings & Reviews
-            </CardTitle>
-            <CardDescription>Customer feedback and ratings</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {((truck as { average_rating?: number }).average_rating === undefined) ? (
-              <p className="text-gray-400 text-sm">No ratings available</p>
-            ) : (
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`h-5 w-5 ${
-                          star <= Math.round((truck as { average_rating?: number }).average_rating ?? 0)
-                            ? 'text-yellow-400 fill-current'
-                            : 'text-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-lg font-semibold">{((truck as { average_rating?: number }).average_rating ?? 0).toFixed(1)}</span>
-                </div>
-                {((truck as { review_count?: number }).review_count !== undefined) && (
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <Users className="h-4 w-4" />
-                    <span className="text-sm">{(truck as { review_count?: number }).review_count} reviews</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <RatingsReviewsCard truck={truck} />
       </div>
 
-      {/* Data Quality Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Data Quality Assessment</CardTitle>
-          <CardDescription>
-            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
-            Quality score: {formatQualityScore(truck.data_quality_score)}
-            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
-            ({qualityCategory.label} quality)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
-                {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
-                {formatQualityScore(truck.data_quality_score)}
-              </div>
-              <div className="text-sm text-gray-500">Overall Score</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold">
-                <Badge variant={truck.verification_status === 'verified' ? 'default' : 'outline'}>
-                  {truck.verification_status}
-                </Badge>
-              </div>
-              <div className="text-sm text-gray-500">Status</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold text-gray-900">
-                {truck.created_at ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
-              </div>
-              <div className="text-sm text-gray-500">Created</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold text-gray-900">
-                {truck.updated_at ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
-              </div>
-              <div className="text-sm text-gray-500">Updated</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <DataQualityCard truck={truck} qualityCategory={qualityCategory} />
     </div>
   );
 }

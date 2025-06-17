@@ -23,67 +23,100 @@ function PageHeader() {
   );
 }
 
+// Helper component for individual feature cards
+function FeatureCard({ title, icon, value, description, colorClass }: {
+  readonly title: string;
+  readonly icon: React.ReactNode;
+  readonly value: string;
+  readonly description: string;
+  readonly colorClass: string;
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className={`text-2xl font-bold ${colorClass}`}>{value}</div>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
 // Helper component for feature overview cards
 function FeatureOverviewCards() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Duplicate Prevention</CardTitle>
-          <Merge className="h-4 w-4 text-purple-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-purple-600">85%+</div>
-          <p className="text-xs text-muted-foreground">
-            Similarity detection with intelligent merging
-          </p>
-        </CardContent>
-      </Card>
+      <FeatureCard
+        title="Duplicate Prevention"
+        icon={<Merge className="h-4 w-4 text-purple-600" />}
+        value="85%+"
+        description="Similarity detection with intelligent merging"
+        colorClass="text-purple-600"
+      />
+      <FeatureCard
+        title="Automated Cleanup"
+        icon={<RefreshCw className="h-4 w-4 text-blue-600" />}
+        value="5 Types"
+        description="Placeholder removal, phone normalization, coordinate fixes"
+        colorClass="text-blue-600"
+      />
+      <FeatureCard
+        title="Quality Scoring"
+        icon={<Zap className="h-4 w-4 text-green-600" />}
+        value="Real-time"
+        description="Automatic quality score recalculation"
+        colorClass="text-green-600"
+      />
+      <FeatureCard
+        title="Batch Processing"
+        icon={<Shield className="h-4 w-4 text-yellow-600" />}
+        value="Safe"
+        description="Dry run mode with comprehensive error handling"
+        colorClass="text-yellow-600"
+      />
+    </div>
+  );
+}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Automated Cleanup</CardTitle>
-          <RefreshCw className="h-4 w-4 text-blue-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-blue-600">5 Types</div>
-          <p className="text-xs text-muted-foreground">
-            Placeholder removal, phone normalization, coordinate fixes
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Quality Scoring</CardTitle>
-          <Zap className="h-4 w-4 text-green-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-green-600">Real-time</div>
-          <p className="text-xs text-muted-foreground">
-            Automatic quality score recalculation
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Batch Processing</CardTitle>
-          <Shield className="h-4 w-4 text-yellow-600" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-yellow-600">Safe</div>
-          <p className="text-xs text-muted-foreground">
-            Dry run mode with comprehensive error handling
-          </p>
-        </CardContent>
-      </Card>
+// Helper component for feature lists
+function FeatureList({ title, items }: {
+  readonly title: string;
+  readonly items: Array<{ readonly icon: React.ReactNode; readonly text: string }>;
+}) {
+  return (
+    <div className="space-y-3">
+      <h4 className="font-semibold text-sm">{title}</h4>
+      <ul className="space-y-2 text-sm text-muted-foreground">
+        {items.map((item, index) => (
+          <li key={index} className="flex items-center gap-2">
+            {item.icon}
+            {item.text}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 // Helper component for system features
 function SystemFeatures() {
+  const duplicatePreventionItems = [
+    { icon: <Merge className="h-3 w-3 text-purple-600" />, text: "Advanced similarity detection (85%+ accuracy)" },
+    { icon: <Shield className="h-3 w-3 text-green-600" />, text: "Multi-field matching (name, location, contact)" },
+    { icon: <Zap className="h-3 w-3 text-blue-600" />, text: "Intelligent merging with data preservation" },
+    { icon: <RefreshCw className="h-3 w-3 text-yellow-600" />, text: "Real-time duplicate checking in pipeline" },
+  ];
+
+  const automatedCleanupItems = [
+    { icon: <RefreshCw className="h-3 w-3 text-red-600" />, text: "Placeholder and mock data removal" },
+    { icon: <Shield className="h-3 w-3 text-blue-600" />, text: "Phone number normalization" },
+    { icon: <Zap className="h-3 w-3 text-green-600" />, text: "GPS coordinate validation and correction" },
+    { icon: <Merge className="h-3 w-3 text-purple-600" />, text: "Quality score recalculation" },
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -94,49 +127,8 @@ function SystemFeatures() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm">Duplicate Prevention</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <Merge className="h-3 w-3 text-purple-600" />
-                Advanced similarity detection (85%+ accuracy)
-              </li>
-              <li className="flex items-center gap-2">
-                <Shield className="h-3 w-3 text-green-600" />
-                Multi-field matching (name, location, contact)
-              </li>
-              <li className="flex items-center gap-2">
-                <Zap className="h-3 w-3 text-blue-600" />
-                Intelligent merging with data preservation
-              </li>
-              <li className="flex items-center gap-2">
-                <RefreshCw className="h-3 w-3 text-yellow-600" />
-                Real-time duplicate checking in pipeline
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <h4 className="font-semibold text-sm">Automated Cleanup</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <RefreshCw className="h-3 w-3 text-red-600" />
-                Placeholder and mock data removal
-              </li>
-              <li className="flex items-center gap-2">
-                <Shield className="h-3 w-3 text-blue-600" />
-                Phone number normalization
-              </li>
-              <li className="flex items-center gap-2">
-                <Zap className="h-3 w-3 text-green-600" />
-                GPS coordinate validation and correction
-              </li>
-              <li className="flex items-center gap-2">
-                <Merge className="h-3 w-3 text-purple-600" />
-                Quality score recalculation
-              </li>
-            </ul>
-          </div>
+          <FeatureList title="Duplicate Prevention" items={duplicatePreventionItems} />
+          <FeatureList title="Automated Cleanup" items={automatedCleanupItems} />
         </div>
       </CardContent>
     </Card>
