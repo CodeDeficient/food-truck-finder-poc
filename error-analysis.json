@@ -1,28 +1,22 @@
 {
-  "timestamp": "2025-06-17T01:00:51.692Z",
-  "totalErrors": 248,
+  "timestamp": "2025-06-17T04:01:20.653Z",
+  "totalErrors": 145,
   "errorCounts": {
     "max-lines-per-function": 94,
-    "@typescript-eslint/strict-boolean-expressions": 55,
-    "@typescript-eslint/await-thenable": 3,
-    "sonarjs/no-invalid-await": 3,
+    "@typescript-eslint/await-thenable": 2,
+    "sonarjs/no-invalid-await": 2,
     "sonarjs/no-nested-conditional": 3,
-    "sonarjs/void-use": 1,
-    "@typescript-eslint/no-explicit-any": 6,
+    "@typescript-eslint/no-unsafe-call": 1,
+    "sonarjs/no-use-of-empty-return-value": 1,
+    "@typescript-eslint/strict-boolean-expressions": 13,
     "sonarjs/cognitive-complexity": 8,
     "sonarjs/no-inverted-boolean-check": 1,
     "max-depth": 4,
     "sonarjs/no-nested-template-literals": 1,
-    "@typescript-eslint/no-misused-promises": 3,
-    "@typescript-eslint/no-unsafe-assignment": 7,
-    "sonarjs/different-types-comparison": 18,
-    "@typescript-eslint/prefer-nullish-coalescing": 1,
-    "@typescript-eslint/no-unsafe-call": 8,
-    "sonarjs/no-use-of-empty-return-value": 1,
-    "@typescript-eslint/no-unsafe-argument": 3,
-    "@typescript-eslint/no-unsafe-member-access": 15,
+    "@typescript-eslint/no-misused-promises": 2,
+    "@typescript-eslint/no-unsafe-assignment": 3,
+    "@typescript-eslint/require-await": 2,
     "sonarjs/no-redundant-jump": 2,
-    "unicorn/no-null": 5,
     "max-params": 4,
     "@typescript-eslint/no-unsafe-return": 1,
     "sonarjs/slow-regex": 1
@@ -38,86 +32,25 @@
       "priority": null
     },
     {
-      "ruleId": "unicorn/no-null",
-      "count": 5,
-      "confidence": "HIGH",
-      "method": "pattern-replacement",
-      "description": "Replace null with undefined",
-      "estimatedFixes": 4,
-      "priority": 12
-    },
-    {
       "ruleId": "@typescript-eslint/strict-boolean-expressions",
-      "count": 55,
+      "count": 13,
       "confidence": "LOW",
       "method": "manual-review",
       "description": "Complex boolean expression fixes",
-      "estimatedFixes": 5,
-      "priority": 5
-    },
-    {
-      "ruleId": "@typescript-eslint/no-explicit-any",
-      "count": 6,
-      "confidence": "MEDIUM",
-      "method": "pattern-replacement",
-      "description": "Replace any with unknown in safe contexts",
-      "estimatedFixes": 2,
-      "priority": 4
-    },
-    {
-      "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 7,
-      "confidence": "MEDIUM",
-      "method": "type-annotation",
-      "description": "Add type annotations for unsafe assignments",
-      "estimatedFixes": 2,
-      "priority": 4
+      "estimatedFixes": 1,
+      "priority": 1
     }
   ],
   "recommendations": {
     "highConfidence": {
-      "candidates": [
-        {
-          "ruleId": "unicorn/no-null",
-          "count": 5,
-          "confidence": "HIGH",
-          "method": "pattern-replacement",
-          "description": "Replace null with undefined",
-          "estimatedFixes": 4,
-          "priority": 12
-        }
-      ],
-      "totalFixes": 4,
-      "methods": [
-        "pattern-replacement"
-      ]
+      "candidates": [],
+      "totalFixes": 0,
+      "methods": []
     },
     "mediumConfidence": {
-      "candidates": [
-        {
-          "ruleId": "@typescript-eslint/no-explicit-any",
-          "count": 6,
-          "confidence": "MEDIUM",
-          "method": "pattern-replacement",
-          "description": "Replace any with unknown in safe contexts",
-          "estimatedFixes": 2,
-          "priority": 4
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 7,
-          "confidence": "MEDIUM",
-          "method": "type-annotation",
-          "description": "Add type annotations for unsafe assignments",
-          "estimatedFixes": 2,
-          "priority": 4
-        }
-      ],
-      "totalFixes": 4,
-      "methods": [
-        "pattern-replacement",
-        "type-annotation"
-      ]
+      "candidates": [],
+      "totalFixes": 0,
+      "methods": []
     }
   }
 }

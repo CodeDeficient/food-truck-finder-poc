@@ -195,7 +195,7 @@ export default function TestPipelinePage() {
         <CardContent>
           <form
             onSubmit={(e) => {
-              handleSubmit(e).catch(error => {
+              void handleSubmit(e).catch(error => {
                 console.warn('Form submission failed:', error);
               });
             }}
@@ -264,7 +264,7 @@ export default function TestPipelinePage() {
         </Card>
       )}
 
-      {results != undefined && !results.error && (
+      {results != undefined && results.error == undefined && (
         <Card>
           <CardHeader>
             <CardTitle>Test Results</CardTitle>

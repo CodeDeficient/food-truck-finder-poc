@@ -154,7 +154,7 @@ export class TaskScheduler {
   }
 
   private calculateNextRun(task: ScheduledTask): string | undefined {
-    if (!task.enabled || !task.lastRun) {
+    if (task.enabled !== true || task.lastRun == undefined) {
       return undefined;
     }
 
@@ -265,7 +265,7 @@ async function updateTruckLocationFromSocial(
   truck: FoodTruck,
   scraperEngine: ScraperEngine,
 ): Promise<void> {
-  if (!truck.social_media.instagram_handle) {
+  if (truck.social_media.instagram_handle == undefined || truck.social_media.instagram_handle === '') {
     return;
   }
 
@@ -274,12 +274,12 @@ async function updateTruckLocationFromSocial(
     truck.social_media.instagram_handle,
   );
 
-  if (socialResult.success && socialResult.data) {
+  if (socialResult.success === true && socialResult.data != undefined) {
     const socialData = socialResult.data as { posts: SocialMediaPost[] };
     const recentPosts = socialData.posts.slice(0, 3);
 
     for (const post of recentPosts) {
-      if (post.location) {
+      if (post.location != undefined && post.location !== '') {
         console.info(`Updated location for ${truck.name}: ${post.location}`);
         break;
       }

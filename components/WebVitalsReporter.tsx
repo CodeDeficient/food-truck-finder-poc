@@ -16,5 +16,5 @@ export function WebVitalsReporter() {
   }, []);
 
   // This component doesn't render anything
-  return;
+  return null;
 }

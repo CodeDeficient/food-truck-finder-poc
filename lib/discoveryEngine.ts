@@ -495,7 +495,7 @@ export class FoodTruckDiscoveryEngine {
   private async processSearchResult(result: unknown, discoveredUrls: Set<string>): Promise<void> {
     if (typeof result === 'object' && result !== null && 'url' in result) {
       const resultUrl = (result as { url?: string }).url;
-      if (resultUrl && (await this.isFoodTruckUrl(resultUrl))) {
+      if (resultUrl != undefined && resultUrl !== '' && (await this.isFoodTruckUrl(resultUrl))) {
         discoveredUrls.add(resultUrl);
       }
 
@@ -511,7 +511,7 @@ export class FoodTruckDiscoveryEngine {
   ): Promise<void> {
     if (typeof result === 'object' && result != undefined) {
       const resultObj = result as { content?: string; raw_content?: string };
-      if (resultObj.content || resultObj.raw_content) {
+      if (resultObj.content != undefined || resultObj.raw_content != undefined) {
         const content = resultObj.content ?? resultObj.raw_content ?? '';
         const extractedUrls = this.extractFoodTruckUrls(content);
         for (const url of extractedUrls) {
