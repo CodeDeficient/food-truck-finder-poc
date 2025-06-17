@@ -84,7 +84,7 @@ export const CachedFoodTruckService = {
     }): Promise<FoodTruck[]> => {
       console.info(`CachedFoodTruckService: Cache miss - searching trucks for "${query}"`);
       
-      if (!supabaseAdmin) {
+      if (supabaseAdmin == undefined) {
         throw new Error('Supabase admin client not available');
       }
 
@@ -100,7 +100,7 @@ export const CachedFoodTruckService = {
 
       const { data: trucks, error } = await dbQuery.limit(50);
 
-      if (error) {
+      if (error != undefined) {
         throw new Error(`Search query failed: ${error.message}`);
       }
 
@@ -160,7 +160,7 @@ export const CachedFoodTruckService = {
     }> => {
       console.info('CachedFoodTruckService: Cache miss - calculating data quality stats');
       
-      if (!supabaseAdmin) {
+      if (supabaseAdmin == undefined) {
         throw new Error('Supabase admin client not available');
       }
 

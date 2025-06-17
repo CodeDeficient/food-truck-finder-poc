@@ -87,7 +87,7 @@ export class APIMonitor {
         };
       }
 
-      if (limits.tokens && newTokenCount > limits.tokens.daily) {
+      if (limits.tokens != undefined && newTokenCount > limits.tokens.daily) {
         return {
           allowed: false,
           reason: `Daily token limit exceeded (${newTokenCount}/${limits.tokens.daily})`,

@@ -11,7 +11,7 @@ export async function processScrapingJob(jobId: string) {
     // Update job status to running
     const job = await ScrapingJobService.updateJobStatus(jobId, 'running');
 
-    if (!job.target_url) {
+    if (job.target_url == undefined) {
       throw new Error('No target URL specified');
     }
 
@@ -19,7 +19,7 @@ export async function processScrapingJob(jobId: string) {
     console.info(`Starting scrape for ${job.target_url}`);
     const scrapeResult = await firecrawl.scrapeFoodTruckWebsite(job.target_url); // Simplified call
 
-    if (!scrapeResult.success || scrapeResult.data?.markdown == undefined) {
+    if (scrapeResult.success !== true || scrapeResult.data?.markdown == undefined) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [scrapeResult.error ?? 'Scraping failed or markdown content not found'],
       });
@@ -34,7 +34,7 @@ export async function processScrapingJob(jobId: string) {
       scrapeResult.data.source_url ?? job.target_url,
     );
 
-    if (!geminiResult.success || geminiResult.data == undefined) {
+    if (geminiResult.success !== true || geminiResult.data == undefined) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [geminiResult.error ?? 'Gemini data extraction failed'],
       });
