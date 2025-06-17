@@ -1,0 +1,39 @@
+'use client';
+
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Eye, RefreshCw, Play } from 'lucide-react';
+
+interface CleanupHeaderProps {
+  isRunning: boolean;
+  onPreview: () => void;
+  onDryRun: () => void;
+  onRunCleanup: () => void;
+}
+
+export function CleanupHeader({ isRunning, onPreview, onDryRun, onRunCleanup }: CleanupHeaderProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Data Cleanup & Quality</h2>
+        <p className="text-muted-foreground">
+          Automated data quality improvements and duplicate prevention
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <Button variant="outline" onClick={onPreview} disabled={isRunning}>
+          <Eye className="h-4 w-4 mr-2" />
+          Preview Changes
+        </Button>
+        <Button variant="outline" onClick={onDryRun} disabled={isRunning}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRunning ? 'animate-spin' : ''}`} />
+          Dry Run
+        </Button>
+        <Button onClick={onRunCleanup} disabled={isRunning}>
+          <Play className="h-4 w-4 mr-2" />
+          Run Cleanup
+        </Button>
+      </div>
+    </div>
+  );
+}
