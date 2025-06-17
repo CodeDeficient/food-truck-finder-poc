@@ -64,7 +64,7 @@ function getEventsAndSchedules() {
   };
 }
 
-export default function EventManagementPage() {
+export default async function EventManagementPage() {
   const { events, schedules } = await getEventsAndSchedules();
 
   return (
