@@ -29,6 +29,20 @@ import {
 } from 'lucide-react';
 import { useRealtimeAdminEvents } from '@/hooks/useRealtimeAdminEvents';
 
+// Helper function moved to outer scope for consistent function scoping
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'healthy': { return 'text-green-600 bg-green-50 border-green-200';
+    }
+    case 'warning': { return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+    }
+    case 'error': { return 'text-red-600 bg-red-50 border-red-200';
+    }
+    default: { return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  }
+};
+
 interface StatusMetric {
   label: string;
   value: number | string;
@@ -69,11 +83,11 @@ export function RealtimeStatusIndicator() {
   // Process recent events into alerts
   useEffect(() => {
     const newAlerts = recentEvents
-      .filter(event => event.severity && event.severity !== 'info')
+      .filter(event => event.severity != undefined && event.severity !== 'info')
       .map(event => ({
         id: event.id,
         type: event.severity as 'warning' | 'error' | 'critical',
-        message: typeof event.data.message === 'string' ? event.data.message : 'System event occurred',
+        message: typeof event.data.message === 'string' && event.data.message !== '' ? event.data.message : 'System event occurred',
         timestamp: event.timestamp,
         acknowledged: false
       }))
@@ -87,7 +101,7 @@ export function RealtimeStatusIndicator() {
     {
       label: 'Connection Status',
       value: isConnected ? 'Connected' : isConnecting ? 'Connecting...' : 'Disconnected',
-      status: isConnected ? 'healthy' : connectionError ? 'error' : 'warning',
+      status: isConnected ? 'healthy' : (connectionError == undefined ? 'warning' : 'error'),
       icon: isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />
     },
     {
@@ -99,8 +113,12 @@ export function RealtimeStatusIndicator() {
     {
       label: 'System Health',
       value: latestMetrics?.systemHealth.status ?? 'unknown',
-      status: latestMetrics?.systemHealth.status === 'healthy' ? 'healthy' : 
-             latestMetrics?.systemHealth.status === 'warning' ? 'warning' : 'error',
+      status: (() => {
+        const healthStatus = latestMetrics?.systemHealth.status;
+        if (healthStatus === 'healthy') return 'healthy';
+        if (healthStatus === 'warning') return 'warning';
+        return 'error';
+      })(),
       icon: <Server className="h-4 w-4" />
     },
     {
@@ -108,24 +126,17 @@ export function RealtimeStatusIndicator() {
       value: latestMetrics?.dataQuality.averageScore ?? 0,
       unit: '%',
       trend: 'stable',
-      status: (latestMetrics?.dataQuality.averageScore ?? 0) >= 80 ? 'healthy' : 
-             (latestMetrics?.dataQuality.averageScore ?? 0) >= 60 ? 'warning' : 'error',
+      status: (() => {
+        const score = latestMetrics?.dataQuality.averageScore ?? 0;
+        if (score >= 80) return 'healthy';
+        if (score >= 60) return 'warning';
+        return 'error';
+      })(),
       icon: <Database className="h-4 w-4" />
     }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'healthy': { return 'text-green-600 bg-green-50 border-green-200';
-      }
-      case 'warning': { return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      }
-      case 'error': { return 'text-red-600 bg-red-50 border-red-200';
-      }
-      default: { return 'text-gray-600 bg-gray-50 border-gray-200';
-      }
-    }
-  };
+
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -193,7 +204,7 @@ export function RealtimeStatusIndicator() {
           )}
         </CardHeader>
         <CardContent>
-          {connectionError && (
+          {connectionError != undefined && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-sm text-red-600">{connectionError}</p>
             </div>
@@ -256,11 +267,11 @@ export function RealtimeStatusIndicator() {
                 {alerts.slice(0, 3).map((alert) => (
                   <div
                     key={alert.id}
-                    className={`p-2 rounded border-l-4 ${
-                      alert.type === 'critical' ? 'border-l-red-500 bg-red-50' :
-                      alert.type === 'error' ? 'border-l-red-400 bg-red-50' :
-                      'border-l-yellow-400 bg-yellow-50'
-                    } ${alert.acknowledged ? 'opacity-50' : ''}`}
+                    className={`p-2 rounded border-l-4 ${(() => {
+                      if (alert.type === 'critical') return 'border-l-red-500 bg-red-50';
+                      if (alert.type === 'error') return 'border-l-red-400 bg-red-50';
+                      return 'border-l-yellow-400 bg-yellow-50';
+                    })()} ${alert.acknowledged === true ? 'opacity-50' : ''}`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -269,7 +280,7 @@ export function RealtimeStatusIndicator() {
                         </Badge>
                         <span className="text-sm">{alert.message}</span>
                       </div>
-                      {!alert.acknowledged && (
+                      {alert.acknowledged !== true && (
                         <Button
                           // @ts-expect-error TS(2322): Type '{ children: string; variant: string; size: s... Remove this comment to see the full error message
                           variant="ghost"

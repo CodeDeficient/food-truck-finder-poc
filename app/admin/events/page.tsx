@@ -44,7 +44,7 @@ function getEventsAndSchedules() {
     .order('date', { ascending: false })
     .order('time', { ascending: false });
 
-  if (eventsError != null) {
+  if (eventsError != undefined) {
     console.error('Error fetching events:', eventsError);
   }
 
@@ -54,7 +54,7 @@ function getEventsAndSchedules() {
     .order('day_of_week', { ascending: true })
     .order('start_time', { ascending: true });
 
-  if (schedulesError != null) {
+  if (schedulesError != undefined) {
     console.error('Error fetching schedules:', schedulesError);
   }
 
@@ -107,7 +107,6 @@ export default function EventManagementPage() {
                   <TableCell>{event.location}</TableCell>
                   <TableCell>{event.description}</TableCell>
                   <TableCell className="text-right">
-                    // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/events/${event.id}`}>
                         <Edit className="h-4 w-4" />
@@ -154,7 +153,6 @@ export default function EventManagementPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    // @ts-expect-error TS(2322): Type '{ children: Element; variant: string; size: ... Remove this comment to see the full error message
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/admin/schedules/${schedule.id}`}>
                         <Edit className="h-4 w-4" />
