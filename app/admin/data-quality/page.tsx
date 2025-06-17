@@ -35,6 +35,102 @@ interface DataQualityStats {
   flagged_count: number;
 }
 
+// Page header component
+function PageHeader() {
+  return (
+    <div className="flex items-center justify-between">
+      <h1 className="text-3xl font-bold tracking-tight">Data Quality Management</h1>
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/admin/data-quality/reports">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            View Reports
+          </Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// Food truck quality table component
+function FoodTruckQualityTable({ trucks }: { readonly trucks: FoodTruck[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Food Truck Data Quality Details</CardTitle>
+        <CardDescription>
+          Review and manage individual food truck data quality scores. Trucks are sorted by quality score (lowest first for priority review).
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Verification Status</TableHead>
+              <TableHead>Quality Score</TableHead>
+              <TableHead>Quality Category</TableHead>
+              <TableHead>Last Scraped</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {trucks.map((truck: FoodTruck) => (
+              <FoodTruckQualityRow key={truck.id} truck={truck} />
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Food truck quality table row component
+function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const ariaLabel: string = getQualityScoreAriaLabel(truck.data_quality_score);
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">{truck.name}</TableCell>
+      <TableCell>
+        <Badge variant={truck.verification_status === 'verified' ? 'default' : 'outline'}>
+          {truck.verification_status}
+        </Badge>
+      </TableCell>
+      <TableCell>
+        <span aria-label={ariaLabel}>
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+          {formatQualityScore(truck.data_quality_score)}
+        </span>
+      </TableCell>
+      <TableCell>
+        <Badge className={badgeClasses}>
+          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+          {qualityCategory.label}
+        </Badge>
+      </TableCell>
+      <TableCell>
+        {(truck.last_scraped_at === undefined)
+          ? 'N/A'
+          : new Date(truck.last_scraped_at).toLocaleDateString()}
+      </TableCell>
+      <TableCell className="text-right">
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/admin/food-trucks/${truck.id}`}>
+            <Edit className="h-4 w-4 mr-2" />
+            Review
+          </Link>
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export default async function DataQualityPage() {
   const { trucks } = await FoodTruckService.getAllTrucks(100, 0); // Fetch first 100 trucks
 
@@ -65,17 +161,7 @@ export default async function DataQualityPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Data Quality Management</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/admin/data-quality/reports">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              View Reports
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <PageHeader />
 
       {/* Data Quality Charts Section */}
       <DataQualityCharts qualityStats={dataQualityStats} />
@@ -83,79 +169,7 @@ export default async function DataQualityPage() {
       {/* Quality Management Panel */}
       <SimpleQualityPanel />
 
-      {/* Food Truck Quality Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Food Truck Data Quality Details</CardTitle>
-          <CardDescription>
-            Review and manage individual food truck data quality scores. Trucks are sorted by quality score (lowest first for priority review).
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Verification Status</TableHead>
-                <TableHead>Quality Score</TableHead>
-                <TableHead>Quality Category</TableHead>
-                <TableHead>Last Scraped</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedTrucks.map((truck: FoodTruck) => {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-                const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-                const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-                const ariaLabel: string = getQualityScoreAriaLabel(truck.data_quality_score);
-
-                return (
-                  <TableRow key={truck.id}>
-                    <TableCell className="font-medium">{truck.name}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={truck.verification_status === 'verified' ? 'default' : 'outline'}
-                      >
-                        {truck.verification_status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span aria-label={ariaLabel}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
-                        {formatQualityScore(truck.data_quality_score)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={badgeClasses}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
-                        {qualityCategory.label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {(truck.last_scraped_at === undefined)
-                        ? 'N/A'
-                        : new Date(truck.last_scraped_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center gap-2 justify-end">
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={`/admin/food-trucks/${truck.id}?tab=data-quality`}>
-                            <Edit className="h-4 w-4" />
-                            <span className="sr-only">Edit {truck.name}</span>
-                          </Link>
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <FoodTruckQualityTable trucks={sortedTrucks} />
     </div>
   );
 }
