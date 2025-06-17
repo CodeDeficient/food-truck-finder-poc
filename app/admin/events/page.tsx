@@ -37,7 +37,7 @@ interface FoodTruckSchedule {
   location: string;
 }
 
-function getEventsAndSchedules() {
+async function getEventsAndSchedules() {
   const { data: events, error: eventsError } = await supabase
     .from('events')
     .select('*')

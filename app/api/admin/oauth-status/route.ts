@@ -84,7 +84,7 @@ export async function GET(_request: NextRequest) {
           };
           status.supabase.authSettings = {
             googleEnabled: settings.external?.google ?? false,
-            signupEnabled: !(settings.disable_signup === true),
+            signupEnabled: settings.disable_signup !== true,
             autoconfirm: settings.autoconfirm ?? false
           };
 
