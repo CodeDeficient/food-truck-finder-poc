@@ -9,7 +9,7 @@ interface CleanupPreviewProps {
 
 export function CleanupPreview({ previewData }: CleanupPreviewProps) {
   if (previewData == undefined) {
-    return null;
+    return undefined;
   }
 
   return (

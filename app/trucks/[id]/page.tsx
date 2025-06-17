@@ -17,7 +17,7 @@ interface FoodTruckDetailPageProps {
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck = await getFoodTruckDetails(params.id);
 
-  if (truck == null) {
+  if (truck == undefined) {
     return <TruckNotFound />;
   }
 

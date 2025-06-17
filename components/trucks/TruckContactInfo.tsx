@@ -53,7 +53,7 @@ function ContactField({
 
 function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string> }) {
   if (!socialMedia || Object.keys(socialMedia).length === 0) {
-    return null;
+    return undefined;
   }
 
   const socialPlatforms = [
@@ -68,7 +68,7 @@ function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
           const handle = socialMedia[key];
-          if (handle == undefined) return null;
+          if (handle == undefined) return undefined;
 
           return (
             <a
