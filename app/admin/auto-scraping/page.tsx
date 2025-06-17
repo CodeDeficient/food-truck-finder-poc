@@ -171,7 +171,7 @@ export default function AutoScrapingDashboard() {
         </div>
       </div>
 
-      {error != undefined && (
+      {error !== undefined && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
@@ -179,7 +179,7 @@ export default function AutoScrapingDashboard() {
       )}
 
       {/* Metrics Cards */}
-      {metrics != undefined && (
+      {metrics !== undefined && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -271,7 +271,7 @@ export default function AutoScrapingDashboard() {
                         <div className={job.lastResult.success ? 'text-green-600' : 'text-red-600'}>
                           {job.lastResult.success ? 'Success' : 'Failed'}
                         </div>
-                        {job.lastResult.trucksProcessed != undefined && (
+                        {job.lastResult.trucksProcessed !== undefined && (
                           <div className="text-xs text-muted-foreground">
                             {job.lastResult.trucksProcessed} trucks, {job.lastResult.newTrucksFound}{' '}
                             new

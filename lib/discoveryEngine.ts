@@ -484,7 +484,7 @@ export class FoodTruckDiscoveryEngine {
   ): Promise<void> {
     const searchResults = await tavilySearch(locationQuery, { limit: 15 });
 
-    if (searchResults && searchResults.length > 0) {
+    if (searchResults != undefined && searchResults.length > 0) {
       for (const result of searchResults) {
         await this.processSearchResult(result, discoveredUrls);
       }

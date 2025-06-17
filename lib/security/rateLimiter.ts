@@ -10,12 +10,6 @@ interface RateLimitEntry {
   blockUntil?: number;
 }
 
-interface RateLimitConfig {
-  windowMs: number;
-  maxRequests: number;
-  blockDurationMs: number;
-  skipSuccessfulRequests?: boolean;
-}
 
 // In-memory rate limit store (in production, use Redis)
 const rateLimitStore = new Map<string, RateLimitEntry>();
