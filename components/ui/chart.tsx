@@ -33,7 +33,7 @@ const ChartContext = React.createContext<ChartContextProps | undefined>(undefine
 function useChart() {
   const context = React.useContext(ChartContext);
 
-  if (!context) {
+  if (context == undefined) {
     throw new Error('useChart must be used within a <ChartContainer />');
   }
 
@@ -72,7 +72,7 @@ ChartContainer.displayName = 'Chart';
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined);
   if (colorConfig.length === 0) {
-    return;
+    return undefined;
   }
 
   return (
@@ -131,8 +131,8 @@ const ChartTooltipContent = React.forwardRef<
     const { config } = useChart();
 
     const tooltipLabel = React.useMemo(() => {
-      if (hideLabel || (payload?.length ?? 0) === 0) {
-        return;
+      if (hideLabel === true || (payload?.length ?? 0) === 0) {
+        return undefined;
       }
 
       const [item] = payload;
