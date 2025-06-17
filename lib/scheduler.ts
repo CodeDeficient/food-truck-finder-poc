@@ -294,176 +294,212 @@ export function createDefaultTasks(
   dataQualityAssessor: DataQualityAssessor,
 ): ScheduledTask[] {
   return [
-    {
-      id: 'instagram_scrape',
-      name: 'Instagram Data Scraping',
-      description: 'Scrape Instagram posts and profiles for food truck data',
-      intervalMinutes: 120, // Every 2 hours
-      enabled: true,
-      successCount: 0,
-      errorCount: 0,
-      execute: async () => {
-        const handles = ['@gourmetstreeteats', '@tacoparadisesf', '@burgermobile'];
-
-        for (const handle of handles) {
-          const result = await scraperEngine.scrapeSocialMedia('instagram', handle);
-          if (result.success) {
-            // Process with Gemini if needed
-            console.info(`Successfully scraped ${handle}`);
-          } else {
-            throw new Error(`Failed to scrape ${handle}: ${result.error}`);
-          }
-        }
-      },
-    },
-    {
-      id: 'website_crawl',
-      name: 'Website Crawling',
-      description: 'Crawl food truck websites for menu and location updates',
-      intervalMinutes: 360, // Every 6 hours
-      enabled: true,
-      successCount: 0,
-      errorCount: 0,
-      execute: () => {
-        const websites = [
-          'https://gourmetstreeteats.com',
-          'https://tacoparadise.com',
-          'https://burgermobile.net',
-        ];
-
-        const selectors = {
-          name: '.truck-name',
-          location: '.current-location',
-          hours: '.operating-hours',
-          menu: '.menu-items',
-        };
-
-        for (const url of websites) {
-          const result = await scraperEngine.scrapeWebsite(url, selectors);
-          if (result.success) {
-            console.info(`Successfully crawled ${url}`);
-          } else {
-            throw new Error(`Failed to crawl ${url}: ${result.error}`);
-          }
-        }
-      },
-    },
-    {
-      id: 'data_quality_check',
-      name: 'Data Quality Assessment',
-      description: 'Assess and validate data quality for all food trucks',
-      intervalMinutes: 720, // Every 12 hours
-      enabled: true,
-      successCount: 0,
-      errorCount: 0,
-      execute: () => {
-        // Database connection to fetch trucks should be implemented here
-        const trucks: FoodTruck[] = []; // Placeholder: fetch trucks from database
-
-        let totalScore = 0;
-        let processedCount = 0;
-
-        if (trucks.length === 0) {
-          console.info('No trucks available for quality assessment');
-          return;
-        }
-
-        for (const truck of trucks) {
-          const assessment = dataQualityAssessor.assessTruckData(truck);
-          totalScore += assessment.score;
-          processedCount++;
-
-          if (assessment.score < 0.7) {
-            console.warn(`Low quality data for truck ${truck.id}: ${assessment.issues.join(', ')}`);
-          }
-        }
-
-        const averageQuality = processedCount > 0 ? totalScore / processedCount : 0;
-        console.info(
-          `Data quality assessment completed. Average score: ${averageQuality.toFixed(2)}`,
-        );
-        await Promise.resolve();
-      },
-    },
-    {
-      id: 'gemini_processing',
-      name: 'AI Data Processing',
-      description: 'Process raw data using Gemini AI for standardization',
-      intervalMinutes: 480, // Every 8 hours
-      enabled: true,
-      successCount: 0,
-      errorCount: 0,
-      execute: () => {
-        // Check Gemini usage limits
-        const usage = geminiProcessor.getUsageStats();
-
-        if (usage.requests.remaining < 100) {
-          console.warn('Skipping Gemini processing due to rate limits');
-          return;
-        } // Process pending data
-        const pendingData: PendingDataItem[] = []; // Placeholder: fetch pending data from queue system
-
-        if (pendingData.length === 0) {
-          console.info('No pending data to process');
-          return;
-        }
-
-        for (const data of pendingData) {
-          switch (data.type) {
-            case 'menu': {
-              await geminiProcessor.processMenuData(data.content as string);
-              break;
-            }
-            case 'location': {
-              await geminiProcessor.extractLocationFromText(data.content as string);
-              break;
-            }
-            case 'hours': {
-              await geminiProcessor.standardizeOperatingHours(data.content as string);
-              break;
-            }
-            case 'sentiment': {
-              await geminiProcessor.analyzeSentiment(data.content as string);
-              break;
-            }
-            case 'enhance': {
-              await geminiProcessor.enhanceFoodTruckData(data.content);
-              break;
-            }
-            default: {
-              // No default
-              break;
-            }
-          }
-        }
-
-        console.info(`Processed ${pendingData.length} items with Gemini AI`);
-        await Promise.resolve();
-      },
-    },
-    {
-      id: 'location_update',
-      name: 'Real-time Location Updates',
-      description: 'Update current locations for active food trucks',
-      intervalMinutes: 30, // Every 30 minutes
-      enabled: true,
-      successCount: 0,
-      errorCount: 0,
-      execute: () => {
-        // Get active trucks (those currently operating)
-        const activeTrucks: FoodTruck[] = []; // Placeholder: fetch active trucks from database
-
-        if (activeTrucks.length === 0) {
-          console.info('No active trucks to update locations for');
-          return;
-        }
-
-        for (const truck of activeTrucks) {
-          await updateTruckLocationFromSocial(truck, scraperEngine);
-        }
-      },
-    },
+    createInstagramScrapeTask(scraperEngine),
+    createWebsiteCrawlTask(scraperEngine),
+    createDataQualityCheckTask(dataQualityAssessor),
+    createGeminiProcessingTask(geminiProcessor),
+    createLocationUpdateTask(scraperEngine),
   ];
+}
+
+/**
+ * Create Instagram scraping task
+ */
+function createInstagramScrapeTask(scraperEngine: ScraperEngine): ScheduledTask {
+  return {
+    id: 'instagram_scrape',
+    name: 'Instagram Data Scraping',
+    description: 'Scrape Instagram posts and profiles for food truck data',
+    intervalMinutes: 120, // Every 2 hours
+    enabled: true,
+    successCount: 0,
+    errorCount: 0,
+    execute: async () => {
+      const handles = ['@gourmetstreeteats', '@tacoparadisesf', '@burgermobile'];
+
+      for (const handle of handles) {
+        const result = await scraperEngine.scrapeSocialMedia('instagram', handle);
+        if (result.success) {
+          console.info(`Successfully scraped ${handle}`);
+        } else {
+          throw new Error(`Failed to scrape ${handle}: ${result.error}`);
+        }
+      }
+    },
+  };
+}
+
+/**
+ * Create website crawling task
+ */
+function createWebsiteCrawlTask(scraperEngine: ScraperEngine): ScheduledTask {
+  return {
+    id: 'website_crawl',
+    name: 'Website Crawling',
+    description: 'Crawl food truck websites for menu and location updates',
+    intervalMinutes: 360, // Every 6 hours
+    enabled: true,
+    successCount: 0,
+    errorCount: 0,
+    execute: async () => {
+      const websites = [
+        'https://gourmetstreeteats.com',
+        'https://tacoparadise.com',
+        'https://burgermobile.net',
+      ];
+
+      const selectors = {
+        name: '.truck-name',
+        location: '.current-location',
+        hours: '.operating-hours',
+        menu: '.menu-items',
+      };
+
+      for (const url of websites) {
+        const result = await scraperEngine.scrapeWebsite(url, selectors);
+        if (result.success) {
+          console.info(`Successfully crawled ${url}`);
+        } else {
+          throw new Error(`Failed to crawl ${url}: ${result.error}`);
+        }
+      }
+    },
+  };
+}
+
+/**
+ * Create data quality check task
+ */
+function createDataQualityCheckTask(dataQualityAssessor: DataQualityAssessor): ScheduledTask {
+  return {
+    id: 'data_quality_check',
+    name: 'Data Quality Assessment',
+    description: 'Assess and validate data quality for all food trucks',
+    intervalMinutes: 720, // Every 12 hours
+    enabled: true,
+    successCount: 0,
+    errorCount: 0,
+    execute: () => {
+      const trucks: FoodTruck[] = []; // Placeholder: fetch trucks from database
+
+      let totalScore = 0;
+      let processedCount = 0;
+
+      if (trucks.length === 0) {
+        console.info('No trucks available for quality assessment');
+        return;
+      }
+
+      for (const truck of trucks) {
+        const assessment = dataQualityAssessor.assessTruckData(truck);
+        totalScore += assessment.score;
+        processedCount++;
+
+        if (assessment.score < 0.7) {
+          console.warn(`Low quality data for truck ${truck.id}: ${assessment.issues.join(', ')}`);
+        }
+      }
+
+      const averageQuality = processedCount > 0 ? totalScore / processedCount : 0;
+      console.info(
+        `Data quality assessment completed. Average score: ${averageQuality.toFixed(2)}`,
+      );
+    },
+  };
+}
+
+/**
+ * Create Gemini processing task
+ */
+function createGeminiProcessingTask(geminiProcessor: GeminiProcessor): ScheduledTask {
+  return {
+    id: 'gemini_processing',
+    name: 'AI Data Processing',
+    description: 'Process raw data using Gemini AI for standardization',
+    intervalMinutes: 480, // Every 8 hours
+    enabled: true,
+    successCount: 0,
+    errorCount: 0,
+    execute: async () => {
+      const usage = geminiProcessor.getUsageStats();
+
+      if (usage.requests.remaining < 100) {
+        console.warn('Skipping Gemini processing due to rate limits');
+        return;
+      }
+
+      const pendingData: PendingDataItem[] = []; // Placeholder: fetch pending data from queue system
+
+      if (pendingData.length === 0) {
+        console.info('No pending data to process');
+        return;
+      }
+
+      await processGeminiDataBatch(geminiProcessor, pendingData);
+      console.info(`Processed ${pendingData.length} items with Gemini AI`);
+    },
+  };
+}
+
+/**
+ * Process batch of data with Gemini
+ */
+async function processGeminiDataBatch(geminiProcessor: GeminiProcessor, pendingData: PendingDataItem[]): Promise<void> {
+  for (const data of pendingData) {
+    switch (data.type) {
+      case 'menu': {
+        await geminiProcessor.processMenuData(data.content as string);
+        break;
+      }
+      case 'location': {
+        await geminiProcessor.extractLocationFromText(data.content as string);
+        break;
+      }
+      case 'hours': {
+        await geminiProcessor.standardizeOperatingHours(data.content as string);
+        break;
+      }
+      case 'sentiment': {
+        await geminiProcessor.analyzeSentiment(data.content as string);
+        break;
+      }
+      case 'enhance': {
+        await geminiProcessor.enhanceFoodTruckData(data.content);
+        break;
+      }
+      default: {
+        // No default
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * Create location update task
+ */
+function createLocationUpdateTask(scraperEngine: ScraperEngine): ScheduledTask {
+  return {
+    id: 'location_update',
+    name: 'Real-time Location Updates',
+    description: 'Update current locations for active food trucks',
+    intervalMinutes: 30, // Every 30 minutes
+    enabled: true,
+    successCount: 0,
+    errorCount: 0,
+    execute: async () => {
+      const activeTrucks: FoodTruck[] = []; // Placeholder: fetch active trucks from database
+
+      if (activeTrucks.length === 0) {
+        console.info('No active trucks to update locations for');
+        return;
+      }
+
+      for (const truck of activeTrucks) {
+        await updateTruckLocationFromSocial(truck, scraperEngine);
+      }
+    },
+  };
 }
 
 // Export scheduler instance for use in cron jobs
