@@ -42,6 +42,32 @@ const getStatusColor = (status: string) => {
   }
 };
 
+// Helper function for status icons
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'healthy': { return <CheckCircle className="h-4 w-4 text-green-600" />;
+    }
+    case 'warning': { return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+    }
+    case 'error': { return <AlertTriangle className="h-4 w-4 text-red-600" />;
+    }
+    default: { return <Clock className="h-4 w-4 text-gray-600" />;
+    }
+  }
+};
+
+// Helper function for trend icons
+const getTrendIcon = (trend?: string) => {
+  switch (trend) {
+    case 'up': { return <TrendingUp className="h-3 w-3 text-green-600" />;
+    }
+    case 'down': { return <TrendingDown className="h-3 w-3 text-red-600" />;
+    }
+    default: { return;
+    }
+  }
+};
+
 interface StatusMetric {
   label: string;
   value: number | string;
@@ -257,6 +283,58 @@ function EventControls({ recentEventsCount, onClearEvents }: {
   );
 }
 
+// Connection Status Header Component
+function ConnectionStatusHeader({
+  isConnected,
+  isConnecting,
+  lastEventTime,
+  connect,
+  disconnect
+}: {
+  isConnected: boolean;
+  isConnecting: boolean;
+  lastEventTime?: Date;
+  connect: () => void;
+  disconnect: () => void;
+}) {
+  return (
+    <CardHeader className="pb-3">
+      <div className="flex items-center justify-between">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Zap className="h-5 w-5" />
+          Real-time System Status
+        </CardTitle>
+        <div className="flex items-center gap-2">
+          {isConnected && (
+            <div className="flex items-center gap-1 text-sm text-green-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              Live
+            </div>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={isConnected ? disconnect : connect}
+            disabled={isConnecting}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isConnecting ? 'animate-spin' : ''}`} />
+            {(() => {
+              if (isConnected) return 'Disconnect';
+              if (isConnecting) return 'Connecting...';
+              return 'Connect';
+            })()}
+          </Button>
+        </div>
+      </div>
+      {lastEventTime && (
+        <p className="text-sm text-muted-foreground">
+          Last update: {lastEventTime.toLocaleTimeString()}
+        </p>
+      )}
+    </CardHeader>
+  );
+}
+
 export function RealtimeStatusIndicator() {
   const {
     isConnected,
@@ -295,32 +373,6 @@ export function RealtimeStatusIndicator() {
 
   const systemMetrics = useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics });
 
-
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'healthy': { return <CheckCircle className="h-4 w-4 text-green-600" />;
-      }
-      case 'warning': { return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      }
-      case 'error': { return <AlertTriangle className="h-4 w-4 text-red-600" />;
-      }
-      default: { return <Clock className="h-4 w-4 text-gray-600" />;
-      }
-    }
-  };
-
-  const getTrendIcon = (trend?: string) => {
-    switch (trend) {
-      case 'up': { return <TrendingUp className="h-3 w-3 text-green-600" />;
-      }
-      case 'down': { return <TrendingDown className="h-3 w-3 text-red-600" />;
-      }
-      default: { return;
-      }
-    }
-  };
-
   const acknowledgeAlert = (alertId: string) => {
     setAlerts(prev => prev.map(alert => 
       alert.id === alertId ? { ...alert, acknowledged: true } : alert
@@ -329,42 +381,14 @@ export function RealtimeStatusIndicator() {
 
   return (
     <div className="space-y-4">
-      {/* Connection Status Header */}
       <Card className={`border-l-4 ${isConnected ? 'border-l-green-500' : 'border-l-red-500'}`}>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Zap className="h-5 w-5" />
-              Real-time System Status
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              {isConnected && (
-                <div className="flex items-center gap-1 text-sm text-green-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  Live
-                </div>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={isConnected ? disconnect : connect}
-                disabled={isConnecting}
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${isConnecting ? 'animate-spin' : ''}`} />
-                {(() => {
-                  if (isConnected) return 'Disconnect';
-                  if (isConnecting) return 'Connecting...';
-                  return 'Connect';
-                })()}
-              </Button>
-            </div>
-          </div>
-          {lastEventTime && (
-            <p className="text-sm text-muted-foreground">
-              Last update: {lastEventTime.toLocaleTimeString()}
-            </p>
-          )}
-        </CardHeader>
+        <ConnectionStatusHeader
+          isConnected={isConnected}
+          isConnecting={isConnecting}
+          lastEventTime={lastEventTime}
+          connect={connect}
+          disconnect={disconnect}
+        />
         <CardContent>
           {connectionError != undefined && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
