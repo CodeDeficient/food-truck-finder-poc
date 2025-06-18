@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-06-18T00:25:38.916Z",
+  "timestamp": "2025-06-18T01:04:50.985Z",
   "summary": {
     "totalFiles": 57,
-    "totalViolations": 102,
+    "totalViolations": 105,
     "highPriorityFiles": 12
   },
   "prioritizedFiles": [
@@ -124,48 +124,6 @@
       "violationCount": 2
     },
     {
-      "filePath": "app\\admin\\monitoring\\page.tsx",
-      "violations": [
-        {
-          "filePath": "app\\admin\\monitoring\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'MonitoringPage' has too many lines (177). Maximum allowed is 50.",
-          "line": 11,
-          "endLine": 187,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 254,
-      "maxLinesViolation": {
-        "current": 177,
-        "max": 50,
-        "excess": 127
-      },
-      "violationCount": 1
-    },
-    {
-      "filePath": "app\\login\\page.tsx",
-      "violations": [
-        {
-          "filePath": "app\\login\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'LoginPage' has too many lines (170). Maximum allowed is 50.",
-          "line": 13,
-          "endLine": 182,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 240,
-      "maxLinesViolation": {
-        "current": 170,
-        "max": 50,
-        "excess": 120
-      },
-      "violationCount": 1
-    },
-    {
       "filePath": "components\\ui\\chart.tsx",
       "violations": [
         {
@@ -194,27 +152,6 @@
         "excess": 27
       },
       "violationCount": 2
-    },
-    {
-      "filePath": "components\\SearchFilters.tsx",
-      "violations": [
-        {
-          "filePath": "components\\SearchFilters.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'SearchFilters' has too many lines (164). Maximum allowed is 50.",
-          "line": 23,
-          "endLine": 186,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 228,
-      "maxLinesViolation": {
-        "current": 164,
-        "max": 50,
-        "excess": 114
-      },
-      "violationCount": 1
     },
     {
       "filePath": "app\\api\\admin\\cron-status\\route.ts",
@@ -685,6 +622,36 @@
       "violationCount": 2
     },
     {
+      "filePath": "app\\login\\page.tsx",
+      "violations": [
+        {
+          "filePath": "app\\login\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'EmailLoginForm' has too many lines (57). Maximum allowed is 50.",
+          "line": 27,
+          "endLine": 83,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "app\\login\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'LoginPage' has too many lines (107). Maximum allowed is 50.",
+          "line": 139,
+          "endLine": 245,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 128,
+      "maxLinesViolation": {
+        "current": 107,
+        "max": 50,
+        "excess": 57
+      },
+      "violationCount": 2
+    },
+    {
       "filePath": "app\\api\\test-pipeline-run\\route.ts",
       "violations": [
         {
@@ -1030,6 +997,36 @@
       "violationCount": 1
     },
     {
+      "filePath": "components\\SearchFilters.tsx",
+      "violations": [
+        {
+          "filePath": "components\\SearchFilters.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'MainSearchSection' has too many lines (53). Maximum allowed is 50.",
+          "line": 12,
+          "endLine": 64,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "components\\SearchFilters.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'SearchFilters' has too many lines (83). Maximum allowed is 50.",
+          "line": 176,
+          "endLine": 258,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 72,
+      "maxLinesViolation": {
+        "current": 83,
+        "max": 50,
+        "excess": 33
+      },
+      "violationCount": 2
+    },
+    {
       "filePath": "components\\admin\\cleanup\\CleanupResults.tsx",
       "violations": [
         {
@@ -1256,6 +1253,36 @@
         "excess": 19
       },
       "violationCount": 1
+    },
+    {
+      "filePath": "app\\admin\\monitoring\\page.tsx",
+      "violations": [
+        {
+          "filePath": "app\\admin\\monitoring\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'FeatureOverviewCards' has too many lines (57). Maximum allowed is 50.",
+          "line": 26,
+          "endLine": 82,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "app\\admin\\monitoring\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'MonitoringFeaturesCard' has too many lines (59). Maximum allowed is 50.",
+          "line": 101,
+          "endLine": 159,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 32,
+      "maxLinesViolation": {
+        "current": 59,
+        "max": 50,
+        "excess": 9
+      },
+      "violationCount": 2
     },
     {
       "filePath": "lib\\performance\\databaseCache.ts",
@@ -1663,9 +1690,18 @@
     {
       "filePath": "app\\admin\\monitoring\\page.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'MonitoringPage' has too many lines (177). Maximum allowed is 50.",
-      "line": 11,
-      "endLine": 187,
+      "message": "Function 'FeatureOverviewCards' has too many lines (57). Maximum allowed is 50.",
+      "line": 26,
+      "endLine": 82,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "app\\admin\\monitoring\\page.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'MonitoringFeaturesCard' has too many lines (59). Maximum allowed is 50.",
+      "line": 101,
+      "endLine": 159,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
@@ -2050,9 +2086,18 @@
     {
       "filePath": "app\\login\\page.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'LoginPage' has too many lines (170). Maximum allowed is 50.",
-      "line": 13,
-      "endLine": 182,
+      "message": "Function 'EmailLoginForm' has too many lines (57). Maximum allowed is 50.",
+      "line": 27,
+      "endLine": 83,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "app\\login\\page.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'LoginPage' has too many lines (107). Maximum allowed is 50.",
+      "line": 139,
+      "endLine": 245,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
@@ -2095,9 +2140,18 @@
     {
       "filePath": "components\\SearchFilters.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'SearchFilters' has too many lines (164). Maximum allowed is 50.",
-      "line": 23,
-      "endLine": 186,
+      "message": "Function 'MainSearchSection' has too many lines (53). Maximum allowed is 50.",
+      "line": 12,
+      "endLine": 64,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "components\\SearchFilters.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'SearchFilters' has too many lines (83). Maximum allowed is 50.",
+      "line": 176,
+      "endLine": 258,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
