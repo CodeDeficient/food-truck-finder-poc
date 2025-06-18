@@ -202,6 +202,118 @@ function SocialMediaSection({ socialMedia }: {
   );
 }
 
+// Helper functions extracted from TruckCard to reduce function length
+
+// Get popular menu items for display
+function getPopularItems(truck: FoodTruck) {
+  if (!truck.menu || truck.menu.length === 0) return [];
+  return truck.menu[0]?.items?.slice(0, 3) ?? [];
+}
+
+// Determine price range fallback from menu items
+function getPriceRange(truck: FoodTruck) {
+  // Flatten all prices from all menu items
+  const prices = (truck.menu ?? [])
+    .flatMap((cat) => cat.items)
+    .map((item) => (typeof item.price === 'number' ? item.price : undefined))
+    .filter((p): p is number => p !== undefined && !Number.isNaN(p));
+  if (prices.length === 0) return;
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  if (max < 10) return '$';
+  if (min >= 10 && max <= 20) return '$$';
+  if (min > 20) return '$$$';
+  if (min < 10 && max > 20) return '$-$$$';
+  if (min < 10 && max <= 20) return '$-$$';
+  if (min >= 10 && max > 20) return '$$-$$$';
+  return '$';
+}
+
+// Get today's operating hours
+function getTodayHours(truck: FoodTruck) {
+  if (!truck.operating_hours) return;
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const todayKey = days[new Date().getDay()];
+  return truck.operating_hours[todayKey];
+}
+
+// Card header component extracted from TruckCard
+function TruckCardHeader({
+  truck,
+  isOpen,
+  popularItems,
+  priceRange
+}: {
+  truck: FoodTruck;
+  isOpen: boolean;
+  popularItems: Array<{ name: string; price?: number }>;
+  priceRange: string | undefined;
+}) {
+  return (
+    <CardHeader>
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
+          {(truck.current_location?.address !== undefined) && (
+            <CardDescription className="flex items-center mt-1 dark:text-gray-400">
+              <MapPin className="h-4 w-4 mr-1" />
+              {truck.current_location.address}
+            </CardDescription>
+          )}
+        </div>
+        <div className="flex flex-col items-end space-y-1">
+          <Badge variant={isOpen ? 'default' : 'secondary'}>{isOpen ? 'Open' : 'Closed'}</Badge>
+          {/* Show price range fallback if no explicit prices */}
+          {popularItems.every((item) => !item.price) && priceRange && (
+            <Badge variant="outline" className="mt-1">
+              {priceRange}
+            </Badge>
+          )}
+        </div>
+      </div>
+    </CardHeader>
+  );
+}
+
+// Operating hours section extracted from TruckCard
+function OperatingHoursSection({ todayHours }: { todayHours: any }) {
+  if (!todayHours) return null;
+
+  return (
+    <div>
+      <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Today's Hours</h4>
+      <div className="flex items-center gap-2">
+        <Clock className="h-3 w-3 text-gray-500" />
+        <span className="text-sm dark:text-gray-300">
+          {formatHours(todayHours)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// Card footer with action buttons extracted from TruckCard
+function TruckCardFooter({ truck }: { truck: FoodTruck }) {
+  return (
+    <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex gap-2">
+        {/* @ts-expect-error TS(2322): Type '{ children: Element; asChild: true; classNam... Remove this comment to see the full error message */}
+        <Button asChild className="flex-1" variant="outline">
+          <Link href={`/trucks/${truck.id}`}>
+            <Eye className="h-4 w-4 mr-2" />
+            View Details
+          </Link>
+        </Button>
+        {truck.verification_status === 'verified' && (
+          <Button className="flex-1" variant="default" disabled>
+            Book Me
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function TruckCard({
   truck,
   isOpen,
@@ -209,41 +321,9 @@ export function TruckCard({
   formatPrice,
   hideHeader = false,
 }: TruckCardProps) {
-  const getPopularItems = () => {
-    if (!truck.menu || truck.menu.length === 0) return [];
-    return truck.menu[0]?.items?.slice(0, 3) ?? [];
-  };
-
-  // Helper to determine price range fallback
-  const getPriceRange = () => {
-    // Flatten all prices from all menu items
-    const prices = (truck.menu ?? [])
-      .flatMap((cat) => cat.items)
-      .map((item) => (typeof item.price === 'number' ? item.price : undefined))
-      .filter((p): p is number => p !== undefined && !Number.isNaN(p));
-    if (prices.length === 0) return;
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
-    if (max < 10) return '$';
-    if (min >= 10 && max <= 20) return '$$';
-    if (min > 20) return '$$$';
-    if (min < 10 && max > 20) return '$-$$$';
-    if (min < 10 && max <= 20) return '$-$$';
-    if (min >= 10 && max > 20) return '$$-$$$';
-    return '$';
-  };
-
-  // Helper to get today's operating hours
-  const getTodayHours = () => {
-    if (!truck.operating_hours) return;
-    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const todayKey = days[new Date().getDay()];
-    return truck.operating_hours[todayKey];
-  };
-
-  const popularItems = getPopularItems();
-  const priceRange = getPriceRange();
-  const todayHours = getTodayHours();
+  const popularItems = getPopularItems(truck);
+  const priceRange = getPriceRange(truck);
+  const todayHours = getTodayHours(truck);
 
   return (
     <Card
@@ -251,28 +331,12 @@ export function TruckCard({
       onClick={onSelectTruck}
     >
       {!hideHeader && (
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-              {(truck.current_location?.address !== undefined) && (
-                <CardDescription className="flex items-center mt-1 dark:text-gray-400">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {truck.current_location.address}
-                </CardDescription>
-              )}
-            </div>
-            <div className="flex flex-col items-end space-y-1">
-              <Badge variant={isOpen ? 'default' : 'secondary'}>{isOpen ? 'Open' : 'Closed'}</Badge>
-              {/* Show price range fallback if no explicit prices */}
-              {popularItems.every((item) => !item.price) && priceRange && (
-                <Badge variant="outline" className="mt-1">
-                  {priceRange}
-                </Badge>
-              )}
-            </div>
-          </div>
-        </CardHeader>
+        <TruckCardHeader
+          truck={truck}
+          isOpen={isOpen}
+          popularItems={popularItems}
+          priceRange={priceRange}
+        />
       )}
       <CardContent className={hideHeader ? 'pt-0' : ''}>
         {truck.description && (
@@ -282,25 +346,12 @@ export function TruckCard({
           {/* Ratings & Hours Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <RatingSection averageRating={truck.average_rating} reviewCount={truck.review_count} />
-
-            {/* Operating Hours */}
-            {todayHours && (
-              <div>
-                <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Today's Hours</h4>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-3 w-3 text-gray-500" />
-                  <span className="text-sm dark:text-gray-300">
-                    {formatHours(todayHours)}
-                  </span>
-                </div>
-              </div>
-            )}
+            <OperatingHoursSection todayHours={todayHours} />
           </div>
 
           {/* Menu & Contact Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <MenuSection popularItems={popularItems} formatPrice={formatPrice} />
-
             <ContactSection contactInfo={truck.contact_info} verificationStatus={truck.verification_status} />
           </div>
 
@@ -314,22 +365,7 @@ export function TruckCard({
           </div>
         )}
       </CardContent>
-      <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex gap-2">
-          {/* @ts-expect-error TS(2322): Type '{ children: Element; asChild: true; classNam... Remove this comment to see the full error message */}
-          <Button asChild className="flex-1" variant="outline">
-            <Link href={`/trucks/${truck.id}`}>
-              <Eye className="h-4 w-4 mr-2" />
-              View Details
-            </Link>
-          </Button>
-          {truck.verification_status === 'verified' && (
-            <Button className="flex-1" variant="default" disabled>
-              Book Me
-            </Button>
-          )}
-        </div>
-      </div>
+      <TruckCardFooter truck={truck} />
     </Card>
   );
 }
