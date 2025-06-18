@@ -52,6 +52,140 @@ async function verifyAdminAccess(request: Request): Promise<boolean> {
   }
 }
 
+// Helper function to calculate cron schedule times
+function createCronTimeHelpers() {
+  const now = new Date();
+
+  const getNextCronRun = (hour: number) => {
+    const next = new Date(now);
+    next.setHours(hour, 0, 0, 0);
+    if (next <= now) {
+      next.setDate(next.getDate() + 1);
+    }
+    return next.toISOString();
+  };
+
+  const getLastCronRun = (hour: number) => {
+    const last = new Date(now);
+    last.setHours(hour, 0, 0, 0);
+    if (last > now) {
+      last.setDate(last.getDate() - 1);
+    }
+    return last.toISOString();
+  };
+
+  return { getNextCronRun, getLastCronRun };
+}
+
+// Helper function to fetch and process job data
+async function fetchJobData(): Promise<{ recentJobs: JobData[]; todayTrucks: TrucksResponse }> {
+  let recentJobs: JobData[] = [];
+  let todayTrucks: TrucksResponse = { trucks: [], total: 0 };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const recentJobsRaw = await ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
+    recentJobs = Array.isArray(recentJobsRaw) ? recentJobsRaw as JobData[] : [];
+  } catch (error: unknown) {
+    console.warn('Failed to fetch recent jobs:', error);
+  }
+
+  try {
+    const todayTrucksRaw = await FoodTruckService.getAllTrucks(1000, 0);
+    todayTrucks = todayTrucksRaw as TrucksResponse;
+  } catch (error: unknown) {
+    console.warn('Failed to fetch trucks:', error);
+  }
+
+  return { recentJobs, todayTrucks };
+}
+
+// Helper function to filter jobs by type
+function filterJobsByType(recentJobs: JobData[]) {
+  const autoScrapeJobs = recentJobs.filter((job: JobData) => {
+    return job.job_type === 'auto_scrape' || (job.target_url?.includes('auto') ?? false);
+  });
+
+  const qualityCheckJobs = recentJobs.filter((job: JobData) => {
+    return job.job_type === 'quality_check' || (job.target_url?.includes('quality') ?? false);
+  });
+
+  return { autoScrapeJobs, qualityCheckJobs };
+}
+
+// Helper function to count new trucks today
+function countNewTrucksToday(todayTrucks: TrucksResponse): number {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return todayTrucks.trucks.filter((truck: TruckData) => {
+    const createdAt = new Date(truck.created_at);
+    return createdAt >= today;
+  }).length;
+}
+
+// Helper function to create job result object
+function createJobResult(jobs: JobData[], todayTrucks: TrucksResponse, newTrucksToday: number, isQualityCheck = false) {
+  const firstJob = jobs[0];
+  const hasJobs = jobs.length > 0;
+  const isCompleted = hasJobs && firstJob?.status === 'completed';
+  const isFailed = hasJobs && firstJob?.status === 'failed';
+
+  let message: string;
+  if (isCompleted) {
+    message = isQualityCheck ? 'Quality check completed successfully' : 'Successfully processed food trucks';
+  } else if (isFailed) {
+    message = isQualityCheck ? 'Quality check failed' : 'Scraping job failed';
+  } else {
+    message = isQualityCheck ? 'No recent quality checks' : 'No recent scraping jobs';
+  }
+
+  return {
+    success: hasJobs ? firstJob?.status === 'completed' : true,
+    message,
+    trucksProcessed: todayTrucks.total,
+    newTrucksFound: isQualityCheck ? 0 : newTrucksToday,
+    errors: jobs.filter((job: JobData) => job.status === 'failed').length,
+  };
+}
+
+// Helper function to create cron jobs array
+function createCronJobs(params: {
+  autoScrapeJobs: JobData[];
+  qualityCheckJobs: JobData[];
+  todayTrucks: TrucksResponse;
+  newTrucksToday: number;
+  getLastCronRun: (hour: number) => string;
+  getNextCronRun: (hour: number) => string;
+}) {
+  const { autoScrapeJobs, qualityCheckJobs, todayTrucks, newTrucksToday, getLastCronRun, getNextCronRun } = params;
+
+  return [
+    {
+      id: 'auto-scrape',
+      name: 'Auto Food Truck Scraping',
+      schedule: '0 6 * * *', // Daily at 6 AM
+      lastRun: getLastCronRun(6),
+      nextRun: getNextCronRun(6),
+      status: Boolean(autoScrapeJobs.some((job: JobData) => {
+        return job.status === 'running';
+      })) ? 'running' as const : 'idle' as const,
+      lastResult: createJobResult(autoScrapeJobs, todayTrucks, newTrucksToday, false),
+    },
+    {
+      id: 'quality-check',
+      name: 'Daily Data Quality Check',
+      schedule: '0 8 * * *', // Daily at 8 AM
+      lastRun: getLastCronRun(8),
+      nextRun: getNextCronRun(8),
+      status: Boolean(qualityCheckJobs.some((job: JobData) => {
+        return job.status === 'running';
+      })) ? 'running' as const : 'idle' as const,
+      lastResult: createJobResult(qualityCheckJobs, todayTrucks, newTrucksToday, true),
+    },
+  ];
+}
+
 export async function GET(request: Request) {
   // Verify admin access for API endpoint security
   const hasAdminAccess = await verifyAdminAccess(request);
@@ -63,133 +197,27 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Fetch real cron job data from database with proper error handling
-    let recentJobs: JobData[] = [];
-    let todayTrucks: TrucksResponse = { trucks: [], total: 0 };
+    // Fetch job data using helper function
+    const { recentJobs, todayTrucks } = await fetchJobData();
 
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const recentJobsRaw = await ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
-      recentJobs = Array.isArray(recentJobsRaw) ? recentJobsRaw as JobData[] : [];
-    } catch (error: unknown) {
-      console.warn('Failed to fetch recent jobs:', error);
-    }
+    // Get cron time calculation helpers
+    const { getNextCronRun, getLastCronRun } = createCronTimeHelpers();
 
-    try {
-      const todayTrucksRaw = await FoodTruckService.getAllTrucks(1000, 0);
-      todayTrucks = todayTrucksRaw as TrucksResponse;
-    } catch (error: unknown) {
-      console.warn('Failed to fetch trucks:', error);
-    }
+    // Filter jobs by type
+    const { autoScrapeJobs, qualityCheckJobs } = filterJobsByType(recentJobs);
 
-    // Calculate next run times based on cron schedules
-    const now = new Date();
-    const getNextCronRun = (hour: number) => {
-      const next = new Date(now);
-      next.setHours(hour, 0, 0, 0);
-      if (next <= now) {
-        next.setDate(next.getDate() + 1);
-      }
-      return next.toISOString();
-    };
+    // Count new trucks today
+    const newTrucksToday = countNewTrucksToday(todayTrucks);
 
-    const getLastCronRun = (hour: number) => {
-      const last = new Date(now);
-      last.setHours(hour, 0, 0, 0);
-      if (last > now) {
-        last.setDate(last.getDate() - 1);
-      }
-      return last.toISOString();
-    };
-
-    // Filter jobs by type/purpose for cron status
-    const autoScrapeJobs = recentJobs.filter((job: JobData) => {
-      return job.job_type === 'auto_scrape' || (job.target_url?.includes('auto') ?? false);
+    // Create jobs array using helper function
+    const jobs = createCronJobs({
+      autoScrapeJobs,
+      qualityCheckJobs,
+      todayTrucks,
+      newTrucksToday,
+      getLastCronRun,
+      getNextCronRun,
     });
-    const qualityCheckJobs = recentJobs.filter((job: JobData) => {
-      return job.job_type === 'quality_check' || (job.target_url?.includes('quality') ?? false);
-    });
-
-    // Count today's new trucks
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const newTrucksToday = todayTrucks.trucks.filter((truck: TruckData) => {
-      const createdAt = new Date(truck.created_at);
-      return createdAt >= today;
-    }).length;
-
-    const jobs = [
-      {
-        id: 'auto-scrape',
-        name: 'Auto Food Truck Scraping',
-        schedule: '0 6 * * *', // Daily at 6 AM
-        lastRun: getLastCronRun(6),
-        nextRun: getNextCronRun(6),
-        status: Boolean(autoScrapeJobs.some((job: JobData) => {
-          return job.status === 'running';
-        })) ? 'running' as const : 'idle' as const,
-        lastResult: (() => {
-          const firstJob = autoScrapeJobs[0];
-          const hasJobs = autoScrapeJobs.length > 0;
-          const isCompleted = hasJobs && firstJob?.status === 'completed';
-          const isFailed = hasJobs && firstJob?.status === 'failed';
-
-          let message: string;
-          if (isCompleted) {
-            message = 'Successfully processed food trucks';
-          } else if (isFailed) {
-            message = 'Scraping job failed';
-          } else {
-            message = 'No recent scraping jobs';
-          }
-
-          return {
-            success: hasJobs ? firstJob?.status === 'completed' : true,
-            message,
-            trucksProcessed: todayTrucks.total,
-            newTrucksFound: newTrucksToday,
-            errors: autoScrapeJobs.filter((job: JobData) => {
-              return job.status === 'failed';
-            }).length,
-          };
-        })(),
-      },
-      {
-        id: 'quality-check',
-        name: 'Daily Data Quality Check',
-        schedule: '0 8 * * *', // Daily at 8 AM
-        lastRun: getLastCronRun(8),
-        nextRun: getNextCronRun(8),
-        status: Boolean(qualityCheckJobs.some((job: JobData) => {
-          return job.status === 'running';
-        })) ? 'running' as const : 'idle' as const,
-        lastResult: (() => {
-          const firstJob = qualityCheckJobs[0];
-          const hasJobs = qualityCheckJobs.length > 0;
-          const isCompleted = hasJobs && firstJob?.status === 'completed';
-          const isFailed = hasJobs && firstJob?.status === 'failed';
-
-          let message: string;
-          if (isCompleted) {
-            message = 'Quality check completed successfully';
-          } else if (isFailed) {
-            message = 'Quality check failed';
-          } else {
-            message = 'No recent quality checks';
-          }
-
-          return {
-            success: hasJobs ? firstJob?.status === 'completed' : true,
-            message,
-            trucksProcessed: todayTrucks.total,
-            newTrucksFound: 0, // Quality checks don't find new trucks
-            errors: qualityCheckJobs.filter((job: JobData) => {
-              return job.status === 'failed';
-            }).length,
-          };
-        })(),
-      },
-    ];
 
     return NextResponse.json({
       success: true,
