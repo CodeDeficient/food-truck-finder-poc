@@ -10,6 +10,132 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, Mail } from 'lucide-react';
 
+// Login header component
+function LoginHeader() {
+  return (
+    <CardHeader className="text-center">
+      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+        <Shield className="h-8 w-8 text-primary" />
+      </div>
+      <CardTitle className="text-2xl">Admin Login</CardTitle>
+      <CardDescription>Sign in to access the admin dashboard</CardDescription>
+    </CardHeader>
+  );
+}
+
+// Email login form component
+function EmailLoginForm({
+  email,
+  setEmail,
+  password,
+  setPassword,
+  loading,
+  handleEmailLogin
+}: {
+  readonly email: string;
+  readonly setEmail: (email: string) => void;
+  readonly password: string;
+  readonly setPassword: (password: string) => void;
+  readonly loading: boolean;
+  readonly handleEmailLogin: (e: React.FormEvent) => Promise<void>;
+}) {
+  return (
+    <form
+      onSubmit={(e) => {
+        handleEmailLogin(e).catch((error) => {
+          console.warn('Failed to handle email login:', error);
+        });
+      }}
+      className="space-y-4"
+    >
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="zabrien@gmail.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <Button type="submit" disabled={loading} className="w-full" size="lg">
+        {loading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Mail className="mr-2 h-4 w-4" />
+        )}
+        {loading ? 'Signing in...' : 'Sign in with Email'}
+      </Button>
+    </form>
+  );
+}
+
+// Google login button component
+function GoogleLoginButton({
+  loading,
+  handleGoogleLogin
+}: {
+  readonly loading: boolean;
+  readonly handleGoogleLogin: () => Promise<void>;
+}) {
+  return (
+    <Button
+      onClick={() => {
+        handleGoogleLogin().catch((error) => {
+          console.warn('Failed to handle Google login:', error);
+        });
+      }}
+      disabled={loading}
+      variant="outline"
+      className="w-full"
+      size="lg"
+    >
+      {loading ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <Mail className="mr-2 h-4 w-4" />
+      )}
+      Google
+    </Button>
+  );
+}
+
+// Login footer component
+function LoginFooter() {
+  return (
+    <div className="text-center text-sm text-muted-foreground">
+      <p>Admin access only</p>
+      <p>Contact your administrator if you need access</p>
+    </div>
+  );
+}
+
+// Divider component
+function LoginDivider() {
+  return (
+    <div className="relative">
+      <div className="absolute inset-0 flex items-center">
+        <span className="w-full border-t" />
+      </div>
+      <div className="relative flex justify-center text-xs uppercase">
+        <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
@@ -87,14 +213,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
       <Card className="w-full max-w-md">
-        {' '}
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <Shield className="h-8 w-8 text-primary" />
-          </div>
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
-          <CardDescription>Sign in to access the admin dashboard</CardDescription>
-        </CardHeader>
+        <LoginHeader />
         <CardContent className="space-y-4">
           {error !== undefined && error !== '' && (
             <Alert variant="destructive">
@@ -102,79 +221,23 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          {/* Email Login Form */}
-          <form
-            onSubmit={(e) => {
-              handleEmailLogin(e).catch((error) => {
-                console.warn('Failed to handle email login:', error);
-              });
-            }}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="zabrien@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" disabled={loading} className="w-full" size="lg">
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Mail className="mr-2 h-4 w-4" />
-              )}
-              {loading ? 'Signing in...' : 'Sign in with Email'}
-            </Button>
-          </form>
+          <EmailLoginForm
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            loading={loading}
+            handleEmailLogin={handleEmailLogin}
+          />
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
+          <LoginDivider />
 
-          <Button
-            onClick={() => {
-              handleGoogleLogin().catch((error) => {
-                console.warn('Failed to handle Google login:', error);
-              });
-            }}
-            disabled={loading}
-            variant="outline"
-            className="w-full"
-            size="lg"
-          >
-            {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Mail className="mr-2 h-4 w-4" />
-            )}
-            Google
-          </Button>
+          <GoogleLoginButton
+            loading={loading}
+            handleGoogleLogin={handleGoogleLogin}
+          />
 
-          <div className="text-center text-sm text-muted-foreground">
-            <p>Admin access only</p>
-            <p>Contact your administrator if you need access</p>
-          </div>
+          <LoginFooter />
         </CardContent>
       </Card>
     </div>
