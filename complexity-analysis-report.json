@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-06-18T01:04:50.985Z",
+  "timestamp": "2025-06-18T01:08:02.104Z",
   "summary": {
     "totalFiles": 57,
-    "totalViolations": 105,
+    "totalViolations": 104,
     "highPriorityFiles": 12
   },
   "prioritizedFiles": [
@@ -233,36 +233,6 @@
         "excess": 97
       },
       "violationCount": 1
-    },
-    {
-      "filePath": "app\\api\\admin\\data-quality\\route.ts",
-      "violations": [
-        {
-          "filePath": "app\\api\\admin\\data-quality\\route.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async function 'GET' has too many lines (90). Maximum allowed is 50.",
-          "line": 55,
-          "endLine": 144,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "app\\api\\admin\\data-quality\\route.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async function 'POST' has too many lines (107). Maximum allowed is 50.",
-          "line": 147,
-          "endLine": 253,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 194,
-      "maxLinesViolation": {
-        "current": 107,
-        "max": 50,
-        "excess": 57
-      },
-      "violationCount": 2
     },
     {
       "filePath": "components\\ui\\sidebar.tsx",
@@ -689,6 +659,27 @@
         "excess": 48
       },
       "violationCount": 3
+    },
+    {
+      "filePath": "app\\api\\admin\\data-quality\\route.ts",
+      "violations": [
+        {
+          "filePath": "app\\api\\admin\\data-quality\\route.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Async function 'POST' has too many lines (107). Maximum allowed is 50.",
+          "line": 157,
+          "endLine": 263,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 114,
+      "maxLinesViolation": {
+        "current": 107,
+        "max": 50,
+        "excess": 57
+      },
+      "violationCount": 1
     },
     {
       "filePath": "lib\\ScraperEngine.ts",
@@ -1816,18 +1807,9 @@
     {
       "filePath": "app\\api\\admin\\data-quality\\route.ts",
       "ruleId": "max-lines-per-function",
-      "message": "Async function 'GET' has too many lines (90). Maximum allowed is 50.",
-      "line": 55,
-      "endLine": 144,
-      "severity": 2,
-      "nodeType": "FunctionDeclaration"
-    },
-    {
-      "filePath": "app\\api\\admin\\data-quality\\route.ts",
-      "ruleId": "max-lines-per-function",
       "message": "Async function 'POST' has too many lines (107). Maximum allowed is 50.",
-      "line": 147,
-      "endLine": 253,
+      "line": 157,
+      "endLine": 263,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
