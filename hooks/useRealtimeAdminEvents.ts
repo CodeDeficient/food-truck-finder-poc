@@ -198,6 +198,115 @@ function createEventSourceConnection({
   }
 }
 
+// Custom hook for event handling logic
+function useEventHandlers(
+  eventFilter: ((event: AdminEvent) => boolean) | undefined,
+  setLastEventTime: (date: Date) => void,
+  setLatestMetrics: (metrics: RealtimeMetrics) => void,
+  setRecentEvents: React.Dispatch<React.SetStateAction<AdminEvent[]>>
+) {
+  return useCallback((event: AdminEvent) => {
+    // Apply filter if provided
+    if (eventFilter && !eventFilter(event)) {
+      return;
+    }
+
+    setLastEventTime(new Date());
+
+    // Handle different event types
+    switch (event.type) {
+      case 'heartbeat': {
+        if (event.data != undefined && typeof event.data === 'object') {
+          setLatestMetrics(event.data as RealtimeMetrics);
+        }
+        break;
+      }
+
+      case 'scraping_update':
+      case 'data_quality_change':
+      case 'system_alert':
+      case 'user_activity': {
+        setRecentEvents(prev => {
+          const newEvents = [event, ...prev].slice(0, 50); // Keep last 50 events
+          return newEvents;
+        });
+        break;
+      }
+    }
+  }, [eventFilter, setLastEventTime, setLatestMetrics, setRecentEvents]);
+}
+
+// Custom hook for connection management functions
+function useConnectionManagement(
+  eventSourceRef: React.MutableRefObject<EventSource | undefined>,
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean>,
+  connectionState: ReturnType<typeof useConnectionState>,
+  handleEvent: (event: AdminEvent) => void,
+  connectionAttempts: number,
+  maxReconnectAttempts: number,
+  reconnectInterval: number,
+  isConnecting: boolean
+) {
+  const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents } = connectionState;
+
+  const connect = useCallback(() => {
+    createEventSourceConnection({
+      eventSourceRef,
+      isConnecting,
+      isManuallyDisconnectedRef,
+      connectionAttempts,
+      maxReconnectAttempts,
+      reconnectInterval,
+      reconnectTimeoutRef,
+      handleEvent,
+      connectionState,
+      connect: () => connect()
+    });
+  }, [handleEvent, connectionAttempts, maxReconnectAttempts, reconnectInterval, isConnecting, connectionState]);
+
+  const disconnect = useCallback(() => {
+    isManuallyDisconnectedRef.current = true;
+
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = undefined;
+    }
+
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = undefined;
+    }
+
+    setIsConnected(false);
+    setIsConnecting(false);
+    setConnectionError(undefined);
+  }, [setIsConnected, setIsConnecting, setConnectionError]);
+
+  const clearEvents = useCallback(() => {
+    setRecentEvents([]);
+  }, [setRecentEvents]);
+
+  return { connect, disconnect, clearEvents };
+}
+
+// Custom hook for auto-connect effect
+function useAutoConnect(
+  autoConnect: boolean,
+  connect: () => void,
+  disconnect: () => void
+) {
+  useEffect(() => {
+    if (autoConnect) {
+      connect();
+    }
+
+    return () => {
+      disconnect();
+    };
+  }, [autoConnect, connect, disconnect]);
+}
+
 export function useRealtimeAdminEvents(
   options: UseRealtimeAdminEventsOptions = {}
 ): UseRealtimeAdminEventsReturn {
@@ -226,84 +335,23 @@ export function useRealtimeAdminEvents(
   const isManuallyDisconnectedRef = useRef(false);
 
   // Event handlers
-  const handleEvent = useCallback((event: AdminEvent) => {
-    // Apply filter if provided
-    if (eventFilter && !eventFilter(event)) {
-      return;
-    }
-
-    setLastEventTime(new Date());
-
-    // Handle different event types
-    switch (event.type) {
-      case 'heartbeat': {
-        if (event.data != undefined && typeof event.data === 'object') {
-          setLatestMetrics(event.data as RealtimeMetrics);
-        }
-        break;
-      }
-
-      case 'scraping_update':
-      case 'data_quality_change':
-      case 'system_alert':
-      case 'user_activity': {
-        setRecentEvents(prev => {
-          const newEvents = [event, ...prev].slice(0, 50); // Keep last 50 events
-          return newEvents;
-        });
-        break;
-      }
-    }
-  }, [eventFilter]);
+  const handleEvent = useEventHandlers(eventFilter, setLastEventTime, setLatestMetrics, setRecentEvents);
 
   // Connection management
-  const connect = useCallback(() => {
-    createEventSourceConnection({
-      eventSourceRef,
-      isConnecting,
-      isManuallyDisconnectedRef,
-      connectionAttempts,
-      maxReconnectAttempts,
-      reconnectInterval,
-      reconnectTimeoutRef,
-      handleEvent,
-      connectionState,
-      connect: () => connect()
-    });
-  }, [handleEvent, connectionAttempts, maxReconnectAttempts, reconnectInterval, isConnecting, connectionState]);
-
-  const disconnect = useCallback(() => {
-    isManuallyDisconnectedRef.current = true;
-    
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = undefined;
-    }
-
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = undefined;
-    }
-
-    setIsConnected(false);
-    setIsConnecting(false);
-    setConnectionError(undefined);
-  }, []);
-
-  const clearEvents = useCallback(() => {
-    setRecentEvents([]);
-  }, []);
+  const { connect, disconnect, clearEvents } = useConnectionManagement(
+    eventSourceRef,
+    reconnectTimeoutRef,
+    isManuallyDisconnectedRef,
+    connectionState,
+    handleEvent,
+    connectionAttempts,
+    maxReconnectAttempts,
+    reconnectInterval,
+    isConnecting
+  );
 
   // Auto-connect on mount
-  useEffect(() => {
-    if (autoConnect) {
-      connect();
-    }
-
-    return () => {
-      disconnect();
-    };
-  }, [autoConnect, connect, disconnect]);
+  useAutoConnect(autoConnect, connect, disconnect);
 
   // Cleanup on unmount
   useEffect(() => {
