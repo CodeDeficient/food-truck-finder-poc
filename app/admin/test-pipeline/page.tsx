@@ -299,6 +299,55 @@ function TestResultsDisplay({
   );
 }
 
+// Helper function extracted from TestPipelinePage to handle form submission
+async function handleTestPipelineSubmit(
+  event: FormEvent<HTMLFormElement>,
+  useRawText: boolean,
+  url: string,
+  rawText: string,
+  isDryRun: boolean,
+  setIsLoading: (loading: boolean) => void,
+  setResults: (results: TestPipelineResults | undefined) => void,
+  setError: (error: string | undefined) => void
+) {
+  event.preventDefault();
+  setIsLoading(true);
+  setResults(undefined);
+  setError(undefined);
+
+  const payload = {
+    url: useRawText ? undefined : url,
+    rawText: useRawText ? rawText : undefined,
+    isDryRun,
+  };
+
+  try {
+    const response = await fetch('/api/test-pipeline-run', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = (await response.json()) as TestPipelineResults;
+
+    if (!response.ok) {
+      throw new Error(data.error ?? 'Test run failed');
+    }
+    setResults(data);
+  } catch (error_) {
+    const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';
+    setError(errorMessage);
+    setResults({ error: errorMessage });
+  } finally {
+    setIsLoading(false);
+  }
+}
+
+// Helper function to render stage results
+function renderStageResultHelper(stageName: string, result?: StageResult) {
+  return <StageResultCard stageName={stageName} result={result} />;
+}
+
 export default function TestPipelinePage() {
   const [url, setUrl] = useState<string>('');
   const [rawText, setRawText] = useState<string>('');
@@ -309,40 +358,17 @@ export default function TestPipelinePage() {
   const [error, setError] = useState<string | undefined>();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setResults(undefined);
-    setError(undefined);
-
-    const payload = {
-      url: useRawText ? undefined : url,
-      rawText: useRawText ? rawText : undefined,
+    void handleTestPipelineSubmit(
+      event,
+      useRawText,
+      url,
+      rawText,
       isDryRun,
-    };
-    try {
-      const response = await fetch('/api/test-pipeline-run', {
-        method: 'post',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = (await response.json()) as TestPipelineResults;
-
-      if (!response.ok) {
-        throw new Error(data.error ?? 'Test run failed');
-      }
-      setResults(data);
-    } catch (error_) {
-      const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';
-      setError(errorMessage);
-      setResults({ error: errorMessage });
-    } finally {
-      setIsLoading(false);
-    }
+      setIsLoading,
+      setResults,
+      setError
+    );
   };
-  const renderStageResult = (stageName: string, result?: StageResult) => (
-    <StageResultCard stageName={stageName} result={result} />
-  );
 
   return (
     <div className="container mx-auto p-4">
@@ -361,7 +387,7 @@ export default function TestPipelinePage() {
 
       <ErrorDisplay error={error} />
 
-      <TestResultsDisplay results={results} renderStageResult={renderStageResult} />
+      <TestResultsDisplay results={results} renderStageResult={renderStageResultHelper} />
     </div>
   );
 }
