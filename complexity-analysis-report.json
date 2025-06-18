@@ -1,50 +1,11 @@
 {
-  "timestamp": "2025-06-18T01:08:02.104Z",
+  "timestamp": "2025-06-18T01:12:18.263Z",
   "summary": {
     "totalFiles": 57,
-    "totalViolations": 104,
+    "totalViolations": 103,
     "highPriorityFiles": 12
   },
   "prioritizedFiles": [
-    {
-      "filePath": "lib\\pipelineProcessor.ts",
-      "violations": [
-        {
-          "filePath": "lib\\pipelineProcessor.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async function 'processScrapingJob' has too many lines (106). Maximum allowed is 50.",
-          "line": 9,
-          "endLine": 114,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "lib\\pipelineProcessor.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async function 'createOrUpdateFoodTruck' has too many lines (140). Maximum allowed is 50.",
-          "line": 185,
-          "endLine": 324,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "lib\\pipelineProcessor.ts",
-          "ruleId": "sonarjs/cognitive-complexity",
-          "message": "Refactor this function to reduce its Cognitive Complexity from 21 to the 15 allowed.",
-          "line": 185,
-          "endLine": 185,
-          "severity": 2,
-          "nodeType": null
-        }
-      ],
-      "severityScore": 307,
-      "maxLinesViolation": {
-        "current": 140,
-        "max": 50,
-        "excess": 90
-      },
-      "violationCount": 3
-    },
     {
       "filePath": "app\\admin\\food-trucks\\[id]\\page.tsx",
       "violations": [
@@ -521,6 +482,36 @@
         "excess": 74
       },
       "violationCount": 1
+    },
+    {
+      "filePath": "lib\\pipelineProcessor.ts",
+      "violations": [
+        {
+          "filePath": "lib\\pipelineProcessor.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'buildTruckDataSchema' has too many lines (66). Maximum allowed is 50.",
+          "line": 35,
+          "endLine": 100,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "lib\\pipelineProcessor.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Async function 'processScrapingJob' has too many lines (106). Maximum allowed is 50.",
+          "line": 156,
+          "endLine": 261,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 144,
+      "maxLinesViolation": {
+        "current": 106,
+        "max": 50,
+        "excess": 56
+      },
+      "violationCount": 2
     },
     {
       "filePath": "app\\api\\admin\\oauth-status\\route.ts",
@@ -2500,29 +2491,20 @@
     {
       "filePath": "lib\\pipelineProcessor.ts",
       "ruleId": "max-lines-per-function",
-      "message": "Async function 'processScrapingJob' has too many lines (106). Maximum allowed is 50.",
-      "line": 9,
-      "endLine": 114,
+      "message": "Function 'buildTruckDataSchema' has too many lines (66). Maximum allowed is 50.",
+      "line": 35,
+      "endLine": 100,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "lib\\pipelineProcessor.ts",
       "ruleId": "max-lines-per-function",
-      "message": "Async function 'createOrUpdateFoodTruck' has too many lines (140). Maximum allowed is 50.",
-      "line": 185,
-      "endLine": 324,
+      "message": "Async function 'processScrapingJob' has too many lines (106). Maximum allowed is 50.",
+      "line": 156,
+      "endLine": 261,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
-    },
-    {
-      "filePath": "lib\\pipelineProcessor.ts",
-      "ruleId": "sonarjs/cognitive-complexity",
-      "message": "Refactor this function to reduce its Cognitive Complexity from 21 to the 15 allowed.",
-      "line": 185,
-      "endLine": 185,
-      "severity": 2,
-      "nodeType": null
     },
     {
       "filePath": "lib\\security\\auditLogger.ts",
