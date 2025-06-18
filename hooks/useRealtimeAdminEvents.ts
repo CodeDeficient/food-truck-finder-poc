@@ -106,6 +106,71 @@ function useConnectionState() {
   };
 }
 
+// Helper function to setup authentication for event source
+function setupEventSourceAuth(): string {
+  const token = localStorage.getItem('supabase.auth.token') ??
+               sessionStorage.getItem('supabase.auth.token');
+
+  if (token == undefined || token === '') {
+    throw new Error('No authentication token available');
+  }
+
+  return token;
+}
+
+// Helper function to setup event source listeners
+function setupEventSourceListeners(
+  eventSource: EventSource,
+  handleEvent: (event: AdminEvent) => void,
+  connectionState: ReturnType<typeof useConnectionState>,
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean>,
+  connectionAttempts: number,
+  maxReconnectAttempts: number,
+  reconnectInterval: number,
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
+  connect: () => void
+) {
+  const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } = connectionState;
+
+  eventSource.addEventListener('open', () => {
+    console.info('Real-time admin events connected');
+    setIsConnected(true);
+    setIsConnecting(false);
+    setConnectionError(undefined);
+    setConnectionAttempts(0);
+  });
+
+  eventSource.addEventListener('message', (event: MessageEvent) => {
+    const adminEvent = parseEventData(event.data as string, 'message');
+    if (adminEvent) {
+      handleEvent(adminEvent);
+    }
+  });
+
+  eventSource.addEventListener('error', (error) => {
+    console.error('Real-time admin events error:', error);
+    setIsConnected(false);
+    setIsConnecting(false);
+    setConnectionError('Connection error occurred');
+
+    // Attempt reconnection if not manually disconnected
+    if (!isManuallyDisconnectedRef.current && connectionAttempts < maxReconnectAttempts) {
+      setConnectionAttempts(prev => prev + 1);
+
+      reconnectTimeoutRef.current = setTimeout(() => {
+        if (!isManuallyDisconnectedRef.current) {
+          connect();
+        }
+      }, reconnectInterval);
+    } else if (connectionAttempts >= maxReconnectAttempts) {
+      setConnectionError('Max reconnection attempts reached');
+    }
+  });
+
+  // Handle specific event types
+  setupEventListeners(eventSource, handleEvent);
+}
+
 // Event source connection management
 function createEventSourceConnection({
   eventSourceRef,
@@ -141,53 +206,23 @@ function createEventSourceConnection({
   isManuallyDisconnectedRef.current = false;
 
   try {
-    // Get auth token from localStorage or context
-    const token = localStorage.getItem('supabase.auth.token') ??
-                 sessionStorage.getItem('supabase.auth.token');
-
-    if (token == undefined || token === '') {
-      throw new Error('No authentication token available');
-    }
+    // Setup authentication
+    setupEventSourceAuth();
 
     const eventSource = new EventSource('/api/admin/realtime-events');
 
-    eventSource.addEventListener('open', () => {
-      console.info('Real-time admin events connected');
-      setIsConnected(true);
-      setIsConnecting(false);
-      setConnectionError(undefined);
-      setConnectionAttempts(0);
-    });
-
-    eventSource.addEventListener('message', (event: MessageEvent) => {
-      const adminEvent = parseEventData(event.data as string, 'message');
-      if (adminEvent) {
-        handleEvent(adminEvent);
-      }
-    });
-
-    eventSource.addEventListener('error', (error) => {
-      console.error('Real-time admin events error:', error);
-      setIsConnected(false);
-      setIsConnecting(false);
-      setConnectionError('Connection error occurred');
-
-      // Attempt reconnection if not manually disconnected
-      if (!isManuallyDisconnectedRef.current && connectionAttempts < maxReconnectAttempts) {
-        setConnectionAttempts(prev => prev + 1);
-
-        reconnectTimeoutRef.current = setTimeout(() => {
-          if (!isManuallyDisconnectedRef.current) {
-            connect();
-          }
-        }, reconnectInterval);
-      } else if (connectionAttempts >= maxReconnectAttempts) {
-        setConnectionError('Max reconnection attempts reached');
-      }
-    });
-
-    // Handle specific event types
-    setupEventListeners(eventSource, handleEvent);
+    // Setup all event listeners
+    setupEventSourceListeners(
+      eventSource,
+      handleEvent,
+      connectionState,
+      isManuallyDisconnectedRef,
+      connectionAttempts,
+      maxReconnectAttempts,
+      reconnectInterval,
+      reconnectTimeoutRef,
+      connect
+    );
 
     eventSourceRef.current = eventSource;
 
