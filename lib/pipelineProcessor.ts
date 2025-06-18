@@ -4,6 +4,153 @@ import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
 import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from './types';
 import { DuplicatePreventionService } from './data-quality/duplicatePrevention';
 
+// Helper function to validate input and prepare basic data
+async function validateInputAndPrepare(
+  jobId: string,
+  extractedTruckData: ExtractedFoodTruckDetails,
+  sourceUrl: string
+): Promise<{ isValid: boolean; name: string }> {
+  // Basic input validation
+  if (!validateTruckData(jobId, extractedTruckData)) {
+    await ScrapingJobService.updateJobStatus(jobId, 'failed', {
+      errors: ['Invalid extracted data received from AI processing step.'],
+    });
+    return { isValid: false, name: '' };
+  }
+
+  if (!sourceUrl) {
+    // Log a warning but proceed if sourceUrl is missing, as it might not be critical for all data.
+    console.warn(`Job ${jobId}: Missing sourceUrl for food truck data, proceeding without it.`);
+  }
+
+  const name = extractedTruckData.name ?? 'Unknown Food Truck'; // Ensure name has a fallback
+  console.info(
+    `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl ?? 'Unknown Source'}`,
+  );
+
+  return { isValid: true, name };
+}
+
+// Helper function to build truck data schema
+function buildTruckDataSchema(
+  extractedTruckData: ExtractedFoodTruckDetails,
+  sourceUrl: string,
+  name: string
+): FoodTruckSchema {
+  const currentLocation = buildLocationData(extractedTruckData);
+
+  return {
+    name: name,
+    description: extractedTruckData.description ?? undefined, // Keep as undefined if null/missing
+    current_location: currentLocation,
+    scheduled_locations: Array.isArray(extractedTruckData.scheduled_locations)
+      ? extractedTruckData.scheduled_locations.map((loc) => ({
+          lat: typeof loc.lat === 'number' ? loc.lat : 0,
+          lng: typeof loc.lng === 'number' ? loc.lng : 0,
+          address: loc.address ?? undefined,
+          start_time: loc.start_time ?? undefined,
+          end_time: loc.end_time ?? undefined,
+          timestamp: new Date().toISOString(),
+        }))
+      : undefined,
+    operating_hours: extractedTruckData.operating_hours == undefined
+      ? {
+          monday: { closed: true },
+          tuesday: { closed: true },
+          wednesday: { closed: true },
+          thursday: { closed: true },
+          friday: { closed: true },
+          saturday: { closed: true },
+          sunday: { closed: true },
+        }
+      : {
+          monday: extractedTruckData.operating_hours.monday ?? { closed: true },
+          tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
+          wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
+          thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
+          friday: extractedTruckData.operating_hours.friday ?? { closed: true },
+          saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
+          sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
+        },
+    menu: processMenuData(extractedTruckData),
+    contact_info: {
+      phone: extractedTruckData.contact_info?.phone ?? undefined,
+      email: extractedTruckData.contact_info?.email ?? undefined,
+      website: extractedTruckData.contact_info?.website ?? undefined,
+    },
+    social_media: {
+      instagram: extractedTruckData.social_media?.instagram ?? undefined,
+      facebook: extractedTruckData.social_media?.facebook ?? undefined,
+      twitter: extractedTruckData.social_media?.twitter ?? undefined,
+      tiktok: extractedTruckData.social_media?.tiktok ?? undefined,
+      yelp: extractedTruckData.social_media?.yelp ?? undefined,
+    },
+    cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
+      ? extractedTruckData.cuisine_type
+      : [],
+    price_range: extractedTruckData.price_range ?? undefined, // Ensure it's one of the allowed enum values or undefined
+    specialties: Array.isArray(extractedTruckData.specialties)
+      ? extractedTruckData.specialties
+      : [],
+    data_quality_score: 0.5, // Default score - confidence_score not available in type
+    verification_status: 'pending',
+    source_urls: sourceUrl != undefined && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
+    last_scraped_at: new Date().toISOString(),
+  };
+}
+
+// Helper function to handle duplicate checking and resolution
+async function handleDuplicateCheck(
+  jobId: string,
+  truckData: FoodTruckSchema,
+  name: string
+): Promise<any> {
+  // Check for duplicates before creating
+  console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
+  const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
+
+  let truck;
+  if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
+    const { bestMatch } = duplicateCheck;
+    console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
+
+    if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
+      // Merge with existing truck
+      truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
+      console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
+    } else if (bestMatch.recommendation === 'update') {
+      // Update existing truck with new data
+      truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
+      console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
+    } else {
+      // Create new truck but log the potential duplicate
+      truck = await FoodTruckService.createTruck(truckData);
+      console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason})`);
+    }
+  } else {
+    // No duplicates found, create new truck
+    truck = await FoodTruckService.createTruck(truckData);
+  }
+
+  return truck;
+}
+
+// Helper function to finalize job status
+async function finalizeJobStatus(
+  jobId: string,
+  truck: any,
+  sourceUrl: string
+): Promise<void> {
+  console.info(
+    `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl ?? 'Unknown Source'}`,
+  );
+
+  // Link truck_id back to the scraping job
+  await ScrapingJobService.updateJobStatus(jobId, 'completed', {
+    completed_at: new Date().toISOString(),
+  });
+}
+
 // Background job processing function
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export async function processScrapingJob(jobId: string) {
@@ -188,120 +335,20 @@ export async function createOrUpdateFoodTruck(
   sourceUrl: string,
 ) {
   try {
-    // Basic input validation
-    if (!validateTruckData(jobId, extractedTruckData)) {
-      await ScrapingJobService.updateJobStatus(jobId, 'failed', {
-        errors: ['Invalid extracted data received from AI processing step.'],
-      });
+    // Validate input and prepare basic data
+    const validation = await validateInputAndPrepare(jobId, extractedTruckData, sourceUrl);
+    if (!validation.isValid) {
       return;
     }
 
-    if (!sourceUrl) {
-      // Log a warning but proceed if sourceUrl is missing, as it might not be critical for all data.
-      console.warn(`Job ${jobId}: Missing sourceUrl for food truck data, proceeding without it.`);
-    }
+    // Build truck data schema
+    const truckData = buildTruckDataSchema(extractedTruckData, sourceUrl, validation.name);
 
-    const name = extractedTruckData.name ?? 'Unknown Food Truck'; // Ensure name has a fallback
-    console.info(
-      `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl ?? 'Unknown Source'}`,
-    );
+    // Handle duplicate checking and resolution
+    const truck = await handleDuplicateCheck(jobId, truckData, validation.name);
 
-    // Map Gemini output to FoodTruck schema with stricter type checking and defaults
-    const currentLocation = buildLocationData(extractedTruckData);
-
-    const truckData: FoodTruckSchema = {
-      name: name,
-      description: extractedTruckData.description ?? undefined, // Keep as undefined if null/missing
-      current_location: currentLocation,
-      scheduled_locations: Array.isArray(extractedTruckData.scheduled_locations)
-        ? extractedTruckData.scheduled_locations.map((loc) => ({
-            lat: typeof loc.lat === 'number' ? loc.lat : 0,
-            lng: typeof loc.lng === 'number' ? loc.lng : 0,
-            address: loc.address ?? undefined,
-            start_time: loc.start_time ?? undefined,
-            end_time: loc.end_time ?? undefined,
-            timestamp: new Date().toISOString(),
-          }))
-        : undefined,
-      operating_hours: extractedTruckData.operating_hours == undefined
-        ? {
-            monday: { closed: true },
-            tuesday: { closed: true },
-            wednesday: { closed: true },
-            thursday: { closed: true },
-            friday: { closed: true },
-            saturday: { closed: true },
-            sunday: { closed: true },
-          }
-        : {
-            monday: extractedTruckData.operating_hours.monday ?? { closed: true },
-            tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
-            wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
-            thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
-            friday: extractedTruckData.operating_hours.friday ?? { closed: true },
-            saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
-            sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
-          },
-      menu: processMenuData(extractedTruckData),
-      contact_info: {
-        phone: extractedTruckData.contact_info?.phone ?? undefined,
-        email: extractedTruckData.contact_info?.email ?? undefined,
-        website: extractedTruckData.contact_info?.website ?? undefined,
-      },
-      social_media: {
-        instagram: extractedTruckData.social_media?.instagram ?? undefined,
-        facebook: extractedTruckData.social_media?.facebook ?? undefined,
-        twitter: extractedTruckData.social_media?.twitter ?? undefined,
-        tiktok: extractedTruckData.social_media?.tiktok ?? undefined,
-        yelp: extractedTruckData.social_media?.yelp ?? undefined,
-      },
-      cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
-        ? extractedTruckData.cuisine_type
-        : [],
-      price_range: extractedTruckData.price_range ?? undefined, // Ensure it's one of the allowed enum values or undefined
-      specialties: Array.isArray(extractedTruckData.specialties)
-        ? extractedTruckData.specialties
-        : [],
-      data_quality_score: 0.5, // Default score - confidence_score not available in type
-      verification_status: 'pending',
-      source_urls: sourceUrl != undefined && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
-      last_scraped_at: new Date().toISOString(),
-    };
-
-    // Check for duplicates before creating
-    console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
-    const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
-
-    let truck;
-    if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
-      const { bestMatch } = duplicateCheck;
-      console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
-
-      if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
-        // Merge with existing truck
-        truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
-        console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
-      } else if (bestMatch.recommendation === 'update') {
-        // Update existing truck with new data
-        truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
-        console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
-      } else {
-        // Create new truck but log the potential duplicate
-        truck = await FoodTruckService.createTruck(truckData);
-        console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason})`);
-      }
-    } else {
-      // No duplicates found, create new truck
-      truck = await FoodTruckService.createTruck(truckData);
-    }
-    console.info(
-      `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl ?? 'Unknown Source'}`,
-    );
-
-    // Link truck_id back to the scraping job
-    await ScrapingJobService.updateJobStatus(jobId, 'completed', {
-      completed_at: new Date().toISOString(),
-    });
+    // Finalize job status
+    await finalizeJobStatus(jobId, truck, sourceUrl);
   } catch (error: unknown) {
     console.error(
       `Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl ?? 'Unknown Source'}:`,
