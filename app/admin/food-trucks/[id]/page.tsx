@@ -22,6 +22,91 @@ import {
   type QualityCategory
 } from '@/lib/utils/data-quality-formatters';
 
+// Contact field component
+function ContactField({
+  icon: Icon,
+  label,
+  value,
+  href,
+  unavailableText
+}: {
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly value?: string;
+  readonly href?: string;
+  readonly unavailableText: string;
+}) {
+  if (value == undefined || value === '') {
+    return (
+      <div className="flex items-center gap-3 text-gray-400">
+        <Icon className="h-4 w-4" />
+        <span className="text-sm">{unavailableText}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <Icon className="h-4 w-4 text-gray-500" />
+      <div>
+        <label className="text-sm font-medium text-gray-500">{label}</label>
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline"
+          >
+            {href.startsWith('http') ? value : value}
+          </a>
+        ) : (
+          <p className="text-gray-900">{value}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Social media links component
+function SocialMediaLinks({ socialMedia }: {
+  readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
+}) {
+  if (!socialMedia || Object.keys(socialMedia).length === 0) {
+    return null;
+  }
+
+  const socialPlatforms = [
+    { key: 'instagram' as const, name: 'Instagram', baseUrl: 'https://instagram.com/', color: 'pink' },
+    { key: 'facebook' as const, name: 'Facebook', baseUrl: 'https://facebook.com/', color: 'blue' },
+    { key: 'twitter' as const, name: 'Twitter', baseUrl: 'https://twitter.com/', color: 'sky' },
+  ];
+
+  return (
+    <div>
+      <label className="text-sm font-medium text-gray-500">Social Media</label>
+      <div className="flex flex-wrap gap-2 mt-2">
+        {socialPlatforms.map(({ key, name, baseUrl, color }) => {
+          const handle = socialMedia[key];
+          if (handle == undefined || handle === '') return null;
+
+          return (
+            <a
+              key={key}
+              href={`${baseUrl}${handle}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex items-center gap-1 px-2 py-1 bg-${color}-100 text-${color}-800 rounded-md text-sm hover:bg-${color}-200`}
+            >
+              <Globe className="h-3 w-3" />
+              {name}
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface FoodTruckDetailPageProps {
   readonly params: {
     readonly id: string;
@@ -163,115 +248,7 @@ function SpecialtiesSection({ specialties }: { readonly specialties?: string[] }
   );
 }
 
-// Contact Information card component
-function ContactInfoCard({ truck }: { readonly truck: any }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Phone className="h-5 w-5" />
-          Contact Information
-        </CardTitle>
-        <CardDescription>Phone, email, website, and social media</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {(truck.contact_info?.phone !== undefined) && truck.contact_info.phone !== '' ? (
-          <div className="flex items-center gap-3">
-            <Phone className="h-4 w-4 text-gray-500" />
-            <div>
-              <label className="text-sm font-medium text-gray-500">Phone</label>
-              <p className="text-gray-900">{truck.contact_info.phone}</p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 text-gray-400">
-            <Phone className="h-4 w-4" />
-            <span className="text-sm">No phone number available</span>
-          </div>
-        )}
 
-        {(truck.contact_info?.email !== undefined) && truck.contact_info.email !== '' ? (
-          <div className="flex items-center gap-3">
-            <Mail className="h-4 w-4 text-gray-500" />
-            <div>
-              <label className="text-sm font-medium text-gray-500">Email</label>
-              <p className="text-gray-900">{truck.contact_info.email}</p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 text-gray-400">
-            <Mail className="h-4 w-4" />
-            <span className="text-sm">No email address available</span>
-          </div>
-        )}
-
-        {(truck.contact_info?.website !== undefined) && truck.contact_info.website !== '' ? (
-          <div className="flex items-center gap-3">
-            <Globe className="h-4 w-4 text-gray-500" />
-            <div>
-              <label className="text-sm font-medium text-gray-500">Website</label>
-              <a
-                href={truck.contact_info.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline"
-              >
-                {truck.contact_info.website}
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 text-gray-400">
-            <Globe className="h-4 w-4" />
-            <span className="text-sm">No website available</span>
-          </div>
-        )}
-
-        {/* Social Media */}
-        {(truck.social_media !== undefined) && Object.keys(truck.social_media).length > 0 && (
-          <div>
-            <label className="text-sm font-medium text-gray-500">Social Media</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {(truck.social_media.instagram !== undefined) && truck.social_media.instagram !== '' && (
-                <a
-                  href={`https://instagram.com/${truck.social_media.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-sm hover:bg-pink-200"
-                >
-                  <Globe className="h-3 w-3" />
-                  Instagram
-                </a>
-              )}
-              {(truck.social_media.facebook !== undefined) && truck.social_media.facebook !== '' && (
-                <a
-                  href={`https://facebook.com/${truck.social_media.facebook}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm hover:bg-blue-200"
-                >
-                  <Globe className="h-3 w-3" />
-                  Facebook
-                </a>
-              )}
-              {(truck.social_media.twitter !== undefined) && truck.social_media.twitter !== '' && (
-                <a
-                  href={`https://twitter.com/${truck.social_media.twitter}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-sm hover:bg-sky-200"
-                >
-                  <Globe className="h-3 w-3" />
-                  Twitter
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
 
 // Contact Information card component
 function ContactInfoCard({ truck }: { readonly truck: { contact_info?: { phone?: string; email?: string; website?: string }; social_media?: { instagram?: string; facebook?: string; twitter?: string } } }) {
@@ -285,99 +262,31 @@ function ContactInfoCard({ truck }: { readonly truck: { contact_info?: { phone?:
         <CardDescription>Phone, email, website, and social media</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {(truck.contact_info?.phone !== undefined) && truck.contact_info.phone !== '' ? (
-          <div className="flex items-center gap-3">
-            <Phone className="h-4 w-4 text-gray-500" />
-            <div>
-              <label className="text-sm font-medium text-gray-500">Phone</label>
-              <p className="text-gray-900">{truck.contact_info.phone}</p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 text-gray-400">
-            <Phone className="h-4 w-4" />
-            <span className="text-sm">No phone number available</span>
-          </div>
-        )}
+        <ContactField
+          icon={Phone}
+          label="Phone"
+          value={truck.contact_info?.phone}
+          href={truck.contact_info?.phone ? `tel:${truck.contact_info.phone}` : undefined}
+          unavailableText="No phone number available"
+        />
 
-        {(truck.contact_info?.email !== undefined) && truck.contact_info.email !== '' ? (
-          <div className="flex items-center gap-3">
-            <Mail className="h-4 w-4 text-gray-500" />
-            <div>
-              <label className="text-sm font-medium text-gray-500">Email</label>
-              <p className="text-gray-900">{truck.contact_info.email}</p>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 text-gray-400">
-            <Mail className="h-4 w-4" />
-            <span className="text-sm">No email address available</span>
-          </div>
-        )}
+        <ContactField
+          icon={Mail}
+          label="Email"
+          value={truck.contact_info?.email}
+          href={truck.contact_info?.email ? `mailto:${truck.contact_info.email}` : undefined}
+          unavailableText="No email address available"
+        />
 
-        {(truck.contact_info?.website !== undefined) && truck.contact_info.website !== '' ? (
-          <div className="flex items-center gap-3">
-            <Globe className="h-4 w-4 text-gray-500" />
-            <div>
-              <label className="text-sm font-medium text-gray-500">Website</label>
-              <a
-                href={truck.contact_info.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline"
-              >
-                {truck.contact_info.website}
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3 text-gray-400">
-            <Globe className="h-4 w-4" />
-            <span className="text-sm">No website available</span>
-          </div>
-        )}
+        <ContactField
+          icon={Globe}
+          label="Website"
+          value={truck.contact_info?.website}
+          href={truck.contact_info?.website}
+          unavailableText="No website available"
+        />
 
-        {/* Social Media */}
-        {(truck.social_media !== undefined) && Object.keys(truck.social_media).length > 0 && (
-          <div>
-            <label className="text-sm font-medium text-gray-500">Social Media</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {(truck.social_media.instagram !== undefined) && truck.social_media.instagram !== '' && (
-                <a
-                  href={`https://instagram.com/${truck.social_media.instagram}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-sm hover:bg-pink-200"
-                >
-                  <Globe className="h-3 w-3" />
-                  Instagram
-                </a>
-              )}
-              {(truck.social_media.facebook !== undefined) && truck.social_media.facebook !== '' && (
-                <a
-                  href={`https://facebook.com/${truck.social_media.facebook}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm hover:bg-blue-200"
-                >
-                  <Globe className="h-3 w-3" />
-                  Facebook
-                </a>
-              )}
-              {(truck.social_media.twitter !== undefined) && truck.social_media.twitter !== '' && (
-                <a
-                  href={`https://twitter.com/${truck.social_media.twitter}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-sm hover:bg-sky-200"
-                >
-                  <Globe className="h-3 w-3" />
-                  Twitter
-                </a>
-              )}
-            </div>
-          </div>
-        )}
+        <SocialMediaLinks socialMedia={truck.social_media} />
       </CardContent>
     </Card>
   );
