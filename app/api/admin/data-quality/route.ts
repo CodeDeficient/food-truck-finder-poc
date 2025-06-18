@@ -1,6 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataQualityService, FoodTruckService, supabase } from '@/lib/supabase';
 
+// Helper function to handle stats action
+async function handleStatsAction() {
+  const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const thresholdsRaw = DataQualityService.getQualityThresholds();
+
+  // Type-safe casting with proper error handling
+  const qualityStats = qualityStatsRaw as Record<string, unknown>;
+  const thresholds = thresholdsRaw as QualityThresholds;
+
+  return NextResponse.json({
+    success: true,
+    data: {
+      ...qualityStats,
+      thresholds,
+      timestamp: new Date().toISOString()
+    }
+  });
+}
+
+// Helper function to handle assess action
+async function handleAssessAction(truckId: string) {
+  // Get truck and assess quality
+  const truckRaw = await FoodTruckService.getTruckById(truckId);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const assessmentRaw = DataQualityService.calculateQualityScore(truckRaw);
+
+  // Type-safe casting
+  const truck = truckRaw as TruckData;
+  const assessment = assessmentRaw as QualityAssessment;
+
+  return NextResponse.json({
+    success: true,
+    data: {
+      truckId,
+      truckName: truck.name,
+      currentScore: truck.data_quality_score,
+      newAssessment: assessment,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      category: DataQualityService.categorizeQualityScore(assessment.score) as QualityCategory,
+      timestamp: new Date().toISOString()
+    }
+  });
+}
+
+// Helper function to handle default action
+async function handleDefaultAction() {
+  const qualityStats = await FoodTruckService.getDataQualityStats();
+  return NextResponse.json({
+    success: true,
+    data: qualityStats
+  });
+}
+
 // Type definitions for API responses
 interface QualityThresholds {
   excellent: number;
@@ -69,24 +123,7 @@ export async function GET(request: NextRequest) {
 
     switch (action) {
       case 'stats': {
-        // Get comprehensive quality statistics
-         
-        const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const thresholdsRaw = DataQualityService.getQualityThresholds();
-
-        // Type-safe casting with proper error handling
-        const qualityStats = qualityStatsRaw as Record<string, unknown>;
-        const thresholds = thresholdsRaw as QualityThresholds;
-        
-        return NextResponse.json({
-          success: true,
-          data: {
-            ...qualityStats,
-            thresholds,
-            timestamp: new Date().toISOString()
-          }
-        });
+        return await handleStatsAction();
       }
 
       case 'assess': {
@@ -96,38 +133,11 @@ export async function GET(request: NextRequest) {
             { status: 400 }
           );
         }
-
-        // Get truck and assess quality
-         
-        const truckRaw = await FoodTruckService.getTruckById(truckId);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const assessmentRaw = DataQualityService.calculateQualityScore(truckRaw);
-
-        // Type-safe casting
-        const truck = truckRaw as TruckData;
-        const assessment = assessmentRaw as QualityAssessment;
-        
-        return NextResponse.json({
-          success: true,
-          data: {
-            truckId,
-            truckName: truck.name,
-            currentScore: truck.data_quality_score,
-            newAssessment: assessment,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-            category: DataQualityService.categorizeQualityScore(assessment.score) as QualityCategory,
-            timestamp: new Date().toISOString()
-          }
-        });
+        return await handleAssessAction(truckId);
       }
 
       default: {
-        // Default: return overview statistics
-        const qualityStats = await FoodTruckService.getDataQualityStats();
-        return NextResponse.json({
-          success: true,
-          data: qualityStats
-        });
+        return await handleDefaultAction();
       }
     }
   } catch (error: unknown) {
