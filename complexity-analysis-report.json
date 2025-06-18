@@ -1,200 +1,11 @@
 {
-  "timestamp": "2025-06-17T17:53:18.110Z",
+  "timestamp": "2025-06-18T00:25:38.916Z",
   "summary": {
     "totalFiles": 57,
-    "totalViolations": 104,
+    "totalViolations": 102,
     "highPriorityFiles": 12
   },
   "prioritizedFiles": [
-    {
-      "filePath": "components\\admin\\DataCleanupDashboard.tsx",
-      "violations": [
-        {
-          "filePath": "components\\admin\\DataCleanupDashboard.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'DataCleanupDashboard' has too many lines (314). Maximum allowed is 50.",
-          "line": 43,
-          "endLine": 356,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 528,
-      "maxLinesViolation": {
-        "current": 314,
-        "max": 50,
-        "excess": 264
-      },
-      "violationCount": 1
-    },
-    {
-      "filePath": "lib\\gemini.ts",
-      "violations": [
-        {
-          "filePath": "lib\\gemini.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async method 'processMenuData' has too many lines (89). Maximum allowed is 50.",
-          "line": 72,
-          "endLine": 160,
-          "severity": 2,
-          "nodeType": "MethodDefinition"
-        },
-        {
-          "filePath": "lib\\gemini.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async method 'extractLocationFromText' has too many lines (81). Maximum allowed is 50.",
-          "line": 162,
-          "endLine": 242,
-          "severity": 2,
-          "nodeType": "MethodDefinition"
-        },
-        {
-          "filePath": "lib\\gemini.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async method 'standardizeOperatingHours' has too many lines (79). Maximum allowed is 50.",
-          "line": 244,
-          "endLine": 322,
-          "severity": 2,
-          "nodeType": "MethodDefinition"
-        },
-        {
-          "filePath": "lib\\gemini.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async method 'analyzeSentiment' has too many lines (80). Maximum allowed is 50.",
-          "line": 324,
-          "endLine": 403,
-          "severity": 2,
-          "nodeType": "MethodDefinition"
-        },
-        {
-          "filePath": "lib\\gemini.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async method 'enhanceFoodTruckData' has too many lines (84). Maximum allowed is 50.",
-          "line": 405,
-          "endLine": 488,
-          "severity": 2,
-          "nodeType": "MethodDefinition"
-        },
-        {
-          "filePath": "lib\\gemini.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Async method 'extractFoodTruckDetailsFromMarkdown' has too many lines (141). Maximum allowed is 50.",
-          "line": 534,
-          "endLine": 674,
-          "severity": 2,
-          "nodeType": "MethodDefinition"
-        }
-      ],
-      "severityScore": 508,
-      "maxLinesViolation": {
-        "current": 141,
-        "max": 50,
-        "excess": 91
-      },
-      "violationCount": 6
-    },
-    {
-      "filePath": "app\\trucks\\[id]\\page.tsx",
-      "violations": [
-        {
-          "filePath": "app\\trucks\\[id]\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Async function 'FoodTruckDetailPage' has too many lines (303). Maximum allowed is 50.",
-          "line": 24,
-          "endLine": 326,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 506,
-      "maxLinesViolation": {
-        "current": 303,
-        "max": 50,
-        "excess": 253
-      },
-      "violationCount": 1
-    },
-    {
-      "filePath": "app\\admin\\test-pipeline\\page.tsx",
-      "violations": [
-        {
-          "filePath": "app\\admin\\test-pipeline\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'TestPipelinePage' has too many lines (254). Maximum allowed is 50.",
-          "line": 58,
-          "endLine": 311,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "app\\admin\\test-pipeline\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Arrow function has too many lines (85). Maximum allowed is 50.",
-          "line": 99,
-          "endLine": 183,
-          "severity": 2,
-          "nodeType": "ArrowFunctionExpression"
-        }
-      ],
-      "severityScore": 478,
-      "maxLinesViolation": {
-        "current": 85,
-        "max": 50,
-        "excess": 35
-      },
-      "violationCount": 2
-    },
-    {
-      "filePath": "hooks\\useRealtimeAdminEvents.ts",
-      "violations": [
-        {
-          "filePath": "hooks\\useRealtimeAdminEvents.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'useRealtimeAdminEvents' has too many lines (227). Maximum allowed is 50.",
-          "line": 64,
-          "endLine": 290,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "hooks\\useRealtimeAdminEvents.ts",
-          "ruleId": "max-lines-per-function",
-          "message": "Arrow function has too many lines (105). Maximum allowed is 50.",
-          "line": 120,
-          "endLine": 224,
-          "severity": 2,
-          "nodeType": "ArrowFunctionExpression"
-        }
-      ],
-      "severityScore": 464,
-      "maxLinesViolation": {
-        "current": 105,
-        "max": 50,
-        "excess": 55
-      },
-      "violationCount": 2
-    },
-    {
-      "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
-      "violations": [
-        {
-          "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'RealtimeStatusIndicator' has too many lines (279). Maximum allowed is 50.",
-          "line": 62,
-          "endLine": 340,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 458,
-      "maxLinesViolation": {
-        "current": 279,
-        "max": 50,
-        "excess": 229
-      },
-      "violationCount": 1
-    },
     {
       "filePath": "lib\\pipelineProcessor.ts",
       "violations": [
@@ -231,45 +42,6 @@
         "current": 140,
         "max": 50,
         "excess": 90
-      },
-      "violationCount": 3
-    },
-    {
-      "filePath": "app\\page.tsx",
-      "violations": [
-        {
-          "filePath": "app\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'AppHeader' has too many lines (81). Maximum allowed is 50.",
-          "line": 84,
-          "endLine": 164,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "app\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'MainContent' has too many lines (90). Maximum allowed is 50.",
-          "line": 167,
-          "endLine": 256,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        },
-        {
-          "filePath": "app\\page.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'FoodTruckFinder' has too many lines (124). Maximum allowed is 50.",
-          "line": 258,
-          "endLine": 381,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 290,
-      "maxLinesViolation": {
-        "current": 124,
-        "max": 50,
-        "excess": 74
       },
       "violationCount": 3
     },
@@ -320,6 +92,36 @@
         "excess": 4
       },
       "violationCount": 4
+    },
+    {
+      "filePath": "hooks\\useRealtimeAdminEvents.ts",
+      "violations": [
+        {
+          "filePath": "hooks\\useRealtimeAdminEvents.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'createEventSourceConnection' has too many lines (90). Maximum allowed is 50.",
+          "line": 110,
+          "endLine": 199,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "hooks\\useRealtimeAdminEvents.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'useRealtimeAdminEvents' has too many lines (139). Maximum allowed is 50.",
+          "line": 201,
+          "endLine": 339,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 258,
+      "maxLinesViolation": {
+        "current": 139,
+        "max": 50,
+        "excess": 89
+      },
+      "violationCount": 2
     },
     {
       "filePath": "app\\admin\\monitoring\\page.tsx",
@@ -436,6 +238,45 @@
       "violationCount": 1
     },
     {
+      "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
+      "violations": [
+        {
+          "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'useSystemMetrics' has too many lines (53). Maximum allowed is 50.",
+          "line": 63,
+          "endLine": 115,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'SystemAlerts' has too many lines (57). Maximum allowed is 50.",
+          "line": 180,
+          "endLine": 236,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'RealtimeStatusIndicator' has too many lines (140). Maximum allowed is 50.",
+          "line": 260,
+          "endLine": 399,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 200,
+      "maxLinesViolation": {
+        "current": 140,
+        "max": 50,
+        "excess": 90
+      },
+      "violationCount": 3
+    },
+    {
       "filePath": "app\\admin\\pipeline\\page.tsx",
       "violations": [
         {
@@ -547,27 +388,6 @@
       "violationCount": 2
     },
     {
-      "filePath": "components\\TruckCard.tsx",
-      "violations": [
-        {
-          "filePath": "components\\TruckCard.tsx",
-          "ruleId": "max-lines-per-function",
-          "message": "Function 'TruckCard' has too many lines (131). Maximum allowed is 50.",
-          "line": 205,
-          "endLine": 335,
-          "severity": 2,
-          "nodeType": "FunctionDeclaration"
-        }
-      ],
-      "severityScore": 162,
-      "maxLinesViolation": {
-        "current": 131,
-        "max": 50,
-        "excess": 81
-      },
-      "violationCount": 1
-    },
-    {
       "filePath": "lib\\data-quality\\batchCleanup.ts",
       "violations": [
         {
@@ -677,6 +497,54 @@
         "excess": 4
       },
       "violationCount": 11
+    },
+    {
+      "filePath": "app\\admin\\test-pipeline\\page.tsx",
+      "violations": [
+        {
+          "filePath": "app\\admin\\test-pipeline\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'StageResultCard' has too many lines (86). Maximum allowed is 50.",
+          "line": 59,
+          "endLine": 144,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "app\\admin\\test-pipeline\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'TestPipelineForm' has too many lines (84). Maximum allowed is 50.",
+          "line": 147,
+          "endLine": 230,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "app\\admin\\test-pipeline\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'TestResultsDisplay' has too many lines (52). Maximum allowed is 50.",
+          "line": 249,
+          "endLine": 300,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "app\\admin\\test-pipeline\\page.tsx",
+          "ruleId": "max-params",
+          "message": "Async function 'handleTestPipelineSubmit' has too many parameters (8). Maximum allowed is 4.",
+          "line": 303,
+          "endLine": 303,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 152,
+      "maxLinesViolation": {
+        "current": 52,
+        "max": 50,
+        "excess": 2
+      },
+      "violationCount": 4
     },
     {
       "filePath": "app\\api\\admin\\realtime-events\\route.ts",
@@ -1162,6 +1030,27 @@
       "violationCount": 1
     },
     {
+      "filePath": "components\\admin\\cleanup\\CleanupResults.tsx",
+      "violations": [
+        {
+          "filePath": "components\\admin\\cleanup\\CleanupResults.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'CleanupResults' has too many lines (86). Maximum allowed is 50.",
+          "line": 16,
+          "endLine": 101,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 72,
+      "maxLinesViolation": {
+        "current": 86,
+        "max": 50,
+        "excess": 36
+      },
+      "violationCount": 1
+    },
+    {
       "filePath": "app\\admin\\page.tsx",
       "violations": [
         {
@@ -1304,6 +1193,48 @@
         "excess": 12
       },
       "violationCount": 2
+    },
+    {
+      "filePath": "hooks\\useDataCleanup.ts",
+      "violations": [
+        {
+          "filePath": "hooks\\useDataCleanup.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'useDataCleanup' has too many lines (72). Maximum allowed is 50.",
+          "line": 26,
+          "endLine": 97,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 44,
+      "maxLinesViolation": {
+        "current": 72,
+        "max": 50,
+        "excess": 22
+      },
+      "violationCount": 1
+    },
+    {
+      "filePath": "lib\\gemini\\promptTemplates.ts",
+      "violations": [
+        {
+          "filePath": "lib\\gemini\\promptTemplates.ts",
+          "ruleId": "max-lines-per-function",
+          "message": "Method 'foodTruckExtraction' has too many lines (69). Maximum allowed is 50.",
+          "line": 151,
+          "endLine": 219,
+          "severity": 2,
+          "nodeType": "ArrowFunctionExpression"
+        }
+      ],
+      "severityScore": 38,
+      "maxLinesViolation": {
+        "current": 69,
+        "max": 50,
+        "excess": 19
+      },
+      "violationCount": 1
     },
     {
       "filePath": "lib\\security\\rateLimiter.ts",
@@ -1455,6 +1386,36 @@
       "violationCount": 2
     },
     {
+      "filePath": "app\\page.tsx",
+      "violations": [
+        {
+          "filePath": "app\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'TruckListSection' has too many lines (58). Maximum allowed is 50.",
+          "line": 259,
+          "endLine": 316,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        },
+        {
+          "filePath": "app\\page.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'FoodTruckFinder' has too many lines (52). Maximum allowed is 50.",
+          "line": 451,
+          "endLine": 502,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 20,
+      "maxLinesViolation": {
+        "current": 52,
+        "max": 50,
+        "excess": 2
+      },
+      "violationCount": 2
+    },
+    {
       "filePath": "components\\ui\\dataQualityCharts.tsx",
       "violations": [
         {
@@ -1577,6 +1538,27 @@
         "current": 57,
         "max": 50,
         "excess": 7
+      },
+      "violationCount": 1
+    },
+    {
+      "filePath": "components\\TruckCard.tsx",
+      "violations": [
+        {
+          "filePath": "components\\TruckCard.tsx",
+          "ruleId": "max-lines-per-function",
+          "message": "Function 'TruckCard' has too many lines (55). Maximum allowed is 50.",
+          "line": 317,
+          "endLine": 371,
+          "severity": 2,
+          "nodeType": "FunctionDeclaration"
+        }
+      ],
+      "severityScore": 10,
+      "maxLinesViolation": {
+        "current": 55,
+        "max": 50,
+        "excess": 5
       },
       "violationCount": 1
     },
@@ -1708,20 +1690,38 @@
     {
       "filePath": "app\\admin\\test-pipeline\\page.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'TestPipelinePage' has too many lines (254). Maximum allowed is 50.",
-      "line": 58,
-      "endLine": 311,
+      "message": "Function 'StageResultCard' has too many lines (86). Maximum allowed is 50.",
+      "line": 59,
+      "endLine": 144,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "app\\admin\\test-pipeline\\page.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Arrow function has too many lines (85). Maximum allowed is 50.",
-      "line": 99,
-      "endLine": 183,
+      "message": "Function 'TestPipelineForm' has too many lines (84). Maximum allowed is 50.",
+      "line": 147,
+      "endLine": 230,
       "severity": 2,
-      "nodeType": "ArrowFunctionExpression"
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "app\\admin\\test-pipeline\\page.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'TestResultsDisplay' has too many lines (52). Maximum allowed is 50.",
+      "line": 249,
+      "endLine": 300,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "app\\admin\\test-pipeline\\page.tsx",
+      "ruleId": "max-params",
+      "message": "Async function 'handleTestPipelineSubmit' has too many parameters (8). Maximum allowed is 4.",
+      "line": 303,
+      "endLine": 303,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "app\\admin\\users\\page.tsx",
@@ -2068,36 +2068,18 @@
     {
       "filePath": "app\\page.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'AppHeader' has too many lines (81). Maximum allowed is 50.",
-      "line": 84,
-      "endLine": 164,
+      "message": "Function 'TruckListSection' has too many lines (58). Maximum allowed is 50.",
+      "line": 259,
+      "endLine": 316,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "app\\page.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'MainContent' has too many lines (90). Maximum allowed is 50.",
-      "line": 167,
-      "endLine": 256,
-      "severity": 2,
-      "nodeType": "FunctionDeclaration"
-    },
-    {
-      "filePath": "app\\page.tsx",
-      "ruleId": "max-lines-per-function",
-      "message": "Function 'FoodTruckFinder' has too many lines (124). Maximum allowed is 50.",
-      "line": 258,
-      "endLine": 381,
-      "severity": 2,
-      "nodeType": "FunctionDeclaration"
-    },
-    {
-      "filePath": "app\\trucks\\[id]\\page.tsx",
-      "ruleId": "max-lines-per-function",
-      "message": "Async function 'FoodTruckDetailPage' has too many lines (303). Maximum allowed is 50.",
-      "line": 24,
-      "endLine": 326,
+      "message": "Function 'FoodTruckFinder' has too many lines (52). Maximum allowed is 50.",
+      "line": 451,
+      "endLine": 502,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
@@ -2122,27 +2104,45 @@
     {
       "filePath": "components\\TruckCard.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'TruckCard' has too many lines (131). Maximum allowed is 50.",
-      "line": 205,
-      "endLine": 335,
-      "severity": 2,
-      "nodeType": "FunctionDeclaration"
-    },
-    {
-      "filePath": "components\\admin\\DataCleanupDashboard.tsx",
-      "ruleId": "max-lines-per-function",
-      "message": "Function 'DataCleanupDashboard' has too many lines (314). Maximum allowed is 50.",
-      "line": 43,
-      "endLine": 356,
+      "message": "Function 'TruckCard' has too many lines (55). Maximum allowed is 50.",
+      "line": 317,
+      "endLine": 371,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'RealtimeStatusIndicator' has too many lines (279). Maximum allowed is 50.",
-      "line": 62,
-      "endLine": 340,
+      "message": "Function 'useSystemMetrics' has too many lines (53). Maximum allowed is 50.",
+      "line": 63,
+      "endLine": 115,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'SystemAlerts' has too many lines (57). Maximum allowed is 50.",
+      "line": 180,
+      "endLine": 236,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "components\\admin\\RealtimeStatusIndicator.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'RealtimeStatusIndicator' has too many lines (140). Maximum allowed is 50.",
+      "line": 260,
+      "endLine": 399,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "components\\admin\\cleanup\\CleanupResults.tsx",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'CleanupResults' has too many lines (86). Maximum allowed is 50.",
+      "line": 16,
+      "endLine": 101,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
@@ -2228,22 +2228,31 @@
       "nodeType": "ArrowFunctionExpression"
     },
     {
-      "filePath": "hooks\\useRealtimeAdminEvents.ts",
+      "filePath": "hooks\\useDataCleanup.ts",
       "ruleId": "max-lines-per-function",
-      "message": "Function 'useRealtimeAdminEvents' has too many lines (227). Maximum allowed is 50.",
-      "line": 64,
-      "endLine": 290,
+      "message": "Function 'useDataCleanup' has too many lines (72). Maximum allowed is 50.",
+      "line": 26,
+      "endLine": 97,
       "severity": 2,
       "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "hooks\\useRealtimeAdminEvents.ts",
       "ruleId": "max-lines-per-function",
-      "message": "Arrow function has too many lines (105). Maximum allowed is 50.",
-      "line": 120,
-      "endLine": 224,
+      "message": "Function 'createEventSourceConnection' has too many lines (90). Maximum allowed is 50.",
+      "line": 110,
+      "endLine": 199,
       "severity": 2,
-      "nodeType": "ArrowFunctionExpression"
+      "nodeType": "FunctionDeclaration"
+    },
+    {
+      "filePath": "hooks\\useRealtimeAdminEvents.ts",
+      "ruleId": "max-lines-per-function",
+      "message": "Function 'useRealtimeAdminEvents' has too many lines (139). Maximum allowed is 50.",
+      "line": 201,
+      "endLine": 339,
+      "severity": 2,
+      "nodeType": "FunctionDeclaration"
     },
     {
       "filePath": "lib\\ScraperEngine.ts",
@@ -2417,58 +2426,13 @@
       "nodeType": "MethodDefinition"
     },
     {
-      "filePath": "lib\\gemini.ts",
+      "filePath": "lib\\gemini\\promptTemplates.ts",
       "ruleId": "max-lines-per-function",
-      "message": "Async method 'processMenuData' has too many lines (89). Maximum allowed is 50.",
-      "line": 72,
-      "endLine": 160,
+      "message": "Method 'foodTruckExtraction' has too many lines (69). Maximum allowed is 50.",
+      "line": 151,
+      "endLine": 219,
       "severity": 2,
-      "nodeType": "MethodDefinition"
-    },
-    {
-      "filePath": "lib\\gemini.ts",
-      "ruleId": "max-lines-per-function",
-      "message": "Async method 'extractLocationFromText' has too many lines (81). Maximum allowed is 50.",
-      "line": 162,
-      "endLine": 242,
-      "severity": 2,
-      "nodeType": "MethodDefinition"
-    },
-    {
-      "filePath": "lib\\gemini.ts",
-      "ruleId": "max-lines-per-function",
-      "message": "Async method 'standardizeOperatingHours' has too many lines (79). Maximum allowed is 50.",
-      "line": 244,
-      "endLine": 322,
-      "severity": 2,
-      "nodeType": "MethodDefinition"
-    },
-    {
-      "filePath": "lib\\gemini.ts",
-      "ruleId": "max-lines-per-function",
-      "message": "Async method 'analyzeSentiment' has too many lines (80). Maximum allowed is 50.",
-      "line": 324,
-      "endLine": 403,
-      "severity": 2,
-      "nodeType": "MethodDefinition"
-    },
-    {
-      "filePath": "lib\\gemini.ts",
-      "ruleId": "max-lines-per-function",
-      "message": "Async method 'enhanceFoodTruckData' has too many lines (84). Maximum allowed is 50.",
-      "line": 405,
-      "endLine": 488,
-      "severity": 2,
-      "nodeType": "MethodDefinition"
-    },
-    {
-      "filePath": "lib\\gemini.ts",
-      "ruleId": "max-lines-per-function",
-      "message": "Async method 'extractFoodTruckDetailsFromMarkdown' has too many lines (141). Maximum allowed is 50.",
-      "line": 534,
-      "endLine": 674,
-      "severity": 2,
-      "nodeType": "MethodDefinition"
+      "nodeType": "ArrowFunctionExpression"
     },
     {
       "filePath": "lib\\monitoring\\apiMonitor.ts",
