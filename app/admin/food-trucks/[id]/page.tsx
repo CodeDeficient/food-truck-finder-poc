@@ -22,6 +22,75 @@ import {
   type QualityCategory
 } from '@/lib/utils/data-quality-formatters';
 
+// Quality score metric component
+function QualityScoreMetric({
+  value,
+  label,
+  className = "text-gray-900"
+}: {
+  readonly value: React.ReactNode;
+  readonly label: string;
+  readonly className?: string;
+}) {
+  return (
+    <div className="text-center">
+      <div className={`text-lg font-semibold ${className}`}>
+        {value}
+      </div>
+      <div className="text-sm text-gray-500">{label}</div>
+    </div>
+  );
+}
+
+// Quality metrics grid component
+function QualityMetricsGrid({
+  truck,
+  qualityCategory
+}: {
+  readonly truck: {
+    data_quality_score?: number;
+    verification_status?: string;
+    created_at?: string;
+    updated_at?: string
+  };
+  readonly qualityCategory: QualityCategory;
+}) {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <QualityScoreMetric
+        value={
+          <div className="text-2xl font-bold text-blue-600">
+            {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+            {formatQualityScore(truck.data_quality_score)}
+          </div>
+        }
+        label="Overall Score"
+        className=""
+      />
+
+      <QualityScoreMetric
+        value={
+          <Badge variant={truck.verification_status === 'verified' ? 'default' : 'outline'}>
+            {truck.verification_status}
+          </Badge>
+        }
+        label="Status"
+        className=""
+      />
+
+      <QualityScoreMetric
+        value={truck.created_at ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
+        label="Created"
+      />
+
+      <QualityScoreMetric
+        value={truck.updated_at ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
+        label="Updated"
+      />
+    </div>
+  );
+}
+
 // Contact field component
 function ContactField({
   icon: Icon,
@@ -447,35 +516,7 @@ function DataQualityCard({ truck, qualityCategory }: {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">
-              {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
-              {formatQualityScore(truck.data_quality_score)}
-            </div>
-            <div className="text-sm text-gray-500">Overall Score</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold">
-              <Badge variant={truck.verification_status === 'verified' ? 'default' : 'outline'}>
-                {truck.verification_status}
-              </Badge>
-            </div>
-            <div className="text-sm text-gray-500">Status</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-gray-900">
-              {truck.created_at ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
-            </div>
-            <div className="text-sm text-gray-500">Created</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-gray-900">
-              {truck.updated_at ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
-            </div>
-            <div className="text-sm text-gray-500">Updated</div>
-          </div>
-        </div>
+        <QualityMetricsGrid truck={truck} qualityCategory={qualityCategory} />
       </CardContent>
     </Card>
   );
