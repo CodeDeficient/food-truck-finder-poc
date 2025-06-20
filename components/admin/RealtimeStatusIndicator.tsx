@@ -86,12 +86,27 @@ interface SystemAlert {
 }
 
 // Custom hook for system metrics calculation
-function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics }: {
+interface SystemMetricsProps {
   isConnected: boolean;
   isConnecting: boolean;
   connectionError?: string;
-  latestMetrics?: any;
-}): StatusMetric[] {
+  latestMetrics?: RealtimeMetrics | null; // More specific type
+}
+
+// Define RealtimeMetrics if it's not imported from elsewhere
+interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    pending: number;
+    failed: number;
+  };
+  systemHealth: { status: string };
+  dataQuality: { averageScore: number };
+}
+
+
+function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics }: Readonly<SystemMetricsProps>): StatusMetric[] {
   return [
     {
       label: 'Connection Status',
@@ -109,8 +124,8 @@ function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMe
     },
     {
       label: 'Active Jobs',
-      value: latestMetrics?.scrapingJobs.active ?? 0,
-      status: (latestMetrics?.scrapingJobs.active ?? 0) > 0 ? 'healthy' : 'warning',
+      value: latestMetrics?.scrapingJobs?.active ?? 0,
+      status: (latestMetrics?.scrapingJobs?.active ?? 0) > 0 ? 'healthy' : 'warning',
       icon: <Activity className="h-4 w-4" />
     },
     {
@@ -141,12 +156,12 @@ function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMe
 }
 
 // System Metrics Grid Component
-function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIcon }: {
+function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIcon }: Readonly<{
   metrics: StatusMetric[];
   getStatusColor: (status: string) => string;
   getStatusIcon: (status: string) => JSX.Element;
-  getTrendIcon: (trend?: string) => JSX.Element | undefined;
-}) {
+  getTrendIcon: (trend?: string) => React.JSX.Element | undefined; // Corrected JSX Element
+}>) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {metrics.map((metric, index) => (
@@ -174,8 +189,17 @@ function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIco
 }
 
 // Scraping Jobs Status Component
-function ScrapingJobsStatus({ scrapingJobs }: { scrapingJobs?: any }) {
-  if (!scrapingJobs) return;
+interface ScrapingJobsStatusProps {
+  scrapingJobs?: { // Defined a more specific type
+    active: number;
+    completed: number;
+    pending: number;
+    failed: number;
+  };
+}
+
+function ScrapingJobsStatus({ scrapingJobs }: Readonly<ScrapingJobsStatusProps>) {
+  if (!scrapingJobs) return; // Changed to falsy check
 
   return (
     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -202,49 +226,60 @@ function ScrapingJobsStatus({ scrapingJobs }: { scrapingJobs?: any }) {
   );
 }
 
+// Single Alert Item Component
+function AlertItem({ alert, onAcknowledgeAlert }: Readonly<{ alert: SystemAlert; onAcknowledgeAlert: (alertId: string) => void; }>) {
+  const alertTypeClasses = () => {
+    if (alert.type === 'critical') return 'border-l-red-500 bg-red-50';
+    if (alert.type === 'error') return 'border-l-red-400 bg-red-50';
+    return 'border-l-yellow-400 bg-yellow-50';
+  };
+
+  return (
+    <div
+      key={alert.id}
+      className={`p-2 rounded border-l-4 ${alertTypeClasses()} ${alert.acknowledged === true ? 'opacity-50' : ''}`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Badge variant={alert.type === 'critical' ? 'destructive' : 'secondary'}>
+            {alert.type}
+          </Badge>
+          <span className="text-sm">{alert.message}</span>
+        </div>
+        {alert.acknowledged !== true && ( // Ensure strict boolean check
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onAcknowledgeAlert(alert.id)}
+          >
+            Acknowledge
+          </Button>
+        )}
+      </div>
+      <p className="text-xs text-gray-500 mt-1">
+        {new Date(alert.timestamp).toLocaleString()}
+      </p>
+    </div>
+  );
+}
+
 // System Alerts Component
-function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: {
+function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: Readonly<{
   alerts: SystemAlert[];
   showDetails: boolean;
   onToggleDetails: () => void;
   onAcknowledgeAlert: (alertId: string) => void;
-}) {
-  if (alerts.length === 0) return;
+}>) {
+  if (alerts.length === 0) return; // Changed from return null
+
+  const displayedAlerts = showDetails ? alerts : alerts.slice(0, 3);
 
   return (
     <div className="mt-4">
       <h4 className="text-sm font-medium text-gray-900 mb-2">Recent Alerts</h4>
       <div className="space-y-2">
-        {alerts.slice(0, 3).map((alert) => (
-          <div
-            key={alert.id}
-            className={`p-2 rounded border-l-4 ${(() => {
-              if (alert.type === 'critical') return 'border-l-red-500 bg-red-50';
-              if (alert.type === 'error') return 'border-l-red-400 bg-red-50';
-              return 'border-l-yellow-400 bg-yellow-50';
-            })()} ${alert.acknowledged === true ? 'opacity-50' : ''}`}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Badge variant={alert.type === 'critical' ? 'destructive' : 'secondary'}>
-                  {alert.type}
-                </Badge>
-                <span className="text-sm">{alert.message}</span>
-              </div>
-              {alert.acknowledged !== true && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onAcknowledgeAlert(alert.id)}
-                >
-                  Acknowledge
-                </Button>
-              )}
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              {new Date(alert.timestamp).toLocaleString()}
-            </p>
-          </div>
+        {displayedAlerts.map((alert) => (
+          <AlertItem key={alert.id} alert={alert} onAcknowledgeAlert={onAcknowledgeAlert} />
         ))}
       </div>
       {alerts.length > 3 && (
@@ -254,7 +289,7 @@ function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert
           className="mt-2"
           onClick={onToggleDetails}
         >
-          {showDetails ? 'Hide' : 'Show'} {alerts.length - 3} more alerts
+          {showDetails ? 'Hide' : `Show ${alerts.length - 3} more alert(s)`}
         </Button>
       )}
     </div>
@@ -262,10 +297,10 @@ function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert
 }
 
 // Event Controls Component
-function EventControls({ recentEventsCount, onClearEvents }: {
+function EventControls({ recentEventsCount, onClearEvents }: Readonly<{
   recentEventsCount: number;
   onClearEvents: () => void;
-}) {
+}>) {
   return (
     <div className="mt-4 flex items-center gap-2">
       <Button
@@ -290,13 +325,13 @@ function ConnectionStatusHeader({
   lastEventTime,
   connect,
   disconnect
-}: {
+}: Readonly<{
   isConnected: boolean;
   isConnecting: boolean;
   lastEventTime?: Date;
   connect: () => void;
   disconnect: () => void;
-}) {
+}>) {
   return (
     <CardHeader className="pb-3">
       <div className="flex items-center justify-between">
@@ -352,32 +387,8 @@ export function RealtimeStatusIndicator() {
     maxReconnectAttempts: 10
   });
 
-  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
-  const [showDetails, setShowDetails] = useState(false);
-
-  // Process recent events into alerts
-  useEffect(() => {
-    const newAlerts = recentEvents
-      .filter(event => event.severity != undefined && event.severity != 'info')
-      .map(event => ({
-        id: event.id,
-        type: event.severity as 'warning' | 'error' | 'critical',
-        message: typeof event.data.message === 'string' && event.data.message !== '' ? event.data.message : 'System event occurred',
-        timestamp: event.timestamp,
-        acknowledged: false
-      }))
-      .slice(0, 5); // Keep only latest 5 alerts
-
-    setAlerts(newAlerts);
-  }, [recentEvents]);
-
+  const { alerts, acknowledgeAlert, showDetails, setShowDetails } = useProcessedAlerts(recentEvents);
   const systemMetrics = useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics });
-
-  const acknowledgeAlert = (alertId: string) => {
-    setAlerts(prev => prev.map(alert => 
-      alert.id === alertId ? { ...alert, acknowledged: true } : alert
-    ));
-  };
 
   return (
     <div className="space-y-4">
@@ -389,35 +400,99 @@ export function RealtimeStatusIndicator() {
           connect={connect}
           disconnect={disconnect}
         />
-        <CardContent>
-          {connectionError != undefined && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{connectionError}</p>
-            </div>
-          )}
-
-          <SystemMetricsGrid
-            metrics={systemMetrics}
-            getStatusColor={getStatusColor}
-            getStatusIcon={getStatusIcon}
-            getTrendIcon={getTrendIcon}
-          />
-
-          <ScrapingJobsStatus scrapingJobs={latestMetrics?.scrapingJobs} />
-
-          <SystemAlerts
-            alerts={alerts}
-            showDetails={showDetails}
-            onToggleDetails={() => setShowDetails(!showDetails)}
-            onAcknowledgeAlert={acknowledgeAlert}
-          />
-
-          <EventControls
-            recentEventsCount={recentEvents.length}
-            onClearEvents={clearEvents}
-          />
-        </CardContent>
+        <RealtimeStatusIndicatorContent
+          connectionError={connectionError}
+          systemMetrics={systemMetrics}
+          latestMetrics={latestMetrics}
+          alerts={alerts}
+          showDetails={showDetails}
+          setShowDetails={setShowDetails}
+          acknowledgeAlert={acknowledgeAlert}
+          recentEventsCount={recentEvents.length}
+          clearEvents={clearEvents}
+        />
       </Card>
     </div>
+  );
+}
+
+// Custom hook to manage alert processing and state
+function useProcessedAlerts(recentEvents: SystemAlert[]) {
+  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
+  const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    const newAlerts = recentEvents
+      .filter(event => event.severity != undefined && event.severity != 'info')
+      .map(event => {
+        // Ensure event.data is treated as a record that might contain a message
+        const eventData = event.data as { message?: unknown };
+        const message = (typeof eventData?.message === 'string' && eventData.message !== '')
+          ? eventData.message
+          : 'System event occurred';
+        return {
+          id: event.id,
+          type: event.severity as 'warning' | 'error' | 'critical',
+          message: message,
+          timestamp: event.timestamp,
+          acknowledged: false,
+        };
+      })
+      .slice(0, 5);
+    setAlerts(newAlerts);
+  }, [recentEvents]);
+
+  const acknowledgeAlert = (alertId: string) => {
+    setAlerts(prev => prev.map(alert => 
+      alert.id === alertId ? { ...alert, acknowledged: true } : alert
+    ));
+  };
+
+  return { alerts, acknowledgeAlert, showDetails, setShowDetails };
+}
+
+
+function RealtimeStatusIndicatorContent({
+  connectionError, systemMetrics, latestMetrics, alerts, showDetails, setShowDetails, acknowledgeAlert, recentEventsCount, clearEvents
+}: Readonly<{
+  connectionError?: string | null;
+  systemMetrics: StatusMetric[];
+  latestMetrics: RealtimeMetrics | null;
+  alerts: SystemAlert[];
+  showDetails: boolean;
+  setShowDetails: React.Dispatch<React.SetStateAction<boolean>>;
+  acknowledgeAlert: (alertId: string) => void;
+  recentEventsCount: number;
+  clearEvents: () => void;
+}>) {
+  return (
+    <CardContent>
+      {connectionError != undefined && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-600">{connectionError}</p>
+        </div>
+      )}
+
+      <SystemMetricsGrid
+        metrics={systemMetrics}
+        getStatusColor={getStatusColor}
+        getStatusIcon={getStatusIcon}
+        getTrendIcon={getTrendIcon}
+      />
+
+      <ScrapingJobsStatus scrapingJobs={latestMetrics?.scrapingJobs} />
+
+      <SystemAlerts
+        alerts={alerts}
+        showDetails={showDetails}
+        onToggleDetails={() => setShowDetails(!showDetails)}
+        onAcknowledgeAlert={acknowledgeAlert}
+      />
+
+      <EventControls
+        recentEventsCount={recentEventsCount}
+        onClearEvents={clearEvents}
+      />
+    </CardContent>
   );
 }
