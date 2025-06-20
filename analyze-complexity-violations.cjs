@@ -1,5 +1,5 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
 
 // Get ESLint output
 console.log('Running ESLint analysis...');
@@ -8,7 +8,7 @@ try {
   eslintOutput = execSync('npx eslint . --format json', { 
     encoding: 'utf8',
     stdio: 'pipe',
-    timeout: 120000
+    timeout: 120_000
   });
 } catch (error) {
   // ESLint returns non-zero exit code when errors are found
@@ -18,7 +18,7 @@ try {
 const results = JSON.parse(eslintOutput);
 
 // Complexity-related rules to look for
-const complexityRules = [
+const complexityRules = new Set([
   'max-lines-per-function',
   'max-lines',
   'sonarjs/cognitive-complexity',
@@ -26,15 +26,15 @@ const complexityRules = [
   'max-depth',
   'max-params',
   'sonarjs/no-identical-functions'
-];
+]);
 
 // Extract components with complexity violations
 const complexityViolations = [];
 
-results.forEach(file => {
+for (const file of results) {
   if (file.messages && file.messages.length > 0) {
-    file.messages.forEach(message => {
-      if (complexityRules.includes(message.ruleId)) {
+    for (const message of file.messages) {
+      if (complexityRules.has(message.ruleId)) {
         complexityViolations.push({
           filePath: file.filePath.replace('C:\\AI\\food-truck-finder-poc\\', ''),
           ruleId: message.ruleId,
@@ -45,53 +45,59 @@ results.forEach(file => {
           nodeType: message.nodeType
         });
       }
-    });
+    }
   }
-});
+}
 
 // Group by file and calculate severity
 const fileViolations = {};
-complexityViolations.forEach(violation => {
+for (const violation of complexityViolations) {
   if (!fileViolations[violation.filePath]) {
     fileViolations[violation.filePath] = [];
   }
   fileViolations[violation.filePath].push(violation);
-});
+}
 
 // Calculate severity scores and sort
 const prioritizedFiles = Object.entries(fileViolations).map(([filePath, violations]) => {
   let severityScore = 0;
   let maxLinesViolation = null;
   
-  violations.forEach(violation => {
+  for (const violation of violations) {
     switch (violation.ruleId) {
-      case 'max-lines-per-function':
+      case 'max-lines-per-function': {
         // Extract current and max lines from message
         const match = violation.message.match(/has too many lines \((\d+)\)\. Maximum allowed is (\d+)/);
         if (match) {
-          const current = parseInt(match[1]);
-          const max = parseInt(match[2]);
+          const current = Number.parseInt(match[1]);
+          const max = Number.parseInt(match[2]);
           const excess = current - max;
           severityScore += excess * 2; // Weight function length heavily
           maxLinesViolation = { current, max, excess };
         }
         break;
-      case 'sonarjs/cognitive-complexity':
+      }
+      case 'sonarjs/cognitive-complexity': {
         severityScore += 15; // High impact
         break;
-      case 'max-depth':
+      }
+      case 'max-depth': {
         severityScore += 10;
         break;
-      case 'max-params':
+      }
+      case 'max-params': {
         severityScore += 8;
         break;
-      case 'sonarjs/no-identical-functions':
+      }
+      case 'sonarjs/no-identical-functions': {
         severityScore += 20; // Very high impact - duplicate code
         break;
-      default:
+      }
+      default: {
         severityScore += 5;
+      }
     }
-  });
+  }
   
   return {
     filePath,
@@ -118,7 +124,7 @@ if (prioritizedFiles.length === 0) {
 console.log(`\n🎯 PARETO 80/20 PRIORITIZATION (by severity score):`);
 console.log('-'.repeat(80));
 
-prioritizedFiles.forEach((file, index) => {
+for (const [index, file] of prioritizedFiles.entries()) {
   const isHighPriority = index < Math.ceil(prioritizedFiles.length * 0.2);
   const priority = isHighPriority ? '🔥 HIGH' : '📋 MEDIUM';
   
@@ -130,19 +136,19 @@ prioritizedFiles.forEach((file, index) => {
   }
   
   console.log(`   ⚠️  Violations (${file.violationCount}):`);
-  file.violations.forEach(violation => {
+  for (const violation of file.violations) {
     console.log(`      - ${violation.ruleId}: ${violation.message} (line ${violation.line})`);
-  });
-});
+  }
+}
 
 console.log(`\n🔧 REFACTORING RECOMMENDATIONS:`);
 console.log('-'.repeat(80));
 
 const highPriorityFiles = prioritizedFiles.slice(0, Math.ceil(prioritizedFiles.length * 0.2));
 console.log(`\n1. Focus on TOP ${highPriorityFiles.length} files first (80/20 rule):`);
-highPriorityFiles.forEach((file, index) => {
+for (const [index, file] of highPriorityFiles.entries()) {
   console.log(`   ${index + 1}. ${file.filePath} (Score: ${file.severityScore})`);
-});
+}
 
 console.log(`\n2. Common refactoring strategies:`);
 console.log(`   - Extract helper functions from large components`);

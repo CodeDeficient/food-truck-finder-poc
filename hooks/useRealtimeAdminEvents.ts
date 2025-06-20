@@ -132,25 +132,35 @@ function handleMessageEvent(event: MessageEvent, handleEventFn: (event: AdminEve
   }
 }
 
-function handleErrorEvent(options: EventSourceListenerOptions, error: Event) {
-  console.error('Real-time admin events error:', error);
-  options.connectionState.setIsConnected(false);
-  options.connectionState.setIsConnecting(false);
-  options.connectionState.setConnectionError('Connection error occurred');
+// Helper for handleErrorEvent
+function _attemptReconnectOnEventError(options: EventSourceListenerOptions) {
+  if (options.isManuallyDisconnectedRef.current) {
+    return; // Do not attempt reconnect if manually disconnected
+  }
 
-  if (!options.isManuallyDisconnectedRef.current && options.connectionAttempts < options.maxReconnectAttempts) {
+  if (options.connectionAttempts < options.maxReconnectAttempts) {
     options.connectionState.setConnectionAttempts(prev => prev + 1);
     if (options.reconnectTimeoutRef.current) {
       clearTimeout(options.reconnectTimeoutRef.current);
     }
     options.reconnectTimeoutRef.current = setTimeout(() => {
+      // Check again before connecting, in case disconnect was called during timeout
       if (!options.isManuallyDisconnectedRef.current) {
-        options.connect();
+        options.connect(); // This `connect` comes from EventSourceListenerOptions
       }
     }, options.reconnectInterval);
-  } else if (options.connectionAttempts >= options.maxReconnectAttempts) {
+  } else {
     options.connectionState.setConnectionError('Max reconnection attempts reached');
+    // No further reconnection attempts
   }
+}
+
+function handleErrorEvent(options: EventSourceListenerOptions, error: Event) {
+  console.error('Real-time admin events error:', error);
+  options.connectionState.setIsConnected(false);
+  options.connectionState.setIsConnecting(false);
+  options.connectionState.setConnectionError('Connection error occurred');
+  _attemptReconnectOnEventError(options);
 }
 
 function localSetupEventSourceListeners(options: EventSourceListenerOptions) {

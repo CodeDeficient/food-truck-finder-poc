@@ -9,11 +9,11 @@
  * Usage: node scripts/test-oauth-flow.js [--env=development|production]
  */
 
-import https from 'https';
-import http from 'http';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import https from 'node:https';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,22 +40,22 @@ class OAuthTester {
     const envPath = path.join(process.cwd(), '.env.local');
     if (fs.existsSync(envPath)) {
       const envContent = fs.readFileSync(envPath, 'utf8');
-      envContent.split('\n').forEach(line => {
+      for (const line of envContent.split('\n')) {
         const [key, value] = line.split('=');
         if (key && value) {
-          process.env[key] = value.replace(/"/g, '');
+          process.env[key] = value.replaceAll('"', '');
         }
-      });
+      }
     }
   }
 
   log(message, type = 'info') {
     const colors = {
-      info: '\x1b[36m',
-      success: '\x1b[32m',
-      warning: '\x1b[33m',
-      error: '\x1b[31m',
-      reset: '\x1b[0m'
+      info: '\u001B[36m',
+      success: '\u001B[32m',
+      warning: '\u001B[33m',
+      error: '\u001B[31m',
+      reset: '\u001B[0m'
     };
     
     const timestamp = new Date().toISOString();
@@ -163,7 +163,7 @@ class OAuthTester {
           autoconfirm: settings.autoconfirm || false,
           settingsAccessible: true
         };
-      } catch (error) {
+      } catch {
         // Settings endpoint might require auth, which is normal
         this.log('⚠️  Auth settings endpoint requires authentication (normal)', 'warning');
         this.results.warnings++;
@@ -258,7 +258,7 @@ class OAuthTester {
       });
       
       req.on('error', reject);
-      req.setTimeout(10000, () => {
+      req.setTimeout(10_000, () => {
         req.destroy();
         reject(new Error('Request timeout'));
       });
@@ -312,8 +312,7 @@ class OAuthTester {
     }
     
     if (this.results.passed === this.results.tests.length) {
-      recommendations.push('✅ All tests passed! Ready for manual OAuth configuration');
-      recommendations.push('📋 Next: Configure Google Cloud Console and Supabase OAuth settings');
+      recommendations.push('✅ All tests passed! Ready for manual OAuth configuration', '📋 Next: Configure Google Cloud Console and Supabase OAuth settings');
     }
     
     recommendations.push('📖 See docs/GOOGLE_OAUTH_SETUP_GUIDE.md for detailed setup instructions');
@@ -343,7 +342,7 @@ class OAuthTester {
       this.log(`Success Rate: ${report.summary.successRate}`, 'info');
       
       this.log('\n💡 RECOMMENDATIONS:', 'info');
-      report.recommendations.forEach(rec => this.log(rec, 'info'));
+      for (const rec of report.recommendations) this.log(rec, 'info');
       
       this.log(`\n📄 Report saved: ${reportPath}`, 'info');
       

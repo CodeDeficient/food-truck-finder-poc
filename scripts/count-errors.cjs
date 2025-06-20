@@ -5,9 +5,9 @@
  * Counts ESLint errors in a platform-independent way
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 function countErrors() {
   try {
@@ -17,7 +17,7 @@ function countErrors() {
     const eslintOutput = execSync('npx eslint . --format json', {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
-      timeout: 120000, // 2 minutes timeout
+      timeout: 120_000, // 2 minutes timeout
       maxBuffer: 1024 * 1024 * 10 // 10MB buffer
     });
 
@@ -83,13 +83,13 @@ function countErrors() {
       fs.writeFileSync('.current-metrics.json', JSON.stringify(metrics, null, 2));
       return totalErrors;
 
-    } catch (parseError) {
+    } catch {
       console.error('Could not parse ESLint output as JSON');
 
       // Look for error patterns in output
       const errorMatch = (errorOutput + stdout).match(/(\d+)\s+error/);
       if (errorMatch) {
-        const errorCount = parseInt(errorMatch[1], 10);
+        const errorCount = Number.parseInt(errorMatch[1], 10);
         console.error(`Extracted error count: ${errorCount}`);
         console.log(errorCount);
         return errorCount;

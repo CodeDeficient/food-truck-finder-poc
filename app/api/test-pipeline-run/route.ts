@@ -46,16 +46,7 @@ function mapExtractedDataToTruckSchema(
     },
     scheduled_locations: extractedData.scheduled_locations ?? undefined,
     operating_hours: extractedData.operating_hours ?? undefined,
-    menu: (extractedData.menu ?? []).map((category: MenuCategory) => ({
-      name: category.name ?? 'Uncategorized',
-      items: (category.items ?? []).map((item: MenuItem) => ({
-        name: item.name ?? 'Unknown Item',
-        description: item.description ?? undefined,
-        price:
-          typeof item.price === 'number' || typeof item.price === 'string' ? item.price : undefined,
-        dietary_tags: item.dietary_tags ?? [],
-      })),
-    })),
+    menu: _buildMenuSchema(extractedData.menu),
     contact_info: extractedData.contact_info ?? undefined,
     social_media: extractedData.social_media ?? undefined,
     cuisine_type: extractedData.cuisine_type ?? [],
@@ -68,6 +59,60 @@ function mapExtractedDataToTruckSchema(
     ...(isDryRun && { test_run_flag: true }), // Add a flag for actual test saves if needed
   };
   return truckData;
+}
+
+function _buildMenuSchema(extractedMenu: MenuCategory[] | undefined): FoodTruckSchema['menu'] {
+  if (!Array.isArray(extractedMenu)) {
+    return [];
+  }
+  return extractedMenu.map((category: MenuCategory) => ({
+    name: category.name ?? 'Uncategorized',
+    items: (category.items ?? []).map((item: MenuItem) => ({
+      name: item.name ?? 'Unknown Item',
+      description: item.description ?? undefined,
+      price: typeof item.price === 'number' || typeof item.price === 'string' ? item.price : undefined,
+      dietary_tags: item.dietary_tags ?? [],
+    })),
+  }));
+}
+
+async function _scrapeUrlWithFirecrawl(url: string, logs: string[]): Promise<{
+  success: boolean;
+  content?: string;
+  sourceUrl?: string;
+  firecrawlResult: StageResult;
+}> {
+  logs.push(`Starting Firecrawl scrape for URL: ${url}`);
+  try {
+    const fcOutput: GeminiResponse<FirecrawlOutputData> =
+      await firecrawl.scrapeFoodTruckWebsite(url);
+    if (fcOutput.success && fcOutput.data?.markdown != undefined && fcOutput.data.markdown != '') {
+      logs.push('Firecrawl scrape successful.');
+      return {
+        success: true,
+        content: fcOutput.data.markdown,
+        sourceUrl: fcOutput.data.source_url ?? url,
+        firecrawlResult: {
+          status: 'Success',
+          rawContent: fcOutput.data.markdown,
+          metadata: { name: fcOutput.data.name, source_url: fcOutput.data.source_url },
+          details: `Markdown length: ${fcOutput.data.markdown.length}`,
+        },
+      };
+    } else {
+      throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
+    }
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : 'An unknown error occurred during Firecrawl scrape.';
+    logs.push(`Firecrawl error: ${errorMessage}`);
+    return {
+      success: false,
+      firecrawlResult: { status: 'Error', error: errorMessage },
+    };
+  }
 }
 
 async function handleFirecrawlStage(
@@ -83,53 +128,47 @@ async function handleFirecrawlStage(
   let contentToProcess: string | undefined;
   let sourceUrlForProcessing: string = url ?? 'raw_text_input';
 
-  if (url != undefined && url != '' && (rawText == undefined || rawText == '')) {
-    logs.push(`Starting Firecrawl scrape for URL: ${url}`);
-    try {
-      const fcOutput: GeminiResponse<FirecrawlOutputData> =
-        await firecrawl.scrapeFoodTruckWebsite(url);
-      if (fcOutput.success && fcOutput.data?.markdown != undefined && fcOutput.data.markdown != '') {
-        contentToProcess = fcOutput.data.markdown;
-        sourceUrlForProcessing = fcOutput.data.source_url ?? url;
-        firecrawlResult = {
-          status: 'Success',
-          rawContent: fcOutput.data.markdown,
-          metadata: { name: fcOutput.data.name, source_url: fcOutput.data.source_url },
-          details: `Markdown length: ${fcOutput.data.markdown.length}`,
-        };
-        logs.push('Firecrawl scrape successful.');
-      } else {
-        throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
-      }
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during Firecrawl scrape.';
-      logs.push(`Firecrawl error: ${errorMessage}`);
-      firecrawlResult = { status: 'Error', error: errorMessage };
+  if (url && (!rawText || rawText.trim() === '')) { // Prioritize URL if provided and rawText is empty
+    const scrapeOutcome = await _scrapeUrlWithFirecrawl(url, logs);
+    firecrawlResult = scrapeOutcome.firecrawlResult;
+    if (scrapeOutcome.success) {
+      contentToProcess = scrapeOutcome.content;
+      sourceUrlForProcessing = scrapeOutcome.sourceUrl ?? url;
     }
-  } else if (rawText != undefined && rawText != '') {
+  } else if (rawText && rawText.trim() !== '') {
     logs.push('Using raw text input for processing.');
     contentToProcess = rawText;
     firecrawlResult = {
       status: 'Skipped (Raw Text Provided)',
       details: `Raw text length: ${rawText.length}`,
     };
+    sourceUrlForProcessing = 'raw_text_input';
   } else {
     logs.push('No URL or raw text provided.');
-    throw new Error('Either a URL or raw text must be provided for testing.');
+    firecrawlResult = { status: 'Error', error: 'Either a URL or raw text must be provided.' };
+    // contentToProcess remains undefined, which will be caught by the check below
   }
 
-  if (contentToProcess == undefined || contentToProcess == '') {
-    logs.push('Content to process is empty after Firecrawl/raw text stage.');
-    throw new Error('Content to process is empty.');
+  // If contentToProcess is still undefined and we didn't explicitly skip or error, it's an issue.
+  if (!contentToProcess && firecrawlResult.status === 'Success') {
+    logs.push('Firecrawl successful but no content extracted.');
+    firecrawlResult = { ...firecrawlResult, status: 'Error', error: 'Scrape successful but no content extracted.'};
+  } else if (!contentToProcess && firecrawlResult.status !== 'Error' && firecrawlResult.status !== 'Skipped (Raw Text Provided)') {
+    // This case handles if something went wrong and content is missing without an error status
+    logs.push('Content to process is unexpectedly empty.');
+    firecrawlResult = { status: 'Error', error: 'Content to process is unexpectedly empty.' };
   }
+
+  // If after all logic, contentToProcess is empty AND it wasn't a deliberate skip or an already caught error, then throw.
+  // This ensures that if a stage "succeeded" but produced no output, it's treated as an error before Gemini.
+  if ((contentToProcess == undefined || contentToProcess.trim() === '') && firecrawlResult.status === 'Success') {
+    throw new Error('Content to process is empty after a successful Firecrawl stage.');
+  }
+
 
   return { firecrawlResult, contentToProcess, sourceUrlForProcessing };
 }
 
-async function handleGeminiStage(
   contentToProcess: string,
   sourceUrlForProcessing: string,
   logs: string[],
@@ -165,7 +204,6 @@ async function handleGeminiStage(
   return { geminiResult, extractedData };
 }
 
-async function handleSupabaseStage(
   extractedData: ExtractedFoodTruckDetails,
   sourceUrlForProcessing: string,
   isDryRun: boolean,
@@ -211,46 +249,41 @@ async function handleSupabaseStage(
   return supabaseResult;
 }
 
-export function POST(request: NextRequest) {
+// Orchestrator function for the test pipeline
+async function _runTestPipeline(url?: string, rawText?: string, isDryRun: boolean = true): Promise<{ responseJson: object, status: number }> {
   const logs: string[] = [];
   logs.push('Test pipeline run started.');
+  logs.push(`Request params: url=${url ?? 'undefined'}, rawText provided=${!!rawText}, isDryRun=${isDryRun}`);
 
   let firecrawlResult: StageResult = { status: 'Incomplete' };
   let geminiResult: StageResult = { status: 'Incomplete' };
   let supabaseResult: StageResult = { status: 'Incomplete' };
   let overallStatus = 'Incomplete';
+  let extractedData;
 
   try {
-    const body = (await request.json()) as { url?: string; rawText?: string; isDryRun?: boolean };
-    const { url, rawText, isDryRun = true } = body;
-    logs.push(`Request body: ${JSON.stringify(body)}`);
-
     const firecrawlStageOutput = await handleFirecrawlStage(url ?? '', rawText, logs);
     firecrawlResult = firecrawlStageOutput.firecrawlResult;
     const { contentToProcess, sourceUrlForProcessing } = firecrawlStageOutput;
 
-    if (firecrawlResult.status === 'Error') {
+    if (firecrawlResult.status === 'Error' || !contentToProcess) {
       overallStatus = 'Error';
-      return NextResponse.json(
-        { results: { firecrawl: firecrawlResult, logs, overallStatus } },
-        { status: 200 },
-      );
+      logs.push(`Pipeline ended prematurely after Firecrawl stage due to error or no content: ${firecrawlResult.error ?? 'No content from Firecrawl'}`);
+      return { responseJson: { results: { firecrawl: firecrawlResult, gemini: geminiResult, supabase: supabaseResult, logs, overallStatus } }, status: 200 };
     }
 
     const geminiStageOutput = await handleGeminiStage(
-      contentToProcess!,
+      contentToProcess,
       sourceUrlForProcessing,
       logs,
     );
     geminiResult = geminiStageOutput.geminiResult;
-    const { extractedData } = geminiStageOutput;
+    extractedData = geminiStageOutput.extractedData;
 
     if (geminiResult.status === 'Error' || !extractedData) {
       overallStatus = 'Error';
-      return NextResponse.json(
-        { results: { firecrawl: firecrawlResult, gemini: geminiResult, logs, overallStatus } },
-        { status: 200 },
-      );
+      logs.push(`Pipeline ended prematurely after Gemini stage due to error or no data: ${geminiResult.error ?? 'No data from Gemini'}`);
+      return { responseJson: { results: { firecrawl: firecrawlResult, gemini: geminiResult, supabase: supabaseResult, logs, overallStatus } }, status: 200 };
     }
 
     supabaseResult = await handleSupabaseStage(
@@ -262,50 +295,44 @@ export function POST(request: NextRequest) {
 
     if (supabaseResult.status === 'Error') {
       overallStatus = 'Error';
-      return NextResponse.json(
-        {
-          results: {
-            firecrawl: firecrawlResult,
-            gemini: geminiResult,
-            supabase: supabaseResult,
-            logs,
-            overallStatus,
-          },
-        },
-        { status: 200 },
-      );
+      logs.push(`Pipeline ended prematurely after Supabase stage due to error: ${supabaseResult.error}`);
+      return { responseJson: { results: { firecrawl: firecrawlResult, gemini: geminiResult, supabase: supabaseResult, logs, overallStatus } }, status: 200 };
     }
 
     overallStatus = 'Success';
     logs.push('Test pipeline run completed successfully.');
-    return NextResponse.json({
-      results: {
-        firecrawl: firecrawlResult,
-        gemini: geminiResult,
-        supabase: supabaseResult,
-        logs,
-        overallStatus,
-      },
-    });
+    return {
+      responseJson: { results: { firecrawl: firecrawlResult, gemini: geminiResult, supabase: supabaseResult, logs, overallStatus } },
+      status: 200
+    };
+
   } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : 'An unknown error occurred during overall test pipeline run.';
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred during overall test pipeline run.';
     logs.push(`Overall test pipeline error: ${errorMessage}`);
-    return NextResponse.json(
-      {
+    return {
+      responseJson: {
         message: 'Test pipeline run failed.',
         error: errorMessage,
-        results: {
-          firecrawl: firecrawlResult,
-          gemini: geminiResult,
-          supabase: supabaseResult,
-          logs,
-          overallStatus: 'Error',
-        },
+        results: { firecrawl: firecrawlResult, gemini: geminiResult, supabase: supabaseResult, logs, overallStatus: 'Error' },
       },
-      { status: 200 },
+      status: 200
+    };
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = (await request.json()) as { url?: string; rawText?: string; isDryRun?: boolean };
+    const { url, rawText, isDryRun = true } = body;
+
+    const { responseJson, status } = await _runTestPipeline(url, rawText, isDryRun);
+    return NextResponse.json(responseJson, { status });
+
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred in POST handler.';
+    return NextResponse.json(
+      { message: 'Test pipeline run failed critically.', error: errorMessage, results: { logs: ['POST handler critical error'], overallStatus: 'Error' } },
+      { status: 500 }
     );
   }
 }

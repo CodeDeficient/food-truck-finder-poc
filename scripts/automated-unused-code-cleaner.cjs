@@ -16,9 +16,9 @@
  * - Rollback capability if issues detected
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 class UnusedCodeCleaner {
   constructor() {
@@ -38,7 +38,7 @@ class UnusedCodeCleaner {
     try {
       const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
       const lines = output.trim().split('\n');
-      return parseInt(lines[lines.length - 1]) || 0;
+      return Number.parseInt(lines.at(-1)) || 0;
     } catch (error) {
       console.warn('Could not get current error count:', error.message);
       return 0;
@@ -59,11 +59,11 @@ class UnusedCodeCleaner {
     
     // Backup key directories
     const dirsToBackup = ['app', 'components', 'lib'];
-    dirsToBackup.forEach(dir => {
+    for (const dir of dirsToBackup) {
       if (fs.existsSync(dir)) {
         execSync(`xcopy "${dir}" "${this.backupDir}\\${dir}" /E /I /Q`, { stdio: 'ignore' });
       }
-    });
+    }
     
     console.log(`✅ Backup created in ${this.backupDir}`);
   }
@@ -79,14 +79,14 @@ class UnusedCodeCleaner {
     }
     
     const dirsToRestore = ['app', 'components', 'lib'];
-    dirsToRestore.forEach(dir => {
+    for (const dir of dirsToRestore) {
       if (fs.existsSync(dir)) {
         execSync(`rmdir /s /q "${dir}"`, { stdio: 'ignore' });
       }
       if (fs.existsSync(path.join(this.backupDir, dir))) {
         execSync(`xcopy "${this.backupDir}\\${dir}" "${dir}" /E /I /Q`, { stdio: 'ignore' });
       }
-    });
+    }
     
     console.log('✅ Backup restored successfully');
   }
@@ -112,14 +112,14 @@ class UnusedCodeCleaner {
       console.log('  Fixing unused variables...');
       execSync('npx eslint . --fix --rule "@typescript-eslint/no-unused-vars: error"', {
         stdio: 'pipe',
-        timeout: 120000
+        timeout: 120_000
       });
       
       // Fix unused imports  
       console.log('  Fixing unused imports...');
       execSync('npx eslint . --fix --rule "sonarjs/unused-import: error"', {
         stdio: 'pipe', 
-        timeout: 120000
+        timeout: 120_000
       });
       
       console.log('✅ ESLint auto-fixes completed');
@@ -139,7 +139,7 @@ class UnusedCodeCleaner {
     try {
       execSync('npx tsc --noEmit --strict', {
         stdio: 'pipe',
-        timeout: 120000
+        timeout: 120_000
       });
       console.log('✅ TypeScript compilation successful');
       return true;
@@ -157,15 +157,15 @@ class UnusedCodeCleaner {
       const output = execSync('npx eslint . --format json', {
         encoding: 'utf8',
         stdio: 'pipe',
-        timeout: 120000
+        timeout: 120_000
       });
       
       const results = JSON.parse(output);
       let unusedVars = 0;
       let unusedImports = 0;
       
-      results.forEach(file => {
-        file.messages.forEach(msg => {
+      for (const file of results) {
+        for (const msg of file.messages) {
           if (msg.severity === 2) {
             if (msg.ruleId === '@typescript-eslint/no-unused-vars') {
               unusedVars++;
@@ -173,8 +173,8 @@ class UnusedCodeCleaner {
               unusedImports++;
             }
           }
-        });
-      });
+        }
+      }
       
       return { unusedVars, unusedImports };
     } catch (error) {
@@ -280,13 +280,13 @@ class UnusedCodeCleaner {
 
 // CLI interface
 if (require.main === module) {
-  const args = process.argv.slice(2);
+  const args = new Set(process.argv.slice(2));
   const options = {};
   
   // Parse command line arguments
-  if (args.includes('--no-backup')) options.createBackup = false;
-  if (args.includes('--no-verify')) options.verifyCompilation = false;
-  if (args.includes('--no-rollback')) options.autoRollback = false;
+  if (args.has('--no-backup')) options.createBackup = false;
+  if (args.has('--no-verify')) options.verifyCompilation = false;
+  if (args.has('--no-rollback')) options.autoRollback = false;
   
   const cleaner = new UnusedCodeCleaner();
   cleaner.run(options).then(result => {

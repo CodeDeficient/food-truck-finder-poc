@@ -63,34 +63,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
       // Set up periodic updates
       const intervalId = setInterval(() => {
-        void (async () => {
-          try {
-            const metrics = await fetchRealtimeMetrics();
-            const event: AdminEvent = {
-              id: generateEventId(),
-              type: 'heartbeat',
-              timestamp: new Date().toISOString(),
-              data: metrics as Record<string, unknown>
-            };
-
-            controller.enqueue(encoder.encode(formatSSEMessage(event)));
-          } catch (error) {
-            console.error('Error fetching realtime metrics:', error);
-
-            const errorEvent: AdminEvent = {
-              id: generateEventId(),
-              type: 'system_alert',
-              timestamp: new Date().toISOString(),
-              data: {
-                error: 'Failed to fetch metrics',
-                details: error instanceof Error ? error.message : 'Unknown error'
-              },
-              severity: 'error'
-            };
-
-            controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
-          }
-        })();
+        void _sendPeriodicMetrics(controller, encoder);
       }, 5000); // Update every 5 seconds
 
       // Set up data change monitoring
@@ -121,6 +94,32 @@ export async function GET(request: NextRequest): Promise<Response> {
       'Access-Control-Allow-Headers': 'Cache-Control'
     }
   });
+}
+
+async function _sendPeriodicMetrics(controller: ReadableStreamDefaultController<Uint8Array>, encoder: TextEncoder) {
+  try {
+    const metrics = await fetchRealtimeMetrics();
+    const event: AdminEvent = {
+      id: generateEventId(),
+      type: 'heartbeat',
+      timestamp: new Date().toISOString(),
+      data: metrics as Record<string, unknown>
+    };
+    controller.enqueue(encoder.encode(formatSSEMessage(event)));
+  } catch (error) {
+    console.error('Error fetching realtime metrics:', error);
+    const errorEvent: AdminEvent = {
+      id: generateEventId(),
+      type: 'system_alert',
+      timestamp: new Date().toISOString(),
+      data: {
+        error: 'Failed to fetch metrics',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      severity: 'error'
+    };
+    controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
+  }
 }
 
 async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
@@ -203,72 +202,76 @@ async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   }
 }
 
+async function _handleScrapingUpdates(controller: ReadableStreamDefaultController<Uint8Array>, encoder: TextEncoder): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const recentJobs = await ScrapingJobService.getJobsFromDate(
+    new Date(Date.now() - 60_000) // Last minute
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  if (recentJobs.length > 0) {
+    const event: AdminEvent = {
+      id: generateEventId(),
+      type: 'scraping_update',
+      timestamp: new Date().toISOString(),
+      data: {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        recentJobs: recentJobs.map((job: unknown) => {
+          const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
+          return {
+            id: jobData.id,
+            status: jobData.status,
+            started_at: jobData.started_at,
+            completed_at: jobData.completed_at
+          };
+        }),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        count: recentJobs.length
+      },
+      severity: 'info'
+    };
+    controller.enqueue(encoder.encode(formatSSEMessage(event)));
+  }
+}
+
+async function _handleDataQualityUpdates(controller: ReadableStreamDefaultController<Uint8Array>, encoder: TextEncoder): Promise<void> {
+  const recentTrucks = await FoodTruckService.getAllTrucks(10, 0); // Get a small number of recent trucks
+  const recentlyUpdated = recentTrucks.trucks.filter(truck => {
+    const updatedAt = new Date(truck.updated_at);
+    const oneMinuteAgo = new Date(Date.now() - 60_000); // Example: updated in the last minute
+    return updatedAt > oneMinuteAgo;
+  });
+
+  if (recentlyUpdated.length > 0) {
+    const event: AdminEvent = {
+      id: generateEventId(),
+      type: 'data_quality_change',
+      timestamp: new Date().toISOString(),
+      data: {
+        updatedTrucks: recentlyUpdated.map(truck => ({
+          id: truck.id,
+          name: truck.name,
+          data_quality_score: truck.data_quality_score,
+          updated_at: truck.updated_at
+        })),
+        count: recentlyUpdated.length
+      },
+      severity: 'info'
+    };
+    controller.enqueue(encoder.encode(formatSSEMessage(event)));
+  }
+}
+
 async function monitorDataChanges(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
   try {
-    // Check for recent scraping job changes
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    const recentJobs = await ScrapingJobService.getJobsFromDate(
-      new Date(Date.now() - 60_000) // Last minute
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (recentJobs.length > 0) {
-      const event: AdminEvent = {
-        id: generateEventId(),
-        type: 'scraping_update',
-        timestamp: new Date().toISOString(),
-        data: {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          recentJobs: recentJobs.map((job: unknown) => {
-            const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
-            return {
-              id: jobData.id,
-              status: jobData.status,
-              started_at: jobData.started_at,
-              completed_at: jobData.completed_at
-            };
-          }),
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          count: recentJobs.length
-        },
-        severity: 'info'
-      };
-
-      controller.enqueue(encoder.encode(formatSSEMessage(event)));
-    }
-
-    // Check for data quality changes
-    const recentTrucks = await FoodTruckService.getAllTrucks(10, 0);
-    const recentlyUpdated = recentTrucks.trucks.filter(truck => {
-      const updatedAt = new Date(truck.updated_at);
-      const oneMinuteAgo = new Date(Date.now() - 60_000);
-      return updatedAt > oneMinuteAgo;
-    });
-
-    if (recentlyUpdated.length > 0) {
-      const event: AdminEvent = {
-        id: generateEventId(),
-        type: 'data_quality_change',
-        timestamp: new Date().toISOString(),
-        data: {
-          updatedTrucks: recentlyUpdated.map(truck => ({
-            id: truck.id,
-            name: truck.name,
-            data_quality_score: truck.data_quality_score,
-            updated_at: truck.updated_at
-          })),
-          count: recentlyUpdated.length
-        },
-        severity: 'info'
-      };
-
-      controller.enqueue(encoder.encode(formatSSEMessage(event)));
-    }
+    await _handleScrapingUpdates(controller, encoder);
+    await _handleDataQualityUpdates(controller, encoder);
   } catch (error) {
-    console.error('Error monitoring data changes:', error);
+    // Log error, but don't let one update type failure stop the other or the interval.
+    console.error('Error during data change monitoring sub-task:', error);
   }
 }
 
