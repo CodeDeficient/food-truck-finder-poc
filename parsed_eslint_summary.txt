@@ -1,0 +1,9 @@
+Total Errors: 255
+Total Warnings: 10
+Total Fatal Errors: 1
+Fixable Errors: 1
+Fixable Warnings: 0
+Files with Errors: 71
+Files with Warnings: 4
+Errors by Rule: {"@typescript-eslint/strict-boolean-expressions": 16, "sonarjs/no-all-duplicated-branches": 1, "unicorn/no-null": 5, "@typescript-eslint/no-unsafe-assignment": 22, "max-lines-per-function": 85, "@typescript-eslint/no-explicit-any": 10, "@typescript-eslint/no-unsafe-member-access": 28, "sonarjs/prefer-read-only-props": 29, "@typescript-eslint/no-redundant-type-constituents": 2, "max-params": 7, "sonarjs/cognitive-complexity": 7, "max-depth": 4, "sonarjs/no-nested-template-literals": 1, "@typescript-eslint/no-misused-promises": 1, "@typescript-eslint/no-unsafe-call": 1, "@typescript-eslint/no-unsafe-argument": 1, "sonarjs/no-redundant-jump": 2, "unicorn/no-array-for-each": 1, "sonarjs/deprecation": 8, "sonarjs/no-unused-vars": 6, "sonarjs/no-dead-store": 6, "sonarjs/unused-import": 1, "@typescript-eslint/unbound-method": 4, "@typescript-eslint/no-unsafe-return": 1, "unicorn/filename-case": 2, "unicorn/no-empty-file": 2, "sonarjs/slow-regex": 1}
+Warnings by Rule: {"@typescript-eslint/no-unused-vars": 10}
