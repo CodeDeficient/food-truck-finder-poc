@@ -5,8 +5,8 @@
  * Analyzes current ESLint errors to identify automation opportunities
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
+const { execSync } = require('node:child_process');
+const fs = require('node:fs');
 
 class ErrorPatternAnalyzer {
   constructor() {
@@ -24,7 +24,7 @@ class ErrorPatternAnalyzer {
       const output = execSync('npx eslint . --format json', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 120000
+        timeout: 120_000
       });
       return JSON.parse(output);
     } catch (error) {
@@ -49,22 +49,22 @@ class ErrorPatternAnalyzer {
   analyzePatterns(results) {
     console.log('📊 Analyzing error patterns...');
     
-    results.forEach(file => {
-      const fileName = file.filePath.replace(process.cwd(), '').replace(/\\/g, '/');
+    for (const file of results) {
+      const fileName = file.filePath.replace(process.cwd(), '').replaceAll('\\', '/');
       let fileErrorCount = 0;
       
-      file.messages.forEach(msg => {
+      for (const msg of file.messages) {
         if (msg.severity === 2) { // Error (not warning)
           const ruleId = msg.ruleId || 'unknown';
           this.errorCounts[ruleId] = (this.errorCounts[ruleId] || 0) + 1;
           fileErrorCount++;
         }
-      });
+      }
       
       if (fileErrorCount > 0) {
         this.fileErrorCounts[fileName] = fileErrorCount;
       }
-    });
+    }
   }
 
   /**
@@ -133,10 +133,10 @@ class ErrorPatternAnalyzer {
     };
 
     // Calculate automation potential
-    Object.entries(this.errorCounts).forEach(([ruleId, count]) => {
+    for (const [ruleId, count] of Object.entries(this.errorCounts)) {
       if (automationRules[ruleId] && count >= 5) { // Only consider rules with 5+ occurrences
         const rule = automationRules[ruleId];
-        const estimatedFixes = Math.floor(count * (parseInt(rule.estimatedReduction) / 100));
+        const estimatedFixes = Math.floor(count * (Number.parseInt(rule.estimatedReduction) / 100));
         
         this.automationCandidates.push({
           ruleId,
@@ -148,7 +148,7 @@ class ErrorPatternAnalyzer {
           priority: this.calculatePriority(count, rule.confidence, estimatedFixes)
         });
       }
-    });
+    }
 
     // Sort by priority (highest first)
     this.automationCandidates.sort((a, b) => b.priority - a.priority);
@@ -209,18 +209,18 @@ class ErrorPatternAnalyzer {
     
     console.log('\n🔝 TOP 15 ERROR TYPES:');
     console.log('----------------------');
-    sortedErrors.slice(0, 15).forEach(([rule, count], index) => {
+    for (const [index, [rule, count]] of sortedErrors.slice(0, 15).entries()) {
       const percentage = ((count / totalErrors) * 100).toFixed(1);
       console.log(`${index + 1}. ${rule}: ${count} (${percentage}%)`);
-    });
+    }
     
     console.log('\n🎯 HIGH CONFIDENCE AUTOMATION CANDIDATES:');
     console.log('------------------------------------------');
     if (recommendations.highConfidence.candidates.length > 0) {
-      recommendations.highConfidence.candidates.forEach(candidate => {
+      for (const candidate of recommendations.highConfidence.candidates) {
         console.log(`✅ ${candidate.ruleId}: ${candidate.count} errors → ~${candidate.estimatedFixes} fixes (${candidate.method})`);
         console.log(`   ${candidate.description}`);
-      });
+      }
       console.log(`\n🚀 TOTAL HIGH CONFIDENCE FIXES: ${recommendations.highConfidence.totalFixes}`);
     } else {
       console.log('No high confidence automation candidates found.');
@@ -229,10 +229,10 @@ class ErrorPatternAnalyzer {
     console.log('\n⚠️  MEDIUM CONFIDENCE AUTOMATION CANDIDATES:');
     console.log('--------------------------------------------');
     if (recommendations.mediumConfidence.candidates.length > 0) {
-      recommendations.mediumConfidence.candidates.forEach(candidate => {
+      for (const candidate of recommendations.mediumConfidence.candidates) {
         console.log(`🔶 ${candidate.ruleId}: ${candidate.count} errors → ~${candidate.estimatedFixes} fixes (${candidate.method})`);
         console.log(`   ${candidate.description}`);
-      });
+      }
       console.log(`\n⚡ TOTAL MEDIUM CONFIDENCE FIXES: ${recommendations.mediumConfidence.totalFixes}`);
     } else {
       console.log('No medium confidence automation candidates found.');
@@ -250,9 +250,9 @@ class ErrorPatternAnalyzer {
     console.log('\n🛠️  RECOMMENDED AUTOMATION METHODS:');
     console.log('-----------------------------------');
     const allMethods = [...recommendations.highConfidence.methods, ...recommendations.mediumConfidence.methods];
-    [...new Set(allMethods)].forEach(method => {
+    for (const method of new Set(allMethods)) {
       console.log(`• ${method}`);
-    });
+    }
     
     return recommendations;
   }

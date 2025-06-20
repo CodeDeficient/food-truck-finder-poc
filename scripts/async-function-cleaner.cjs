@@ -15,9 +15,9 @@
  * - Maintains code formatting
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 class AsyncFunctionCleaner {
   constructor() {
@@ -35,7 +35,7 @@ class AsyncFunctionCleaner {
     try {
       const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
       const lines = output.trim().split('\n');
-      return parseInt(lines[lines.length - 1]) || 0;
+      return Number.parseInt(lines.at(-1)) || 0;
     } catch (error) {
       console.warn('Could not get current error count:', error.message);
       return 0;
@@ -61,7 +61,7 @@ class AsyncFunctionCleaner {
 
     // Pattern 1: async function declarations
     const functionPattern = /async\s+(function\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\([^)]*\)\s*\{[^}]*\})/g;
-    fixed = fixed.replace(functionPattern, (match, functionDef) => {
+    fixed = fixed.replaceAll(functionPattern, (match, functionDef) => {
       if (!this.hasAwaitExpressions(functionDef)) {
         changes++;
         return functionDef; // Remove 'async' keyword
@@ -71,7 +71,7 @@ class AsyncFunctionCleaner {
 
     // Pattern 2: async arrow functions
     const arrowPattern = /async\s+(\([^)]*\)\s*=>\s*\{[^}]*\})/g;
-    fixed = fixed.replace(arrowPattern, (match, arrowDef) => {
+    fixed = fixed.replaceAll(arrowPattern, (match, arrowDef) => {
       if (!this.hasAwaitExpressions(arrowDef)) {
         changes++;
         return arrowDef; // Remove 'async' keyword
@@ -81,7 +81,7 @@ class AsyncFunctionCleaner {
 
     // Pattern 3: async methods in classes/objects
     const methodPattern = /async\s+([a-zA-Z_$][a-zA-Z0-9_$]*\s*\([^)]*\)\s*\{[^}]*\})/g;
-    fixed = fixed.replace(methodPattern, (match, methodDef) => {
+    fixed = fixed.replaceAll(methodPattern, (match, methodDef) => {
       if (!this.hasAwaitExpressions(methodDef)) {
         changes++;
         return methodDef; // Remove 'async' keyword
@@ -122,24 +122,24 @@ class AsyncFunctionCleaner {
   findTSFiles(directories = ['app', 'components', 'lib']) {
     const files = [];
     
-    directories.forEach(dir => {
+    for (const dir of directories) {
       if (fs.existsSync(dir)) {
         const findFiles = (currentDir) => {
           const items = fs.readdirSync(currentDir);
-          items.forEach(item => {
+          for (const item of items) {
             const fullPath = path.join(currentDir, item);
             const stat = fs.statSync(fullPath);
             
             if (stat.isDirectory() && !item.startsWith('.')) {
               findFiles(fullPath);
             } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
-              files.push(fullPath.replace(/\\/g, '/'));
+              files.push(fullPath.replaceAll('\\', '/'));
             }
-          });
+          }
         };
         findFiles(dir);
       }
-    });
+    }
     
     return files;
   }
@@ -177,10 +177,7 @@ class AsyncFunctionCleaner {
     for (const file of filesToProcess) {
       console.log(`Processing: ${file}`);
       
-      if (!dryRun) {
-        const changed = this.processFile(file);
-        if (changed) filesChanged++;
-      } else {
+      if (dryRun) {
         // Dry run - just analyze
         const content = fs.readFileSync(file, 'utf8');
         const result = this.fixAsyncFunctions(content);
@@ -189,6 +186,9 @@ class AsyncFunctionCleaner {
           console.log(`  Would remove ${result.changes} async keyword(s)`);
           filesChanged++;
         }
+      } else {
+        const changed = this.processFile(file);
+        if (changed) filesChanged++;
       }
       
       this.stats.filesProcessed++;
@@ -214,9 +214,9 @@ class AsyncFunctionCleaner {
     if (this.stats.errors.length > 0) {
       console.log('');
       console.log('❌ ERRORS:');
-      this.stats.errors.forEach(err => {
+      for (const err of this.stats.errors) {
         console.log(`  ${err.file}: ${err.error}`);
-      });
+      }
     }
 
     return {
@@ -237,7 +237,7 @@ if (require.main === module) {
   if (args.includes('--dry-run')) options.dryRun = true;
   if (args.includes('--max-files')) {
     const maxIndex = args.indexOf('--max-files');
-    options.maxFiles = parseInt(args[maxIndex + 1]) || 10;
+    options.maxFiles = Number.parseInt(args[maxIndex + 1]) || 10;
   }
   
   const cleaner = new AsyncFunctionCleaner();

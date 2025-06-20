@@ -17,7 +17,7 @@ export default tseslint.config(
       "build/",
       "dist/",
       "public/",
-      "scripts/", // Ignore scripts directory with JS files
+      // "scripts/", // Temporarily allow scripts for execution
       "lib/database.types.ts", // Ignore auto-generated Supabase types file
       // Temporarily ignore test files while focusing on main application code
       "**/*.test.ts",
@@ -148,5 +148,48 @@ export default tseslint.config(
   },
 
   // Prettier - must be last to override other formatting rules
-  eslintConfigPrettier
+  eslintConfigPrettier,
+
+  // Override for JavaScript files (including .cjs)
+  {
+    files: ["**/*.js", "**/*.cjs"],
+    languageOptions: {
+      parserOptions: {
+        project: null, // Do not use tsconfig.json for JS/CJS files
+      },
+      globals: { // Add Node.js globals for CJS files
+        ...require('globals').node, // Using require for globals
+      }
+    },
+    rules: {
+      // Disable TypeScript-specific rules that don't apply to JS
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-var-requires": "off", // Allow require in CJS
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/strict-boolean-expressions": "off",
+      "@typescript-eslint/await-thenable": "off",
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-array-delete": "off",
+      "@typescript-eslint/no-base-to-string": "off",
+      "@typescript-eslint/no-duplicate-type-constituents": "off",
+      "@typescript-eslint/no-implied-eval": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/no-redundant-type-constituents": "off",
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/no-unsafe-enum-comparison": "off",
+      "@typescript-eslint/only-throw-error": "off",
+      "@typescript-eslint/prefer-promise-reject-errors": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/restrict-plus-operands": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/unbound-method": "off",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
+      "@typescript-eslint/prefer-optional-chain": "off",
+      "@typescript-eslint/no-unsafe-unary-minus": "off"
+    }
+  }
 );

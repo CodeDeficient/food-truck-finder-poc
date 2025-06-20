@@ -18,9 +18,9 @@
  * - boolean || boolean
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 class NullishCoalescingConverter {
   constructor() {
@@ -79,7 +79,7 @@ class NullishCoalescingConverter {
     let conversions = 0;
 
     // Apply safe pattern conversions
-    this.safePatterns.forEach(pattern => {
+    for (const pattern of this.safePatterns) {
       const matches = converted.match(pattern);
       if (matches) {
         converted = converted.replace(pattern, (match, left, right) => {
@@ -88,7 +88,7 @@ class NullishCoalescingConverter {
         });
         changed = true;
       }
-    });
+    }
 
     if (changed) {
       this.stats.conversionsApplied += conversions;
@@ -107,14 +107,14 @@ class NullishCoalescingConverter {
       let hasChanges = false;
       const results = [];
 
-      lines.forEach((line, index) => {
+      for (const [index, line] of lines.entries()) {
         const result = this.convertLine(line, index + 1);
         results.push(result.converted);
         if (result.changed) {
           hasChanges = true;
           console.log(`  Line ${index + 1}: ${result.conversions} conversion(s)`);
         }
-      });
+      }
 
       if (hasChanges) {
         fs.writeFileSync(filePath, results.join('\n'));
@@ -137,11 +137,11 @@ class NullishCoalescingConverter {
   findTSFiles(directories = ['app', 'components', 'lib']) {
     const files = [];
     
-    directories.forEach(dir => {
+    for (const dir of directories) {
       if (fs.existsSync(dir)) {
         const findFiles = (currentDir) => {
           const items = fs.readdirSync(currentDir);
-          items.forEach(item => {
+          for (const item of items) {
             const fullPath = path.join(currentDir, item);
             const stat = fs.statSync(fullPath);
             
@@ -150,11 +150,11 @@ class NullishCoalescingConverter {
             } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
               files.push(fullPath);
             }
-          });
+          }
         };
         findFiles(dir);
       }
-    });
+    }
     
     return files;
   }
@@ -166,7 +166,7 @@ class NullishCoalescingConverter {
     try {
       const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
       const lines = output.trim().split('\n');
-      return parseInt(lines[lines.length - 1]) || 0;
+      return Number.parseInt(lines.at(-1)) || 0;
     } catch (error) {
       console.warn('Could not get current error count:', error.message);
       return 0;
@@ -207,24 +207,24 @@ class NullishCoalescingConverter {
     for (const file of filesToProcess) {
       console.log(`Processing: ${file}`);
       
-      if (!dryRun) {
-        const changed = this.processFile(file);
-        if (changed) filesChanged++;
-      } else {
+      if (dryRun) {
         // Dry run - just analyze
         const content = fs.readFileSync(file, 'utf8');
         const lines = content.split('\n');
         let potentialChanges = 0;
         
-        lines.forEach((line, index) => {
+        for (const [index, line] of lines.entries()) {
           const result = this.convertLine(line, index + 1);
           if (result.changed) potentialChanges += result.conversions;
-        });
+        }
         
         if (potentialChanges > 0) {
           console.info(`  Would make ${potentialChanges} conversion(s)`);
           filesChanged++;
         }
+      } else {
+        const changed = this.processFile(file);
+        if (changed) filesChanged++;
       }
       
       this.stats.filesProcessed++;
@@ -251,9 +251,9 @@ class NullishCoalescingConverter {
     if (this.stats.errors.length > 0) {
       console.log('');
       console.log('❌ ERRORS:');
-      this.stats.errors.forEach(err => {
+      for (const err of this.stats.errors) {
         console.log(`  ${err.file}: ${err.error}`);
-      });
+      }
     }
 
     return {
@@ -274,7 +274,7 @@ if (require.main === module) {
   if (args.includes('--dry-run')) options.dryRun = true;
   if (args.includes('--max-files')) {
     const maxIndex = args.indexOf('--max-files');
-    options.maxFiles = parseInt(args[maxIndex + 1]) || 10;
+    options.maxFiles = Number.parseInt(args[maxIndex + 1]) || 10;
   }
   
   const converter = new NullishCoalescingConverter();

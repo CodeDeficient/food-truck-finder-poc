@@ -9,24 +9,24 @@
  * Usage: node scripts/verify-oauth-setup.js
  */
 
-import https from 'https';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import https from 'node:https';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ANSI color codes for console output
 const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m'
+  reset: '\u001B[0m',
+  bright: '\u001B[1m',
+  red: '\u001B[31m',
+  green: '\u001B[32m',
+  yellow: '\u001B[33m',
+  blue: '\u001B[34m',
+  magenta: '\u001B[35m',
+  cyan: '\u001B[36m'
 };
 
 // Configuration
@@ -45,12 +45,12 @@ class OAuthVerifier {
     const envPath = path.join(process.cwd(), '.env.local');
     if (fs.existsSync(envPath)) {
       const envContent = fs.readFileSync(envPath, 'utf8');
-      envContent.split('\n').forEach(line => {
+      for (const line of envContent.split('\n')) {
         const [key, value] = line.split('=');
         if (key && value) {
-          process.env[key] = value.replace(/"/g, '');
+          process.env[key] = value.replaceAll('"', '');
         }
-      });
+      }
     }
   }
 
@@ -92,13 +92,13 @@ class OAuthVerifier {
       'SUPABASE_SERVICE_ROLE_KEY'
     ];
 
-    requiredVars.forEach(varName => {
+    for (const varName of requiredVars) {
       if (process.env[varName]) {
         this.logSuccess(`${varName} is configured`);
       } else {
         this.logError(`${varName} is missing`);
       }
-    });
+    }
 
     // Check Supabase URL format
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -157,9 +157,9 @@ class OAuthVerifier {
     ];
 
     this.logInfo('Expected redirect URLs for Google Cloud Console:');
-    expectedUrls.forEach(url => {
+    for (const url of expectedUrls) {
       this.log(`  • ${url}`, 'blue');
-    });
+    }
 
     this.logInfo('\nExpected authorized origins:');
     this.log(`  • ${PRODUCTION_URL}`, 'blue');
@@ -210,7 +210,7 @@ class OAuthVerifier {
       });
 
       request.on('error', reject);
-      request.setTimeout(10000, () => {
+      request.setTimeout(10_000, () => {
         request.destroy();
         reject(new Error('Request timeout'));
       });

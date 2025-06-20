@@ -5,9 +5,9 @@
  * Fixes the malformed expressions created by the targeted-boolean-expression-fixer.cjs
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 class BooleanFixerReverter {
   constructor() {
@@ -25,7 +25,7 @@ class BooleanFixerReverter {
     try {
       const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
       const lines = output.trim().split('\n');
-      return parseInt(lines[lines.length - 1]) || 0;
+      return Number.parseInt(lines.at(-1)) || 0;
     } catch (error) {
       console.warn('Could not get current error count:', error.message);
       return 0;
@@ -42,7 +42,7 @@ class BooleanFixerReverter {
     // Pattern 1: Fix instanceof expressions
     // "error instanceof Error != null" → "error instanceof Error"
     const instanceofPattern = /(\w+\s+instanceof\s+\w+)\s*!=\s*null/g;
-    fixed = fixed.replace(instanceofPattern, (match, instanceofExpr) => {
+    fixed = fixed.replaceAll(instanceofPattern, (match, instanceofExpr) => {
       changes++;
       return instanceofExpr;
     });
@@ -50,7 +50,7 @@ class BooleanFixerReverter {
     // Pattern 2: Fix boolean ternary expressions
     // "booleanVar != null ? a : b" → "booleanVar ? a : b" (for known boolean patterns)
     const booleanTernaryPattern = /(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*\?\s*([^:]+)\s*:\s*([^;,}]+)/g;
-    fixed = fixed.replace(booleanTernaryPattern, (match, booleanVar, trueExpr, falseExpr) => {
+    fixed = fixed.replaceAll(booleanTernaryPattern, (match, booleanVar, trueExpr, falseExpr) => {
       changes++;
       return `${booleanVar} ? ${trueExpr} : ${falseExpr}`;
     });
@@ -58,7 +58,7 @@ class BooleanFixerReverter {
     // Pattern 3: Fix boolean if conditions
     // "if (booleanVar != null)" → "if (booleanVar)"
     const booleanIfPattern = /if\s*\(\s*(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*\)/g;
-    fixed = fixed.replace(booleanIfPattern, (match, booleanVar) => {
+    fixed = fixed.replaceAll(booleanIfPattern, (match, booleanVar) => {
       changes++;
       return `if (${booleanVar})`;
     });
@@ -66,7 +66,7 @@ class BooleanFixerReverter {
     // Pattern 4: Fix boolean && expressions
     // "booleanVar != null &&" → "booleanVar &&"
     const booleanAndPattern = /(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*&&/g;
-    fixed = fixed.replace(booleanAndPattern, (match, booleanVar) => {
+    fixed = fixed.replaceAll(booleanAndPattern, (match, booleanVar) => {
       changes++;
       return `${booleanVar} &&`;
     });
@@ -88,7 +88,7 @@ class BooleanFixerReverter {
       let hasChanges = false;
       const results = [];
 
-      lines.forEach((line, index) => {
+      for (const [index, line] of lines.entries()) {
         const result = this.fixMalformedExpressions(line);
         results.push(result.fixed);
         if (result.changes > 0) {
@@ -96,7 +96,7 @@ class BooleanFixerReverter {
           this.stats.fixesApplied += result.changes;
           console.log(`  Line ${index + 1}: ${result.changes} fix(es)`);
         }
-      });
+      }
 
       if (hasChanges) {
         fs.writeFileSync(filePath, results.join('\n'));
@@ -119,13 +119,13 @@ class BooleanFixerReverter {
   findFilesWithMalformedPatterns() {
     try {
       // Use PowerShell to find files with the malformed patterns
-      const output = execSync('Get-ChildItem -Path . -Include "*.ts", "*.tsx" -Recurse | Select-String "!= null \\?" | Select-Object -ExpandProperty Filename | Sort-Object | Get-Unique', {
+      const output = execSync(String.raw`Get-ChildItem -Path . -Include "*.ts", "*.tsx" -Recurse | Select-String "!= null \?" | Select-Object -ExpandProperty Filename | Sort-Object | Get-Unique`, {
         encoding: 'utf8',
         shell: 'powershell'
       });
       
       return output.trim().split('\n').filter(file => file.trim()).map(file => file.trim());
-    } catch (error) {
+    } catch {
       console.warn('Could not find files with malformed patterns, using fallback');
       // Fallback to known affected files
       return [
@@ -189,9 +189,9 @@ class BooleanFixerReverter {
     if (this.stats.errors.length > 0) {
       console.log('');
       console.log('❌ ERRORS:');
-      this.stats.errors.forEach(err => {
+      for (const err of this.stats.errors) {
         console.log(`  ${err.file}: ${err.error}`);
-      });
+      }
     }
 
     return {

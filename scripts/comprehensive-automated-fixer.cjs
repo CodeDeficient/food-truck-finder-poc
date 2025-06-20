@@ -12,9 +12,9 @@
  * 5. Simple type safety improvements
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 class ComprehensiveAutomatedFixer {
   constructor() {
@@ -37,7 +37,7 @@ class ComprehensiveAutomatedFixer {
     try {
       const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
       const lines = output.trim().split('\n');
-      return parseInt(lines[lines.length - 1]) || 0;
+      return Number.parseInt(lines.at(-1)) || 0;
     } catch (error) {
       console.warn('Could not get current error count:', error.message);
       return 0;
@@ -54,12 +54,12 @@ class ComprehensiveAutomatedFixer {
       // Run auto-fix with specific safe rules
       execSync('npx eslint . --fix --quiet', {
         stdio: 'pipe',
-        timeout: 120000
+        timeout: 120_000
       });
       
       console.log('✅ ESLint auto-fix completed');
       return true;
-    } catch (error) {
+    } catch {
       console.warn('⚠️  ESLint auto-fix had issues (expected with many errors)');
       return true; // Continue anyway, auto-fix often "fails" but still fixes things
     }
@@ -75,7 +75,7 @@ class ComprehensiveAutomatedFixer {
       // Use our proven nullish coalescing converter
       const result = execSync('node scripts/automated-nullish-coalescing-converter.cjs', {
         encoding: 'utf8',
-        timeout: 120000
+        timeout: 120_000
       });
       
       // Extract conversion count from output
@@ -84,7 +84,7 @@ class ComprehensiveAutomatedFixer {
       if (conversionLine) {
         const match = conversionLine.match(/Total conversions: (\d+)/);
         if (match) {
-          this.stats.nullishCoalescingFixes = parseInt(match[1]);
+          this.stats.nullishCoalescingFixes = Number.parseInt(match[1]);
         }
       }
       
@@ -105,7 +105,7 @@ class ComprehensiveAutomatedFixer {
     const files = this.findTSFiles();
     let fixCount = 0;
     
-    files.forEach(filePath => {
+    for (const filePath of files) {
       try {
         const content = fs.readFileSync(filePath, 'utf8');
         let modified = content;
@@ -122,13 +122,13 @@ class ComprehensiveAutomatedFixer {
           { from: /:\s*null(?=\s*[,}])/g, to: ': undefined' }
         ];
         
-        patterns.forEach(pattern => {
+        for (const pattern of patterns) {
           const matches = modified.match(pattern.from);
           if (matches) {
             modified = modified.replace(pattern.from, pattern.to);
             fixCount += matches.length;
           }
-        });
+        }
         
         if (modified !== content) {
           fs.writeFileSync(filePath, modified);
@@ -136,7 +136,7 @@ class ComprehensiveAutomatedFixer {
       } catch (error) {
         console.warn(`Error processing ${filePath}:`, error.message);
       }
-    });
+    }
     
     this.stats.nullUndefinedFixes = fixCount;
     console.log(`✅ Null → undefined fixes: ${fixCount}`);
@@ -153,12 +153,12 @@ class ComprehensiveAutomatedFixer {
       // Target specific unused import rules
       execSync('npx eslint . --fix --rule "sonarjs/unused-import: error" --quiet', {
         stdio: 'pipe',
-        timeout: 120000
+        timeout: 120_000
       });
       
       console.log('✅ Unused import removal completed');
       return true;
-    } catch (error) {
+    } catch {
       console.warn('⚠️  Unused import removal had issues (expected)');
       return true; // Continue anyway
     }
@@ -171,11 +171,11 @@ class ComprehensiveAutomatedFixer {
     const files = [];
     const directories = ['app', 'components', 'lib'];
     
-    directories.forEach(dir => {
+    for (const dir of directories) {
       if (fs.existsSync(dir)) {
         const findFiles = (currentDir) => {
           const items = fs.readdirSync(currentDir);
-          items.forEach(item => {
+          for (const item of items) {
             const fullPath = path.join(currentDir, item);
             const stat = fs.statSync(fullPath);
             
@@ -184,11 +184,11 @@ class ComprehensiveAutomatedFixer {
             } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
               files.push(fullPath);
             }
-          });
+          }
         };
         findFiles(dir);
       }
-    });
+    }
     
     return files;
   }
@@ -202,11 +202,11 @@ class ComprehensiveAutomatedFixer {
     try {
       execSync('npx tsc --noEmit --strict', {
         stdio: 'pipe',
-        timeout: 120000
+        timeout: 120_000
       });
       console.log('✅ TypeScript compilation successful');
       return true;
-    } catch (error) {
+    } catch {
       console.warn('⚠️  TypeScript compilation has issues (may be expected)');
       return false;
     }
@@ -304,7 +304,7 @@ class ComprehensiveAutomatedFixer {
         initialErrors: this.stats.initialErrors,
         finalErrors: this.stats.finalErrors,
         totalReduction,
-        reductionPercentage: parseFloat(reductionPercentage),
+        reductionPercentage: Number.parseFloat(reductionPercentage),
         phase1Complete: this.stats.finalErrors <= 200
       };
 
@@ -321,15 +321,15 @@ class ComprehensiveAutomatedFixer {
 
 // CLI interface
 if (require.main === module) {
-  const args = process.argv.slice(2);
+  const args = new Set(process.argv.slice(2));
   const options = {};
   
   // Parse command line arguments
-  if (args.includes('--skip-eslint')) options.skipESLintFix = true;
-  if (args.includes('--skip-nullish')) options.skipNullishCoalescing = true;
-  if (args.includes('--skip-null')) options.skipNullUndefined = true;
-  if (args.includes('--skip-imports')) options.skipUnusedImports = true;
-  if (args.includes('--verify')) options.verifyCompilation = true;
+  if (args.has('--skip-eslint')) options.skipESLintFix = true;
+  if (args.has('--skip-nullish')) options.skipNullishCoalescing = true;
+  if (args.has('--skip-null')) options.skipNullUndefined = true;
+  if (args.has('--skip-imports')) options.skipUnusedImports = true;
+  if (args.has('--verify')) options.verifyCompilation = true;
   
   const fixer = new ComprehensiveAutomatedFixer();
   fixer.run(options).then(result => {

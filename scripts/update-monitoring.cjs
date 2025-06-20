@@ -5,9 +5,9 @@
  * Updates dashboard files with current metrics and progress
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { execSync } = require('node:child_process');
 
 function updateMonitoring() {
   console.log('📈 UPDATING REAL-TIME MONITORING DASHBOARDS');
@@ -22,10 +22,10 @@ function updateMonitoring() {
 
     // Extract just the number from the output (last line should be the error count)
     const lines = errorCountOutput.trim().split('\n');
-    const currentErrors = parseInt(lines[lines.length - 1]) || 0;
+    const currentErrors = Number.parseInt(lines.at(-1)) || 0;
 
     const baselineErrors = fs.existsSync('.baseline-errors.txt')
-      ? parseInt(fs.readFileSync('.baseline-errors.txt', 'utf8').trim())
+      ? Number.parseInt(fs.readFileSync('.baseline-errors.txt', 'utf8').trim())
       : currentErrors;
     
     const timestamp = new Date().toLocaleString();
@@ -200,9 +200,9 @@ function updateFileContent(filename, replacements) {
 
     let content = fs.readFileSync(filename, 'utf8');
     
-    replacements.forEach(({ search, replace }) => {
+    for (const { search, replace } of replacements) {
       content = content.replace(search, replace);
-    });
+    }
     
     fs.writeFileSync(filename, content);
     console.log(`✅ Updated ${filename}`);
