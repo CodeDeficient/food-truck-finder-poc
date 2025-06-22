@@ -11,11 +11,8 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { UserPlus } from 'lucide-react';
-// @ts-expect-error TS(2792): Cannot find module 'next/link'. Did you mean to se... Remove this comment to see the full error message
 import Link from 'next/link';
-// @ts-expect-error TS(2792): Cannot find module '@supabase/supabase-js'. Did yo... Remove this comment to see the full error message
 import { User, PostgrestError } from '@supabase/supabase-js';
 
 interface UserDisplayData {
