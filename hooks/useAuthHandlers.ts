@@ -58,9 +58,9 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
           router.push('/access-denied');
         }
       }
-    } catch (err: unknown) {
-      console.error('Login error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
+    } catch (error_: unknown) {
+      console.error('Login error:', error_);
+      setError(error_ instanceof Error ? error_.message : 'An error occurred during login');
     } finally {
       setLoading(false);
     }
@@ -81,9 +81,9 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
       if (signInError) {
         throw signInError;
       }
-    } catch (err: unknown) {
-      console.error('Login error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred during login');
+    } catch (error_: unknown) {
+      console.error('Login error:', error_);
+      setError(error_ instanceof Error ? error_.message : 'An error occurred during login');
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { verifyAdminAccess, getScrapingMetrics } from '@/lib/api/admin/scraping-metrics/handlers';
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminAccess, handleGetRequest } from '@/lib/api/admin/scraping-metrics/handlers';
 
 export async function GET(request: Request): Promise<NextResponse> {
   const hasAdminAccess = await verifyAdminAccess(request);
@@ -11,11 +11,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   try {
-    const metrics = await getScrapingMetrics();
-    return NextResponse.json({
-      success: true,
-      metrics,
-    });
+    return await handleGetRequest();
   } catch (error: unknown) {
     console.error('Error fetching scraping metrics:', error);
     return NextResponse.json(

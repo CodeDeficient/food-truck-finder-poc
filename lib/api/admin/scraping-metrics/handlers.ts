@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
+import { RealtimeMetrics } from './types';
 
 export async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
@@ -23,7 +24,16 @@ export async function verifyAdminAccess(request: Request): Promise<boolean> {
   }
 }
 
-export async function getScrapingMetrics() {
+export async function handleGetRequest(): Promise<NextResponse> {
+  const metrics = await getScrapingMetrics();
+  return NextResponse.json({
+    success: true,
+    data: metrics,
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function getScrapingMetrics(): Promise<RealtimeMetrics> {
   // Fetch real scraping metrics from database
   const [allJobs, , recentTrucks] = await Promise.all([
     ScrapingJobService.getAllJobs(100, 0), // Get last 100 jobs for metrics
@@ -71,5 +81,22 @@ export async function getScrapingMetrics() {
     newTrucksToday,
   };
 
-  return metrics;
+  return {
+    scrapingJobs: {
+      active: typedJobs.filter(job => job.status === 'running').length,
+      completed: successfulRuns,
+      failed: failedRuns,
+      pending: typedJobs.filter(job => job.status === 'pending').length,
+    },
+    dataQuality: {
+      averageScore: 0, // Placeholder, actual calculation might be complex
+      totalTrucks: recentTrucks.total,
+      recentChanges: 0, // Placeholder
+    },
+    systemHealth: {
+      status: 'healthy',
+      uptime: process.uptime(),
+      lastUpdate: new Date().toISOString(),
+    },
+  };
 }
