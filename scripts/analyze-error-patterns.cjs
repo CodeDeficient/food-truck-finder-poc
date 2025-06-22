@@ -19,26 +19,33 @@ class ErrorPatternAnalyzer {
    * Get current ESLint results
    */
   getESLintResults() {
+    let eslintOutput;
     try {
       console.log('🔍 Running ESLint analysis...');
-      const output = execSync('npx eslint . --format json', {
+      const eslintCLIPath = require.resolve('eslint/bin/eslint.js');
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      eslintOutput = execSync(`node "${eslintCLIPath}" . --format json`, {
         encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe'],
+        stdio: 'pipe', // Capture stdout, stderr will go to console by default if not piped
         timeout: 120_000
       });
-      return JSON.parse(output);
+      return JSON.parse(eslintOutput);
     } catch (error) {
-      // Try to parse output even if ESLint failed
+      // Try to parse output even if ESLint failed (e.g. non-zero exit for lint errors)
       const stdout = error.stdout ? error.stdout.toString() : '';
       if (stdout) {
         try {
           return JSON.parse(stdout);
         } catch (parseError) {
-          console.error('Failed to parse ESLint output:', parseError.message);
+          console.error('Failed to parse ESLint output after error:', parseError.message);
+          console.error('ESLint raw stdout on error:', stdout.substring(0, 1000)); // Log snippet
           return [];
         }
       }
-      console.error('ESLint failed:', error.message);
+      console.error('ESLint execution failed without stdout:', error.message);
+      if (error.stderr) {
+        console.error('ESLint stderr:', error.stderr.toString());
+      }
       return [];
     }
   }
@@ -73,9 +80,7 @@ class ErrorPatternAnalyzer {
   identifyAutomationCandidates() {
     console.log('🎯 Identifying automation candidates...');
     
-    // Define automation-friendly rules
     const automationRules = {
-      // High confidence - safe to automate
       '@typescript-eslint/no-unused-vars': {
         confidence: 'HIGH',
         method: 'eslint-autofix',
@@ -94,8 +99,6 @@ class ErrorPatternAnalyzer {
         description: 'Replace null with undefined',
         estimatedReduction: '85%'
       },
-      
-      // Medium confidence - needs careful automation
       '@typescript-eslint/no-explicit-any': {
         confidence: 'MEDIUM',
         method: 'pattern-replacement',
@@ -114,8 +117,6 @@ class ErrorPatternAnalyzer {
         description: 'Remove dead store assignments',
         estimatedReduction: '70%'
       },
-      
-      // Low confidence - manual review needed
       '@typescript-eslint/strict-boolean-expressions': {
         confidence: 'LOW',
         method: 'manual-review',
@@ -132,9 +133,8 @@ class ErrorPatternAnalyzer {
       }
     };
 
-    // Calculate automation potential
     for (const [ruleId, count] of Object.entries(this.errorCounts)) {
-      if (automationRules[ruleId] && count >= 5) { // Only consider rules with 5+ occurrences
+      if (automationRules[ruleId] && count >= 5) {
         const rule = automationRules[ruleId];
         const estimatedFixes = Math.floor(count * (Number.parseInt(rule.estimatedReduction) / 100));
         
@@ -149,33 +149,18 @@ class ErrorPatternAnalyzer {
         });
       }
     }
-
-    // Sort by priority (highest first)
     this.automationCandidates.sort((a, b) => b.priority - a.priority);
   }
 
-  /**
-   * Calculate automation priority score
-   */
   calculatePriority(count, confidence, estimatedFixes) {
-    const confidenceMultiplier = {
-      'HIGH': 3,
-      'MEDIUM': 2,
-      'LOW': 1
-    };
-    
-    return estimatedFixes * confidenceMultiplier[confidence];
+    const confidenceMultiplier = { 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
+    return estimatedFixes * (confidenceMultiplier[confidence] || 1);
   }
 
-  /**
-   * Generate automation recommendations
-   */
   generateRecommendations() {
     console.log('💡 Generating automation recommendations...');
-    
     const highConfidenceCandidates = this.automationCandidates.filter(c => c.confidence === 'HIGH');
     const mediumConfidenceCandidates = this.automationCandidates.filter(c => c.confidence === 'MEDIUM');
-    
     const totalHighConfidenceFixes = highConfidenceCandidates.reduce((sum, c) => sum + c.estimatedFixes, 0);
     const totalMediumConfidenceFixes = mediumConfidenceCandidates.reduce((sum, c) => sum + c.estimatedFixes, 0);
     
@@ -193,9 +178,6 @@ class ErrorPatternAnalyzer {
     };
   }
 
-  /**
-   * Print analysis results
-   */
   printResults() {
     const totalErrors = Object.values(this.errorCounts).reduce((sum, count) => sum + count, 0);
     const sortedErrors = Object.entries(this.errorCounts).sort((a, b) => b[1] - a[1]);
@@ -210,7 +192,7 @@ class ErrorPatternAnalyzer {
     console.log('\n🔝 TOP 15 ERROR TYPES:');
     console.log('----------------------');
     for (const [index, [rule, count]] of sortedErrors.slice(0, 15).entries()) {
-      const percentage = ((count / totalErrors) * 100).toFixed(1);
+      const percentage = totalErrors > 0 ? ((count / totalErrors) * 100).toFixed(1) : "0.0";
       console.log(`${index + 1}. ${rule}: ${count} (${percentage}%)`);
     }
     
@@ -239,40 +221,39 @@ class ErrorPatternAnalyzer {
     }
     
     const totalAutomationPotential = recommendations.highConfidence.totalFixes + recommendations.mediumConfidence.totalFixes;
-    const automationPercentage = ((totalAutomationPotential / totalErrors) * 100).toFixed(1);
+    const automationPercentage = totalErrors > 0 ? ((totalAutomationPotential / totalErrors) * 100).toFixed(1) : "0.0";
     
     console.log('\n📊 AUTOMATION SUMMARY:');
     console.log('----------------------');
     console.log(`Current errors: ${totalErrors}`);
     console.log(`Automation potential: ${totalAutomationPotential} fixes (${automationPercentage}%)`);
-    console.log(`Remaining manual work: ${totalErrors - totalAutomationPotential} errors`);
+    console.log(`Remaining manual work: ${Math.max(0, totalErrors - totalAutomationPotential)} errors`);
     
     console.log('\n🛠️  RECOMMENDED AUTOMATION METHODS:');
     console.log('-----------------------------------');
-    const allMethods = [...recommendations.highConfidence.methods, ...recommendations.mediumConfidence.methods];
-    for (const method of new Set(allMethods)) {
+    const allMethods = [...new Set([...recommendations.highConfidence.methods, ...recommendations.mediumConfidence.methods])];
+    for (const method of allMethods) {
       console.log(`• ${method}`);
     }
     
     return recommendations;
   }
 
-  /**
-   * Run the complete analysis
-   */
   async run() {
     const results = this.getESLintResults();
+    if (!results || results.length === 0) {
+        console.warn("No ESLint results to analyze. Exiting pattern analysis.");
+        return { highConfidence: { candidates: [], totalFixes: 0, methods: [] }, mediumConfidence: { candidates: [], totalFixes: 0, methods: [] } };
+    }
     this.analyzePatterns(results);
     this.identifyAutomationCandidates();
     return this.printResults();
   }
 }
 
-// CLI interface
 if (require.main === module) {
   const analyzer = new ErrorPatternAnalyzer();
   analyzer.run().then(recommendations => {
-    // Save results for other scripts to use
     const output = {
       timestamp: new Date().toISOString(),
       totalErrors: Object.values(analyzer.errorCounts).reduce((sum, count) => sum + count, 0),
@@ -283,7 +264,6 @@ if (require.main === module) {
     
     fs.writeFileSync('error-analysis.json', JSON.stringify(output, null, 2));
     console.log('\n💾 Analysis saved to error-analysis.json');
-    
     process.exit(0);
   }).catch(error => {
     console.error('Analysis failed:', error);

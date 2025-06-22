@@ -104,7 +104,7 @@ async function handleDuplicateCheck(
   jobId: string,
   truckData: FoodTruckSchema,
   name: string
-): Promise<any> {
+): Promise<(FoodTruckSchema & { id: string }) | null> { // Allowing null if operation could fail to return a truck
   // Check for duplicates before creating
   console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
   const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
@@ -138,9 +138,17 @@ async function handleDuplicateCheck(
 // Helper function to finalize job status
 async function finalizeJobStatus(
   jobId: string,
-  truck: any,
+  truck: (FoodTruckSchema & { id: string }) | null, // Match the return type of handleDuplicateCheck
   sourceUrl: string
 ): Promise<void> {
+  if (!truck) {
+    console.warn(`Job ${jobId}: Finalize job status called with null truck. Source: ${sourceUrl ?? 'Unknown Source'}`);
+    // Potentially update job to a specific error state if truck is unexpectedly null
+    await ScrapingJobService.updateJobStatus(jobId, 'failed', {
+      errors: ['Data processing resulted in a null truck object before finalization.'],
+    });
+    return;
+  }
   console.info(
     `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl ?? 'Unknown Source'}`,
   );

@@ -5,17 +5,44 @@ const fs = require('node:fs');
 console.log('Running ESLint analysis...');
 let eslintOutput;
 try {
-  eslintOutput = execSync('npx eslint . --format json', { 
+  // Prefer local eslint binary path
+  // This assumes eslint is installed locally, which is typical for npx usage.
+  const eslintCLIPath = require.resolve('eslint/bin/eslint.js');
+  // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+  eslintOutput = execSync(`node "${eslintCLIPath}" . --format json`, {
     encoding: 'utf8',
-    stdio: 'pipe',
-    timeout: 120_000
+    stdio: 'pipe', // Capture stdout
+    timeout: 120_000 // 2 minutes timeout
   });
 } catch (error) {
-  // ESLint returns non-zero exit code when errors are found
-  eslintOutput = error.stdout;
+  // ESLint returns non-zero exit code when errors are found,
+  // but still outputs JSON to stdout.
+  if (error.stdout && error.stdout.length > 0) {
+    eslintOutput = error.stdout;
+  } else {
+    // If no stdout, or it's empty, then it's a more serious error
+    console.error('Failed to run ESLint or no output received.');
+    if (error.stderr) {
+      console.error('ESLint stderr:', error.stderr);
+    }
+    if (error.message) {
+      console.error('ESLint error message:', error.message);
+    }
+    process.exit(1);
+  }
 }
 
-const results = JSON.parse(eslintOutput);
+let results;
+try {
+  results = JSON.parse(eslintOutput);
+} catch (parseError) {
+  console.error('Failed to parse ESLint JSON output.');
+  console.error('ESLint raw output length:', eslintOutput ? eslintOutput.length : 'undefined');
+  // Avoid printing extremely long strings if output is huge and not JSON
+  console.error('ESLint raw output (first 1000 chars):', eslintOutput ? eslintOutput.substring(0, 1000) : 'undefined');
+  console.error('Parse error:', parseError.message);
+  process.exit(1);
+}
 
 // Complexity-related rules to look for
 const complexityRules = new Set([
@@ -36,7 +63,7 @@ for (const file of results) {
     for (const message of file.messages) {
       if (complexityRules.has(message.ruleId)) {
         complexityViolations.push({
-          filePath: file.filePath.replace('C:\\AI\\food-truck-finder-poc\\', ''),
+          filePath: file.filePath.replace('C:\\AI\\food-truck-finder-poc\\', ''), // Consider making this path replacement more robust or configurable
           ruleId: message.ruleId,
           message: message.message,
           line: message.line,
@@ -66,19 +93,18 @@ const prioritizedFiles = Object.entries(fileViolations).map(([filePath, violatio
   for (const violation of violations) {
     switch (violation.ruleId) {
       case 'max-lines-per-function': {
-        // Extract current and max lines from message
         const match = violation.message.match(/has too many lines \((\d+)\)\. Maximum allowed is (\d+)/);
         if (match) {
           const current = Number.parseInt(match[1]);
           const max = Number.parseInt(match[2]);
           const excess = current - max;
-          severityScore += excess * 2; // Weight function length heavily
+          severityScore += excess * 2;
           maxLinesViolation = { current, max, excess };
         }
         break;
       }
       case 'sonarjs/cognitive-complexity': {
-        severityScore += 15; // High impact
+        severityScore += 15;
         break;
       }
       case 'max-depth': {
@@ -90,7 +116,7 @@ const prioritizedFiles = Object.entries(fileViolations).map(([filePath, violatio
         break;
       }
       case 'sonarjs/no-identical-functions': {
-        severityScore += 20; // Very high impact - duplicate code
+        severityScore += 20;
         break;
       }
       default: {
