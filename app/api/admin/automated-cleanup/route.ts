@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   verifyAdminAccess,
+  handlePostRequest,
   handleGetStatus,
   handleGetSchedules,
   handleGetHistory,
   handleGetPreview,
   handleGetDefault,
-  handleRunScheduled,
-  handleRunImmediate,
-  handleScheduleCleanup,
-  handleUpdateSchedule,
-  handleDeleteSchedule,
-  handleAnalyzeDuplicates,
 } from '@/lib/api/admin/automated-cleanup/handlers';
 
 /**
@@ -23,11 +18,6 @@ import {
  * GET /api/admin/automated-cleanup - Get cleanup status and schedule
  * POST /api/admin/automated-cleanup - Run cleanup operations
  */
-
-interface RequestBody {
-  action: string;
-  options?: Record<string, unknown>;
-}
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -73,43 +63,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json() as RequestBody;
-    const { action, options = {} } = body;
-
-    switch (action) {
-      case 'run_scheduled': {
-        return await handleRunScheduled(options);
-      }
-      case 'run_immediate': {
-        return await handleRunImmediate(options);
-      }
-      case 'schedule_cleanup': {
-        return await handleScheduleCleanup(options);
-      }
-      case 'update_schedule': {
-        return await handleUpdateSchedule(options);
-      }
-      case 'delete_schedule': {
-        return await handleDeleteSchedule(options);
-      }
-      case 'analyze_duplicates': {
-        return await handleAnalyzeDuplicates(options);
-      }
-      default: {
-        return NextResponse.json({
-          success: false,
-          error: 'Unknown action',
-          available_actions: [
-            'run_scheduled',
-            'run_immediate',
-            'schedule_cleanup',
-            'update_schedule',
-            'delete_schedule',
-            'analyze_duplicates'
-          ]
-        }, { status: 400 });
-      }
-    }
+    const body = await request.json();
+    return await handlePostRequest(body);
   } catch (error) {
     console.error('Automated cleanup POST error:', error);
     return NextResponse.json({
