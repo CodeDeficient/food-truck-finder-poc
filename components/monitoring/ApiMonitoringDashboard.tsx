@@ -20,8 +20,8 @@ export function ApiMonitoringDashboard() {
         if (!res.ok) throw new Error('Failed to fetch API usage');
         const data = await res.json();
         setUsage(data);
-      } catch (err: any) {
-        setError(err.message || 'Unknown error');
+      } catch (error_: any) {
+        setError(error_.message || 'Unknown error');
       } finally {
         setLoading(false);
       }
