@@ -1,58 +1,10 @@
 // app/api/pipeline/route.ts
 // Unified Pipeline API - Consolidates all pipeline functionality
 
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { type NextRequest, NextResponse } from 'next/server';
-import { ScrapingJobService } from '@/lib/supabase';
 import { pipelineManager, type PipelineConfig } from '@/lib/pipelineManager';
-
-interface PipelineRequestBody {
-  action?: 'discovery' | 'processing' | 'full' | 'maintenance';
-  target_url?: string;
-  config?: {
-    maxUrls?: number;
-    maxUrlsToProcess?: number;
-    targetCities?: string[];
-    priority?: number;
-    skipDiscovery?: boolean;
-    retryFailedJobs?: boolean;
-  };
-  // Legacy support
-  job_type?: string;
-  priority?: number;
-}
-
-async function handleLegacyScrapingRequest(body: PipelineRequestBody) {
-  const { target_url, job_type = 'website_scrape', priority = 1 } = body;
-
-  if (target_url == undefined || target_url === '') {
-    return NextResponse.json({ error: 'target_url is required' }, { status: 400 });
-  }
-
-  try {
-    new URL(target_url);
-  } catch {
-    return NextResponse.json({ error: 'Invalid target_url format' }, { status: 400 });
-  }
-
-  const job = await ScrapingJobService.createJob({
-    target_url,
-    job_type,
-    priority,
-    scheduled_at: new Date().toISOString(),
-  });
-
-  if (job == undefined) {
-    return NextResponse.json({ error: 'Failed to create scraping job' }, { status: 500 });
-  }
-
-  return NextResponse.json({
-    message: 'Scraping job created (legacy mode)',
-    job_id: job.id,
-    target_url,
-    note: 'Consider using the new unified pipeline API with action parameter',
-  });
-}
+import { handleLegacyScrapingRequest } from '@/lib/api/pipeline/handlers';
+import { PipelineRequestBody } from '@/lib/api/pipeline/types';
 
 export async function POST(request: NextRequest) {
   try {

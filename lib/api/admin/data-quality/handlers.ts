@@ -27,7 +27,52 @@ interface QualityCategory {
   description: string;
 }
 
-export async function handleStatsAction() {
+export async function handleGetRequest(request: NextRequest): Promise<NextResponse> {
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
+  const truckId = searchParams.get('truckId');
+  const limit = searchParams.get('limit');
+
+  switch (action) {
+    case 'stats': {
+      return await handleStatsAction();
+    }
+    case 'assess': {
+      if (!truckId) {
+        return NextResponse.json({ success: false, error: 'Missing truckId for assess action' }, { status: 400 });
+      }
+      return await handleAssessAction(truckId);
+    }
+    default: {
+      return await handleDefaultGetAction();
+    }
+  }
+}
+
+export async function handlePostRequest(request: NextRequest): Promise<NextResponse> {
+  const body = await request.json();
+  const { action, truckId, limit } = body;
+
+  switch (action) {
+    case 'update-single': {
+      if (!truckId) {
+        return NextResponse.json({ success: false, error: 'Missing truckId for update-single action' }, { status: 400 });
+      }
+      return await handleUpdateSingle(truckId);
+    }
+    case 'batch-update': {
+      return await handleBatchUpdate(limit);
+    }
+    case 'recalculate-all': {
+      return await handleRecalculateAll();
+    }
+    default: {
+      return NextResponse.json({ success: false, error: `Unknown action: ${action}` }, { status: 400 });
+    }
+  }
+}
+
+async function handleStatsAction() {
   const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
 
   const qualityStats = qualityStatsRaw as Record<string, unknown>;
@@ -41,7 +86,7 @@ export async function handleStatsAction() {
   });
 }
 
-export async function handleAssessAction(truckId: string) {
+async function handleAssessAction(truckId: string) {
   const truckRaw = await FoodTruckService.getTruckById(truckId);
 
   const truck = truckRaw as TruckData;
@@ -57,7 +102,7 @@ export async function handleAssessAction(truckId: string) {
   });
 }
 
-export async function handleDefaultGetAction() {
+async function handleDefaultGetAction() {
   const qualityStats = await FoodTruckService.getDataQualityStats();
   return NextResponse.json({
     success: true,
@@ -65,7 +110,7 @@ export async function handleDefaultGetAction() {
   });
 }
 
-export async function handleUpdateSingle(truckId: string) {
+async function handleUpdateSingle(truckId: string) {
   const updatedTruck = await FoodTruckService.getTruckById(truckId);
   
   return NextResponse.json({
@@ -81,7 +126,7 @@ export async function handleUpdateSingle(truckId: string) {
   });
 }
 
-export async function handleBatchUpdate(limit?: number) {
+async function handleBatchUpdate(limit?: number) {
   const batchLimit = limit ?? 100;
   
   return NextResponse.json({
@@ -94,7 +139,7 @@ export async function handleBatchUpdate(limit?: number) {
   });
 }
 
-export async function handleRecalculateAll() {
+async function handleRecalculateAll() {
   const { trucks } = await FoodTruckService.getAllTrucks(1000, 0);
   let updated = 0;
   let errors = 0;

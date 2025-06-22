@@ -8,16 +8,21 @@ import {
 
 async function handleDashboardSectionRequest(section: string | null) {
   switch (section) {
-    case 'overview':
+    case 'overview': {
       return NextResponse.json(await getDashboardOverview());
-    case 'scraping':
+    }
+    case 'scraping': {
       return NextResponse.json(await getScrapingStatus());
-    case 'processing':
+    }
+    case 'processing': {
       return NextResponse.json(await getProcessingStatus());
-    case 'quality':
+    }
+    case 'quality': {
       return NextResponse.json(await getDataQualityStatus());
-    case 'usage':
+    }
+    case 'usage': {
       return NextResponse.json(await getAPIUsageStatus());
+    }
     default: {
       const [overview, scraping, processing, quality, usage] = await Promise.allSettled([
         getDashboardOverview(),
