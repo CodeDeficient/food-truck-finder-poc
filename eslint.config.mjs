@@ -43,6 +43,7 @@ export default tseslint.config(
       // Quality gate reports
       "eslint-*.json",
       "quality-report.json",
+      "analyze-complexity-violations.cjs", // Ignore CJS file causing parsing errors
     ],
   },
 

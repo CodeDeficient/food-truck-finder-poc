@@ -101,62 +101,75 @@ export async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   }
 }
 
+export async function sendScrapingUpdateEvent(
+  controller: ReadableStreamDefaultController<Uint8Array>,
+  encoder: TextEncoder
+): Promise<void> {
+  const recentJobs = await ScrapingJobService.getJobsByStatus('all');
+
+  if (recentJobs.length > 0) {
+    const event: AdminEvent = {
+      id: generateEventId(),
+      type: 'scraping_update',
+      timestamp: new Date().toISOString(),
+      data: {
+        recentJobs: recentJobs.map((job: unknown) => {
+          const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
+          return {
+            id: jobData.id,
+            status: jobData.status,
+            started_at: jobData.started_at,
+            completed_at: jobData.completed_at
+          };
+        }),
+        count: recentJobs.length
+      },
+      severity: 'info'
+    };
+
+    controller.enqueue(encoder.encode(formatSSEMessage(event)));
+  }
+}
+
+export async function sendDataQualityChangeEvent(
+  controller: ReadableStreamDefaultController<Uint8Array>,
+  encoder: TextEncoder
+): Promise<void> {
+  const recentTrucks = await FoodTruckService.getAllTrucks(10, 0);
+  const recentlyUpdated = recentTrucks.trucks.filter(truck => {
+    const updatedAt = new Date(truck.updated_at);
+    const oneMinuteAgo = new Date(Date.now() - 60_000);
+    return updatedAt > oneMinuteAgo;
+  });
+
+  if (recentlyUpdated.length > 0) {
+    const event: AdminEvent = {
+      id: generateEventId(),
+      type: 'data_quality_change',
+      timestamp: new Date().toISOString(),
+      data: {
+        updatedTrucks: recentlyUpdated.map(truck => ({
+          id: truck.id,
+          name: truck.name,
+          data_quality_score: truck.data_quality_score,
+          updated_at: truck.updated_at
+        })),
+        count: recentlyUpdated.length
+      },
+      severity: 'info'
+    };
+
+    controller.enqueue(encoder.encode(formatSSEMessage(event)));
+  }
+}
+
 export async function monitorDataChanges(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
   try {
-    const recentJobs = await ScrapingJobService.getJobsByStatus('all');
-
-    if (recentJobs.length > 0) {
-      const event: AdminEvent = {
-        id: generateEventId(),
-        type: 'scraping_update',
-        timestamp: new Date().toISOString(),
-        data: {
-          recentJobs: recentJobs.map((job: unknown) => {
-            const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
-            return {
-              id: jobData.id,
-              status: jobData.status,
-              started_at: jobData.started_at,
-              completed_at: jobData.completed_at
-            };
-          }),
-          count: recentJobs.length
-        },
-        severity: 'info'
-      };
-
-      controller.enqueue(encoder.encode(formatSSEMessage(event)));
-    }
-
-    const recentTrucks = await FoodTruckService.getAllTrucks(10, 0);
-    const recentlyUpdated = recentTrucks.trucks.filter(truck => {
-      const updatedAt = new Date(truck.updated_at);
-      const oneMinuteAgo = new Date(Date.now() - 60_000);
-      return updatedAt > oneMinuteAgo;
-    });
-
-    if (recentlyUpdated.length > 0) {
-      const event: AdminEvent = {
-        id: generateEventId(),
-        type: 'data_quality_change',
-        timestamp: new Date().toISOString(),
-        data: {
-          updatedTrucks: recentlyUpdated.map(truck => ({
-            id: truck.id,
-            name: truck.name,
-            data_quality_score: truck.data_quality_score,
-            updated_at: truck.updated_at
-          })),
-          count: recentlyUpdated.length
-        },
-        severity: 'info'
-      };
-
-      controller.enqueue(encoder.encode(formatSSEMessage(event)));
-    }
+    await sendScrapingUpdateEvent(controller, encoder);
+    await sendDataQualityChangeEvent(controller, encoder);
   } catch (error) {
     console.error('Error monitoring data changes:', error);
   }
