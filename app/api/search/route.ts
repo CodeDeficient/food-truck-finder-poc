@@ -1,11 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { CachedFoodTruckService } from '@/lib/performance/databaseCache';
-import { type FoodTruck } from '@/lib/types';
 import {
   applyCuisineFilter,
   applyOpenNowFilter,
   applyTextSearchFilter,
 } from '@/lib/api/search/filters';
+import { getAndFilterFoodTrucks, sortFoodTrucksByQuality } from '@/lib/api/search/data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -14,43 +13,22 @@ export async function GET(request: NextRequest) {
   const openNow = searchParams.get('openNow') === 'true';
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
-  const radius = searchParams.get('radius') ?? '10';
+  const radius = searchParams.get('radius');
 
   try {
-    let trucks: FoodTruck[] = [];
-
-    // Get trucks by location if coordinates provided
-    if (lat != undefined && lng != undefined) {
-      const userLat = Number.parseFloat(lat);
-      const userLng = Number.parseFloat(lng);
-      const radiusKm = Number.parseFloat(radius);
-      trucks = await CachedFoodTruckService.getTrucksByLocationCached(userLat, userLng, radiusKm);
-    } else {
-      // Get all trucks
-      const result = await CachedFoodTruckService.getAllTrucksCached();
-      trucks = result.trucks;
-    }
+    let trucks = await getAndFilterFoodTrucks(lat, lng, radius);
 
     // Apply filters
-    let filteredTrucks = trucks;
-
-    // Text search filter
-    filteredTrucks = applyTextSearchFilter(filteredTrucks, query);
-
-    // Cuisine filter
-    filteredTrucks = applyCuisineFilter(filteredTrucks, cuisine);
-
-    // Open now filter
-    filteredTrucks = applyOpenNowFilter(filteredTrucks, openNow);
+    trucks = applyTextSearchFilter(trucks, query);
+    trucks = applyCuisineFilter(trucks, cuisine);
+    trucks = applyOpenNowFilter(trucks, openNow);
 
     // Sort by data quality score
-    filteredTrucks.sort(
-      (a: FoodTruck, b: FoodTruck) => (b.data_quality_score ?? 0) - (a.data_quality_score ?? 0),
-    );
+    const filteredAndSortedTrucks = sortFoodTrucksByQuality(trucks);
 
     return NextResponse.json({
-      trucks: filteredTrucks,
-      total: filteredTrucks.length,
+      trucks: filteredAndSortedTrucks,
+      total: filteredAndSortedTrucks.length,
       filters: {
         query,
         cuisine,
@@ -59,7 +37,7 @@ export async function GET(request: NextRequest) {
           lat != undefined && lng != undefined
             ? { lat: Number.parseFloat(lat), lng: Number.parseFloat(lng) }
             : undefined,
-        radius: Number.parseFloat(radius),
+        radius: Number.parseFloat(radius ?? '10'),
       },
     });
   } catch (error) {

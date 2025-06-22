@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logActivity } from '@/lib/activityLogger';
-import { DataQualityService, FoodTruckService } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
+import { DataQualityService } from '@/lib/utils/qualityScorer';
 
 // Type definitions for quality assessment
 interface QualityAssessment {
@@ -9,12 +10,13 @@ interface QualityAssessment {
 }
 
 interface QualityService {
-  calculateQualityScore: (truck: unknown) => QualityAssessment;
+  calculateQualityScore: (truck: FoodTruck) => QualityAssessment;
   categorizeQualityScore: (score: number) => string;
   batchUpdateQualityScores: (limit: number) => Promise<unknown>;
+  updateTruckQualityScore: (truckId: string) => Promise<unknown>;
 }
 
-function verifyCronSecret(request: NextRequest): NextResponse | null {
+function verifyCronSecret(request: NextRequest): NextResponse | undefined {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
@@ -27,7 +29,7 @@ function verifyCronSecret(request: NextRequest): NextResponse | null {
     console.error('Unauthorized cron attempt:', authHeader);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  return null;
+  return undefined;
 }
 
 function logQualityCheckStart() {
@@ -95,7 +97,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function assessTrucksQuality(trucks: any[]) {
+function assessTrucksQuality(trucks: FoodTruck[]): {
+  trucksWithMissingData: number;
+  lowQualityTrucks: number;
+  staleDataCount: number;
+  averageQualityScore: number;
+  qualityBreakdown: { high: number; medium: number; low: number };
+} {
   let trucksWithMissingData = 0;
   let lowQualityTrucks = 0;
   let totalQualityScore = 0;
@@ -107,7 +115,7 @@ async function assessTrucksQuality(trucks: any[]) {
     totalQualityScore += assessment.score;
 
     const category = (DataQualityService as QualityService).categorizeQualityScore(assessment.score);
-    (qualityBreakdown as Record<string, number>)[category]++;
+    qualityBreakdown[category as keyof typeof qualityBreakdown]++;
 
     if (assessment.issues.length > 0) {
       trucksWithMissingData++;
@@ -117,7 +125,7 @@ async function assessTrucksQuality(trucks: any[]) {
       lowQualityTrucks++;
     }
 
-    if (truck.current_location?.timestamp) {
+    if (truck.current_location?.timestamp !== undefined && truck.current_location.timestamp !== null) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
       if (daysSinceUpdate > 7) {

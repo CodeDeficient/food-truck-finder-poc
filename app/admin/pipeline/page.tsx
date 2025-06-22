@@ -2,8 +2,6 @@ import React from 'react';
 import {
   ScrapingJobService,
   DataProcessingService,
-  ScrapingJob,
-  DataProcessingQueue,
 } from '@/lib/supabase';
 import { PipelineStatisticsCards } from '@/components/admin/pipeline/PipelineStatisticsCards';
 import { RecentScrapingJobsTable } from '@/components/admin/pipeline/RecentScrapingJobsTable';

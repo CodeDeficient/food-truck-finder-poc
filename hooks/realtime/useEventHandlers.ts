@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
-import { AdminEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
+import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
 
 export function useEventHandlers(
-  eventFilter: ((event: AdminEvent) => boolean) | undefined,
+  eventFilter: ((event: RealtimeEvent) => boolean) | undefined,
   setLastEventTime: (date: Date) => void,
   setLatestMetrics: (metrics: RealtimeMetrics) => void,
-  setRecentEvents: React.Dispatch<React.SetStateAction<AdminEvent[]>>
+  setRecentEvents: React.Dispatch<React.SetStateAction<RealtimeEvent[]>>
 ) {
-  return useCallback((event: AdminEvent) => {
+  return useCallback((event: RealtimeEvent) => {
     // Apply filter if provided
     if (eventFilter && !eventFilter(event)) {
       return;

@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   handlePostRequest,
   handleGetRequest,
+  DataCleanupRequestBody,
 } from '@/lib/api/admin/data-cleanup/handlers';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body: DataCleanupRequestBody = await request.json();
     return await handlePostRequest(body);
   } catch (error) {
     console.error('Data cleanup API error:', error);

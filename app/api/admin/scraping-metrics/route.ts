@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { verifyAdminAccess, handleGetRequest } from '@/lib/api/admin/scraping-metrics/handlers';
 
 export async function GET(request: Request): Promise<NextResponse> {
