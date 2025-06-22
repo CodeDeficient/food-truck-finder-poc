@@ -1,62 +1,13 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { AdminEvent, RealtimeMetrics } from './useRealtimeAdminEvents.types';
+import { parseEventData, setupEventListeners, setupEventSourceAuth } from './useRealtimeAdminEventsHelpers';
+
 /**
  * SOTA Real-time Admin Dashboard Hook
  * 
  * Provides real-time updates for admin dashboard using Server-Sent Events (SSE)
  * Implements automatic reconnection, error handling, and event filtering
  */
-
-import { useState, useEffect, useRef, useCallback } from 'react';
-
-// Utility function for parsing event data
-function parseEventData(eventData: string, eventType: string): AdminEvent | null {
-  try {
-    return JSON.parse(eventData) as AdminEvent;
-  } catch (error) {
-    console.warn(`Failed to parse ${eventType} event:`, error);
-    return null;
-  }
-}
-
-// Setup event listeners for different event types
-function setupEventListeners(eventSource: EventSource, handleEvent: (event: AdminEvent) => void) {
-  const eventTypes = ['heartbeat', 'scraping_update', 'data_quality_change', 'system_alert'];
-
-  eventTypes.forEach(eventType => {
-    eventSource.addEventListener(eventType, (event: MessageEvent) => {
-      const adminEvent = parseEventData(event.data as string, eventType);
-      if (adminEvent) {
-        handleEvent(adminEvent);
-      }
-    });
-  });
-}
-
-interface AdminEvent {
-  id: string;
-  type: 'scraping_update' | 'data_quality_change' | 'system_alert' | 'user_activity' | 'heartbeat';
-  timestamp: string;
-  data: Record<string, unknown>;
-  severity?: 'info' | 'warning' | 'error' | 'critical';
-}
-
-interface RealtimeMetrics {
-  scrapingJobs: {
-    active: number;
-    completed: number;
-    failed: number;
-    pending: number;
-  };
-  dataQuality: {
-    averageScore: number;
-    totalTrucks: number;
-    recentChanges: number;
-  };
-  systemHealth: {
-    status: 'healthy' | 'warning' | 'error';
-    uptime: number;
-    lastUpdate: string;
-  };
-}
 
 interface UseRealtimeAdminEventsOptions {
   autoConnect?: boolean;
@@ -69,10 +20,10 @@ interface UseRealtimeAdminEventsReturn {
   // Connection state
   isConnected: boolean;
   isConnecting: boolean;
-  connectionError: string | null;
+  connectionError: string | undefined;
   
   // Data
-  latestMetrics: RealtimeMetrics | null;
+  latestMetrics: RealtimeMetrics | undefined;
   recentEvents: AdminEvent[];
   
   // Controls
@@ -82,18 +33,18 @@ interface UseRealtimeAdminEventsReturn {
   
   // Statistics
   connectionAttempts: number;
-  lastEventTime: Date | null;
+  lastEventTime: Date | undefined;
 }
 
 // Connection state management hook
 function useConnectionState() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | undefined>();
-  const [latestMetrics, setLatestMetrics] = useState<RealtimeMetrics | undefined>();
+  const [connectionError, setConnectionError] = useState<string | undefined>(undefined);
+  const [latestMetrics, setLatestMetrics] = useState<RealtimeMetrics | undefined>(undefined);
   const [recentEvents, setRecentEvents] = useState<AdminEvent[]>([]);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
-  const [lastEventTime, setLastEventTime] = useState<Date | undefined>();
+  const [lastEventTime, setLastEventTime] = useState<Date | undefined>(undefined);
 
   return {
     isConnected, setIsConnected,
@@ -104,18 +55,6 @@ function useConnectionState() {
     connectionAttempts, setConnectionAttempts,
     lastEventTime, setLastEventTime
   };
-}
-
-// Helper function to setup authentication for event source
-function setupEventSourceAuth(): string {
-  const token = localStorage.getItem('supabase.auth.token') ??
-               sessionStorage.getItem('supabase.auth.token');
-
-  if (token == undefined || token === '') {
-    throw new Error('No authentication token available');
-  }
-
-  return token;
 }
 
 // Helper function to setup event source listeners
@@ -252,7 +191,7 @@ function useEventHandlers(
     switch (event.type) {
       case 'heartbeat': {
         if (event.data != undefined && typeof event.data === 'object') {
-          setLatestMetrics(event.data as RealtimeMetrics);
+          setLatestMetrics(event.data as unknown as RealtimeMetrics);
         }
         break;
       }
