@@ -26,7 +26,7 @@ export function useSystemMetrics({ isConnected, isConnecting, connectionError, l
       })(),
       status: (() => {
         if (isConnected) return 'healthy';
-        if (connectionError == undefined) return 'warning';
+        if (connectionError === undefined) return 'warning';
         return 'error';
       })(),
       icon: isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />

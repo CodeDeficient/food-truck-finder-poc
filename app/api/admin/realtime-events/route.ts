@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import {
   verifyAdminAccess,
   fetchRealtimeMetrics,
@@ -15,71 +15,78 @@ interface AdminEvent {
   severity?: 'info' | 'warning' | 'error' | 'critical';
 }
 
+function handleSSEStream(request: NextRequest, controller: ReadableStreamDefaultController<Uint8Array>) {
+  const encoder = new TextEncoder();
+
+  const connectionEvent: AdminEvent = {
+    id: generateEventId(),
+    type: 'heartbeat',
+    timestamp: new Date().toISOString(),
+    data: {
+      message: 'Real-time admin dashboard connected',
+      connectionId: generateEventId()
+    }
+  };
+  
+  controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
+
+  const handleHeartbeatEvent = async () => {
+    try {
+      const metrics = await fetchRealtimeMetrics();
+      const event: AdminEvent = {
+        id: generateEventId(),
+        type: 'heartbeat',
+        timestamp: new Date().toISOString(),
+        data: { ...metrics }
+      };
+
+      controller.enqueue(encoder.encode(formatSSEMessage(event)));
+    } catch (error) {
+      console.error('Error fetching realtime metrics:', error);
+
+      const errorEvent: AdminEvent = {
+        id: generateEventId(),
+        type: 'system_alert',
+        timestamp: new Date().toISOString(),
+        data: {
+          error: 'Failed to fetch metrics',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        },
+        severity: 'error'
+      };
+
+      controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
+    }
+  };
+
+  const intervalId = setInterval(() => {
+    void handleHeartbeatEvent();
+  }, 5000);
+
+  const changeMonitorId = setInterval(async () => {
+    try {
+      await monitorDataChanges(controller, encoder);
+    } catch (error) {
+      console.error('Error monitoring data changes:', error);
+    }
+  }, 10_000);
+
+  request.signal.addEventListener('abort', () => {
+    clearInterval(intervalId);
+    clearInterval(changeMonitorId);
+    controller.close();
+  });
+}
+
 export async function GET(request: NextRequest): Promise<Response> {
   const hasAccess = await verifyAdminAccess(request);
   if (!hasAccess) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
-      const connectionEvent: AdminEvent = {
-        id: generateEventId(),
-        type: 'heartbeat',
-        timestamp: new Date().toISOString(),
-        data: {
-          message: 'Real-time admin dashboard connected',
-          connectionId: generateEventId()
-        }
-      };
-      
-      controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
-
-      const intervalId = setInterval(() => {
-        void (async () => {
-          try {
-            const metrics = await fetchRealtimeMetrics();
-            const event: AdminEvent = {
-              id: generateEventId(),
-              type: 'heartbeat',
-              timestamp: new Date().toISOString(),
-              data: { ...metrics }
-            };
-
-            controller.enqueue(encoder.encode(formatSSEMessage(event)));
-          } catch (error) {
-            console.error('Error fetching realtime metrics:', error);
-
-            const errorEvent: AdminEvent = {
-              id: generateEventId(),
-              type: 'system_alert',
-              timestamp: new Date().toISOString(),
-              data: {
-                error: 'Failed to fetch metrics',
-                details: error instanceof Error ? error.message : 'Unknown error'
-              },
-              severity: 'error'
-            };
-
-            controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
-          }
-        })();
-      }, 5000);
-
-      const changeMonitorId = setInterval(async () => {
-        try {
-          await monitorDataChanges(controller, encoder);
-        } catch (error) {
-          console.error('Error monitoring data changes:', error);
-        }
-      }, 10_000);
-
-      request.signal.addEventListener('abort', () => {
-        clearInterval(intervalId);
-        clearInterval(changeMonitorId);
-        controller.close();
-      });
+      handleSSEStream(request, controller);
     }
   });
 
@@ -91,6 +98,30 @@ export async function GET(request: NextRequest): Promise<Response> {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Cache-Control'
     }
+  });
+}
+  });
+}
+
+async function handleHealthCheck(): Promise<Response> {
+  const metrics = await fetchRealtimeMetrics();
+  return new Response(JSON.stringify({
+    success: true,
+    status: 'healthy',
+    metrics,
+    timestamp: new Date().toISOString()
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function handleTriggerTestEvent(): Response {
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Test event triggered',
+    timestamp: new Date().toISOString()
+  }), {
+    headers: { 'Content-Type': 'application/json' }
   });
 }
 
@@ -106,25 +137,11 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     switch (action) {
       case 'health_check': {
-        const metrics = await fetchRealtimeMetrics();
-        return new Response(JSON.stringify({
-          success: true,
-          status: 'healthy',
-          metrics,
-          timestamp: new Date().toISOString()
-        }), {
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return await handleHealthCheck();
       }
 
       case 'trigger_test_event': {
-        return new Response(JSON.stringify({
-          success: true,
-          message: 'Test event triggered',
-          timestamp: new Date().toISOString()
-        }), {
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return handleTriggerTestEvent();
       }
 
       default: {

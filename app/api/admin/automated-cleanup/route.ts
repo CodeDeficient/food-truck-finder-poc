@@ -40,16 +40,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const action = searchParams.get('action');
 
     switch (action) {
-      case 'status':
+      case 'status': {
         return await handleGetStatus();
-      case 'schedules':
+      }
+      case 'schedules': {
         return await handleGetSchedules();
-      case 'history':
+      }
+      case 'history': {
         return await handleGetHistory(searchParams);
-      case 'preview':
+      }
+      case 'preview': {
         return await handleGetPreview(searchParams);
-      default:
+      }
+      default: {
         return await handleGetDefault();
+      }
     }
   } catch (error) {
     console.error('Automated cleanup GET error:', error);
@@ -72,19 +77,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const { action, options = {} } = body;
 
     switch (action) {
-      case 'run_scheduled':
+      case 'run_scheduled': {
         return await handleRunScheduled(options);
-      case 'run_immediate':
+      }
+      case 'run_immediate': {
         return await handleRunImmediate(options);
-      case 'schedule_cleanup':
+      }
+      case 'schedule_cleanup': {
         return await handleScheduleCleanup(options);
-      case 'update_schedule':
+      }
+      case 'update_schedule': {
         return await handleUpdateSchedule(options);
-      case 'delete_schedule':
+      }
+      case 'delete_schedule': {
         return await handleDeleteSchedule(options);
-      case 'analyze_duplicates':
+      }
+      case 'analyze_duplicates': {
         return await handleAnalyzeDuplicates(options);
-      default:
+      }
+      default: {
         return NextResponse.json({
           success: false,
           error: 'Unknown action',
@@ -97,6 +108,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             'analyze_duplicates'
           ]
         }, { status: 400 });
+      }
     }
   } catch (error) {
     console.error('Automated cleanup POST error:', error);

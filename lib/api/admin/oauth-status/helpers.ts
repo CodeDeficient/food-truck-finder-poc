@@ -25,6 +25,62 @@ interface OAuthStatus {
   overall_status: 'ready' | 'partial' | 'not_configured' | 'error';
 }
 
+export async function checkSupabaseConnection(status: OAuthStatus, supabase: any) {
+  try {
+    const { error } = await supabase.from('profiles').select('count').limit(1);
+    if (error == undefined) {
+      status.supabase.connected = true;
+    } else {
+      status.supabase.error = error.message;
+    }
+  } catch (error) {
+    status.supabase.error = error instanceof Error ? error.message : 'Unknown connection error';
+  }
+}
+
+export async function checkSupabaseAuthSettings(status: OAuthStatus) {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl != undefined && supabaseUrl !== '') {
+      const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
+      if (settingsResponse.ok === true) {
+        const settings = await settingsResponse.json() as {
+          external?: { google?: boolean };
+          disable_signup?: boolean;
+          autoconfirm?: boolean;
+        };
+        status.supabase.authSettings = {
+          googleEnabled: settings.external?.google ?? false,
+          signupEnabled: settings.disable_signup !== true,
+          autoconfirm: settings.autoconfirm ?? false
+        };
+        if (settings.external?.google != undefined) {
+          status.oauth_flow.authProviderConfigured = true;
+        }
+      }
+    }
+  } catch {
+    console.info('Auth settings endpoint requires authentication (normal)');
+  }
+}
+
+export async function testOAuthProvider(status: OAuthStatus, supabase: any) {
+  try {
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/auth/callback',
+        skipBrowserRedirect: true
+      }
+    });
+    if (!oauthError || oauthError.message !== 'Provider not found') {
+      status.oauth_flow.authProviderConfigured = true;
+    }
+  } catch {
+    console.info('OAuth provider test failed (may be normal)');
+  }
+}
+
 export function generateRecommendations(status: OAuthStatus): string[] {
   const recommendations: string[] = [];
 

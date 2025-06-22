@@ -107,6 +107,37 @@ export class ScraperEngine {
     this.maxRetries = 3;
   }
 
+  private async performFallbackScrape(url: string): Promise<ScrapeResult> {
+    try {
+      const response = await fetch(url, { headers: { 'User-Agent': this.getRandomUserAgent() } });
+      if (!response.ok) {
+        throw new Error(
+          `HTTP error ${response.status}: ${response.statusText} during fallback fetch.`,
+        );
+      }
+      const htmlContent = await response.text();
+      return {
+        success: true,
+        data: {
+          html: htmlContent,
+          is_fallback: true,
+        },
+        timestamp: new Date().toISOString(),
+        source: url,
+        note: 'Fetched using basic fetch as Firecrawl failed.',
+      };
+    } catch (fallbackError: unknown) {
+      console.warn(`Fallback fetch error for ${url}:`, fallbackError);
+      return {
+        success: false,
+        error:
+          fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback fetch error',
+        timestamp: new Date().toISOString(),
+        source: url,
+      };
+    }
+  }
+
   async scrapeWebsite(url: string, _selectors?: Record<string, string>): Promise<ScrapeResult> {
     try {
       const firecrawlResult = await firecrawl.scrapeUrl(url, {
@@ -142,34 +173,7 @@ export class ScraperEngine {
     } catch (error: unknown) {
       console.warn(`Scraping error for ${url} using Firecrawl:`, error);
       console.info(`Falling back to basic fetch for ${url}`);
-      try {
-        const response = await fetch(url, { headers: { 'User-Agent': this.getRandomUserAgent() } });
-        if (!response.ok) {
-          throw new Error(
-            `HTTP error ${response.status}: ${response.statusText} during fallback fetch.`,
-          );
-        }
-        const htmlContent = await response.text();
-        return {
-          success: true,
-          data: {
-            html: htmlContent,
-            is_fallback: true,
-          },
-          timestamp: new Date().toISOString(),
-          source: url,
-          note: 'Fetched using basic fetch as Firecrawl failed.',
-        };
-      } catch (fallbackError: unknown) {
-        console.warn(`Fallback fetch error for ${url}:`, fallbackError);
-        return {
-          success: false,
-          error:
-            fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback fetch error',
-          timestamp: new Date().toISOString(),
-          source: url,
-        };
-      }
+      return await this.performFallbackScrape(url);
     }
   }
 
@@ -386,16 +390,15 @@ interface TruckData {
 }
 
 export class DataQualityAssessor {
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  assessTruckData(truckData: TruckData): { score: number; issues: string[] } {
-    const issues: string[] = [];
-    let score = 100;
-
+  private assessBasicInfo(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.name == undefined || truckData.name.trim().length === 0) {
       issues.push('Missing or empty truck name');
       score -= 20;
     }
+    return score;
+  }
 
+  private assessLocationInfo(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.location?.current == undefined) {
       issues.push('Missing current location data');
       score -= 25;
@@ -412,7 +415,10 @@ export class DataQualityAssessor {
         score -= 10;
       }
     }
+    return score;
+  }
 
+  private assessContactInfo(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.contact == undefined) {
       issues.push('Missing contact information');
       score -= 20;
@@ -430,12 +436,18 @@ export class DataQualityAssessor {
         score -= 5;
       }
     }
+    return score;
+  }
 
+  private assessOperatingHours(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.operating_hours == undefined || Object.keys(truckData.operating_hours).length === 0) {
       issues.push('Missing operating hours');
       score -= 15;
     }
+    return score;
+  }
 
+  private assessMenuInfo(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.menu == undefined || truckData.menu.length === 0) {
       issues.push('Missing menu information');
       score -= 10;
@@ -444,7 +456,10 @@ export class DataQualityAssessor {
       issues.push(...menuIssues);
       score -= menuIssues.length * 2;
     }
+    return score;
+  }
 
+  private assessLastUpdated(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.last_updated != undefined && truckData.last_updated !== '') {
       const lastUpdate = new Date(truckData.last_updated);
       const daysSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
@@ -457,6 +472,19 @@ export class DataQualityAssessor {
         score -= 5;
       }
     }
+    return score;
+  }
+
+  assessTruckData(truckData: TruckData): { score: number; issues: string[] } {
+    const issues: string[] = [];
+    let score = 100;
+
+    score = this.assessBasicInfo(truckData, issues, score);
+    score = this.assessLocationInfo(truckData, issues, score);
+    score = this.assessContactInfo(truckData, issues, score);
+    score = this.assessOperatingHours(truckData, issues, score);
+    score = this.assessMenuInfo(truckData, issues, score);
+    score = this.assessLastUpdated(truckData, issues, score);
 
     return {
       score: Math.max(0, score) / 100,
@@ -464,27 +492,33 @@ export class DataQualityAssessor {
     };
   }
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+  private validateMenuCategory(category: MenuCategory, categoryIndex: number, issues: string[]): void {
+    if (category.category == undefined || category.category.trim().length === 0) {
+      issues.push(`Menu category ${categoryIndex + 1} missing name`);
+    }
+  }
+
+  private validateMenuItems(category: MenuCategory, issues: string[]): void {
+    if (category.items == undefined || category.items.length === 0) {
+      issues.push(`Menu category "${category.category ?? 'Unknown'}" has no items`);
+    } else {
+      for (const [itemIndex, item] of category.items.entries()) {
+        if (item.name == undefined || item.name.trim().length === 0) {
+          issues.push(`Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`);
+        }
+        if (typeof item.price !== 'number' || item.price <= 0) {
+          issues.push(`Menu item "${item.name ?? 'Unknown'}" has invalid price`);
+        }
+      }
+    }
+  }
+
   private validateMenuData(menu: MenuCategory[]): string[] {
     const issues: string[] = [];
 
     for (const [categoryIndex, category] of menu.entries()) {
-      if (category.category == undefined || category.category.trim().length === 0) {
-        issues.push(`Menu category ${categoryIndex + 1} missing name`);
-      }
-
-      if (category.items == undefined || category.items.length === 0) {
-        issues.push(`Menu category "${category.category ?? 'Unknown'}" has no items`);
-      } else {
-        for (const [itemIndex, item] of category.items.entries()) {
-          if (item.name == undefined || item.name.trim().length === 0) {
-            issues.push(`Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`);
-          }
-          if (typeof item.price !== 'number' || item.price <= 0) {
-            issues.push(`Menu item "${item.name ?? 'Unknown'}" has invalid price`);
-          }
-        }
-      }
+      this.validateMenuCategory(category, categoryIndex, issues);
+      this.validateMenuItems(category, issues);
     }
 
     return issues;

@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, Mail } from 'lucide-react';
+import { useAuthHandlers } from '@/hooks/useAuthHandlers';
 
 // Login header component
 function LoginHeader() {
@@ -137,78 +137,19 @@ function LoginDivider() {
 }
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectedFrom') ?? '/admin';
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      setError(undefined);
-
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      // Check if user has admin role
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (profile?.role === 'admin') {
-          router.push(redirectTo);
-        } else {
-          // User exists but is not admin - redirect to access denied
-          router.push('/access-denied');
-        }
-      }
-    } catch (error: unknown) {
-      console.error('Login error:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred during login');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      setLoading(true);
-      setError(undefined);
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${globalThis.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
-        },
-      });
-
-      if (error) {
-        throw error;
-      }
-    } catch (error: unknown) {
-      console.error('Login error:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred during login');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    handleEmailLogin,
+    handleGoogleLogin,
+    loading,
+    error,
+    email,
+    setEmail,
+    password,
+    setPassword,
+  } = useAuthHandlers(redirectTo);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">

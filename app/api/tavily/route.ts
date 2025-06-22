@@ -64,7 +64,39 @@ interface TavilyResult {
   raw_content: string;
 }
 
-function performTavilySearch(params: Record<string, unknown>) {
+async function callTavilySearchApi(apiKey: string, params: Record<string, unknown>) {
+  const response = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      query: (params.query as string) ?? (params.q as string),
+      max_results: (params.limit as number) ?? 10,
+      search_depth: (params.search_depth as string) ?? 'advanced',
+      include_answer: true,
+      include_raw_content: true,
+    }),
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Tavily API error response:', errorText);
+    throw new Error(`Tavily API error: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+  const data = (await response.json()) as { results?: TavilyResult[] };
+  return {
+    results:
+      data.results?.map((result: TavilyResult) => ({
+        title: result.title,
+        url: result.url,
+        content: result.content,
+        raw_content: result.raw_content,
+      })) ?? [],
+  };
+}
+
+async function performTavilySearch(params: Record<string, unknown>) {
   const apiKey = process.env.TAVILY_API_KEY;
   if (apiKey === undefined || apiKey === '') {
     console.warn('TAVILY_API_KEY not found, using mock data');
@@ -88,35 +120,7 @@ function performTavilySearch(params: Record<string, unknown>) {
     };
   }
   try {
-    const response = await fetch('https://api.tavily.com/search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        query: (params.query as string) ?? (params.q as string),
-        max_results: (params.limit as number) ?? 10,
-        search_depth: (params.search_depth as string) ?? 'advanced',
-        include_answer: true,
-        include_raw_content: true,
-      }),
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Tavily API error response:', errorText);
-      throw new Error(`Tavily API error: ${response.status} ${response.statusText} - ${errorText}`);
-    }
-    const data = (await response.json()) as { results?: TavilyResult[] };
-    return {
-      results:
-        data.results?.map((result: TavilyResult) => ({
-          title: result.title,
-          url: result.url,
-          content: result.content,
-          raw_content: result.raw_content,
-        })) ?? [],
-    };
+    return await callTavilySearchApi(apiKey, params);
   } catch (error) {
     console.error('Tavily API call failed:', error);
     throw error;

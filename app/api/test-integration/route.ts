@@ -135,32 +135,42 @@ function formatTestResults(scrapeResult: any, geminiResult: any, supabaseResults
   };
 }
 
+async function runIntegrationTestSteps(testUrl: string) {
+  console.info('Starting integration test...');
+
+  // Step 1: Test Firecrawl scraping
+  const firecrawlTest = await testFirecrawlScraping(testUrl);
+  if (!firecrawlTest.success) {
+    return firecrawlTest;
+  }
+
+  // Step 2: Test Gemini processing
+  const geminiTest = await testGeminiProcessing();
+  if (!geminiTest.success) {
+    return geminiTest;
+  }
+
+  // Step 3: Test Supabase operations
+  console.info('Testing Supabase operations...');
+  const supabaseResults = await testSupabaseOperations(testUrl, geminiTest.result);
+
+  // Step 4: Format and return results
+  const results = formatTestResults(firecrawlTest.result, geminiTest.result, supabaseResults);
+  return { success: true, results };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as { testUrl?: string };
     const { testUrl = 'https://example-food-truck.com' } = body;
 
-    console.info('Starting integration test...');
+    const testResult = await runIntegrationTestSteps(testUrl);
 
-    // Step 1: Test Firecrawl scraping
-    const firecrawlTest = await testFirecrawlScraping(testUrl);
-    if (!firecrawlTest.success) {
-      return NextResponse.json(firecrawlTest);
+    if (!testResult.success) {
+      return NextResponse.json(testResult);
     }
 
-    // Step 2: Test Gemini processing
-    const geminiTest = await testGeminiProcessing();
-    if (!geminiTest.success) {
-      return NextResponse.json(geminiTest);
-    }
-
-    // Step 3: Test Supabase operations
-    console.info('Testing Supabase operations...');
-    const supabaseResults = await testSupabaseOperations(testUrl, geminiTest.result);
-
-    // Step 4: Format and return results
-    const results = formatTestResults(firecrawlTest.result, geminiTest.result, supabaseResults);
-    return NextResponse.json(results);
+    return NextResponse.json(testResult.results);
   } catch (error) {
     console.error('Integration test failed:', error);
     return NextResponse.json({

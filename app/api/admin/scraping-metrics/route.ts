@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyAdminAccess, getScrapingMetrics } from '@/lib/api/admin/scraping-metrics/handlers';
 
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<NextResponse> {
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
     return NextResponse.json(

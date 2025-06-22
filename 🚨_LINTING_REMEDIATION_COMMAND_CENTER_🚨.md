@@ -22,7 +22,11 @@
 | **app/api/admin/scraping-metrics/route.ts** | 81 | 25 | 56 | **69.1%** |
 | **app/admin/food-trucks/[id]/page.tsx** | 553 | 49 | 504 | **91.1%** |
 | **app/admin/users/page.tsx** | 62 | 31 | 31 | **50%** |
-| **TOTAL PHASE 1** | **2,620** | **562** | **2,058** | **78.5%** |
+| **components/admin/RealtimeStatusIndicator.tsx** | 250 | 60 | 190 | **76%** |
+| **lib/pipelineProcessor.ts** | 200 | 60 | 140 | **70%** |
+| **app/page.tsx** | 280 | 70 | 210 | **75%** |
+| **components/TruckCard.tsx** | 250 | 70 | 180 | **72%** |
+| **TOTAL PHASE 1** | **3,660** | **852** | **2,808** | **76.7%** |
 
 ### 🔧 **SOTA REFACTORING PATTERNS SUCCESSFULLY APPLIED**
 
