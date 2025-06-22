@@ -12,6 +12,32 @@ export const formatPrice = (price: number) => {
   }).format(price);
 };
 
+export const formatHours = (hours: { open: string; close: string; }) => {
+    const open = new Date(`1970-01-01T${hours.open}Z`).toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    const close = new Date(`1970-01-01T${hours.close}Z`).toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
+    return `${open} - ${close}`;
+}
+
+export const getPopularItems = (truck: FoodTruck) => {
+    return truck.menu?.flatMap(category => category.items).filter(item => item.is_popular) ?? [];
+}
+
+export const getPriceRange = (truck: FoodTruck) => {
+    const allItems = truck.menu?.flatMap(category => category.items);
+    if (!allItems || allItems.length === 0) {
+        return 'N/A';
+    }
+    const prices = allItems.map(item => item.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
+}
+
+export const getTodayHours = (truck: FoodTruck) => {
+    const today = getCurrentDay();
+    return truck.operating_hours?.[today];
+}
+
 // Get user's current location or default to San Francisco
 export function getUserLocationHelper(
   setUserLocation: (location: { lat: number; lng: number }) => void

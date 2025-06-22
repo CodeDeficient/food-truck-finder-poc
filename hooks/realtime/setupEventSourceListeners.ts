@@ -1,11 +1,11 @@
 import React from 'react';
-import { AdminEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
+import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
 import { parseEventData, setupEventListeners } from '../useRealtimeAdminEventsHelpers';
 import { useConnectionState } from './useConnectionState';
 
 export function setupEventSourceListeners(
   eventSource: EventSource,
-  handleEvent: (event: AdminEvent) => void,
+  handleEvent: (event: RealtimeEvent) => void,
   connectionState: ReturnType<typeof useConnectionState>,
   isManuallyDisconnectedRef: React.MutableRefObject<boolean>,
   connectionAttempts: number,

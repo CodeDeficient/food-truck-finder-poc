@@ -7,40 +7,18 @@
  * with animated indicators, health scores, and alert notifications
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 
-import { 
-  Activity, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
-  Database, 
-  RefreshCw, 
-  Server, 
-  TrendingUp, 
-  TrendingDown,
-  Wifi,
-  WifiOff
-} from 'lucide-react';
 import { useRealtimeAdminEvents } from '@/hooks/useRealtimeAdminEvents';
-import { useSystemMetrics, StatusMetric } from './realtime/useSystemMetrics';
-import { ConnectionStatusHeader } from './realtime/ConnectionStatusHeader';
+import { useSystemMetrics } from './realtime/useSystemMetrics';
+import { useSystemAlerts } from '@/hooks/useSystemAlerts';
+import { ConnectionStatusHeader } from '@/components/admin/realtime/ConnectionStatusHeader';
 import { getStatusColor, getStatusIcon, getTrendIcon } from './realtime/StatusHelpers';
 import { SystemMetricsGrid } from './realtime/SystemMetricsGrid';
 import { ScrapingJobsStatus } from './realtime/ScrapingJobsStatus';
-import { SystemAlerts } from './realtime/SystemAlerts';
+import { SystemAlerts } from '@/components/admin/realtime/SystemAlerts';
 import { EventControls } from './realtime/EventControls';
-
-interface SystemAlert {
-  id: string;
-  type: 'info' | 'warning' | 'error' | 'critical';
-  message: string;
-  timestamp: string;
-  acknowledged?: boolean;
-}
 
 export function RealtimeStatusIndicator() {
   const {
@@ -59,32 +37,8 @@ export function RealtimeStatusIndicator() {
     maxReconnectAttempts: 10
   });
 
-  const [alerts, setAlerts] = useState<SystemAlert[]>([]);
-  const [showDetails, setShowDetails] = useState(false);
-
-  // Process recent events into alerts
-  useEffect(() => {
-    const newAlerts = recentEvents
-      .filter(event => event.severity !== undefined && event.severity !== 'info')
-      .map(event => ({
-        id: event.id,
-        type: event.severity as 'warning' | 'error' | 'critical',
-        message: typeof event.data.message === 'string' && event.data.message !== '' ? event.data.message : 'System event occurred',
-        timestamp: event.timestamp,
-        acknowledged: false
-      }))
-      .slice(0, 5); // Keep only latest 5 alerts
-
-    setAlerts(newAlerts);
-  }, [recentEvents]);
-
   const systemMetrics = useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics });
-
-  const acknowledgeAlert = (alertId: string) => {
-    setAlerts(prev => prev.map(alert => 
-      alert.id === alertId ? { ...alert, acknowledged: true } : alert
-    ));
-  };
+  const { alerts, showDetails, acknowledgeAlert, toggleDetails } = useSystemAlerts(recentEvents);
 
   return (
     <div className="space-y-4">
@@ -97,7 +51,7 @@ export function RealtimeStatusIndicator() {
           disconnect={disconnect}
         />
         <CardContent>
-          {connectionError !== undefined && (
+          {connectionError && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-sm text-red-600">{connectionError}</p>
             </div>
@@ -115,7 +69,7 @@ export function RealtimeStatusIndicator() {
           <SystemAlerts
             alerts={alerts}
             showDetails={showDetails}
-            onToggleDetails={() => setShowDetails(!showDetails)}
+            onToggleDetails={toggleDetails}
             onAcknowledgeAlert={acknowledgeAlert}
           />
 

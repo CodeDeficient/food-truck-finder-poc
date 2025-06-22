@@ -1,44 +1,28 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
 import { useThemeSwitcher } from '@/components/ThemeProvider';
-import { FoodTruck, TrucksApiResponse } from '@/lib/types/foodTruck';
-import {
-  getUserLocationHelper,
-  loadFoodTrucksHelper,
-  loadNearbyTrucksHelper,
-  isTruckOpen,
-} from '@/lib/utils/foodTruckHelpers';
+import { isTruckOpen } from '@/lib/utils/foodTruckHelpers';
 import { AppHeader } from '@/components/home/AppHeader';
 import { MainContent } from '@/components/home/MainContent';
 import { LoadingScreen } from '@/components/home/LoadingScreen';
+import { useFoodTruckFinder } from '@/hooks/useFoodTruckFinder';
 
 export default function FoodTruckFinder() {
-  const [trucks, setTrucks] = useState<FoodTruck[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | undefined>();
-  const [selectedTruckId, setSelectedTruckId] = useState<string | undefined>();
+  const {
+    loading,
+    searchTerm,
+    setSearchTerm,
+    userLocation,
+    loadNearbyTrucks,
+    filteredTrucks,
+    selectedTruckId,
+    setSelectedTruckId,
+  } = useFoodTruckFinder();
 
   const { setTheme, resolvedTheme } = useThemeSwitcher();
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    void loadFoodTrucksHelper(setTrucks, setLoading);
-    getUserLocationHelper(setUserLocation);
-  }, []);
-
-  const loadNearbyTrucks = async () => {
-    await loadNearbyTrucksHelper(userLocation, setTrucks);
-  };
-
-  const filteredTrucks = trucks.filter(
-    (truck) =>
-      truck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (truck.description ?? '').toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  useEffect(() => setMounted(true), []);
 
   if (loading) {
     return <LoadingScreen />;

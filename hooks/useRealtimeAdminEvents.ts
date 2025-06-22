@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { AdminEvent, RealtimeMetrics } from './useRealtimeAdminEvents.types';
+import { RealtimeEvent, RealtimeMetrics } from './useRealtimeAdminEvents.types';
 import { useConnectionState } from './realtime/useConnectionState';
 import { setupEventSourceListeners } from './realtime/setupEventSourceListeners';
 import { createEventSourceConnection } from './realtime/createEventSourceConnection';
@@ -18,7 +18,7 @@ interface UseRealtimeAdminEventsOptions {
   autoConnect?: boolean;
   reconnectInterval?: number;
   maxReconnectAttempts?: number;
-  eventFilter?: (event: AdminEvent) => boolean;
+  eventFilter?: (event: RealtimeEvent) => boolean;
 }
 
 interface UseRealtimeAdminEventsReturn {
@@ -29,7 +29,7 @@ interface UseRealtimeAdminEventsReturn {
   
   // Data
   latestMetrics: RealtimeMetrics | undefined;
-  recentEvents: AdminEvent[];
+  recentEvents: RealtimeEvent[];
   
   // Controls
   connect: () => void;

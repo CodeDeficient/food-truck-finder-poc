@@ -15,6 +15,7 @@ export interface FoodTruck {
       name: string;
       description: string;
       price: number;
+      is_popular?: boolean;
       dietary_tags: string[];
     }>;
   }>;
