@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
 import { DuplicatePreventionService } from '@/lib/data-quality/duplicatePrevention';
 
-interface DataCleanupRequestBody {
+export interface DataCleanupRequestBody {
   action: string;
   options?: {
     batchSize?: number;

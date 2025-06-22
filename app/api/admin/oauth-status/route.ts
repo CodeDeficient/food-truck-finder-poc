@@ -3,7 +3,6 @@ import {
   handleGetRequest,
   handlePostRequest,
 } from '@/lib/api/admin/oauth-status/helpers';
-import { OAuthStatus } from '@/lib/api/admin/oauth-status/types';
 
 export async function GET(request: NextRequest) {
   try {

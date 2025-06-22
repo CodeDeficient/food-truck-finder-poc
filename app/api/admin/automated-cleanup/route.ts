@@ -8,6 +8,7 @@ import {
   handleGetPreview,
   handleGetDefault,
 } from '@/lib/api/admin/automated-cleanup/handlers';
+import { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
 
 /**
  * SOTA Automated Data Cleanup API
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body: RequestBody = await request.json();
     return await handlePostRequest(body);
   } catch (error) {
     console.error('Automated cleanup POST error:', error);

@@ -41,13 +41,6 @@ Recommended Approach: Sub-domain or separate route within the existing Next.js a
 
 import * as React from 'react';
 import { useState, FormEvent } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StageResult, TestPipelineResults } from '@/lib/types';
 import { StageResultCard } from '@/components/test-pipeline/StageResultCard';
 import { TestPipelineForm } from '@/components/test-pipeline/TestPipelineForm';
@@ -55,31 +48,40 @@ import { ErrorDisplay } from '@/components/test-pipeline/ErrorDisplay';
 import { TestResultsDisplay } from '@/components/test-pipeline/TestResultsDisplay';
 import { submitTestPipeline } from '@/components/test-pipeline/TestPipelineSubmitHandler';
 
+interface HandleTestPipelineSubmitParams {
+  useRawText: boolean;
+  url: string;
+  rawText: string;
+  isDryRun: boolean;
+  setIsLoading: (loading: boolean) => void;
+  setResults: (results: TestPipelineResults | undefined) => void;
+  setError: (error: string | undefined) => void;
+}
+
 // Helper function extracted from TestPipelinePage to handle form submission
 async function handleTestPipelineSubmit(
   event: FormEvent<HTMLFormElement>,
-  useRawText: boolean,
-  url: string,
-  rawText: string,
-  isDryRun: boolean,
-  setIsLoading: (loading: boolean) => void,
-  setResults: (results: TestPipelineResults | undefined) => void,
-  setError: (error: string | undefined) => void
+  params: HandleTestPipelineSubmitParams
 ) {
   event.preventDefault();
-  setIsLoading(true);
-  setResults(undefined);
-  setError(undefined);
+  params.setIsLoading(true);
+  params.setResults(undefined);
+  params.setError(undefined);
 
   try {
-    const data = await submitTestPipeline({ useRawText, url, rawText, isDryRun });
-    setResults(data);
+    const data = await submitTestPipeline({
+      useRawText: params.useRawText,
+      url: params.url,
+      rawText: params.rawText,
+      isDryRun: params.isDryRun,
+    });
+    params.setResults(data);
   } catch (error_) {
     const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';
-    setError(errorMessage);
-    setResults({ error: errorMessage });
+    params.setError(errorMessage);
+    params.setResults({ error: errorMessage });
   } finally {
-    setIsLoading(false);
+    params.setIsLoading(false);
   }
 }
 
@@ -98,16 +100,15 @@ export default function TestPipelinePage() {
   const [error, setError] = useState<string | undefined>();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    void handleTestPipelineSubmit(
-      event,
+    void handleTestPipelineSubmit(event, {
       useRawText,
       url,
       rawText,
       isDryRun,
       setIsLoading,
       setResults,
-      setError
-    );
+      setError,
+    });
   };
 
   return (

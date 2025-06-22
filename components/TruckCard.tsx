@@ -1,21 +1,12 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { FoodTruck } from '@/lib/types/foodTruck';
-import {
-  getPopularItems,
-  getPriceRange,
-  getTodayHours,
-  formatHours,
-} from '@/lib/utils/foodTruckHelpers';
-import { RatingSection } from './trucks/RatingSection';
-import { MenuSection } from './trucks/MenuSection';
-import { ContactSection } from './trucks/ContactSection';
-import { SocialMediaSection } from './trucks/SocialMediaSection';
+import { useTruckCard } from '@/hooks/useTruckCard';
 import { TruckCardHeader } from './trucks/TruckCardHeader';
-import { OperatingHoursSection } from './trucks/OperatingHoursSection';
+import { TruckCardContent } from './trucks/TruckCardContent';
 import { TruckCardFooter } from './trucks/TruckCardFooter';
+import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 
 interface TruckCardProps {
   readonly truck: FoodTruck;
@@ -33,9 +24,7 @@ export function TruckCard({
   formatPrice,
   hideHeader = false,
 }: TruckCardProps) {
-  const popularItems = getPopularItems(truck);
-  const priceRange = getPriceRange(truck);
-  const todayHours = getTodayHours(truck);
+  const { popularItems, priceRange, todayHours } = useTruckCard(truck);
 
   return (
     <Card
@@ -51,31 +40,12 @@ export function TruckCard({
         />
       )}
       <CardContent className={hideHeader ? 'pt-0' : ''}>
-        {truck.description && (
-          <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{truck.description}</p>
-        )}
-        <div className="space-y-4">
-          {/* Ratings & Hours Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <RatingSection averageRating={truck.average_rating} reviewCount={truck.review_count} />
-            <OperatingHoursSection todayHours={todayHours} formatHours={formatHours} />
-          </div>
-
-          {/* Menu & Contact Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <MenuSection popularItems={popularItems} formatPrice={formatPrice} />
-            <ContactSection contactInfo={truck.contact_info} verificationStatus={truck.verification_status} />
-          </div>
-
-          <SocialMediaSection socialMedia={truck.social_media} />
-        </div>
-        {truck.verification_status && (
-          <div className="mt-2">
-            <Badge variant={truck.verification_status === 'verified' ? 'default' : 'secondary'}>
-              <span className="capitalize">{truck.verification_status}</span>
-            </Badge>
-          </div>
-        )}
+        <TruckCardContent
+          truck={truck}
+          todayHours={todayHours}
+          popularItems={popularItems}
+          formatPrice={formatPrice}
+        />
       </CardContent>
       <TruckCardFooter truck={truck} />
     </Card>

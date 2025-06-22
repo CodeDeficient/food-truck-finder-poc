@@ -1,5 +1,5 @@
 import React from 'react';
-import { AdminEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
+import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
 import { parseEventData, setupEventListeners, setupEventSourceAuth } from '../useRealtimeAdminEventsHelpers';
 import { useConnectionState } from './useConnectionState';
 import { setupEventSourceListeners } from './setupEventSourceListeners';
@@ -23,7 +23,7 @@ export function createEventSourceConnection({
   maxReconnectAttempts: number;
   reconnectInterval: number;
   reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>;
-  handleEvent: (event: AdminEvent) => void;
+  handleEvent: (event: RealtimeEvent) => void;
   connectionState: ReturnType<typeof useConnectionState>;
   connect: () => void;
 }) {

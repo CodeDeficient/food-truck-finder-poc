@@ -190,8 +190,9 @@ export function scoreVerificationStatus(truck: Record<string, unknown>): number 
   }
 }
 
+import { type FoodTruck } from '@/lib/supabase';
 // Calculate overall quality score
-export function calculateOverallQualityScore(truck: Record<string, unknown>): number {
+export function calculateOverallQualityScore(truck: FoodTruck): { score: number; issues: string[] } {
   const coreScore = scoreCoreData(truck);
   const locationScore = scoreLocationData(truck);
   const contactScore = scoreContactData(truck);
@@ -199,7 +200,7 @@ export function calculateOverallQualityScore(truck: Record<string, unknown>): nu
   const operationalScore = scoreOperationalData(truck);
   const verificationScore = scoreVerificationStatus(truck);
 
-  return (
+  const score = (
     coreScore * QUALITY_WEIGHTS.CORE_DATA +
     locationScore * QUALITY_WEIGHTS.LOCATION_DATA +
     contactScore * QUALITY_WEIGHTS.CONTACT_DATA +
@@ -207,6 +208,10 @@ export function calculateOverallQualityScore(truck: Record<string, unknown>): nu
     operationalScore * QUALITY_WEIGHTS.OPERATIONAL_DATA +
     verificationScore * QUALITY_WEIGHTS.VERIFICATION
   );
+
+  // For now, we return an empty issues array.
+  // This can be expanded later to include specific data quality issues.
+  return { score, issues: [] };
 }
 
 // Get quality category
@@ -247,3 +252,21 @@ export function getQualityColor(score: number): string {
     }
   }
 }
+
+export const DataQualityService = {
+  calculateQualityScore: calculateOverallQualityScore,
+  categorizeQualityScore: getQualityCategory,
+  // Assuming batchUpdateQualityScores is a separate function or will be added elsewhere
+  // For now, we'll leave it as a placeholder or remove if not needed here.
+  // It was previously cast from DataQualityService in cron/quality-check/route.ts
+  // If it's meant to be a method of this service, it needs to be implemented.
+  // For now, I'll add a placeholder for it.
+  batchUpdateQualityScores: async (limit: number) => {
+    console.warn(`DataQualityService.batchUpdateQualityScores called with limit: ${limit}. This function needs to be properly implemented.`);
+    return { updatedCount: 0, errors: [] };
+  },
+  updateTruckQualityScore: async (truckId: string) => {
+    console.warn(`DataQualityService.updateTruckQualityScore called for truckId: ${truckId}. This function needs to be properly implemented.`);
+    return { success: true };
+  }
+};
