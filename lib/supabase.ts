@@ -62,6 +62,8 @@ export interface FoodTruck {
   last_scraped_at?: string;
   exact_location?: FoodTruckLocation;
   city_location?: FoodTruckLocation;
+  average_rating?: number; // Added for ratings
+  review_count?: number; // Added for ratings
 }
 
 export interface ScrapingJob {
@@ -497,6 +499,37 @@ export const ScrapingJobService = {
 
     if (error) throw error;
     return data;
+  },
+  async getAllJobs(limit = 50, offset = 0): Promise<ScrapingJob[]> {
+    try {
+      const { data, error }: PostgrestResponse<ScrapingJob> = await supabase
+        .from('scraping_jobs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (error) throw error;
+      return data ?? [];
+    } catch (error: unknown) {
+      console.warn('Error fetching all jobs:', error);
+      return [];
+    }
+  },
+
+  async getJobsFromDate(date: Date): Promise<ScrapingJob[]> {
+    try {
+      const { data, error }: PostgrestResponse<ScrapingJob> = await supabase
+        .from('scraping_jobs')
+        .select('*')
+        .gte('created_at', date.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data ?? [];
+    } catch (error: unknown) {
+      console.warn('Error fetching jobs from date:', error);
+      return [];
+    }
   },
 };
 

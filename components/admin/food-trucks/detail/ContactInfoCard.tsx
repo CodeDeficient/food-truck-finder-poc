@@ -1,0 +1,50 @@
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Phone, Mail, Globe } from 'lucide-react';
+import { ContactField } from './ContactField';
+import { SocialMediaLinks } from './SocialMediaLinks';
+
+interface ContactInfoCardProps {
+  truck: { contact_info?: { phone?: string; email?: string; website?: string }; social_media?: { instagram?: string; facebook?: string; twitter?: string } };
+}
+
+export function ContactInfoCard({ truck }: ContactInfoCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Phone className="h-5 w-5" />
+          Contact Information
+        </CardTitle>
+        <CardDescription>Phone, email, website, and social media</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <ContactField
+          icon={Phone}
+          label="Phone"
+          value={truck.contact_info?.phone}
+          href={truck.contact_info?.phone ? `tel:${truck.contact_info.phone}` : undefined}
+          unavailableText="No phone number available"
+        />
+
+        <ContactField
+          icon={Mail}
+          label="Email"
+          value={truck.contact_info?.email}
+          href={truck.contact_info?.email ? `mailto:${truck.contact_info.email}` : undefined}
+          unavailableText="No email address available"
+        />
+
+        <ContactField
+          icon={Globe}
+          label="Website"
+          value={truck.contact_info?.website}
+          href={truck.contact_info?.website}
+          unavailableText="No website available"
+        />
+
+        <SocialMediaLinks socialMedia={truck.social_media} />
+      </CardContent>
+    </Card>
+  );
+}

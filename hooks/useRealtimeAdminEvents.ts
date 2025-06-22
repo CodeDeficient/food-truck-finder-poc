@@ -40,11 +40,11 @@ interface UseRealtimeAdminEventsReturn {
 function useConnectionState() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [connectionError, setConnectionError] = useState<string | undefined>(undefined);
-  const [latestMetrics, setLatestMetrics] = useState<RealtimeMetrics | undefined>(undefined);
+  const [connectionError, setConnectionError] = useState<string | undefined>();
+  const [latestMetrics, setLatestMetrics] = useState<RealtimeMetrics | undefined>();
   const [recentEvents, setRecentEvents] = useState<AdminEvent[]>([]);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
-  const [lastEventTime, setLastEventTime] = useState<Date | undefined>(undefined);
+  const [lastEventTime, setLastEventTime] = useState<Date | undefined>();
 
   return {
     isConnected, setIsConnected,
