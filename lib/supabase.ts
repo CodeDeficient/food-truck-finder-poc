@@ -104,6 +104,21 @@ export interface ApiUsage {
 }
 
 // Food truck operations
+function buildMenuByTruck(menuItems: RawMenuItemFromDB[]): Record<string, RawMenuItemFromDB[]> {
+  const menuByTruck: Record<string, RawMenuItemFromDB[]> = {};
+  for (const item of menuItems) {
+    if (!menuByTruck[item.food_truck_id as string]) {
+      menuByTruck[item.food_truck_id as string] = [];
+    }
+    menuByTruck[item.food_truck_id as string].push(item);
+  }
+  return menuByTruck;
+}
+
+function handleSupabaseError(error: unknown, context: string) {
+  console.warn(`Error in ${context}:`, error);
+}
+
 export const FoodTruckService = {
   async getAllTrucks(limit = 50, offset = 0): Promise<{ trucks: FoodTruck[]; total: number }> {
     try {
@@ -112,37 +127,28 @@ export const FoodTruckService = {
         .select('*', { count: 'exact' })
         .order('updated_at', { ascending: false })
         .range(offset, offset + limit - 1);
-
       if (error) throw error;
       const trucks: FoodTruck[] = (data ?? []).map((t: FoodTruck) => normalizeTruckLocation(t));
-
+      if (trucks.length === 0) return { trucks: [], total: count ?? 0 };
       const truckIds = trucks.map((t) => t.id);
-      let menuItems: {
-        food_truck_id: string;
-        name: string;
-        description: string;
-        price: number;
-        dietary_tags: string[];
-      }[] = [];
-      if (truckIds.length > 0) {
-        const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
-          await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
-        if (menuError) throw menuError;
-        menuItems = (items as typeof menuItems) ?? [];
+      let menuItems: RawMenuItemFromDB[] = [];
+      try {
+        if (truckIds.length > 0) {
+          const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
+            await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
+          if (menuError) throw menuError;
+          menuItems = items ?? [];
+        }
+      } catch (menuError) {
+        handleSupabaseError(menuError, 'getAllTrucks:menu_items');
       }
-
-      const menuByTruck: Record<string, typeof menuItems> = {};
-      for (const item of menuItems) {
-        menuByTruck[item.food_truck_id] ??= [];
-        menuByTruck[item.food_truck_id].push(item);
-      }
-
+      const menuByTruck = buildMenuByTruck(menuItems);
       for (const truck of trucks) {
         truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []);
       }
       return { trucks, total: count ?? 0 };
-    } catch (error: unknown) {
-      console.warn('Error fetching trucks:', error);
+    } catch (error) {
+      handleSupabaseError(error, 'getAllTrucks');
       return { trucks: [], total: 0 };
     }
   },
@@ -192,64 +198,30 @@ export const FoodTruckService = {
     if (!supabaseAdmin) {
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
-
-    // Extract menu data before inserting truck
     const menuData = truckData.menu;
     const truckDataWithoutMenu = { ...truckData };
     delete truckDataWithoutMenu.menu;
-
-    // Insert truck first
     const { data: truck, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
       .from('food_trucks')
       .insert([truckDataWithoutMenu])
       .select()
       .single();
-
     if (error) throw error;
-
-    // Insert menu items if they exist
-    if (menuData && menuData.length > 0 && truck.id) {
-      const menuItems = menuData.flatMap((category) =>
-        (category.items ?? []).map((item) => ({
-          food_truck_id: truck.id,
-          category: category.name ?? 'Uncategorized',
-          name: item.name ?? 'Unknown Item',
-          description: item.description ?? undefined,
-          price: typeof item.price === 'number' ? item.price : undefined,
-          dietary_tags: item.dietary_tags ?? [],
-        })),
-      );
-
-      if (menuItems.length > 0) {
-        const { error: menuError } = await supabaseAdmin.from('menu_items').insert(menuItems);
-
-        if (menuError) {
-          console.error('Error inserting menu items for truck', truck.id, menuError);
-          // Don't throw here - truck creation succeeded, menu insertion failed
-        }
-      }
-    }
-
+    await insertMenuItems(truck.id, menuData);
     return truck;
   },
+
   async updateTruck(id: string, updates: Partial<FoodTruck>): Promise<FoodTruck> {
     if (!supabaseAdmin) {
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
-
-    // Extract menu data before updating truck
     const menuData = updates.menu;
     const updatesWithoutMenu = { ...updates };
     delete updatesWithoutMenu.menu;
-
-    // Update truck first
     const truck = await updateTruckData(id, updatesWithoutMenu);
-
-    // Update menu items if provided
     if (menuData !== undefined) {
       await updateTruckMenu(id, menuData);
     }
-
     return truck;
   },
 
@@ -694,3 +666,27 @@ export const APIUsageService = {
 };
 
 export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange } from './types';
+
+// Helper to prepare menu items for DB insertion
+function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | undefined) {
+  if (!menuData || menuData.length === 0) return [];
+  return menuData.flatMap((category) =>
+    (category.items ?? []).map((item) => ({
+      food_truck_id: truckId,
+      category: category.name ?? 'Uncategorized',
+      name: item.name ?? 'Unknown Item',
+      description: item.description ?? undefined,
+      price: typeof item.price === 'number' ? item.price : undefined,
+      dietary_tags: item.dietary_tags ?? [],
+    }))
+  );
+}
+
+async function insertMenuItems(truckId: string, menuData: MenuCategory[] | undefined) {
+  const menuItems = prepareMenuItemsForInsert(truckId, menuData);
+  if (menuItems.length === 0) return;
+  const { error: menuError } = await supabaseAdmin!.from('menu_items').insert(menuItems);
+  if (menuError) {
+    console.error('Error inserting menu items for truck', truckId, menuError);
+  }
+}
