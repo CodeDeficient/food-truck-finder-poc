@@ -27,6 +27,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useRealtimeAdminEvents } from '@/hooks/useRealtimeAdminEvents';
+import { useSystemMetrics, StatusMetric } from './realtime/useSystemMetrics';
 
 // Helper function moved to outer scope for consistent function scoping
 const getStatusColor = (status: string) => {
@@ -68,15 +69,6 @@ const getTrendIcon = (trend?: string) => {
   }
 };
 
-interface StatusMetric {
-  label: string;
-  value: number | string;
-  unit?: string;
-  trend?: 'up' | 'down' | 'stable';
-  status: 'healthy' | 'warning' | 'error';
-  icon: React.ReactNode;
-}
-
 interface SystemAlert {
   id: string;
   type: 'info' | 'warning' | 'error' | 'critical';
@@ -85,67 +77,12 @@ interface SystemAlert {
   acknowledged?: boolean;
 }
 
-// Custom hook for system metrics calculation
-function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics }: {
-  isConnected: boolean;
-  isConnecting: boolean;
-  connectionError?: string;
-  latestMetrics?: any;
-}): StatusMetric[] {
-  return [
-    {
-      label: 'Connection Status',
-      value: (() => {
-        if (isConnected) return 'Connected';
-        if (isConnecting) return 'Connecting...';
-        return 'Disconnected';
-      })(),
-      status: (() => {
-        if (isConnected) return 'healthy';
-        if (connectionError == undefined) return 'warning';
-        return 'error';
-      })(),
-      icon: isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />
-    },
-    {
-      label: 'Active Jobs',
-      value: latestMetrics?.scrapingJobs.active ?? 0,
-      status: (latestMetrics?.scrapingJobs.active ?? 0) > 0 ? 'healthy' : 'warning',
-      icon: <Activity className="h-4 w-4" />
-    },
-    {
-      label: 'System Health',
-      value: latestMetrics?.systemHealth.status ?? 'unknown',
-      status: (() => {
-        const healthStatus = latestMetrics?.systemHealth.status;
-        if (healthStatus === 'healthy') return 'healthy';
-        if (healthStatus === 'warning') return 'warning';
-        return 'error';
-      })(),
-      icon: <Server className="h-4 w-4" />
-    },
-    {
-      label: 'Data Quality',
-      value: latestMetrics?.dataQuality.averageScore ?? 0,
-      unit: '%',
-      trend: 'stable',
-      status: (() => {
-        const score = latestMetrics?.dataQuality.averageScore ?? 0;
-        if (score >= 80) return 'healthy';
-        if (score >= 60) return 'warning';
-        return 'error';
-      })(),
-      icon: <Database className="h-4 w-4" />
-    }
-  ];
-}
-
 // System Metrics Grid Component
 function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIcon }: {
   metrics: StatusMetric[];
   getStatusColor: (status: string) => string;
-  getStatusIcon: (status: string) => JSX.Element;
-  getTrendIcon: (trend?: string) => JSX.Element | undefined;
+  getStatusIcon: (status: string) => React.ReactNode;
+  getTrendIcon: (trend?: string) => React.ReactNode;
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

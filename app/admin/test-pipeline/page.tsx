@@ -47,18 +47,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // If you want to use tabs for results
-import {
-  StageResult,
-  TestPipelineResults,
-  // FirecrawlOutputData, // Already imported via StageResult's data union if needed directly
-  // ExtractedFoodTruckDetails, // Already imported via StageResult's data union
-  // FoodTruckSchema // Already imported via StageResult's data union
-} from '@/lib/types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { StageResult, TestPipelineResults } from '@/lib/types';
 import { StageResultCard } from '@/components/test-pipeline/StageResultCard';
 import { TestPipelineForm } from '@/components/test-pipeline/TestPipelineForm';
 import { ErrorDisplay } from '@/components/test-pipeline/ErrorDisplay';
 import { TestResultsDisplay } from '@/components/test-pipeline/TestResultsDisplay';
+import { submitTestPipeline } from '@/components/test-pipeline/TestPipelineSubmitHandler';
 
 // Helper function extracted from TestPipelinePage to handle form submission
 async function handleTestPipelineSubmit(
@@ -76,24 +71,8 @@ async function handleTestPipelineSubmit(
   setResults(undefined);
   setError(undefined);
 
-  const payload = {
-    url: useRawText ? undefined : url,
-    rawText: useRawText ? rawText : undefined,
-    isDryRun,
-  };
-
   try {
-    const response = await fetch('/api/test-pipeline-run', {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    const data = (await response.json()) as TestPipelineResults;
-
-    if (!response.ok) {
-      throw new Error(data.error ?? 'Test run failed');
-    }
+    const data = await submitTestPipeline({ useRawText, url, rawText, isDryRun });
     setResults(data);
   } catch (error_) {
     const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';

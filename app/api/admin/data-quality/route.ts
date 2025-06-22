@@ -1,113 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DataQualityService, FoodTruckService, supabase } from '@/lib/supabase';
+import {
+  handleStatsAction,
+  handleAssessAction,
+  handleDefaultGetAction,
+  handleUpdateSingle,
+  handleBatchUpdate,
+  handleRecalculateAll,
+  verifyAdminAccess,
+} from '@/lib/api/admin/data-quality/handlers';
 
-// Helper function to handle stats action
-async function handleStatsAction() {
-  const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  const thresholdsRaw = DataQualityService.getQualityThresholds();
-
-  // Type-safe casting with proper error handling
-  const qualityStats = qualityStatsRaw as Record<string, unknown>;
-  const thresholds = thresholdsRaw as QualityThresholds;
-
-  return NextResponse.json({
-    success: true,
-    data: {
-      ...qualityStats,
-      thresholds,
-      timestamp: new Date().toISOString()
-    }
-  });
-}
-
-// Helper function to handle assess action
-async function handleAssessAction(truckId: string) {
-  // Get truck and assess quality
-  const truckRaw = await FoodTruckService.getTruckById(truckId);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  const assessmentRaw = DataQualityService.calculateQualityScore(truckRaw);
-
-  // Type-safe casting
-  const truck = truckRaw as TruckData;
-  const assessment = assessmentRaw as QualityAssessment;
-
-  return NextResponse.json({
-    success: true,
-    data: {
-      truckId,
-      truckName: truck.name,
-      currentScore: truck.data_quality_score,
-      newAssessment: assessment,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      category: DataQualityService.categorizeQualityScore(assessment.score) as QualityCategory,
-      timestamp: new Date().toISOString()
-    }
-  });
-}
-
-// Helper function to handle default action
-async function handleDefaultAction() {
-  const qualityStats = await FoodTruckService.getDataQualityStats();
-  return NextResponse.json({
-    success: true,
-    data: qualityStats
-  });
-}
-
-// Type definitions for API responses
-interface QualityThresholds {
-  excellent: number;
-  good: number;
-  fair: number;
-  poor: number;
-}
-
-interface QualityAssessment {
-  score: number;
-  breakdown: Record<string, number>;
-  recommendations: string[];
-}
-
-interface TruckData {
-  id: string;
-  name: string;
-  data_quality_score: number;
-  verification_status: string;
-}
-
-interface QualityCategory {
-  label: string;
-  color: string;
-  description: string;
-}
-
-// Security check for admin API endpoints
-async function verifyAdminAccess(request: Request): Promise<boolean> {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader == undefined) return false;
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    
-    if (error || !user) return false;
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    return profile?.role === 'admin';
-  } catch {
-    return false;
-  }
-}
-
-// GET: Retrieve data quality statistics and metrics
 export async function GET(request: NextRequest) {
-  // Verify admin access
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
     return NextResponse.json(
@@ -122,11 +24,9 @@ export async function GET(request: NextRequest) {
     const truckId = searchParams.get('truckId');
 
     switch (action) {
-      case 'stats': {
+      case 'stats':
         return await handleStatsAction();
-      }
-
-      case 'assess': {
+      case 'assess':
         if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required for assessment' },
@@ -134,11 +34,8 @@ export async function GET(request: NextRequest) {
           );
         }
         return await handleAssessAction(truckId);
-      }
-
-      default: {
-        return await handleDefaultAction();
-      }
+      default:
+        return await handleDefaultGetAction();
     }
   } catch (error: unknown) {
     console.error('Error fetching data quality information:', error);
@@ -153,9 +50,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: Update quality scores or perform quality operations
 export async function POST(request: NextRequest) {
-  // Verify admin access
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
     return NextResponse.json(
@@ -169,85 +64,23 @@ export async function POST(request: NextRequest) {
     const { action, truckId, limit } = body;
 
     switch (action) {
-      case 'update_single': {
+      case 'update_single':
         if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required' },
             { status: 400 }
           );
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const updatedTruckRaw = await DataQualityService.updateTruckQualityScore(truckId);
-        const updatedTruck = updatedTruckRaw as TruckData;
-        
-        return NextResponse.json({
-          success: true,
-          message: 'Quality score updated successfully',
-          data: {
-            truckId: updatedTruck.id,
-            truckName: updatedTruck.name,
-            newScore: updatedTruck.data_quality_score,
-            verificationStatus: updatedTruck.verification_status,
-            timestamp: new Date().toISOString()
-          }
-        });
-      }
-
-      case 'batch_update': {
-        const batchLimit = limit ?? 100;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        const resultsRaw = await DataQualityService.batchUpdateQualityScores(batchLimit);
-        const results = resultsRaw as Record<string, unknown>;
-        
-        return NextResponse.json({
-          success: true,
-          message: 'Batch quality score update completed',
-          data: {
-            ...results,
-            limit: batchLimit,
-            timestamp: new Date().toISOString()
-          }
-        });
-      }
-
-      case 'recalculate_all': {
-        // Recalculate quality scores for all trucks
-        const { trucks } = await FoodTruckService.getAllTrucks(1000, 0);
-        let updated = 0;
-        let errors = 0;
-
-        for (const truck of trucks) {
-          try {
-            const truckData = truck as TruckData;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-            await DataQualityService.updateTruckQualityScore(truckData.id);
-            updated++;
-          } catch (error: unknown) {
-            const truckData = truck as TruckData;
-            console.error(`Failed to update truck ${truckData.id}:`, error);
-            errors++;
-          }
-        }
-
-        return NextResponse.json({
-          success: true,
-          message: 'Quality score recalculation completed',
-          data: {
-            totalTrucks: trucks.length,
-            updated,
-            errors,
-            timestamp: new Date().toISOString()
-          }
-        });
-      }
-
-      default: {
+        return await handleUpdateSingle(truckId);
+      case 'batch_update':
+        return await handleBatchUpdate(limit);
+      case 'recalculate_all':
+        return await handleRecalculateAll();
+      default:
         return NextResponse.json(
           { success: false, error: 'Invalid action specified' },
           { status: 400 }
         );
-      }
     }
   } catch (error: unknown) {
     console.error('Error updating data quality:', error);
