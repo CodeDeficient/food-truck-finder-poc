@@ -61,7 +61,7 @@
 |-------|--------|--------------|-----|-------------|
 | Augment | ⏸️ STANDBY | Phase 1 complete, static priority list updated | 2025-06-22  | 2025-06-22  |
 | Cline | ⏸️ ACTIVE | Awaiting max-lines-per-function completion | TBD | 2025-06-17 Ready |
-| Copilot | 🔄 ACTIVE | Phase 2: Full Lint Error Audit & Command Center Update | 1 hour | 2025-06-22 Current |
+| Copilot | 🔄 STANDBY | Phase 2: Full Lint Error Audit & Command Center Update | 1 hour | 2025-06-22 Current |
 | Jules | ⏸️ STANDBY | Awaiting Phase 3 | TBD | 2025-01-10 09:00 |
 
 🚨 **CRITICAL**: Only ONE agent should work on linting remediation at a time!
