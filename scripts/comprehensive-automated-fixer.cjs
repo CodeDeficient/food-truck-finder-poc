@@ -3,18 +3,29 @@
 /**
  * Comprehensive Automated Fixer
  * Targets multiple high-impact, safe-to-automate ESLint error patterns
- * 
- * AUTOMATION TARGETS (in priority order):
- * 1. ESLint auto-fixable rules (highest safety)
- * 2. Remaining || → ?? conversions  
- * 3. null → undefined conversions
- * 4. Unused import removal
- * 5. Simple type safety improvements
  */
 
 const fs = require('node:fs');
 const path = require('node:path');
 const { execSync } = require('node:child_process');
+
+// Resolve paths to CLI tools upfront
+let eslintCLIPath;
+try {
+  eslintCLIPath = require.resolve('eslint/bin/eslint.js');
+} catch (e) {
+  console.error("ESLint CLI path not found. Make sure 'eslint' is installed locally.");
+  process.exit(1);
+}
+
+let tscCLIPath;
+try {
+  tscCLIPath = require.resolve('typescript/bin/tsc');
+} catch (e) {
+  console.error("TypeScript CLI path not found. Make sure 'typescript' is installed locally.");
+  process.exit(1);
+}
+const nodeExecutablePath = process.execPath;
 
 class ComprehensiveAutomatedFixer {
   constructor() {
@@ -24,8 +35,8 @@ class ComprehensiveAutomatedFixer {
       eslintAutoFixes: 0,
       nullishCoalescingFixes: 0,
       nullUndefinedFixes: 0,
-      unusedImportFixes: 0,
-      totalFilesProcessed: 0,
+      unusedImportFixes: 0, // This will be estimated based on error count change
+      totalFilesProcessed: 0, // TODO: Implement tracking if needed
       errors: []
     };
   }
@@ -35,11 +46,20 @@ class ComprehensiveAutomatedFixer {
    */
   getCurrentErrorCount() {
     try {
-      const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
+      const countScriptPath = path.join(__dirname, 'count-errors.cjs');
+      const command = `"${nodeExecutablePath}" "${countScriptPath}"`;
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      const output = execSync(command, { encoding: 'utf8', stdio: 'pipe' });
       const lines = output.trim().split('\n');
-      return Number.parseInt(lines.at(-1)) || 0;
+      const lastLine = lines.pop();
+      return Number.parseInt(lastLine) || 0;
     } catch (error) {
-      console.warn('Could not get current error count:', error.message);
+      console.warn('Could not get current error count:');
+      if (error.stderr) console.warn('stderr:', error.stderr.toString().trim());
+      // error.message often includes stdout/stderr, so log it if distinct
+      if (error.message && !error.message.includes(error.stdout?.toString()) && !error.message.includes(error.stderr?.toString())) {
+        console.warn('message:', error.message);
+      }
       return 0;
     }
   }
@@ -48,20 +68,19 @@ class ComprehensiveAutomatedFixer {
    * Step 1: Run ESLint auto-fix for safe rules
    */
   runESLintAutoFix() {
-    console.log('🔧 Step 1: Running ESLint auto-fix...');
-    
+    console.log('🔧 Step 1: Running ESLint auto-fix (general)...');
     try {
-      // Run auto-fix with specific safe rules
-      execSync('npx eslint . --fix --quiet', {
-        stdio: 'pipe',
-        timeout: 120_000
-      });
-      
-      console.log('✅ ESLint auto-fix completed');
+      const command = `"${nodeExecutablePath}" "${eslintCLIPath}" . --fix --quiet`;
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      execSync(command, { stdio: 'pipe', timeout: 300_000 }); // Increased timeout
+      console.log('✅ ESLint auto-fix (general) completed');
       return true;
-    } catch {
-      console.warn('⚠️  ESLint auto-fix had issues (expected with many errors)');
-      return true; // Continue anyway, auto-fix often "fails" but still fixes things
+    } catch (error) {
+      // ESLint exits with non-zero if it finds errors, even if it fixes some.
+      // So, we don't treat exit code 1 as a fatal error for the auto-fixer itself.
+      console.warn('⚠️  ESLint auto-fix (general) finished. May have had issues or found lint errors (expected).');
+      if (error.stderr) console.warn("Stderr:", error.stderr.toString().substring(0, 500));
+      return true;
     }
   }
 
@@ -70,28 +89,31 @@ class ComprehensiveAutomatedFixer {
    */
   fixRemainingNullishCoalescing() {
     console.log('🔄 Step 2: Fixing remaining || → ?? patterns...');
-    
     try {
-      // Use our proven nullish coalescing converter
-      const result = execSync('node scripts/automated-nullish-coalescing-converter.cjs', {
-        encoding: 'utf8',
-        timeout: 120_000
-      });
+      const converterScriptPath = path.join(__dirname, 'automated-nullish-coalescing-converter.cjs');
+      const command = `"${nodeExecutablePath}" "${converterScriptPath}"`;
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      const result = execSync(command, { encoding: 'utf8', timeout: 180_000 }); // Increased timeout
       
-      // Extract conversion count from output
       const lines = result.split('\n');
-      const conversionLine = lines.find(line => line.includes('Total conversions:'));
+      const conversionLine = lines.find(line => line.includes('Total conversions actually applied:')); // Adjusted to match new output
       if (conversionLine) {
-        const match = conversionLine.match(/Total conversions: (\d+)/);
-        if (match) {
-          this.stats.nullishCoalescingFixes = Number.parseInt(match[1]);
+        const match = conversionLine.match(/Total conversions actually applied: (\d+)/);
+        if (match) this.stats.nullishCoalescingFixes = Number.parseInt(match[1]);
+      } else {
+         // Fallback if the exact line is not found, check for the other dry-run type line
+        const dryRunConversionLine = lines.find(line => line.includes('Total conversions potentially applied:'));
+        if (dryRunConversionLine) {
+            const match = dryRunConversionLine.match(/Total conversions potentially applied: (\d+)/);
+            if (match) this.stats.nullishCoalescingFixes = Number.parseInt(match[1]); // Store it even if it was dry-run like
         }
       }
-      
-      console.log(`✅ Nullish coalescing fixes: ${this.stats.nullishCoalescingFixes}`);
+      console.log(`✅ Nullish coalescing fixes reported by script: ${this.stats.nullishCoalescingFixes}`);
       return true;
     } catch (error) {
-      console.warn('⚠️  Nullish coalescing fixes had issues:', error.message);
+      console.warn('⚠️  Nullish coalescing script execution had issues:');
+      if (error.stderr) console.warn("Stderr:", error.stderr.toString().substring(0, 500));
+      if (error.stdout) console.warn("Stdout:", error.stdout.toString().substring(0, 500));
       return false;
     }
   }
@@ -101,7 +123,6 @@ class ComprehensiveAutomatedFixer {
    */
   fixNullToUndefined() {
     console.log('🔄 Step 3: Converting null → undefined...');
-    
     const files = this.findTSFiles();
     let fixCount = 0;
     
@@ -110,21 +131,16 @@ class ComprehensiveAutomatedFixer {
         const content = fs.readFileSync(filePath, 'utf8');
         let modified = content;
         
-        // Safe null → undefined patterns
         const patterns = [
-          // Variable assignments
           { from: /:\s*null(?=\s*[,;}\]])/g, to: ': undefined' },
-          // Return statements
           { from: /return\s+null(?=\s*[;}])/g, to: 'return undefined' },
-          // Default parameters
           { from: /=\s*null(?=\s*[,)])/g, to: '= undefined' },
-          // Object properties
-          { from: /:\s*null(?=\s*[,}])/g, to: ': undefined' }
+          { from: /:\s*null(?=\s*[,}])/g, to: ': undefined' } // Already covered by first one
         ];
         
         for (const pattern of patterns) {
-          const matches = modified.match(pattern.from);
-          if (matches) {
+          const matches = Array.from(modified.matchAll(pattern.from));
+          if (matches.length > 0) {
             modified = modified.replace(pattern.from, pattern.to);
             fixCount += matches.length;
           }
@@ -134,12 +150,12 @@ class ComprehensiveAutomatedFixer {
           fs.writeFileSync(filePath, modified);
         }
       } catch (error) {
-        console.warn(`Error processing ${filePath}:`, error.message);
+        console.warn(`Error processing ${filePath} for null->undefined: ${error.message}`);
+        this.stats.errors.push({file: filePath, step: 'fixNullToUndefined', message: error.message});
       }
     }
-    
     this.stats.nullUndefinedFixes = fixCount;
-    console.log(`✅ Null → undefined fixes: ${fixCount}`);
+    console.log(`✅ Null → undefined fixes applied: ${fixCount}`);
     return true;
   }
 
@@ -147,195 +163,174 @@ class ComprehensiveAutomatedFixer {
    * Step 4: Remove unused imports using ESLint
    */
   removeUnusedImports() {
-    console.log('🗑️  Step 4: Removing unused imports...');
-    
+    console.log('🗑️  Step 4: Removing unused imports (sonarjs/unused-import)...');
     try {
-      // Target specific unused import rules
-      execSync('npx eslint . --fix --rule "sonarjs/unused-import: error" --quiet', {
-        stdio: 'pipe',
-        timeout: 120_000
-      });
-      
-      console.log('✅ Unused import removal completed');
+      const command = `"${nodeExecutablePath}" "${eslintCLIPath}" . --fix --rule "sonarjs/unused-import:error" --quiet`;
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      execSync(command, { stdio: 'pipe', timeout: 180_000 }); // Increased timeout
+      console.log('✅ Unused import removal (sonarjs/unused-import) completed');
       return true;
-    } catch {
-      console.warn('⚠️  Unused import removal had issues (expected)');
-      return true; // Continue anyway
+    } catch (error) {
+      console.warn('⚠️  Unused import removal (sonarjs/unused-import) finished. May have had issues or found lint errors.');
+      if (error.stderr) console.warn("Stderr:", error.stderr.toString().substring(0,500));
+      return true;
     }
   }
 
-  /**
-   * Find all TypeScript files
-   */
-  findTSFiles() {
+  findTSFiles(directories = ['app', 'components', 'lib', 'hooks']) {
     const files = [];
-    const directories = ['app', 'components', 'lib'];
-    
+    const excludedDirs = new Set(['node_modules', '.next', '.git', 'dist', 'build']);
     for (const dir of directories) {
-      if (fs.existsSync(dir)) {
-        const findFiles = (currentDir) => {
-          const items = fs.readdirSync(currentDir);
-          for (const item of items) {
-            const fullPath = path.join(currentDir, item);
-            const stat = fs.statSync(fullPath);
-            
-            if (stat.isDirectory() && !item.startsWith('.')) {
-              findFiles(fullPath);
-            } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
-              files.push(fullPath);
+      const rootDir = path.resolve(dir);
+      if (fs.existsSync(rootDir)) {
+        const findFilesRecursive = (currentDir) => {
+          try {
+            const items = fs.readdirSync(currentDir);
+            for (const item of items) {
+              const fullPath = path.join(currentDir, item);
+              if (excludedDirs.has(item) && fs.statSync(fullPath).isDirectory()) continue;
+              const stat = fs.statSync(fullPath);
+              if (stat.isDirectory()) findFilesRecursive(fullPath);
+              else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
+                files.push(fullPath.replaceAll('\\', '/'));
+              }
             }
-          }
+          } catch (readDirError) { console.warn(`Could not read directory ${currentDir}: ${readDirError.message}`); }
         };
-        findFiles(dir);
-      }
+        findFilesRecursive(rootDir);
+      } else { console.warn(`Directory not found for TS scan: ${rootDir}`); }
     }
-    
     return files;
   }
 
-  /**
-   * Verify TypeScript compilation
-   */
   verifyCompilation() {
     console.log('🔍 Verifying TypeScript compilation...');
-    
     try {
-      execSync('npx tsc --noEmit --strict', {
-        stdio: 'pipe',
-        timeout: 120_000
-      });
+      const command = `"${nodeExecutablePath}" "${tscCLIPath}" --noEmit --strict`; // Added --strict for thoroughness
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      execSync(command, { stdio: 'pipe', timeout: 300_000 }); // Increased timeout
       console.log('✅ TypeScript compilation successful');
       return true;
-    } catch {
-      console.warn('⚠️  TypeScript compilation has issues (may be expected)');
+    } catch (error) {
+      console.warn('⚠️  TypeScript compilation has issues:');
+      if (error.stdout) console.warn("Stdout:", error.stdout.toString().substring(0,1000));
+      if (error.stderr) console.warn("Stderr:", error.stderr.toString().substring(0,1000));
       return false;
     }
   }
 
-  /**
-   * Run the complete automated fixing process
-   */
   async run(options = {}) {
     const { 
-      skipESLintFix = false,
-      skipNullishCoalescing = false,
-      skipNullUndefined = false,
-      skipUnusedImports = false,
-      verifyCompilation = false
+      skipESLintFix = false, skipNullishCoalescing = false, skipNullUndefined = false,
+      skipUnusedImports = false, verifyCompilation = true // Verify by default
     } = options;
 
     console.log('🚀 Starting Comprehensive Automated Fixing');
     console.log('==========================================');
 
-    // Get baseline
     this.stats.initialErrors = this.getCurrentErrorCount();
     console.log(`📊 Initial error count: ${this.stats.initialErrors}`);
+    let errorsBeforeStep = this.stats.initialErrors;
 
     try {
-      // Step 1: ESLint auto-fix
       if (!skipESLintFix) {
         this.runESLintAutoFix();
         const afterESLint = this.getCurrentErrorCount();
-        this.stats.eslintAutoFixes = this.stats.initialErrors - afterESLint;
-        console.log(`📉 After ESLint auto-fix: ${afterESLint} (${this.stats.eslintAutoFixes} fixed)`);
+        this.stats.eslintAutoFixes = errorsBeforeStep - afterESLint;
+        console.log(`📉 After ESLint auto-fix: ${afterESLint} (${this.stats.eslintAutoFixes} fixed in this step)`);
+        errorsBeforeStep = afterESLint;
       }
 
-      // Step 2: Nullish coalescing
       if (!skipNullishCoalescing) {
-        this.fixRemainingNullishCoalescing();
+        this.fixRemainingNullishCoalescing(); // This method updates its own stat
         const afterNullish = this.getCurrentErrorCount();
-        console.log(`📉 After nullish coalescing: ${afterNullish}`);
+        // Note: this.stats.nullishCoalescingFixes is set by the script, not by error diff here
+        console.log(`📉 After nullish coalescing: ${afterNullish} (script reported ${this.stats.nullishCoalescingFixes} conversions)`);
+        errorsBeforeStep = afterNullish;
       }
 
-      // Step 3: Null → undefined
       if (!skipNullUndefined) {
-        this.fixNullToUndefined();
-        const afterNull = this.getCurrentErrorCount();
-        console.log(`📉 After null → undefined: ${afterNull}`);
+        this.fixNullToUndefined(); // This method updates its own stat
+        const afterNullUndef = this.getCurrentErrorCount();
+        // Note: this.stats.nullUndefinedFixes is set by the script
+        console.log(`📉 After null → undefined: ${afterNullUndef} (${this.stats.nullUndefinedFixes} fixed in this step)`);
+        errorsBeforeStep = afterNullUndef;
       }
 
-      // Step 4: Unused imports
       if (!skipUnusedImports) {
+        const errorsBeforeUnused = errorsBeforeStep;
         this.removeUnusedImports();
         const afterImports = this.getCurrentErrorCount();
-        console.log(`📉 After unused imports: ${afterImports}`);
+        this.stats.unusedImportFixes = errorsBeforeUnused - afterImports;
+        console.log(`📉 After unused imports: ${afterImports} (${this.stats.unusedImportFixes} fixed in this step)`);
+        errorsBeforeStep = afterImports;
       }
 
-      // Final verification
-      if (verifyCompilation) {
-        this.verifyCompilation();
-      }
+      if (verifyCompilation) this.verifyCompilation();
 
-      // Get final metrics
       this.stats.finalErrors = this.getCurrentErrorCount();
       const totalReduction = this.stats.initialErrors - this.stats.finalErrors;
-      const reductionPercentage = ((totalReduction / this.stats.initialErrors) * 100).toFixed(1);
+      const reductionPercentage = this.stats.initialErrors > 0 ? ((totalReduction / this.stats.initialErrors) * 100).toFixed(1) : "0.0";
 
-      // Print comprehensive results
       console.log('\n📈 COMPREHENSIVE AUTOMATION RESULTS');
       console.log('===================================');
       console.log(`Initial errors: ${this.stats.initialErrors}`);
       console.log(`Final errors: ${this.stats.finalErrors}`);
       console.log(`Total reduction: ${totalReduction} (${reductionPercentage}%)`);
-      console.log('');
-      console.log('BREAKDOWN BY AUTOMATION TYPE:');
-      console.log(`• ESLint auto-fixes: ${this.stats.eslintAutoFixes}`);
-      console.log(`• Nullish coalescing (|| → ??): ${this.stats.nullishCoalescingFixes}`);
+      console.log('\nBREAKDOWN BY AUTOMATION TYPE (approximated for some):');
+      console.log(`• ESLint auto-fixes (general): ${this.stats.eslintAutoFixes}`);
+      console.log(`• Nullish coalescing (|| → ??): ${this.stats.nullishCoalescingFixes} (reported by sub-script)`);
       console.log(`• Null → undefined: ${this.stats.nullUndefinedFixes}`);
-      console.log(`• Unused imports: estimated from ESLint`);
+      console.log(`• Unused imports (sonarjs/unused-import): ${this.stats.unusedImportFixes}`);
       
-      // Calculate remaining work
-      const remainingToTarget = Math.max(0, this.stats.finalErrors - 200); // Phase 1 target
-      console.log('');
-      console.log(`🎯 PHASE 1 PROGRESS:`);
-      console.log(`Target: 200 errors`);
+      const phase1Target = 200;
+      const remainingToTarget = Math.max(0, this.stats.finalErrors - phase1Target);
+      console.log('\n🎯 PHASE 1 PROGRESS:');
+      console.log(`Target: ${phase1Target} errors`);
       console.log(`Current: ${this.stats.finalErrors} errors`);
       console.log(`Remaining: ${remainingToTarget} errors to target`);
       
-      if (this.stats.finalErrors <= 200) {
-        console.log('🎉 PHASE 1 TARGET ACHIEVED!');
-      } else {
-        const progressPercentage = ((1333 - this.stats.finalErrors) / (1333 - 200) * 100).toFixed(1);
-        console.log(`Progress: ${progressPercentage}% toward Phase 1 target`);
+      if (this.stats.finalErrors <= phase1Target) console.log('🎉 PHASE 1 TARGET ACHIEVED!');
+      else {
+        const initialGap = Math.max(1, this.stats.initialErrors - phase1Target); // Avoid division by zero if already at target
+        const progressMade = this.stats.initialErrors - this.stats.finalErrors;
+        const progressPercentage = ((progressMade / initialGap) * 100).toFixed(1);
+        console.log(`Progress toward Phase 1 target: ${progressPercentage}%`);
       }
 
       return {
-        success: true,
-        initialErrors: this.stats.initialErrors,
-        finalErrors: this.stats.finalErrors,
-        totalReduction,
-        reductionPercentage: Number.parseFloat(reductionPercentage),
-        phase1Complete: this.stats.finalErrors <= 200
+        success: true, initialErrors: this.stats.initialErrors, finalErrors: this.stats.finalErrors,
+        totalReduction, reductionPercentage: Number.parseFloat(reductionPercentage),
+        phase1Complete: this.stats.finalErrors <= phase1Target
       };
 
     } catch (error) {
       console.error('\n❌ Comprehensive automation failed:', error.message);
+      this.stats.errors.push({step: 'run', message: error.message});
       return {
-        success: false,
-        error: error.message,
+        success: false, error: error.message,
         finalErrors: this.stats.finalErrors || this.stats.initialErrors
       };
     }
   }
 }
 
-// CLI interface
 if (require.main === module) {
   const args = new Set(process.argv.slice(2));
-  const options = {};
-  
-  // Parse command line arguments
-  if (args.has('--skip-eslint')) options.skipESLintFix = true;
-  if (args.has('--skip-nullish')) options.skipNullishCoalescing = true;
-  if (args.has('--skip-null')) options.skipNullUndefined = true;
-  if (args.has('--skip-imports')) options.skipUnusedImports = true;
-  if (args.has('--verify')) options.verifyCompilation = true;
+  const options = {
+    skipESLintFix: args.has('--skip-eslint'),
+    skipNullishCoalescing: args.has('--skip-nullish'),
+    skipNullUndefined: args.has('--skip-null'),
+    skipUnusedImports: args.has('--skip-imports'),
+    verifyCompilation: args.has('--verify') // Only verify if explicitly asked
+  };
   
   const fixer = new ComprehensiveAutomatedFixer();
   fixer.run(options).then(result => {
+    console.log(`Comprehensive Automated Fixer ${result.success ? 'finished successfully' : 'finished with errors'}.`);
     process.exit(result.success ? 0 : 1);
   }).catch(error => {
-    console.error('Fatal error:', error);
+    console.error('Fatal error in ComprehensiveAutomatedFixer:', error);
     process.exit(1);
   });
 }

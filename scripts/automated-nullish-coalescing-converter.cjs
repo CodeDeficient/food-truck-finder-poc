@@ -74,28 +74,26 @@ class NullishCoalescingConverter {
       return { converted: line, changed: false, reason: 'Contains unsafe boolean logic' };
     }
 
-    let converted = line;
-    let changed = false;
-    let conversions = 0;
+    let convertedLine = line;
+    let lineChanged = false;
+    let lineConversions = 0;
 
-    // Apply safe pattern conversions
     for (const pattern of this.safePatterns) {
-      const matches = converted.match(pattern);
-      if (matches) {
-        converted = converted.replace(pattern, (match, left, right) => {
-          conversions++;
-          return `${left} ?? ${right}`;
-        });
-        changed = true;
-      }
+      // Ensure global flag is reset for stateful regexes if exec is used, not an issue for replace
+      convertedLine = convertedLine.replace(pattern, (match, left, right) => {
+        lineConversions++;
+        lineChanged = true;
+        return `${left} ?? ${right}`;
+      });
     }
 
-    if (changed) {
-      this.stats.conversionsApplied += conversions;
+    if (lineChanged) {
+      this.stats.conversionsApplied += lineConversions; // Accumulate total conversions
     }
 
-    return { converted, changed, conversions };
+    return { converted: convertedLine, changed: lineChanged, conversions: lineConversions };
   }
+
 
   /**
    * Process a single TypeScript/TSX file
@@ -104,24 +102,25 @@ class NullishCoalescingConverter {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
-      let hasChanges = false;
-      const results = [];
+      let fileHasChanges = false;
+      const newLines = [];
+      let fileTotalConversions = 0;
 
       for (const [index, line] of lines.entries()) {
         const result = this.convertLine(line, index + 1);
-        results.push(result.converted);
+        newLines.push(result.converted);
         if (result.changed) {
-          hasChanges = true;
-          console.log(`  Line ${index + 1}: ${result.conversions} conversion(s)`);
+          fileHasChanges = true;
+          fileTotalConversions += result.conversions;
         }
       }
 
-      if (hasChanges) {
-        fs.writeFileSync(filePath, results.join('\n'));
-        console.log(`✅ Updated: ${filePath}`);
+      if (fileHasChanges) {
+        fs.writeFileSync(filePath, newLines.join('\n'));
+        console.log(`✅ Updated: ${filePath} (${fileTotalConversions} conversion(s))`);
         return true;
       } else {
-        console.log(`⏭️  No changes: ${filePath}`);
+        // console.log(`⏭️  No changes: ${filePath}`); // Optional: reduce noise
         return false;
       }
     } catch (error) {
@@ -134,28 +133,38 @@ class NullishCoalescingConverter {
   /**
    * Find all TypeScript/TSX files in specified directories
    */
-  findTSFiles(directories = ['app', 'components', 'lib']) {
+  findTSFiles(directories = ['app', 'components', 'lib', 'hooks']) { // Added hooks
     const files = [];
+    const excludedDirs = new Set(['node_modules', '.next', '.git', 'dist', 'build']);
     
     for (const dir of directories) {
-      if (fs.existsSync(dir)) {
-        const findFiles = (currentDir) => {
-          const items = fs.readdirSync(currentDir);
-          for (const item of items) {
-            const fullPath = path.join(currentDir, item);
-            const stat = fs.statSync(fullPath);
-            
-            if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
-              findFiles(fullPath);
-            } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
-              files.push(fullPath);
+      const rootDir = path.resolve(dir);
+      if (fs.existsSync(rootDir)) {
+        const findFilesRecursive = (currentDir) => {
+          try {
+            const items = fs.readdirSync(currentDir);
+            for (const item of items) {
+              const fullPath = path.join(currentDir, item);
+              if (excludedDirs.has(item) && fs.statSync(fullPath).isDirectory()) {
+                continue;
+              }
+              const stat = fs.statSync(fullPath);
+
+              if (stat.isDirectory()) {
+                findFilesRecursive(fullPath);
+              } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
+                files.push(fullPath.replaceAll('\\', '/'));
+              }
             }
+          } catch (readDirError) {
+             console.warn(`Could not read directory ${currentDir}: ${readDirError.message}`);
           }
         };
-        findFiles(dir);
+        findFilesRecursive(rootDir);
+      } else {
+        console.warn(`Directory not found for searching TS files: ${rootDir}`);
       }
     }
-    
     return files;
   }
 
@@ -164,12 +173,21 @@ class NullishCoalescingConverter {
    */
   getCurrentErrorCount() {
     try {
-      const output = execSync('node scripts/count-errors.cjs', { encoding: 'utf8' });
+      const countScriptPath = path.join(__dirname, 'count-errors.cjs');
+      const command = `"${process.execPath}" "${countScriptPath}"`;
+      // eslint-disable-next-line sonarjs/os-command -- Reason: Internal script, command constructed with resolved paths for trusted tools.
+      const output = execSync(command, { encoding: 'utf8', stdio: 'pipe' });
       const lines = output.trim().split('\n');
-      return Number.parseInt(lines.at(-1)) || 0;
+      const lastLine = lines.pop(); // Get the last line which should be the count
+      return Number.parseInt(lastLine) || 0;
     } catch (error) {
-      console.warn('Could not get current error count:', error.message);
-      return 0;
+      console.warn('Could not get current error count for prefer-nullish-coalescing:');
+      if (error.stderr) console.warn('stderr:', error.stderr.toString().trim());
+      if (error.stdout) console.warn('stdout:', error.stdout.toString().trim());
+      if (error.message && !error.message.includes(error.stdout?.toString()) && !error.message.includes(error.stderr?.toString())) {
+        console.warn('message:', error.message);
+      }
+      return 0; // Default to 0 if count fails
     }
   }
 
@@ -178,7 +196,7 @@ class NullishCoalescingConverter {
    */
   async run(options = {}) {
     const { 
-      directories = ['app', 'components', 'lib'],
+      directories = ['app', 'components', 'lib', 'hooks'], // Added hooks
       dryRun = false,
       maxFiles = null 
     } = options;
@@ -190,74 +208,72 @@ class NullishCoalescingConverter {
       console.info('🔍 DRY RUN MODE - No files will be modified');
     }
 
-    // Get baseline error count
     const initialErrors = this.getCurrentErrorCount();
-    console.info(`📊 Initial error count: ${initialErrors}`);
+    console.info(`📊 Initial @typescript-eslint/prefer-nullish-coalescing error count (estimated): ${initialErrors}`);
 
-    // Find files to process
-    const files = this.findTSFiles(directories);
-    const filesToProcess = maxFiles ? files.slice(0, maxFiles) : files;
+    const allFiles = this.findTSFiles(directories);
+    const filesToProcess = maxFiles ? allFiles.slice(0, maxFiles) : allFiles;
 
-    console.info(`📁 Found ${files.length} TypeScript files`);
-    console.info(`🎯 Processing ${filesToProcess.length} files`);
+    console.info(`📁 Found ${allFiles.length} TypeScript files (in specified directories)`);
+    if (maxFiles) console.info(`🎯 Processing a maximum of ${filesToProcess.length} files`);
+    else console.info(`🎯 Processing all ${filesToProcess.length} files`);
     console.info('');
 
-    // Process files
-    let filesChanged = 0;
+    let filesChangedCount = 0;
     for (const file of filesToProcess) {
-      console.log(`Processing: ${file}`);
+      // console.log(`Processing: ${file}`); // Optional: reduce noise
       
       if (dryRun) {
-        // Dry run - just analyze
-        const content = fs.readFileSync(file, 'utf8');
-        const lines = content.split('\n');
-        let potentialChanges = 0;
-        
-        for (const [index, line] of lines.entries()) {
-          const result = this.convertLine(line, index + 1);
-          if (result.changed) potentialChanges += result.conversions;
-        }
-        
-        if (potentialChanges > 0) {
-          console.info(`  Would make ${potentialChanges} conversion(s)`);
-          filesChanged++;
+        try {
+            const content = fs.readFileSync(file, 'utf8');
+            const lines = content.split('\n');
+            let potentialChangesInFile = 0;
+            for (const [index, line] of lines.entries()) {
+              const result = this.convertLine(line, index + 1);
+              if (result.changed) potentialChangesInFile += result.conversions;
+            }
+            if (potentialChangesInFile > 0) {
+              console.info(`  [DRY RUN] Would make ${potentialChangesInFile} conversion(s) in ${file}`);
+              filesChangedCount++;
+              // this.stats.conversionsApplied is updated by convertLine, so it's fine for dry run
+            }
+        } catch (dryRunError) {
+            console.error(`❌ Error during dry run for ${file}: ${dryRunError.message}`);
         }
       } else {
-        const changed = this.processFile(file);
-        if (changed) filesChanged++;
+        const changed = this.processFile(file); // processFile logs changes and updates stats
+        if (changed) filesChangedCount++;
       }
-      
       this.stats.filesProcessed++;
     }
 
-    // Get final error count
     const finalErrors = dryRun ? initialErrors : this.getCurrentErrorCount();
-    const errorReduction = initialErrors - finalErrors;
+    const errorReduction = initialErrors > 0 ? initialErrors - finalErrors : 0;
+    const percentageReduction = initialErrors > 0 ? ((errorReduction / initialErrors) * 100).toFixed(1) : "0.0";
 
-    // Print summary
     console.info('');
     console.info('📈 CONVERSION SUMMARY');
     console.info('====================');
     console.info(`Files processed: ${this.stats.filesProcessed}`);
-    console.info(`Files changed: ${filesChanged}`);
-    console.info(`Total conversions: ${this.stats.conversionsApplied}`);
-    console.info(`Unsafe patterns preserved: ${this.stats.unsafePatternsSaved}`);
-    console.info(`Errors encountered: ${this.stats.errors.length}`);
+    console.info(`Files ${dryRun ? 'that would be' : 'actually'} changed: ${filesChangedCount}`);
+    console.info(`Total conversions ${dryRun ? 'potentially' : 'actually'} applied: ${this.stats.conversionsApplied}`);
+    console.info(`Unsafe patterns preserved (not converted): ${this.stats.unsafePatternsSaved}`);
+    console.info(`Errors encountered during processing: ${this.stats.errors.length}`);
     console.info('');
-    console.info(`Initial errors: ${initialErrors}`);
-    console.info(`Final errors: ${finalErrors}`);
-    console.info(`Error reduction: ${errorReduction} (${((errorReduction/initialErrors)*100).toFixed(1)}%)`);
+    console.info(`Initial @typescript-eslint/prefer-nullish-coalescing errors: ${initialErrors}`);
+    console.info(`Final @typescript-eslint/prefer-nullish-coalescing errors: ${finalErrors}`);
+    console.info(`Error reduction for @typescript-eslint/prefer-nullish-coalescing: ${errorReduction} (${percentageReduction}%)`);
 
     if (this.stats.errors.length > 0) {
       console.log('');
-      console.log('❌ ERRORS:');
+      console.log('❌ DETAILED ERRORS DURING PROCESSING:');
       for (const err of this.stats.errors) {
-        console.log(`  ${err.file}: ${err.error}`);
+        console.log(`  File: ${err.file}, Error: ${err.error}`);
       }
     }
 
     return {
-      filesChanged,
+      filesChanged: filesChangedCount,
       conversionsApplied: this.stats.conversionsApplied,
       errorReduction,
       success: this.stats.errors.length === 0
@@ -270,18 +286,22 @@ if (require.main === module) {
   const args = process.argv.slice(2);
   const options = {};
   
-  // Parse command line arguments
   if (args.includes('--dry-run')) options.dryRun = true;
-  if (args.includes('--max-files')) {
-    const maxIndex = args.indexOf('--max-files');
-    options.maxFiles = Number.parseInt(args[maxIndex + 1]) || 10;
+  const maxFilesIndex = args.indexOf('--max-files');
+  if (maxFilesIndex !== -1 && args[maxFilesIndex + 1]) {
+    options.maxFiles = Number.parseInt(args[maxFilesIndex + 1]);
+     if (isNaN(options.maxFiles)) {
+        console.error("Invalid value for --max-files. Must be a number.");
+        process.exit(1);
+    }
   }
   
   const converter = new NullishCoalescingConverter();
   converter.run(options).then(result => {
+    console.log(`\nNullish Coalescing Converter ${result.success ? 'completed successfully' : 'completed with errors'}.`);
     process.exit(result.success ? 0 : 1);
   }).catch(error => {
-    console.error('Fatal error:', error);
+    console.error('Fatal error during NullishCoalescingConverter execution:', error);
     process.exit(1);
   });
 }
