@@ -1,13 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService } from '@/lib/supabase';
-
-interface AdminEvent {
-  id: string;
-  type: 'scraping_update' | 'data_quality_change' | 'system_alert' | 'user_activity' | 'heartbeat';
-  timestamp: string;
-  data: Record<string, unknown>;
-  severity?: 'info' | 'warning' | 'error' | 'critical';
-}
+import { AdminEvent } from './types';
 
 interface RealtimeMetrics {
   scrapingJobs: {
@@ -58,7 +51,122 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
   }
 }
 
-export async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
+export async function handleGetRequest(request: NextRequest): Promise<Response> {
+  const stream = new ReadableStream({
+    start(controller) {
+      const encoder = new TextEncoder();
+
+      const connectionEvent: AdminEvent = {
+        id: generateEventId(),
+        type: 'heartbeat',
+        timestamp: new Date().toISOString(),
+        data: {
+          message: 'Real-time admin dashboard connected',
+          connectionId: generateEventId()
+        }
+      };
+      
+      controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
+
+      const handleHeartbeatEvent = async () => {
+        try {
+          const metrics = await fetchRealtimeMetrics();
+          const event: AdminEvent = {
+            id: generateEventId(),
+            type: 'heartbeat',
+            timestamp: new Date().toISOString(),
+            data: { ...metrics }
+          };
+
+          controller.enqueue(encoder.encode(formatSSEMessage(event)));
+        } catch (error) {
+          console.error('Error fetching realtime metrics:', error);
+
+          const errorEvent: AdminEvent = {
+            id: generateEventId(),
+            type: 'system_alert',
+            timestamp: new Date().toISOString(),
+            data: {
+              error: 'Failed to fetch metrics',
+              details: error instanceof Error ? error.message : 'Unknown error'
+            },
+            severity: 'error'
+          };
+
+          controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
+        }
+      };
+
+      const intervalId = setInterval(() => {
+        void handleHeartbeatEvent();
+      }, 5000);
+
+      const changeMonitorId = setInterval(async () => {
+        try {
+          await monitorDataChanges(controller, encoder);
+        } catch (error) {
+          console.error('Error monitoring data changes:', error);
+        }
+      }, 10_000);
+
+      request.signal.addEventListener('abort', () => {
+        clearInterval(intervalId);
+        clearInterval(changeMonitorId);
+        controller.close();
+      });
+    }
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Cache-Control'
+    }
+  });
+}
+
+export async function handlePostRequest(request: NextRequest): Promise<Response> {
+  try {
+    const body = await request.json();
+    const { action } = body as { action: string };
+
+    switch (action) {
+      case 'health_check': {
+        return await handleHealthCheck();
+      }
+
+      case 'trigger_test_event': {
+        return handleTriggerTestEvent();
+      }
+
+      default: {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Unknown action',
+          available_actions: ['health_check', 'trigger_test_event']
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Realtime events POST error:', error);
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   try {
     const recentJobs = await ScrapingJobService.getJobsByStatus('all');
     const typedJobs = recentJobs as Array<{ status?: string }>;
@@ -101,7 +209,7 @@ export async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   }
 }
 
-export async function sendScrapingUpdateEvent(
+async function sendScrapingUpdateEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
@@ -131,7 +239,7 @@ export async function sendScrapingUpdateEvent(
   }
 }
 
-export async function sendDataQualityChangeEvent(
+async function sendDataQualityChangeEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
@@ -163,7 +271,7 @@ export async function sendDataQualityChangeEvent(
   }
 }
 
-export async function monitorDataChanges(
+async function monitorDataChanges(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
@@ -175,10 +283,32 @@ export async function monitorDataChanges(
   }
 }
 
-export function formatSSEMessage(event: AdminEvent): string {
+function formatSSEMessage(event: AdminEvent): string {
   return `id: ${event.id}\nevent: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`;
 }
 
-export function generateEventId(): string {
+function generateEventId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
+async function handleHealthCheck(): Promise<Response> {
+  const metrics = await fetchRealtimeMetrics();
+  return new Response(JSON.stringify({
+    success: true,
+    status: 'healthy',
+    metrics,
+    timestamp: new Date().toISOString()
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
+
+function handleTriggerTestEvent(): Response {
+  return new Response(JSON.stringify({
+    success: true,
+    message: 'Test event triggered',
+    timestamp: new Date().toISOString()
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
 }

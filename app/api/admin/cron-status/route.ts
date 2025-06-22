@@ -83,7 +83,7 @@ async function fetchJobData(): Promise<{ recentJobs: JobData[]; todayTrucks: Tru
   let todayTrucks: TrucksResponse = { trucks: [], total: 0 };
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+     
     const recentJobsRaw = await ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
     recentJobs = Array.isArray(recentJobsRaw) ? recentJobsRaw as JobData[] : [];
   } catch (error: unknown) {

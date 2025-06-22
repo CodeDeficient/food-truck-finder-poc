@@ -14,6 +14,48 @@ interface DataCleanupRequestBody {
   };
 }
 
+export async function handlePostRequest(body: DataCleanupRequestBody): Promise<NextResponse> {
+  const { action, options = {} } = body;
+
+  switch (action) {
+    case 'full-cleanup': {
+      return await handleFullCleanup(options);
+    }
+    case 'check-duplicates': {
+      return await handleCheckDuplicates(options);
+    }
+    case 'merge-duplicates': {
+      return await handleMergeDuplicates(options);
+    }
+    case 'dry-run': {
+      return await handleDryRun(options);
+    }
+    default: {
+      return NextResponse.json(
+        { success: false, error: `Unknown action: ${action}` },
+        { status: 400 }
+      );
+    }
+  }
+}
+
+export async function handleGetRequest(request: NextRequest): Promise<NextResponse> {
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get('action');
+
+  switch (action) {
+    case 'status': {
+      return await handleGetStatus();
+    }
+    case 'preview': {
+      return await handleGetPreview();
+    }
+    default: {
+      return await handleGetDefault();
+    }
+  }
+}
+
 export async function handleFullCleanup(options: DataCleanupRequestBody['options']): Promise<NextResponse> {
   const result = await BatchCleanupService.runFullCleanup({
     batchSize: options?.batchSize ?? 50,

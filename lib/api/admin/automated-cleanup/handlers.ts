@@ -99,6 +99,45 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
   }
 }
 
+export async function handlePostRequest(body: { action: string; options?: Record<string, unknown> }) {
+  const { action, options = {} } = body;
+
+  switch (action) {
+    case 'run_scheduled': {
+      return await handleRunScheduled(options);
+    }
+    case 'run_immediate': {
+      return await handleRunImmediate(options);
+    }
+    case 'schedule_cleanup': {
+      return await handleScheduleCleanup(options);
+    }
+    case 'update_schedule': {
+      return await handleUpdateSchedule(options);
+    }
+    case 'delete_schedule': {
+      return await handleDeleteSchedule(options);
+    }
+    case 'analyze_duplicates': {
+      return await handleAnalyzeDuplicates(options);
+    }
+    default: {
+      return NextResponse.json({
+        success: false,
+        error: 'Unknown action',
+        available_actions: [
+          'run_scheduled',
+          'run_immediate',
+          'schedule_cleanup',
+          'update_schedule',
+          'delete_schedule',
+          'analyze_duplicates'
+        ]
+      }, { status: 400 });
+    }
+  }
+}
+
 export async function handleGetStatus(): Promise<NextResponse> {
   const status = await getCleanupStatus();
   return NextResponse.json({
