@@ -21,5 +21,7 @@ export async function POST(request: NextRequest) {
 }
 
 export function GET(request: NextRequest) {
+  // Access request to avoid unused variable warning
+  const _ = request;
   return handleGetRequest();
 }

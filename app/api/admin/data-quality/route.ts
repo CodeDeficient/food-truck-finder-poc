@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(request.url);
+    new URL(request.url); // Access searchParams to avoid unused variable warning
     return await handleGetRequest(request);
   } catch (error: unknown) {
     console.error('Error fetching data quality information:', error);

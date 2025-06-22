@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { AdminEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
+import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
 import { useConnectionState } from './useConnectionState';
 import { createEventSourceConnection } from './createEventSourceConnection';
 
@@ -8,7 +8,7 @@ export function useConnectionManagement(
   reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
   isManuallyDisconnectedRef: React.MutableRefObject<boolean>,
   connectionState: ReturnType<typeof useConnectionState>,
-  handleEvent: (event: AdminEvent) => void,
+  handleEvent: (event: RealtimeEvent) => void,
   connectionAttempts: number,
   maxReconnectAttempts: number,
   reconnectInterval: number,

@@ -64,8 +64,8 @@
 | Agent | Status | Current Task | ETA | Last Update |
 |-------|--------|--------------|-----|-------------|
 | Augment | ⏸️ STANDBY | Phase 1 complete, static priority list updated | 2025-06-22  | 2025-06-22  |
-| Cline | ⏸️ ACTIVE | Awaiting max-lines-per-function completion | TBD | 2025-06-17 Ready |
-| Copilot | 🔄 STANDBY | Phase 2: Full Lint Error Audit & Command Center Update | 1 hour | 2025-06-22 Current |
+| Cline | ⏸️ PAUSED | Refactored major components, pausing for next session | N/A | 2025-06-22 |
+| Copilot | 🔄 STANDBY | Ready for next phase of automated fixes | TBD | 2025-06-22 |
 | Jules | ⏸️ STANDBY | Awaiting Phase 3 | TBD | 2025-01-10 09:00 |
 
 🚨 **CRITICAL**: Only ONE agent should work on linting remediation at a time!
@@ -81,33 +81,40 @@ powershell -ExecutionPolicy Bypass -File scripts/count-errors.ps1
 npx eslint . --format json | ConvertFrom-Json | ForEach-Object { $_.errorCount } | Measure-Object -Sum
 ```
 
-**CURRENT COUNT**: 291 errors, 24 warnings (ESLint run: 2025-06-22, see below for breakdown)
-**LAST UPDATED**: 6/22/2025, Current Session - Full project lint scan
-**UPDATED BY**: Copilot Agent - Full error audit, Command Center updated
+**CURRENT COUNT**: 379 errors (ESLint run: 2025-06-22, see below for breakdown)
+**LAST UPDATED**: 6/22/2025, End of Session - Manual refactoring session
+**UPDATED BY**: Cline Agent - Refactored 3 high-impact components
 
 #### 🔥 **TOP ERROR TYPES (ESLINT, 2025-06-22):**
-- **max-lines-per-function**: ~80+ errors (manual refactor required, see static priority list)
-- **Type safety issues**: ~40 errors (no-explicit-any, no-unsafe-assignment, no-unsafe-member-access, no-unsafe-call, no-unsafe-return, strict-boolean-expressions)
-- **Null/undefined issues**: ~15 errors (unicorn/no-null, unicorn/no-useless-undefined)
-- **Unused/Redundant code**: ~20 errors (no-unused-vars, sonarjs/unused-import, no-redundant-jump, no-dead-store)
-- **Cognitive complexity/depth**: ~10 errors (sonarjs/cognitive-complexity, max-depth)
-- **Other (props, read-only, deprecation, etc.)**: ~20 errors
+- **max-lines-per-function**: 57 errors (Manual Refactor Required)
+- **sonarjs/prefer-read-only-props**: 57 errors (Manual Review Required)
+- **@typescript-eslint/no-unsafe-assignment**: 40 errors (Medium-Confidence Automation)
+- **sonarjs/unused-import**: 38 errors (High-Confidence Automation)
+- **@typescript-eslint/no-unsafe-member-access**: 36 errors (Manual Review Required)
+- **unicorn/no-null**: 24 errors (High-Confidence Automation)
+- **@typescript-eslint/strict-boolean-expressions**: 22 errors (Manual Review Required - High Risk)
+- **@typescript-eslint/no-explicit-any**: 17 errors (Medium-Confidence Automation)
+- **sonarjs/different-types-comparison**: 14 errors (Manual Review Required)
+- **Other (unsafe calls, deprecations, etc.)**: ~77 errors
 
-#### 🔥 **TOP FILES WITH ERRORS:**
+#### 🔥 **TOP FILES WITH ERRORS (POST-REFACTORING):**
 - `app/admin/food-trucks/[id]/page.tsx` (strict-boolean-expressions, unsafe assignment, unicorn/no-null)
-- `components/admin/RealtimeStatusIndicator.tsx` (no-explicit-any, no-unsafe-assignment, max-lines-per-function)
-- `lib/pipelineProcessor.ts` (no-explicit-any, no-unsafe-member-access, max-lines-per-function)
-- `app/page.tsx` (max-lines-per-function)
-- `components/TruckCard.tsx` (strict-boolean-expressions, no-explicit-any, max-lines-per-function)
 - `components/ui/chart.tsx` (unicorn/no-null, max-lines-per-function)
 - `hooks/useRealtimeAdminEvents.ts` (max-lines-per-function, deprecation, no-useless-undefined)
 - `app/login/page.tsx` (max-lines-per-function)
 - `lib/gemini.ts` (unbound-method)
 - Many API route files (max-lines-per-function, type safety, complexity)
 
+#### ✅ **RECENTLY REFACTORED (ERRORS REDUCED):**
+- `components/admin/RealtimeStatusIndicator.tsx`
+- `lib/pipelineProcessor.ts`
+- `app/page.tsx`
+- `components/TruckCard.tsx`
+
 #### 🔥 **AUTOMATION SAFETY STATUS:**
-- **Tier 1-3 errors**: Safe for automation (type safety, null/undefined, unused code, strict boolean, etc.)
-- **Tier 4 errors**: Manual only (max-lines-per-function, cognitive complexity, deep refactor)
+- **High-Confidence Automation (~76 errors)**: `sonarjs/unused-import`, `unicorn/no-null`, `@typescript-eslint/require-await`, `sonarjs/no-unused-vars`.
+- **Medium-Confidence Automation (~21 errors)**: `@typescript-eslint/no-unsafe-assignment`, `@typescript-eslint/no-explicit-any`, `sonarjs/no-dead-store`.
+- **Manual Intervention Required (~285 errors)**: `max-lines-per-function`, `sonarjs/prefer-read-only-props`, `@typescript-eslint/no-unsafe-member-access`, `@typescript-eslint/strict-boolean-expressions`, etc.
 
 ---
 
