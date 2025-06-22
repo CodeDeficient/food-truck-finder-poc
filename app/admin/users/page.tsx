@@ -1,19 +1,11 @@
 import React from 'react';
 import { supabaseAdmin } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { User, PostgrestError } from '@supabase/supabase-js';
+import { UserTable } from '@/components/admin/users/UserTable';
 
 interface UserDisplayData {
   id: string;
@@ -30,7 +22,7 @@ async function getUsersData(): Promise<UserDisplayData[]> {
 
   const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 
-  if (error != undefined) {
+  if (error !== undefined) {
     console.error('Error fetching users:', error);
     return [];
   }
@@ -47,7 +39,7 @@ async function getUsersData(): Promise<UserDisplayData[]> {
     .from('profiles')
     .select('id, role')) as { data: Profile[] | null; error: PostgrestError | null };
 
-  if (profilesError != undefined) {
+  if (profilesError !== undefined) {
     console.error('Error fetching profiles:', profilesError);
     // Continue with users data even if profiles fetch fails
   }
@@ -63,65 +55,43 @@ async function getUsersData(): Promise<UserDisplayData[]> {
   })) as UserDisplayData[];
 }
 
+function PageHeader() {
+  return (
+    <div className="flex items-center justify-between">
+      <h1 className="text-2xl font-bold">User Management</h1>
+      <Button asChild>
+        <Link href="/admin/users/new">
+          <UserPlus className="mr-2 h-4 w-4" />
+          Add New User
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
+function UserListCard({ users }: { users: UserDisplayData[] }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>System Users</CardTitle>
+        <CardDescription>
+          Manage user accounts and their roles. ({users.length} total)
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <UserTable users={users} />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default async function UserManagementPage() {
   const users = await getUsersData();
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">User Management</h1>
-        <Button asChild>
-          <Link href="/admin/users/new">
-            <UserPlus className="mr-2 h-4 w-4" />
-            Add New User
-          </Link>
-        </Button>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>System Users</CardTitle>
-          <CardDescription>
-            Manage user accounts and their roles. ({users.length} total)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Last Sign In</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.email}</TableCell>
-                  <TableCell>
-                    <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    {user.last_sign_in_at == undefined
-                      ? 'N/A'
-                      : new Date(user.last_sign_in_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/admin/users/${user.id}`}>Edit</Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <PageHeader />
+      <UserListCard users={users} />
     </div>
   );
 }

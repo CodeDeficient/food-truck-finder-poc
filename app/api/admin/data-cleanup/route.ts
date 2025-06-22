@@ -27,19 +27,24 @@ export async function POST(request: NextRequest) {
     const { action, options = {} } = body;
 
     switch (action) {
-      case 'full-cleanup':
+      case 'full-cleanup': {
         return await handleFullCleanup(options);
-      case 'check-duplicates':
+      }
+      case 'check-duplicates': {
         return await handleCheckDuplicates(options);
-      case 'merge-duplicates':
+      }
+      case 'merge-duplicates': {
         return await handleMergeDuplicates(options);
-      case 'dry-run':
+      }
+      case 'dry-run': {
         return await handleDryRun(options);
-      default:
+      }
+      default: {
         return NextResponse.json(
           { success: false, error: `Unknown action: ${action}` },
           { status: 400 }
         );
+      }
     }
   } catch (error) {
     console.error('Data cleanup API error:', error);
@@ -60,12 +65,15 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action');
 
     switch (action) {
-      case 'status':
+      case 'status': {
         return await handleGetStatus();
-      case 'preview':
+      }
+      case 'preview': {
         return await handleGetPreview();
-      default:
+      }
+      default: {
         return await handleGetDefault();
+      }
     }
   } catch (error) {
     console.error('Data cleanup GET error:', error);

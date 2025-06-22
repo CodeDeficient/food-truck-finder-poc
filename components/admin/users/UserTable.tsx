@@ -46,7 +46,7 @@ export function UserTable({ users }: UserTableProps) {
             </TableCell>
             <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
             <TableCell>
-              {user.last_sign_in_at == undefined
+              {user.last_sign_in_at === undefined
                 ? 'N/A'
                 : new Date(user.last_sign_in_at).toLocaleDateString()}
             </TableCell>

@@ -1,172 +1,26 @@
 import { firecrawl } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
-import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
-import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from './types';
-import { DuplicatePreventionService } from './data-quality/duplicatePrevention';
+import { ScrapingJobService } from '@/lib/supabase';
+import { ExtractedFoodTruckDetails } from './types';
+import {
+  validateInputAndPrepare,
+  buildTruckDataSchema,
+  handleDuplicateCheck,
+  finalizeJobStatus,
+} from './pipeline/pipelineHelpers';
 
-// Helper function to validate input and prepare basic data
-async function validateInputAndPrepare(
-  jobId: string,
-  extractedTruckData: ExtractedFoodTruckDetails,
-  sourceUrl: string
-): Promise<{ isValid: boolean; name: string }> {
-  // Basic input validation
-  if (!validateTruckData(jobId, extractedTruckData)) {
-    await ScrapingJobService.updateJobStatus(jobId, 'failed', {
-      errors: ['Invalid extracted data received from AI processing step.'],
-    });
-    return { isValid: false, name: '' };
-  }
-
-  if (!sourceUrl) {
-    // Log a warning but proceed if sourceUrl is missing, as it might not be critical for all data.
-    console.warn(`Job ${jobId}: Missing sourceUrl for food truck data, proceeding without it.`);
-  }
-
-  const name = extractedTruckData.name ?? 'Unknown Food Truck'; // Ensure name has a fallback
-  console.info(
-    `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl ?? 'Unknown Source'}`,
-  );
-
-  return { isValid: true, name };
-}
-
-// Helper function to build truck data schema
-function buildTruckDataSchema(
-  extractedTruckData: ExtractedFoodTruckDetails,
-  sourceUrl: string,
-  name: string
-): FoodTruckSchema {
-  const currentLocation = buildLocationData(extractedTruckData);
-
-  return {
-    name: name,
-    description: extractedTruckData.description ?? undefined, // Keep as undefined if null/missing
-    current_location: currentLocation,
-    scheduled_locations: Array.isArray(extractedTruckData.scheduled_locations)
-      ? extractedTruckData.scheduled_locations.map((loc) => ({
-          lat: typeof loc.lat === 'number' ? loc.lat : 0,
-          lng: typeof loc.lng === 'number' ? loc.lng : 0,
-          address: loc.address ?? undefined,
-          start_time: loc.start_time ?? undefined,
-          end_time: loc.end_time ?? undefined,
-          timestamp: new Date().toISOString(),
-        }))
-      : undefined,
-    operating_hours: extractedTruckData.operating_hours == undefined
-      ? {
-          monday: { closed: true },
-          tuesday: { closed: true },
-          wednesday: { closed: true },
-          thursday: { closed: true },
-          friday: { closed: true },
-          saturday: { closed: true },
-          sunday: { closed: true },
-        }
-      : {
-          monday: extractedTruckData.operating_hours.monday ?? { closed: true },
-          tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
-          wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
-          thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
-          friday: extractedTruckData.operating_hours.friday ?? { closed: true },
-          saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
-          sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
-        },
-    menu: processMenuData(extractedTruckData),
-    contact_info: {
-      phone: extractedTruckData.contact_info?.phone ?? undefined,
-      email: extractedTruckData.contact_info?.email ?? undefined,
-      website: extractedTruckData.contact_info?.website ?? undefined,
-    },
-    social_media: {
-      instagram: extractedTruckData.social_media?.instagram ?? undefined,
-      facebook: extractedTruckData.social_media?.facebook ?? undefined,
-      twitter: extractedTruckData.social_media?.twitter ?? undefined,
-      tiktok: extractedTruckData.social_media?.tiktok ?? undefined,
-      yelp: extractedTruckData.social_media?.yelp ?? undefined,
-    },
-    cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
-      ? extractedTruckData.cuisine_type
-      : [],
-    price_range: extractedTruckData.price_range ?? undefined, // Ensure it's one of the allowed enum values or undefined
-    specialties: Array.isArray(extractedTruckData.specialties)
-      ? extractedTruckData.specialties
-      : [],
-    data_quality_score: 0.5, // Default score - confidence_score not available in type
-    verification_status: 'pending',
-    source_urls: sourceUrl != undefined && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
-    last_scraped_at: new Date().toISOString(),
-  };
-}
-
-// Helper function to handle duplicate checking and resolution
-async function handleDuplicateCheck(
-  jobId: string,
-  truckData: FoodTruckSchema,
-  name: string
-): Promise<any> {
-  // Check for duplicates before creating
-  console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
-  const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
-
-  let truck;
-  if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
-    const { bestMatch } = duplicateCheck;
-    console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
-
-    if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
-      // Merge with existing truck
-      truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
-      console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
-    } else if (bestMatch.recommendation === 'update') {
-      // Update existing truck with new data
-      truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
-      console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
-    } else {
-      // Create new truck but log the potential duplicate
-      truck = await FoodTruckService.createTruck(truckData);
-      console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason})`);
-    }
-  } else {
-    // No duplicates found, create new truck
-    truck = await FoodTruckService.createTruck(truckData);
-  }
-
-  return truck;
-}
-
-// Helper function to finalize job status
-async function finalizeJobStatus(
-  jobId: string,
-  truck: any,
-  sourceUrl: string
-): Promise<void> {
-  console.info(
-    `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl ?? 'Unknown Source'}`,
-  );
-
-  // Link truck_id back to the scraping job
-  await ScrapingJobService.updateJobStatus(jobId, 'completed', {
-    completed_at: new Date().toISOString(),
-  });
-}
-
-// Background job processing function
-// eslint-disable-next-line sonarjs/cognitive-complexity
 export async function processScrapingJob(jobId: string) {
   try {
-    // Update job status to running
     const job = await ScrapingJobService.updateJobStatus(jobId, 'running');
 
-    if (job.target_url == undefined) {
+    if (job.target_url === undefined) {
       throw new Error('No target URL specified');
     }
 
-    // Scrape the website using Firecrawl
     console.info(`Starting scrape for ${job.target_url}`);
-    const scrapeResult = await firecrawl.scrapeFoodTruckWebsite(job.target_url); // Simplified call
+    const scrapeResult = await firecrawl.scrapeFoodTruckWebsite(job.target_url);
 
-    if (scrapeResult.success !== true || scrapeResult.data?.markdown == undefined) {
+    if (scrapeResult.success !== true || scrapeResult.data?.markdown === undefined) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [scrapeResult.error ?? 'Scraping failed or markdown content not found'],
       });
@@ -175,13 +29,12 @@ export async function processScrapingJob(jobId: string) {
 
     console.info(`Scraping successful for ${job.target_url}, proceeding to Gemini extraction.`);
 
-    // Call Gemini to extract structured data
     const geminiResult = await gemini.extractFoodTruckDetailsFromMarkdown(
       scrapeResult.data.markdown,
       scrapeResult.data.source_url ?? job.target_url,
     );
 
-    if (geminiResult.success !== true || geminiResult.data == undefined) {
+    if (geminiResult.success !== true || geminiResult.data === undefined) {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [geminiResult.error ?? 'Gemini data extraction failed'],
       });
@@ -190,31 +43,23 @@ export async function processScrapingJob(jobId: string) {
 
     console.info(`Gemini extraction successful for ${job.target_url}.`);
 
-    // Update job with structured data from Gemini
     await ScrapingJobService.updateJobStatus(jobId, 'completed', {
-      data_collected: geminiResult.data as unknown as Record<string, unknown>, // Cast to unknown first, then to Record<string, unknown>
+      data_collected: geminiResult.data as unknown as Record<string, unknown>,
       completed_at: new Date().toISOString(),
     });
 
-    // Create or update FoodTruck entry
     await createOrUpdateFoodTruck(
       jobId,
       geminiResult.data,
       scrapeResult.data.source_url ?? job.target_url,
     );
 
-    // The call to processScrapedData is removed as Gemini now handles full extraction.
-    // The old processScrapedData and processDataQueue can remain for other potential uses or reprocessing.
-
     console.info(`Scraping job ${jobId} completed successfully and data processed.`);
   } catch (error: unknown) {
-    // Explicitly type error as unknown
     console.error(`Scraping job ${jobId} failed:`, error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
-    // Attempt to update job status to failed
     try {
-      // Check current status to avoid overwriting if already failed in a specific step
       const currentJobData = await ScrapingJobService.getJobsByStatus('all').then((jobs) =>
         jobs.find((j) => j.id === jobId),
       );
@@ -223,19 +68,16 @@ export async function processScrapingJob(jobId: string) {
           errors: [errorMessage],
         });
       } else if (!currentJobData) {
-        // If job couldn't be fetched, log but proceed to retry logic if appropriate
         console.error(`Could not fetch job ${jobId} to update status to failed.`);
       }
     } catch (statusUpdateError) {
       console.error(`Error updating job ${jobId} status to failed:`, statusUpdateError);
     }
 
-    // Increment retry count and potentially retry
     try {
       const jobAfterRetryIncrement = await ScrapingJobService.incrementRetryCount(jobId);
-      // Ensure jobAfterRetryIncrement and its properties are valid before using them
       if (
-        jobAfterRetryIncrement != undefined &&
+        jobAfterRetryIncrement !== undefined &&
         typeof jobAfterRetryIncrement.retry_count === 'number' &&
         typeof jobAfterRetryIncrement.max_retries === 'number'
       ) {
@@ -245,7 +87,7 @@ export async function processScrapingJob(jobId: string) {
           );
           setTimeout(() => {
             void processScrapingJob(jobId);
-          }, 5000); // Retry after 5 seconds
+          }, 5000);
         } else {
           console.warn(`Job ${jobId} reached max retries (${jobAfterRetryIncrement.max_retries}).`);
         }
@@ -260,101 +102,27 @@ export async function processScrapingJob(jobId: string) {
   }
 }
 
-// Helper function to validate input data
-function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruckDetails): boolean {
-  if (extractedTruckData == undefined || typeof extractedTruckData !== 'object') {
-    console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`);
-    return false;
-  }
-  return true;
-}
-
-// Helper function to build location data
-function buildLocationData(extractedTruckData: ExtractedFoodTruckDetails) {
-  const locationData = extractedTruckData.current_location ?? {};
-  const fullAddress = [
-    locationData.address,
-    locationData.city,
-    locationData.state,
-    locationData.zip_code,
-  ]
-    .filter(Boolean)
-    .join(', ');
-
-  return {
-    lat: typeof locationData.lat === 'number' ? locationData.lat : 0,
-    lng: typeof locationData.lng === 'number' ? locationData.lng : 0,
-    address: fullAddress || (locationData.raw_text ?? undefined),
-    timestamp: new Date().toISOString(),
-  };
-}
-
-// Helper function to process menu data
-function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCategory[] {
-  if (!Array.isArray(extractedTruckData.menu)) {
-    return [];
-  }
-
-  return extractedTruckData.menu.map((category: unknown): MenuCategory => {
-    const categoryData = category as { items?: unknown[]; category?: string; name?: string };
-    const items = (Array.isArray(categoryData.items) ? categoryData.items : []).map(
-      (item: unknown): MenuItem => {
-        const itemData = item as {
-          name?: string;
-          description?: string;
-          price?: string | number;
-          dietary_tags?: string[];
-        };
-        let price: number | undefined = undefined;
-        if (typeof itemData.price === 'number') {
-          price = itemData.price;
-        } else if (typeof itemData.price === 'string') {
-          const parsedPrice = Number.parseFloat(itemData.price.replaceAll(/[^\d.-]/g, ''));
-          if (!Number.isNaN(parsedPrice)) {
-            price = parsedPrice;
-          }
-        }
-        return {
-          name: itemData.name ?? 'Unknown Item',
-          description: itemData.description ?? undefined,
-          price: price,
-          dietary_tags: Array.isArray(itemData.dietary_tags) ? itemData.dietary_tags : [],
-        };
-      },
-    );
-    return {
-      name: categoryData.category ?? categoryData.name ?? 'Uncategorized',
-      items: items,
-    };
-  });
-}
-
 export async function createOrUpdateFoodTruck(
   jobId: string,
   extractedTruckData: ExtractedFoodTruckDetails,
   sourceUrl: string,
 ) {
   try {
-    // Validate input and prepare basic data
     const validation = await validateInputAndPrepare(jobId, extractedTruckData, sourceUrl);
     if (!validation.isValid) {
       return;
     }
 
-    // Build truck data schema
     const truckData = buildTruckDataSchema(extractedTruckData, sourceUrl, validation.name);
 
-    // Handle duplicate checking and resolution
     const truck = await handleDuplicateCheck(jobId, truckData, validation.name);
 
-    // Finalize job status
     await finalizeJobStatus(jobId, truck, sourceUrl);
   } catch (error: unknown) {
     console.error(
       `Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl ?? 'Unknown Source'}:`,
       error,
     );
-    // Update the scraping job with this error information
     try {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', {
         errors: [
@@ -369,5 +137,3 @@ export async function createOrUpdateFoodTruck(
     }
   }
 }
-
-// Fix type assignment and compatibility errors, replace any with unknown or specific types, and remove unused variables/imports.

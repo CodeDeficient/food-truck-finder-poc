@@ -24,9 +24,10 @@ export async function GET(request: NextRequest) {
     const truckId = searchParams.get('truckId');
 
     switch (action) {
-      case 'stats':
+      case 'stats': {
         return await handleStatsAction();
-      case 'assess':
+      }
+      case 'assess': {
         if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required for assessment' },
@@ -34,8 +35,10 @@ export async function GET(request: NextRequest) {
           );
         }
         return await handleAssessAction(truckId);
-      default:
+      }
+      default: {
         return await handleDefaultGetAction();
+      }
     }
   } catch (error: unknown) {
     console.error('Error fetching data quality information:', error);
@@ -64,7 +67,7 @@ export async function POST(request: NextRequest) {
     const { action, truckId, limit } = body;
 
     switch (action) {
-      case 'update_single':
+      case 'update_single': {
         if (truckId == undefined) {
           return NextResponse.json(
             { success: false, error: 'Truck ID required' },
@@ -72,15 +75,19 @@ export async function POST(request: NextRequest) {
           );
         }
         return await handleUpdateSingle(truckId);
-      case 'batch_update':
+      }
+      case 'batch_update': {
         return await handleBatchUpdate(limit);
-      case 'recalculate_all':
+      }
+      case 'recalculate_all': {
         return await handleRecalculateAll();
-      default:
+      }
+      default: {
         return NextResponse.json(
           { success: false, error: 'Invalid action specified' },
           { status: 400 }
         );
+      }
     }
   } catch (error: unknown) {
     console.error('Error updating data quality:', error);
