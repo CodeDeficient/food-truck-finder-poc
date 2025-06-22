@@ -90,25 +90,25 @@ async function handleCrawlOperation(url: string, options: Record<string, unknown
   return pollCrawlStatus(crawlJob.jobId);
 }
 
+async function handleSearchOperation() {
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        'Search operation not directly supported by Firecrawl API. Use crawl on directory URLs instead.',
+    },
+    { status: 400 },
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as FirecrawlRequestBody;
     const { operation, url, options = {} } = body;
 
     switch (operation) {
-      case 'search': {
-        // Note: Firecrawl doesn't have a direct search API, but we can simulate it
-        // by scraping search engine results or known directories
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              'Search operation not directly supported by Firecrawl API. Use crawl on directory URLs instead.',
-          },
-          { status: 400 },
-        );
-      }
-
+      case 'search':
+        return handleSearchOperation();
       case 'scrape': {
         if (url == undefined) {
           return NextResponse.json(
@@ -116,10 +116,8 @@ export async function POST(request: NextRequest) {
             { status: 400 },
           );
         }
-
         return handleScrapeOperation(url, options);
       }
-
       case 'crawl': {
         if (url == undefined) {
           return NextResponse.json(
@@ -127,16 +125,13 @@ export async function POST(request: NextRequest) {
             { status: 400 },
           );
         }
-
         return handleCrawlOperation(url, options);
       }
-
-      default: {
+      default:
         return NextResponse.json(
           { success: false, error: `Unknown operation: ${operation}` },
           { status: 400 },
         );
-      }
     }
   } catch (error) {
     console.error('Firecrawl API error:', error);

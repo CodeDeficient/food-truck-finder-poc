@@ -4,6 +4,9 @@ import {
   generateRecommendations,
   determineOverallStatus,
   getStatusMessage,
+  checkSupabaseConnection,
+  checkSupabaseAuthSettings,
+  testOAuthProvider,
 } from '@/lib/api/admin/oauth-status/helpers';
 
 interface OAuthStatus {
@@ -33,81 +36,41 @@ interface OAuthStatus {
   overall_status: 'ready' | 'partial' | 'not_configured' | 'error';
 }
 
+async function getOAuthStatus(): Promise<OAuthStatus> {
+  const status: OAuthStatus = {
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+    supabase: {
+      connected: false,
+      projectId: 'zkwliyjjkdnigizidlln'
+    },
+    environment_variables: {
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL != undefined,
+      supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY != undefined,
+      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY != undefined
+    },
+    oauth_flow: {
+      loginPageExists: true,
+      callbackRouteExists: true,
+      authProviderConfigured: false
+    },
+    recommendations: [],
+    overall_status: 'not_configured'
+  };
+
+  await checkSupabaseConnection(status, supabase);
+  await checkSupabaseAuthSettings(status);
+  await testOAuthProvider(status, supabase);
+
+  status.recommendations = generateRecommendations(status);
+  status.overall_status = determineOverallStatus(status);
+
+  return status;
+}
+
 export async function GET(_request: NextRequest) {
   try {
-    const status: OAuthStatus = {
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-      supabase: {
-        connected: false,
-        projectId: 'zkwliyjjkdnigizidlln'
-      },
-      environment_variables: {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL != undefined,
-        supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY != undefined,
-        supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY != undefined
-      },
-      oauth_flow: {
-        loginPageExists: true,
-        callbackRouteExists: true,
-        authProviderConfigured: false
-      },
-      recommendations: [],
-      overall_status: 'not_configured'
-    };
-
-    try {
-      const { error } = await supabase.from('profiles').select('count').limit(1);
-      if (error == undefined) {
-        status.supabase.connected = true;
-      } else {
-        status.supabase.error = error.message;
-      }
-    } catch (error) {
-      status.supabase.error = error instanceof Error ? error.message : 'Unknown connection error';
-    }
-
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (supabaseUrl != undefined && supabaseUrl !== '') {
-        const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
-        if (settingsResponse.ok === true) {
-          const settings = await settingsResponse.json() as {
-            external?: { google?: boolean };
-            disable_signup?: boolean;
-            autoconfirm?: boolean;
-          };
-          status.supabase.authSettings = {
-            googleEnabled: settings.external?.google ?? false,
-            signupEnabled: settings.disable_signup !== true,
-            autoconfirm: settings.autoconfirm ?? false
-          };
-          if (settings.external?.google != undefined) {
-            status.oauth_flow.authProviderConfigured = true;
-          }
-        }
-      }
-    } catch {
-      console.info('Auth settings endpoint requires authentication (normal)');
-    }
-
-    try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'http://localhost:3000/auth/callback',
-          skipBrowserRedirect: true
-        }
-      });
-      if (!oauthError || oauthError.message !== 'Provider not found') {
-        status.oauth_flow.authProviderConfigured = true;
-      }
-    } catch {
-      console.info('OAuth provider test failed (may be normal)');
-    }
-
-    status.recommendations = generateRecommendations(status);
-    status.overall_status = determineOverallStatus(status);
+    const status = await getOAuthStatus();
 
     return NextResponse.json({
       success: true,

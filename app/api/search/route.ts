@@ -29,53 +29,68 @@ export async function GET(request: NextRequest) {
     // Apply filters
     let filteredTrucks = trucks;
 
-    // Text search filter
-    if (query != undefined && query !== '') {
-      filteredTrucks = filteredTrucks.filter(
-        (truck: FoodTruck) => truck.name.toLowerCase().includes(query.toLowerCase()) ||
-        truck.description?.toLowerCase().includes(query.toLowerCase()) ??
-        truck.menu?.some((category: MenuCategory) =>
-          category.items?.some(
-            (item: MenuItem) =>
-              item.name.toLowerCase().includes(query.toLowerCase()) ??
-              (item.description?.toLowerCase().includes(query.toLowerCase()) ?? false),
-          ) ?? false,
+function applyTextSearchFilter(trucks: FoodTruck[], query: string | null): FoodTruck[] {
+  if (query != undefined && query !== '') {
+    return trucks.filter(
+      (truck: FoodTruck) => truck.name.toLowerCase().includes(query.toLowerCase()) ||
+      truck.description?.toLowerCase().includes(query.toLowerCase()) ??
+      truck.menu?.some((category: MenuCategory) =>
+        category.items?.some(
+          (item: MenuItem) =>
+            item.name.toLowerCase().includes(query.toLowerCase()) ??
+            (item.description?.toLowerCase().includes(query.toLowerCase()) ?? false),
         ) ?? false,
-      );
-    }
+      ) ?? false,
+    );
+  }
+  return trucks;
+}
+
+    // Text search filter
+    filteredTrucks = applyTextSearchFilter(filteredTrucks, query);
+
+function applyCuisineFilter(trucks: FoodTruck[], cuisine: string | null): FoodTruck[] {
+  if (cuisine != undefined && cuisine != '') {
+    return trucks.filter((truck: FoodTruck) => truck.menu?.some((category: MenuCategory) =>
+      category.name.toLowerCase().includes(cuisine.toLowerCase()),
+    ),
+    );
+  }
+  return trucks;
+}
 
     // Cuisine filter
-    if (cuisine != undefined && cuisine != '') {
-      filteredTrucks = filteredTrucks.filter((truck: FoodTruck) => truck.menu?.some((category: MenuCategory) =>
-        category.name.toLowerCase().includes(cuisine.toLowerCase()),
-      ),
-      );
-    }
+    filteredTrucks = applyCuisineFilter(filteredTrucks, cuisine);
+
+function applyOpenNowFilter(trucks: FoodTruck[], openNow: boolean): FoodTruck[] {
+  if (openNow === true) {
+    const now = new Date();
+    const daysOfWeek: Array<keyof OperatingHours> = [
+      'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+    ];
+    const currentDay = daysOfWeek[now.getDay()];
+    const currentTime = now.getHours() * 100 + now.getMinutes();
+
+    return trucks.filter((truck: FoodTruck) => {
+      const hours = truck.operating_hours?.[currentDay];
+      if (!hours || hours.closed) return false;
+
+      const openTime = Number.parseInt(hours.open.replace(':', ''));
+      const closeTime = Number.parseInt(hours.close.replace(':', ''));
+      return currentTime >= openTime && currentTime <= closeTime;
+    });
+  }
+  return trucks;
+}
 
     // Open now filter
-    if (openNow === true) {
-      const now = new Date();
-      const daysOfWeek: Array<keyof OperatingHours> = [
-        'sunday',
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-        'saturday',
-      ];
-      const currentDay = daysOfWeek[now.getDay()];
-      const currentTime = now.getHours() * 100 + now.getMinutes();
-
-      filteredTrucks = filteredTrucks.filter((truck: FoodTruck) => {
-        const hours = truck.operating_hours?.[currentDay];
-        if (!hours || hours.closed) return false;
-
-        const openTime = Number.parseInt(hours.open.replace(':', ''));
-        const closeTime = Number.parseInt(hours.close.replace(':', ''));
-        return currentTime >= openTime && currentTime <= closeTime;
-      });
-    }
+    filteredTrucks = applyOpenNowFilter(filteredTrucks, openNow);
 
     // Sort by data quality score
     filteredTrucks.sort((a: FoodTruck, b: FoodTruck) => (b.data_quality_score ?? 0) - (a.data_quality_score ?? 0));

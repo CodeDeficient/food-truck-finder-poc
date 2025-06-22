@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Store metric in database (if admin client available)
     if (supabaseAdmin) {
       try {
         const { error } = await supabaseAdmin
@@ -72,47 +71,52 @@ export async function POST(request: NextRequest) {
 /**
  * Get Web Vitals Analytics Data
  */
-export function GET(request: NextRequest) {
+function getRequestParams(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const days = Number.parseInt(searchParams.get('days') ?? '7');
+  const page = searchParams.get('page');
+  return { days, page };
+}
+
+async function fetchAndFilterMetrics(request: NextRequest) {
+  const { days, page } = getRequestParams(request);
+
+  if (!supabaseAdmin) {
+    throw new Error('Database not available');
+  }
+
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+
+  let query = supabaseAdmin
+    .from('web_vitals_metrics')
+    .select('*')
+    .gte('recorded_at', startDate.toISOString())
+    .order('recorded_at', { ascending: false });
+
+  if (page != undefined && page !== '') {
+    query = query.ilike('page_url', `%${page}%`);
+  }
+
+  const { data: metrics, error } = await query.limit(1000);
+
+  if (error) {
+    throw error;
+  }
+
+  return { metrics: metrics ?? [], days, startDate };
+}
+
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const days = Number.parseInt(searchParams.get('days') ?? '7');
-    const page = searchParams.get('page');
+    const { metrics, days, startDate } = await fetchAndFilterMetrics(request);
 
-    if (!supabaseAdmin) {
-      return NextResponse.json(
-        { success: false, error: 'Database not available' },
-        { status: 503 }
-      );
-    }
-
-    // Calculate date range
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-
-    let query = supabaseAdmin
-      .from('web_vitals_metrics')
-      .select('*')
-      .gte('recorded_at', startDate.toISOString())
-      .order('recorded_at', { ascending: false });
-
-    // Filter by page if specified
-    if (page != undefined && page !== '') {
-      query = query.ilike('page_url', `%${page}%`);
-    }
-
-    const { data: metrics, error } = await query.limit(1000);
-
-    if (error) {
-      throw error;
-    }
-
-    // Calculate summary statistics
-    const summary = calculateMetricsSummary((metrics ?? []) as Array<{ metric_name: string; metric_value: number; rating: string }>);
+    const summary = calculateMetricsSummary(metrics);
 
     return NextResponse.json({
       success: true,
       data: {
-        metrics: metrics ?? [],
+        metrics,
         summary,
         period: {
           days,
@@ -133,8 +137,8 @@ export function GET(request: NextRequest) {
 /**
  * Calculate summary statistics for metrics
  */
-function calculateMetricsSummary(metrics: Array<{ metric_name: string; metric_value: number; rating: string }>) {
-  const metricTypes = ['LCP', 'FID', 'CLS', 'FCP', 'TTFB'];
+function calculateMetricsSummary(metrics: { metric_name: string; metric_value: number; rating: string }[]) {
+  const metricTypes: ('LCP' | 'FID' | 'CLS' | 'FCP' | 'TTFB')[] = ['LCP', 'FID', 'CLS', 'FCP', 'TTFB'];
   const summary: Record<string, {
     count: number;
     average: number | undefined;

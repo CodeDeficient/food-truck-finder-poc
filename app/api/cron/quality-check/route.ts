@@ -14,45 +14,65 @@ interface QualityService {
   batchUpdateQualityScores: (limit: number) => Promise<unknown>;
 }
 
-export function POST(request: NextRequest) {
+function verifyCronSecret(request: NextRequest): NextResponse | null {
+  const authHeader = request.headers.get('authorization');
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (cronSecret === undefined) {
+    console.error('CRON_SECRET not configured');
+    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+  }
+
+  if (authHeader !== `Bearer ${cronSecret}`) {
+    console.error('Unauthorized cron attempt:', authHeader);
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return null;
+}
+
+function logQualityCheckStart() {
+  console.info('Starting daily data quality check...');
+  logActivity({
+    type: 'cron_job',
+    action: 'quality_check_started',
+    details: { timestamp: new Date().toISOString() },
+  });
+}
+
+function logQualityCheckCompletion(qualityResults: any) {
+  logActivity({
+    type: 'cron_job',
+    action: 'quality_check_completed',
+    details: {
+      logTimestamp: new Date().toISOString(),
+      ...qualityResults,
+    },
+  });
+  console.info('Data quality check completed successfully');
+}
+
+function logQualityCheckFailure(error: unknown) {
+  console.error('Quality check cron job failed:', error);
+  logActivity({
+    type: 'cron_job',
+    action: 'quality_check_failed',
+    details: {
+      timestamp: new Date().toISOString(),
+      error: error instanceof Error ? error.message : 'Unknown error',
+    },
+  });
+}
+
+export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret for security
-    const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET;
-
-    if (cronSecret === undefined) {
-      console.error('CRON_SECRET not configured');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    const authResponse = verifyCronSecret(request);
+    if (authResponse) {
+      return authResponse;
     }
 
-    if (authHeader !== `Bearer ${cronSecret}`) {
-      console.error('Unauthorized cron attempt:', authHeader);
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    console.info('Starting daily data quality check...');
-
-    // Log the start of the quality check
-    logActivity({
-      type: 'cron_job',
-      action: 'quality_check_started',
-      details: { timestamp: new Date().toISOString() },
-    });
-
-    // Perform data quality checks using SOTA algorithm
+    logQualityCheckStart();
     const qualityResults = await performDataQualityCheck();
-
-    // Log completion with results
-    logActivity({
-      type: 'cron_job',
-      action: 'quality_check_completed',
-      details: {
-        logTimestamp: new Date().toISOString(),
-        ...qualityResults,
-      },
-    });
-
-    console.info('Data quality check completed successfully');
+    logQualityCheckCompletion(qualityResults);
 
     return NextResponse.json({
       success: true,
@@ -63,18 +83,7 @@ export function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Quality check cron job failed:', error);
-
-    // Log the error
-    logActivity({
-      type: 'cron_job',
-      action: 'quality_check_failed',
-      details: {
-        timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-    });
-
+    logQualityCheckFailure(error);
     return NextResponse.json(
       {
         success: false,
@@ -86,46 +95,60 @@ export function POST(request: NextRequest) {
   }
 }
 
-async function performDataQualityCheck() {
-  try {
-    // Get all trucks for quality assessment
-    const { trucks, total } = await FoodTruckService.getAllTrucks(1000, 0);
+async function assessTrucksQuality(trucks: any[]) {
+  let trucksWithMissingData = 0;
+  let lowQualityTrucks = 0;
+  let totalQualityScore = 0;
+  let staleDataCount = 0;
+  const qualityBreakdown = { high: 0, medium: 0, low: 0 };
 
-    let trucksWithMissingData = 0;
-    let lowQualityTrucks = 0;
-    let totalQualityScore = 0;
-    let staleDataCount = 0;
-    const qualityBreakdown = { high: 0, medium: 0, low: 0 };
+  for (const truck of trucks) {
+    const assessment = (DataQualityService as QualityService).calculateQualityScore(truck);
+    totalQualityScore += assessment.score;
 
-    // Assess each truck using SOTA algorithm
-    for (const truck of trucks) {
-      const assessment = (DataQualityService as QualityService).calculateQualityScore(truck);
-      totalQualityScore += assessment.score;
+    const category = (DataQualityService as QualityService).categorizeQualityScore(assessment.score);
+    (qualityBreakdown as Record<string, number>)[category]++;
 
-      const category = (DataQualityService as QualityService).categorizeQualityScore(assessment.score);
-      (qualityBreakdown as Record<string, number>)[category]++;
-
-      if (assessment.issues.length > 0) {
-        trucksWithMissingData++;
-      }
-
-      if (assessment.score < 0.6) {
-        lowQualityTrucks++;
-      }
-
-      // Check for stale data (location timestamp > 7 days old)
-      if (truck.current_location?.timestamp) {
-        const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
-        const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
-        if (daysSinceUpdate > 7) {
-          staleDataCount++;
-        }
-      }
+    if (assessment.issues.length > 0) {
+      trucksWithMissingData++;
     }
 
-    const averageQualityScore = trucks.length > 0 ? totalQualityScore / trucks.length : 0;
+    if (assessment.score < 0.6) {
+      lowQualityTrucks++;
+    }
 
-    // Update quality scores for trucks that need it (batch update)
+    if (truck.current_location?.timestamp) {
+      const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
+      const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
+      if (daysSinceUpdate > 7) {
+        staleDataCount++;
+      }
+    }
+  }
+
+  const averageQualityScore = trucks.length > 0 ? totalQualityScore / trucks.length : 0;
+
+  return {
+    trucksWithMissingData,
+    lowQualityTrucks,
+    staleDataCount,
+    averageQualityScore,
+    qualityBreakdown,
+  };
+}
+
+async function performDataQualityCheck() {
+  try {
+    const { trucks, total } = await FoodTruckService.getAllTrucks(1000, 0);
+
+    const {
+      trucksWithMissingData,
+      lowQualityTrucks,
+      staleDataCount,
+      averageQualityScore,
+      qualityBreakdown,
+    } = await assessTrucksQuality(trucks);
+
     const updateResults = await (DataQualityService as QualityService).batchUpdateQualityScores(100);
 
     return {

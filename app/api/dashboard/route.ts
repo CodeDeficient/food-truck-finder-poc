@@ -6,56 +6,47 @@ import {
   APIUsageService,
 } from '@/lib/supabase';
 
+async function handleDashboardSectionRequest(section: string | null) {
+  switch (section) {
+    case 'overview':
+      return NextResponse.json(await getDashboardOverview());
+    case 'scraping':
+      return NextResponse.json(await getScrapingStatus());
+    case 'processing':
+      return NextResponse.json(await getProcessingStatus());
+    case 'quality':
+      return NextResponse.json(await getDataQualityStatus());
+    case 'usage':
+      return NextResponse.json(await getAPIUsageStatus());
+    default: {
+      const [overview, scraping, processing, quality, usage] = await Promise.allSettled([
+        getDashboardOverview(),
+        getScrapingStatus(),
+        getProcessingStatus(),
+        getDataQualityStatus(),
+        getAPIUsageStatus(),
+      ]);
+
+      return NextResponse.json({
+        overview: overview.status === 'fulfilled' ? overview.value : getDefaultOverview(),
+        scraping: scraping.status === 'fulfilled' ? scraping.value : getDefaultScraping(),
+        processing: processing.status === 'fulfilled' ? processing.value : getDefaultProcessing(),
+        quality: quality.status === 'fulfilled' ? quality.value : getDefaultQuality(),
+        usage: usage.status === 'fulfilled' ? usage.value : getDefaultUsage(),
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const section = searchParams.get('section');
 
   try {
-    switch (section) {
-      case 'overview': {
-        return NextResponse.json(await getDashboardOverview());
-      }
-
-      case 'scraping': {
-        return NextResponse.json(await getScrapingStatus());
-      }
-
-      case 'processing': {
-        return NextResponse.json(await getProcessingStatus());
-      }
-
-      case 'quality': {
-        return NextResponse.json(await getDataQualityStatus());
-      }
-
-      case 'usage': {
-        return NextResponse.json(await getAPIUsageStatus());
-      }
-
-      default: {
-        // Return complete dashboard data with error handling
-        const [overview, scraping, processing, quality, usage] = await Promise.allSettled([
-          getDashboardOverview(),
-          getScrapingStatus(),
-          getProcessingStatus(),
-          getDataQualityStatus(),
-          getAPIUsageStatus(),
-        ]);
-
-        return NextResponse.json({
-          overview: overview.status === 'fulfilled' ? overview.value : getDefaultOverview(),
-          scraping: scraping.status === 'fulfilled' ? scraping.value : getDefaultScraping(),
-          processing: processing.status === 'fulfilled' ? processing.value : getDefaultProcessing(),
-          quality: quality.status === 'fulfilled' ? quality.value : getDefaultQuality(),
-          usage: usage.status === 'fulfilled' ? usage.value : getDefaultUsage(),
-          timestamp: new Date().toISOString(),
-        });
-      }
-    }
+    return await handleDashboardSectionRequest(section);
   } catch (error) {
     console.error('Dashboard API error:', error);
-
-    // Return fallback data instead of error
     return NextResponse.json({
       overview: getDefaultOverview(),
       scraping: getDefaultScraping(),
