@@ -3,7 +3,7 @@
  * Implements automated data quality improvements and cleanup operations
  */
 
-import { FoodTruckService, DataQualityService, type FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck, DataQualityService } from '@/lib/supabase';
 import { DuplicatePreventionService } from './duplicatePrevention';
 
 export interface CleanupOperation {
@@ -161,19 +161,19 @@ export class BatchCleanupService {
     let needsUpdate = false;
 
     // Check name
-    if (truck.name && patterns.some(pattern => pattern.test(truck.name))) {
+    if (truck.name && patterns.some(pattern => pattern.test(truck.name ?? ''))) {
       updates.name = undefined;
       needsUpdate = true;
     }
 
     // Check description
-    if (truck.description !== undefined && typeof truck.description === 'string' && patterns.some(pattern => pattern.test(truck.description))) {
+    if (truck.description !== undefined && typeof truck.description === 'string' && patterns.some(pattern => pattern.test(truck.description ?? ''))) {
       updates.description = undefined;
       needsUpdate = true;
     }
 
     // Check price range
-    if (truck.price_range !== undefined && typeof truck.price_range === 'string' && patterns.some(pattern => pattern.test(truck.price_range))) {
+    if (truck.price_range !== undefined && typeof truck.price_range === 'string' && patterns.some(pattern => pattern.test(truck.price_range ?? ''))) {
       updates.price_range = undefined;
       needsUpdate = true;
     }
@@ -200,17 +200,17 @@ export class BatchCleanupService {
         const cleanContact = { ...truck.contact_info };
         let contactUpdated = false;
 
-        if (cleanContact.phone !== undefined && typeof cleanContact.phone === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone))) {
+        if (cleanContact.phone !== undefined && typeof cleanContact.phone === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.phone ?? ''))) {
           cleanContact.phone = undefined;
           contactUpdated = true;
         }
 
-        if (cleanContact.website !== undefined && typeof cleanContact.website === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.website))) {
+        if (cleanContact.website !== undefined && typeof cleanContact.website === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.website ?? ''))) {
           cleanContact.website = undefined;
           contactUpdated = true;
         }
 
-        if (cleanContact.email !== undefined && typeof cleanContact.email === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.email))) {
+        if (cleanContact.email !== undefined && typeof cleanContact.email === 'string' && placeholderPatterns.some(pattern => pattern.test(cleanContact.email ?? ''))) {
           cleanContact.email = undefined;
           contactUpdated = true;
         }
@@ -222,7 +222,7 @@ export class BatchCleanupService {
       }
 
       // Check address
-      if (truck.current_location?.address !== undefined && typeof truck.current_location.address === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address))) {
+      if (truck.current_location?.address !== undefined && typeof truck.current_location.address === 'string' && placeholderPatterns.some(pattern => pattern.test(truck.current_location.address ?? ''))) {
         updates.current_location = {
           ...truck.current_location,
           address: undefined
@@ -356,10 +356,8 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
     for (const truck of trucks) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const qualityAssessment = DataQualityService.calculateQualityScore(truck);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      const newScore = qualityAssessment.score;
+      const qualityAssessment: { score: number } = DataQualityService.calculateQualityScore(truck);
+      const newScore: number = qualityAssessment.score;
       const currentScore = truck.data_quality_score ?? 0;
       
       // Only update if score changed significantly (>5% difference)

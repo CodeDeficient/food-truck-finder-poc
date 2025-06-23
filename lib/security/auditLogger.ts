@@ -145,7 +145,7 @@ export class AuditLogger {
     userEmail: string,
     resourceType: string,
     resourceId?: string,
-    action: 'read' | 'search' | 'export' = 'read',
+    action: 'read' | 'search' | 'export' | 'admin_access' = 'read',
     request?: {
       ip?: string;
       userAgent?: string;

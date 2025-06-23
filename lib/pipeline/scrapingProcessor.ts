@@ -88,7 +88,7 @@ export async function processScrapingJob(jobId: string): Promise<void> {
     await createOrUpdateFoodTruck(jobId, extractedData, scrapeData.source_url ?? job.target_url);
 
     console.info(`Scraping job ${jobId} completed successfully and data processed.`);
-  } catch (error) {
+  } catch {
     await handleRetryLogic(jobId);
   }
 }
