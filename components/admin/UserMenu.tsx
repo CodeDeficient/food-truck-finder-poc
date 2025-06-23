@@ -17,7 +17,7 @@ interface UserMenuProps {
   handleSignOut: () => Promise<void>;
 }
 
-export function UserMenu({ user, userInitials, handleSignOut }: UserMenuProps) {
+export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMenuProps>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -3,10 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MapPin } from 'lucide-react';
 
 interface LocationInfoCardProps {
-  truck: { current_location?: { address?: string; lat?: number; lng?: number; timestamp?: string } };
+  readonly truck: { current_location?: { address?: string; lat?: number; lng?: number; timestamp?: string } };
 }
 
-export function LocationInfoCard({ truck }: LocationInfoCardProps) {
+export function LocationInfoCard({ truck }: Readonly<LocationInfoCardProps>) {
   return (
     <Card>
       <CardHeader>

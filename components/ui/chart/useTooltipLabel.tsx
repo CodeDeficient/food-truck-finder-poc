@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { ChartConfig } from '../chart'; // Assuming ChartConfig is exported from chart.tsx
+import { ChartConfig } from '../chart';
+import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
@@ -31,13 +32,13 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 }
 
 interface UseTooltipLabelProps {
-  hideLabel: boolean;
-  payload: unknown[] | undefined;
-  label: unknown;
-  labelFormatter?: (value: unknown, payload: unknown[]) => React.ReactNode;
-  labelClassName?: string;
-  config: ChartConfig;
-  labelKey?: string;
+  readonly hideLabel: boolean;
+  readonly payload: Payload<ValueType, NameType>[] | undefined;
+  readonly label: unknown;
+  readonly labelFormatter?: (value: unknown, payload: Payload<ValueType, NameType>[]) => React.ReactNode;
+  readonly labelClassName?: string;
+  readonly config: ChartConfig;
+  readonly labelKey?: string;
 }
 
 export function useTooltipLabel({
@@ -51,10 +52,10 @@ export function useTooltipLabel({
 }: UseTooltipLabelProps) {
   return React.useMemo(() => {
     if (hideLabel === true || (payload?.length ?? 0) === 0) {
-      return null;
+      return undefined;
     }
 
-    const [item] = payload as unknown[];
+    const [item] = payload;
 
     const key = `${labelKey ?? (item as { dataKey?: string; name?: string }).dataKey ?? (item as { dataKey?: string; name?: string }).name ?? 'value'}`;
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
@@ -63,12 +64,12 @@ export function useTooltipLabel({
 
     if (labelFormatter) {
       return (
-        <div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload as unknown[])}</div>
+        <div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload)}</div>
       );
     }
 
     if (value === undefined || value === null || value === '') {
-      return null;
+      return undefined;
     }
 
     return <div className={cn('font-medium', labelClassName)}>{value}</div>;

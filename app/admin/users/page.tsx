@@ -69,7 +69,7 @@ function PageHeader() {
   );
 }
 
-function UserListCard({ users }: { users: Readonly<UserDisplayData[]> }) {
+function UserListCard({ users }: Readonly<{ users: Readonly<UserDisplayData[]> }>) {
   return (
     <Card>
       <CardHeader>

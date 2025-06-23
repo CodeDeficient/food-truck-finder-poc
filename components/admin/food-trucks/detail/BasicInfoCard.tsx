@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 
 interface BasicInfoCardProps {
-  truck: { name: string; description?: string; cuisine_type?: string[]; price_range?: string; specialties?: string[] };
+  readonly truck: { name: string; description?: string; cuisine_type?: string[]; price_range?: string; specialties?: string[] };
 }
 
 function CuisineTypeSection({ cuisineType }: { readonly cuisineType?: string[] }) {
@@ -51,7 +51,7 @@ function SpecialtiesSection({ specialties }: { readonly specialties?: string[] }
   );
 }
 
-export function BasicInfoCard({ truck }: BasicInfoCardProps) {
+export function BasicInfoCard({ truck }: Readonly<BasicInfoCardProps>) {
   return (
     <Card>
       <CardHeader>

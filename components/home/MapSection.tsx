@@ -25,10 +25,10 @@ function getSelectedTruckLocation(
 }
 
 interface MapSectionProps {
-  filteredTrucks: FoodTruck[];
-  userLocation: { lat: number; lng: number } | undefined;
-  selectedTruckId: string | undefined;
-  setSelectedTruckId: (id: string | undefined) => void;
+  readonly filteredTrucks: FoodTruck[];
+  readonly userLocation: { lat: number; lng: number } | undefined;
+  readonly selectedTruckId: string | undefined;
+  readonly setSelectedTruckId: (id: string | undefined) => void;
 }
 
 export function MapSection({

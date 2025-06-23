@@ -13,14 +13,14 @@ import { RecentErrorsCard } from '@/components/admin/dashboard/RecentErrorsCard'
 
 // Define the data quality stats type based on the database function
 interface DataQualityStats {
-  total_trucks: number;
-  avg_quality_score: number;
-  high_quality_count: number;
-  medium_quality_count: number;
-  low_quality_count: number;
-  verified_count: number;
-  pending_count: number;
-  flagged_count: number;
+  readonly total_trucks: number;
+  readonly avg_quality_score: number;
+  readonly high_quality_count: number;
+  readonly medium_quality_count: number;
+  readonly low_quality_count: number;
+  readonly verified_count: number;
+  readonly pending_count: number;
+  readonly flagged_count: number;
 }
 
 async function getDashboardData() {

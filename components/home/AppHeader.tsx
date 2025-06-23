@@ -5,13 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Sun, Moon } from 'lucide-react';
 
 interface AppHeaderProps {
-  mounted: boolean;
-  resolvedTheme?: string;
-  setTheme: (theme: string) => void;
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  userLocation?: { lat: number; lng: number };
-  loadNearbyTrucks: () => void;
+  readonly mounted: boolean;
+  readonly resolvedTheme?: string;
+  readonly setTheme: (theme: string) => void;
+  readonly searchTerm: string;
+  readonly setSearchTerm: (term: string) => void;
+  readonly userLocation?: { lat: number; lng: number };
+  readonly loadNearbyTrucks: () => void;
 }
 
 export function AppHeader({
