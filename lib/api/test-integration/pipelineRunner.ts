@@ -25,7 +25,7 @@ export async function runTestPipeline(
   }
 
   const geminiStageOutput = await handleGeminiStage(
-    contentToProcess!,
+    contentToProcess,
     sourceUrlForProcessing,
     logs,
   );

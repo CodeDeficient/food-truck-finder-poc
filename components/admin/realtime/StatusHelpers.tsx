@@ -43,9 +43,9 @@ export const getTrendIcon = (trend?: string) => {
     }
     case 'down': { return <TrendingDown className="h-3 w-3 text-red-600" />;
     }
-    default: {
+    default:
       // No icon for default case
-    }
+    
   }
 };
 
