@@ -8,7 +8,7 @@ import type { LatLngExpression } from 'leaflet';
 import { useEffect, useState } from 'react';
 import { MapLoadingFallback } from './map/MapLoadingFallback';
 import { MapContent } from './map/MapContent';
-import { getInitialMapCenter } from './map/map-helpers';
+import { getInitialMapCenter } from './map/mapHelpers';
 // Removed UserLocationMarker import from here, as it's now rendered inside MapContent
 
 interface MapDisplayProps {

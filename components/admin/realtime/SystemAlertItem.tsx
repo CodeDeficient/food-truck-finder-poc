@@ -3,14 +3,30 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { type SystemAlert, getAlertClasses } from './status-helpers'; // Revert to no .tsx extension
+import { type SystemAlert } from './StatusHelpers';
 
 interface SystemAlertItemProps {
-  alert: SystemAlert;
-  onAcknowledgeAlert: (id: string) => void;
+  readonly alert: SystemAlert;
+  readonly onAcknowledgeAlert: (id: string) => void;
 }
 
-export function SystemAlertItem({ alert, onAcknowledgeAlert }: SystemAlertItemProps) {
+export function SystemAlertItem({ alert, onAcknowledgeAlert }: Readonly<SystemAlertItemProps>) {
+  const getAlertClasses = (type: 'warning' | 'error' | 'critical', acknowledged: boolean) => {
+    if (acknowledged) {
+      return 'border-gray-300 bg-gray-50 text-gray-500';
+    }
+    switch (type) {
+      case 'warning':
+        return 'border-yellow-500 bg-yellow-50 text-yellow-800';
+      case 'error':
+        return 'border-red-500 bg-red-50 text-red-800';
+      case 'critical':
+        return 'border-red-700 bg-red-100 text-red-900 font-bold';
+      default:
+        return 'border-gray-300 bg-gray-50 text-gray-800';
+    }
+  };
+
   return (
     <div className={`p-2 rounded border-l-4 ${getAlertClasses(alert.type, alert.acknowledged)}`}>
       <div className="flex items-center justify-between">

@@ -1,13 +1,8 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity, Shield, Zap, TrendingUp } from 'lucide-react';
 import { FeatureList } from './FeatureList';
 
-interface MonitoringFeaturesContentProps {
-  // No props needed as the content is static
-}
-
-export function MonitoringFeaturesContent({}: Readonly<MonitoringFeaturesContentProps>) {
+export function MonitoringFeaturesContent() {
   const proactiveMonitoringItems = [
     { icon: <Activity />, text: 'Real-time usage tracking for all APIs', iconColorClass: 'text-blue-600' },
     { icon: <Shield />, text: 'Predictive limit checking before requests', iconColorClass: 'text-green-600' },

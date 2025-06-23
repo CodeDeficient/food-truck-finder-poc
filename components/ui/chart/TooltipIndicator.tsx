@@ -2,11 +2,11 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface TooltipIndicatorProps {
-  indicator: 'line' | 'dot' | 'dashed';
-  hideIndicator: boolean;
-  indicatorColor?: string;
-  nestLabel: boolean;
-  itemConfig?: { icon?: React.ComponentType };
+  readonly indicator: 'line' | 'dot' | 'dashed';
+  readonly hideIndicator: boolean;
+  readonly indicatorColor?: string;
+  readonly nestLabel: boolean;
+  readonly itemConfig?: { icon?: React.ComponentType };
 }
 
 export function TooltipIndicator({
@@ -21,7 +21,7 @@ export function TooltipIndicator({
   }
 
   if (hideIndicator) {
-    return null;
+    return undefined;
   }
 
   return (

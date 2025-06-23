@@ -123,7 +123,7 @@ export async function handleDryRun(options: DataCleanupRequestBody['options']): 
   });
 }
 
-export async function handleGetStatus(): Promise<NextResponse> {
+export  function handleGetStatus(): Promise<NextResponse> {
   return NextResponse.json({
     success: true,
     status: {
@@ -160,7 +160,7 @@ export async function handleGetPreview(): Promise<NextResponse> {
   });
 }
 
-export async function handleGetDefault(): Promise<NextResponse> {
+export  function handleGetDefault(): Promise<NextResponse> {
   return NextResponse.json({
     success: true,
     endpoints: [

@@ -4,7 +4,7 @@ import { Clock } from 'lucide-react';
 import type { FoodTruck } from '@/lib/supabase';
 
 interface TruckOperatingHoursProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
 interface DayData {

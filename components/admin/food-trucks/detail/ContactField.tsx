@@ -2,11 +2,11 @@ import React from 'react';
 // Removed Mail, Phone, Globe imports as they are not directly used here
 
 interface ContactFieldProps {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value?: string;
-  href?: string;
-  unavailableText: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly value?: string;
+  readonly href?: string;
+  readonly unavailableText: string;
 }
 
 export function ContactField({
@@ -16,7 +16,7 @@ export function ContactField({
   href,
   unavailableText
 }: Readonly<ContactFieldProps>) {
-  if (value === null || value === undefined || value.length === 0) {
+  if (value === undefined || value === '') {
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />

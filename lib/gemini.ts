@@ -24,14 +24,14 @@ export class GeminiService {
     this.apiClient = new GeminiApiClient();
   }
 
-  async checkUsageLimits() {
+   checkUsageLimits() {
     return GeminiUsageLimits.checkUsageLimits({
       dailyRequestLimit: this.dailyRequestLimit,
       dailyTokenLimit: this.dailyTokenLimit,
     });
   }
 
-  private async makeGeminiRequest<T>(
+  private  makeGeminiRequest<T>(
     prompt: string,
     parser: (text: string) => T,
     errorContext: string

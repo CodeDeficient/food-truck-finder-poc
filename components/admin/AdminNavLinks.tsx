@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 interface AdminNavLinksProps {
-  isMobile?: boolean;
+  readonly isMobile?: boolean;
 }
 
 export function AdminNavLinks({ isMobile = false }: Readonly<AdminNavLinksProps>) {

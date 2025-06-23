@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { protectAdminRoutes } from '@/lib/middleware/middleware-helpers';
+import { protectAdminRoutes } from '@/lib/middleware/middlewareHelpers';
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();

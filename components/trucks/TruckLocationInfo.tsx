@@ -4,7 +4,7 @@ import { MapPin } from 'lucide-react';
 import type { FoodTruck } from '@/lib/supabase';
 
 interface TruckLocationInfoProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
 export function TruckLocationInfo({ truck }: TruckLocationInfoProps) {

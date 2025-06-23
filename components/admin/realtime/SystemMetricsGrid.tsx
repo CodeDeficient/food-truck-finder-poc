@@ -5,7 +5,7 @@ import { type StatusMetric } from './useSystemMetrics'; // Import StatusMetric t
 import { getStatusColor, getStatusIcon, getTrendIcon } from './status-helpers'; // Import helper functions
 
 interface SystemMetricsGridProps {
-  metrics: StatusMetric[];
+  readonly metrics: StatusMetric[];
 }
 
 export function SystemMetricsGrid({ metrics }: SystemMetricsGridProps) {

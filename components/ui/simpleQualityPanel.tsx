@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { RefreshCw, Settings, Loader2 } from 'lucide-react';
 
 interface SimpleQualityPanelProps {
-  onRefresh?: () => void;
+  readonly onRefresh?: () => void;
 }
 
 export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefresh }) => {
