@@ -4,7 +4,7 @@ import { Star, Users } from 'lucide-react';
 import type { FoodTruckWithRatings } from '@/hooks/useFoodTruckDetails';
 
 interface TruckRatingsReviewsProps {
-  truck: FoodTruckWithRatings;
+  readonly truck: FoodTruckWithRatings;
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -26,7 +26,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
   if (truck.average_rating == undefined) {
-    return;
+    
   }
 
   return (

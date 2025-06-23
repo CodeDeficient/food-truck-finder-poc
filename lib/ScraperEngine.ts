@@ -321,7 +321,7 @@ export class ScraperEngine {
     return this.userAgents[idx];
   }
 
-  private async randomDelay(): Promise<void> {
+  private  randomDelay(): Promise<void> {
     // Use Node.js crypto for stronger randomness if available, fallback to Math.random otherwise.
     let randomMs: number;
     if (globalThis.window?.crypto?.getRandomValues !== undefined) {
@@ -336,7 +336,7 @@ export class ScraperEngine {
     return new Promise((resolve) => setTimeout(resolve, delay));
   }
 
-  async handleRateLimit(retryAfter: number): Promise<void> {
+   handleRateLimit(retryAfter: number): Promise<void> {
     console.info(`Rate limited. Waiting ${retryAfter} seconds before retry...`);
     return new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
   }

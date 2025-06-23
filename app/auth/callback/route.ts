@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { RateLimiter, getClientIdentifier } from '@/lib/security/rateLimiter';
 import { AuditLogger } from '@/lib/security/auditLogger';
-import { handleSuccessfulAuth, handleAuthFailure } from '@/lib/auth/auth-helpers';
+import { handleSuccessfulAuth, handleAuthFailure } from '@/lib/auth/authHelpers';
 
 export async function GET(request: NextRequest) {
   const identifier = getClientIdentifier(request);

@@ -75,7 +75,7 @@ ChartContainer.displayName = 'Chart';
 const ChartStyle = ({ id, config }: { readonly id: string; readonly config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined);
   if (colorConfig.length === 0) {
-    return null;
+    return undefined;
   }
 
   return (
@@ -149,7 +149,7 @@ const ChartTooltipContent = React.forwardRef<
     });
 
     if (!active || !safePayload || safePayload.length === 0) {
-      return null;
+      return undefined;
     }
 
     const nestLabel = safePayload.length === 1 && indicator !== 'dot';
@@ -234,7 +234,7 @@ const ChartLegendContent = React.forwardRef<
     : [];
 
   if (!safePayload || safePayload.length === 0) {
-    return null;
+    return undefined;
   }
 
   return (

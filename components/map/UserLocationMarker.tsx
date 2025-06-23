@@ -6,7 +6,7 @@ interface UserLocationMarkerProps {
 }
 
 export function UserLocationMarker({ userLocation }: UserLocationMarkerProps) {
-  if (!userLocation) return null;
+  if (!userLocation) return undefined;
   return (
     <Marker position={[userLocation.lat, userLocation.lng]}>
       <Popup>You are here</Popup>

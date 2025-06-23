@@ -6,7 +6,7 @@ interface SocialMediaSectionProps {
 }
 
 export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionProps>) {
-  if (socialMedia === undefined || Object.keys(socialMedia).length === 0) return null;
+  if (socialMedia === undefined || Object.keys(socialMedia).length === 0) return undefined;
 
   return (
     <div>

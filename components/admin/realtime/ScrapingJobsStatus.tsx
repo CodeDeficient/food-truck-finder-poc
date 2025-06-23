@@ -10,11 +10,11 @@ interface ScrapingJobsMetrics {
 }
 
 interface ScrapingJobsStatusProps {
-  scrapingJobs?: ScrapingJobsMetrics;
+  readonly scrapingJobs?: ScrapingJobsMetrics;
 }
 
 export function ScrapingJobsStatus({ scrapingJobs }: ScrapingJobsStatusProps) {
-  if (scrapingJobs === undefined) return null;
+  if (!scrapingJobs) return undefined;
 
   return (
     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">

@@ -8,7 +8,7 @@ interface AlertToggleButtonProps {
 }
 
 export function AlertToggleButton({ alertsLength, showDetails, onToggleDetails }: AlertToggleButtonProps) {
-  if (alertsLength <= 3) return null;
+  if (alertsLength <= 3) return undefined;
 
   return (
     <Button

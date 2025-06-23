@@ -2,11 +2,7 @@ import React from 'react';
 import { Activity, Shield, Zap, TrendingUp } from 'lucide-react';
 import { FeatureCard } from './FeatureCard';
 
-interface FeatureOverviewContentProps {
-  // No props needed as the content is static
-}
-
-export function FeatureOverviewContent({}: Readonly<FeatureOverviewContentProps>) {
+export function FeatureOverviewContent() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <FeatureCard

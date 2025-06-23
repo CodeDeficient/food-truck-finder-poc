@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity } from 'lucide-react';
 
 interface PipelineStatusCardProps {
-  pendingScrapingJobsCount: number;
-  runningScrapingJobsCount: number;
-  failedScrapingJobsCount: number;
+  readonly pendingScrapingJobsCount: number;
+  readonly runningScrapingJobsCount: number;
+  readonly failedScrapingJobsCount: number;
 }
 
 export function PipelineStatusCard({

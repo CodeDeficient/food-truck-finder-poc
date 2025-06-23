@@ -1,30 +1,39 @@
 import React from 'react';
 import { AlertTriangle, CheckCircle, Clock, TrendingUp, TrendingDown } from 'lucide-react';
-import { StatusMetric } from '@/lib/supabase';
 
-export const getStatusColor = (status: StatusMetric['status']) => {
+type Status = 'healthy' | 'warning' | 'error' | 'unknown';
+
+export const getStatusColor = (status: Status) => {
   switch (status) {
-    case 'healthy':
+    case 'healthy': {
       return 'text-green-600 bg-green-50 border-green-200';
-    case 'warning':
+    }
+    case 'warning': {
       return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    case 'error':
+    }
+    case 'error': {
       return 'text-red-600 bg-red-50 border-red-200';
-    default:
+    }
+    default: {
       return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
   }
 };
 
-export const getStatusIcon = (status: StatusMetric['status']) => {
+export const getStatusIcon = (status: Status) => {
   switch (status) {
-    case 'healthy':
+    case 'healthy': {
       return <CheckCircle className="h-4 w-4 text-green-600" />;
-    case 'warning':
+    }
+    case 'warning': {
       return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-    case 'error':
+    }
+    case 'error': {
       return <AlertTriangle className="h-4 w-4 text-red-600" />;
-    default:
+    }
+    default: {
       return <Clock className="h-4 w-4 text-gray-600" />;
+    }
   }
 };
 
@@ -34,7 +43,16 @@ export const getTrendIcon = (trend?: string) => {
     }
     case 'down': { return <TrendingDown className="h-3 w-3 text-red-600" />;
     }
-    default: { return null; // Changed to return null
+    default: {
+      // No icon for default case
     }
   }
 };
+
+export interface SystemAlert {
+  id: string;
+  type: 'warning' | 'error' | 'critical';
+  message: string;
+  timestamp: string;
+  acknowledged: boolean;
+}

@@ -126,7 +126,7 @@ async function handleUpdateSingle(truckId: string) {
   });
 }
 
-async function handleBatchUpdate(limit?: number) {
+ function handleBatchUpdate(limit?: number) {
   const batchLimit = limit ?? 100;
   
   return NextResponse.json({

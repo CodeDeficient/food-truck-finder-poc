@@ -8,8 +8,8 @@ interface CleanupPreviewProps {
 }
 
 export function CleanupPreview({ previewData }: CleanupPreviewProps) {
-  if (previewData == undefined) {
-    return null;
+  if (previewData === undefined) {
+    return undefined;
   }
 
   return (
