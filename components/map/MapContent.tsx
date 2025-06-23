@@ -1,9 +1,10 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet'; // Removed Marker, Popup
 import type { LatLngExpression } from 'leaflet';
 import TruckMarkers from './TruckMarkers';
 import { MapViewUpdater } from './MapViewUpdater';
+import { UserLocationMarker } from './UserLocationMarker'; // Import external UserLocationMarker
 
 interface MapContentProps {
   readonly initialMapCenter: LatLngExpression;
@@ -19,7 +20,7 @@ interface MapContentProps {
     };
   }>;
   readonly onSelectTruck?: (truckId: string) => void;
-  readonly userLocation?: { lat: number; lng: number };
+  readonly userLocation?: { lat: number; lng: number }; // Added userLocation prop
 }
 
 export function MapContent({
@@ -28,17 +29,8 @@ export function MapContent({
   selectedTruckLocation,
   trucks,
   onSelectTruck,
-  userLocation,
+  userLocation, // Destructure userLocation
 }: MapContentProps) {
-  function UserLocationMarker({ userLocation }: { userLocation?: { lat: number; lng: number } }) {
-    if (!userLocation) return null;
-    return (
-      <Marker position={[userLocation.lat, userLocation.lng]}>
-        <Popup>You are here</Popup>
-      </Marker>
-    );
-  }
-
   return (
     <MapContainer
       center={initialMapCenter}
@@ -56,6 +48,7 @@ export function MapContent({
         zoom={selectedTruckLocation ? 13 : undefined}
       />
       <TruckMarkers trucks={trucks} onSelectTruck={onSelectTruck} />
+      {/* Render the external UserLocationMarker here */}
       <UserLocationMarker userLocation={userLocation} />
     </MapContainer>
   );

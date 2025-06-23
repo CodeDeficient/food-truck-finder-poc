@@ -1,20 +1,14 @@
 'use client';
 
 import React from 'react';
-import { MainSearchSection } from '../SearchFilters'; // Assuming MainSearchSection is exported from SearchFilters for now
-import { AdvancedFilters } from '../SearchFilters'; // Assuming AdvancedFilters is exported from SearchFilters for now
 import { useSearchFiltersLogic } from '@/hooks/useSearchFiltersLogic';
+import { type SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
+import { MainSearchSection } from './MainSearchSection'; // Import from new file
+import { AdvancedFilters } from './AdvancedFilters'; // Import from new file
 
 interface SearchFilterContentProps {
   readonly onSearch: (filters: SearchFilters) => void;
   readonly loading?: boolean;
-}
-
-interface SearchFilters {
-  query: string;
-  cuisine: string;
-  openNow: boolean;
-  radius: number;
 }
 
 export function SearchFilterContent({ onSearch, loading }: SearchFilterContentProps) {

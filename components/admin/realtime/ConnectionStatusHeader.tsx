@@ -1,14 +1,16 @@
+'use client';
+
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { CardHeader, CardTitle } from '@/components/ui/card';
-import { RefreshCw, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Zap, RefreshCw } from 'lucide-react';
 
 interface ConnectionStatusHeaderProps {
-  readonly isConnected: boolean;
-  readonly isConnecting: boolean;
-  readonly lastEventTime?: Date;
-  readonly connect: () => void;
-  readonly disconnect: () => void;
+  isConnected: boolean;
+  isConnecting: boolean;
+  lastEventTime?: Date;
+  connect: () => void;
+  disconnect: () => void;
 }
 
 export function ConnectionStatusHeader({
@@ -27,10 +29,7 @@ export function ConnectionStatusHeader({
         </CardTitle>
         <div className="flex items-center gap-2">
           {isConnected && (
-            <div className="flex items-center gap-1 text-sm text-green-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              Live
-            </div>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           )}
           <Button
             variant="outline"

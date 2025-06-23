@@ -7,7 +7,7 @@ interface CleanupPreviewProps {
   readonly previewData: unknown;
 }
 
-export function CleanupPreview({ previewData }: Readonly<CleanupPreviewProps>) {
+export function CleanupPreview({ previewData }: CleanupPreviewProps) {
   if (previewData == undefined) {
     return null;
   }

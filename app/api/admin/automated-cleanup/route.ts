@@ -65,11 +65,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const rawBody: unknown = await request.json();
-    if (typeof rawBody !== 'object' || rawBody === null || !('action' in rawBody)) {
-      return NextResponse.json({ success: false, error: 'Invalid request body' }, { status: 400 });
+
+    // Validate rawBody against RequestBody type
+    if (typeof rawBody !== 'object' || rawBody === null) {
+      return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
-    const body: RequestBody = rawBody as RequestBody;
-    return await handlePostRequest(body);
+
+    const body = rawBody as Partial<RequestBody>; // Use Partial for initial type assertion
+
+    if (typeof body.action !== 'string') {
+      return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+    }
+
+    // Further validation can be added here for other properties of RequestBody if needed
+    // For now, we assume if action is present and string, it's sufficient for initial handling
+
+    return await handlePostRequest(body as RequestBody);
   } catch (error: unknown) {
     console.error('Automated cleanup POST error:', error);
     return NextResponse.json({
