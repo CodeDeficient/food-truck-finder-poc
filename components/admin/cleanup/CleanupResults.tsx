@@ -11,7 +11,7 @@ interface CleanupResultsProps {
   readonly lastResult: CleanupResult;
 }
 
-export function CleanupResults({ lastResult }: Readonly<CleanupResultsProps>) {
+export function CleanupResults({ lastResult }: CleanupResultsProps) {
   return (
     <Card>
       <CardHeader>

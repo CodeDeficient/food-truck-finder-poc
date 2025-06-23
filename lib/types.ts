@@ -125,7 +125,7 @@ export interface FirecrawlOutputData {
 
 export interface FoodTruckSchema {
   name: string;
-  description: string | undefined;
+  description?: string;
   current_location: {
     lat: number;
     lng: number;

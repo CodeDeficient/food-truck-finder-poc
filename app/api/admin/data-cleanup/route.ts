@@ -8,12 +8,21 @@ import {
 export async function POST(request: NextRequest) {
   try {
     const rawBody: unknown = await request.json();
-    // Basic validation to ensure it's an object and has an 'action' property
-    if (typeof rawBody !== 'object' || rawBody === null || !('action' in rawBody)) {
-      return NextResponse.json({ success: false, error: 'Invalid request body' }, { status: 400 });
+
+    // Validate rawBody against DataCleanupRequestBody type
+    if (typeof rawBody !== 'object' || rawBody === null) {
+      return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
-    const body: DataCleanupRequestBody = rawBody as DataCleanupRequestBody;
-    return await handlePostRequest(body);
+
+    const body = rawBody as Partial<DataCleanupRequestBody>; // Use Partial for initial type assertion
+
+    if (typeof body.action !== 'string') {
+      return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+    }
+
+    // Further validation can be added here for other properties of DataCleanupRequestBody if needed
+
+    return await handlePostRequest(body as DataCleanupRequestBody);
   } catch (error: unknown) {
     console.error('Data cleanup API error:', error);
     return NextResponse.json(

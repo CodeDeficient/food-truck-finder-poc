@@ -618,11 +618,20 @@ export const DataQualityService = {
     // Placeholder for actual quality score calculation logic
     // This should be implemented based on defined data quality rules
     let score = 0;
-    if (truck.name) score += 20;
-    if (truck.current_location?.lat && truck.current_location?.lng) score += 30;
-    if (truck.contact_info?.phone || truck.contact_info?.email || truck.contact_info?.website) score += 25;
-    if (truck.menu && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours) score += 10;
+    if (typeof truck.name === 'string' && truck.name.trim() !== '') score += 20;
+    if (
+      truck.current_location &&
+      typeof truck.current_location.lat === 'number' && !Number.isNaN(truck.current_location.lat) &&
+      typeof truck.current_location.lng === 'number' && !Number.isNaN(truck.current_location.lng)
+    ) score += 30;
+    if (
+      (truck.contact_info &&
+        ((typeof truck.contact_info.phone === 'string' && truck.contact_info.phone.trim() !== '') ||
+         (typeof truck.contact_info.email === 'string' && truck.contact_info.email.trim() !== '') ||
+         (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
+    ) score += 25;
+    if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
+    if (truck.operating_hours !== undefined && truck.operating_hours !== null) score += 10;
     return { score: Math.min(100, score) };
   },
 

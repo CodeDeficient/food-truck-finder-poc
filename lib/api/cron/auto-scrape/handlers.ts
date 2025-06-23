@@ -64,7 +64,13 @@ export async function handlePostRequest(request: NextRequest) {
 
     logAutoScrapeStart();
 
-    const result: AutoScrapeResult = await autoScraper.runAutoScraping();
+    const rawResult = await autoScraper.runAutoScraping();
+    // Map errors to string[] for compatibility
+    const result: AutoScrapeResult = {
+      trucksProcessed: rawResult.trucksProcessed,
+      newTrucksFound: rawResult.newTrucksFound,
+      errors: rawResult.errors?.map(e => e.url + (e.details ? `: ${e.details}` : '')),
+    };
     scheduler.scheduleFollowUpTasks(result);
     logAutoScrapeCompletion(result);
 

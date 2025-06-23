@@ -40,12 +40,12 @@ export function QualityMetricsGrid({
       />
 
       <QualityScoreMetric
-        value={(typeof truck.created_at === 'string' && truck.created_at.length > 0) ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
+        value={(truck.created_at !== null && truck.created_at !== undefined && truck.created_at.length > 0) ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
         label="Created"
       />
 
       <QualityScoreMetric
-        value={(typeof truck.updated_at === 'string' && truck.updated_at.length > 0) ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
+        value={(truck.updated_at !== null && truck.updated_at !== undefined && truck.updated_at.length > 0) ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
         label="Updated"
       />
     </div>

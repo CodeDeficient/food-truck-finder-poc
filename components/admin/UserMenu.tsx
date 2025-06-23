@@ -29,7 +29,7 @@ export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMen
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
           <Avatar>
-            <AvatarImage src={(user?.user_metadata as UserMetadata)?.avatar_url} alt="Avatar" />
+            <AvatarImage src={user?.user_metadata?.avatar_url as string | undefined} alt="Avatar" />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
           <span className="sr-only">Toggle user menu</span>
@@ -38,7 +38,7 @@ export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMen
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium">{(user?.user_metadata as UserMetadata)?.full_name ?? 'Admin'}</p>
+            <p className="text-sm font-medium">{(user?.user_metadata as { full_name?: string })?.full_name ?? 'Admin'}</p>
             <p className="text-xs text-muted-foreground">{user?.email ?? 'N/A'}</p>
           </div>
         </DropdownMenuLabel>

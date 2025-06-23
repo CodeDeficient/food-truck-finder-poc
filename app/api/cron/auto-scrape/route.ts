@@ -20,6 +20,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export function GET(_request: NextRequest) {
+export function GET() {
   return handleGetRequest();
 }
