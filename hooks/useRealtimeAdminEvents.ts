@@ -1,11 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useRealtimeAdminEventsLogic } from './realtime/useRealtimeAdminEventsLogic';
 import { RealtimeEvent, RealtimeMetrics } from './useRealtimeAdminEvents.types';
-import { useConnectionState } from './realtime/useConnectionState';
-import { setupEventSourceListeners } from './realtime/setupEventSourceListeners';
-import { createEventSourceConnection } from './realtime/createEventSourceConnection';
-import { useEventHandlers } from './realtime/useEventHandlers';
-import { useConnectionManagement } from './realtime/useConnectionManagement';
-import { useAutoConnect } from './realtime/useAutoConnect';
 
 /**
  * SOTA Real-time Admin Dashboard Hook
@@ -44,83 +38,5 @@ interface UseRealtimeAdminEventsReturn {
 export function useRealtimeAdminEvents(
   options: UseRealtimeAdminEventsOptions = {}
 ): UseRealtimeAdminEventsReturn {
-  const {
-    autoConnect = true,
-    reconnectInterval = 5000,
-    maxReconnectAttempts = 10,
-    eventFilter
-  } = options;
-
-  // State management
-  const connectionState = useConnectionState();
-  const {
-    isConnected,
-    isConnecting,
-    connectionError,
-    latestMetrics,
-    recentEvents,
-    connectionAttempts,
-    lastEventTime
-  } = connectionState;
-
-  // Refs
-  const eventSourceRef = useRef<EventSource | undefined>(undefined);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const isManuallyDisconnectedRef = useRef(false);
-
-  // Event handlers
-  const handleEvent = useEventHandlers(
-    eventFilter,
-    connectionState.setLastEventTime,
-    connectionState.setLatestMetrics,
-    connectionState.setRecentEvents
-  );
-
-  // Connection management
-  const { connect, disconnect, clearEvents } = useConnectionManagement(
-    eventSourceRef,
-    reconnectTimeoutRef,
-    isManuallyDisconnectedRef,
-    connectionState,
-    handleEvent,
-    connectionAttempts,
-    maxReconnectAttempts,
-    reconnectInterval,
-    isConnecting
-  );
-
-  // Auto-connect on mount
-  useAutoConnect(autoConnect, connect, disconnect);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-    };
-  }, []);
-
-  return {
-    // Connection state
-    isConnected,
-    isConnecting,
-    connectionError,
-    
-    // Data
-    latestMetrics,
-    recentEvents,
-    
-    // Controls
-    connect,
-    disconnect,
-    clearEvents,
-    
-    // Statistics
-    connectionAttempts,
-    lastEventTime
-  };
+  return useRealtimeAdminEventsLogic(options);
 }

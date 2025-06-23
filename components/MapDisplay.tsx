@@ -4,11 +4,11 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
 
-// @ts-expect-error TS(2792): Cannot find module 'react-leaflet'. Did you mean t... Remove this comment to see the full error message
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import type { LatLngExpression } from 'leaflet';
 import L from 'leaflet';
-import { useEffect, useState } from 'react'; // Added useState
+import { useEffect, useState } from 'react';
+import TruckMarkers from './map/TruckMarkers';
 
 interface MapDisplayProps {
   trucks: Array<{
@@ -46,19 +46,10 @@ const MapViewUpdater = ({
   return <></>;
 };
 
-// Custom food truck icon
-const foodTruckIcon = new L.Icon({
-  iconUrl: '/food-truck-icon.svg',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-  className: 'food-truck-marker-icon',
-});
-
 const MapDisplay = ({
   trucks,
   userLocation,
-  defaultCenter, // No longer has a default here, will be passed from parent
+  defaultCenter,
   defaultZoom = 10,
   onSelectTruck,
   selectedTruckLocation,
@@ -69,23 +60,12 @@ const MapDisplay = ({
     setIsMounted(true);
   }, []);
 
-  const validTrucks = trucks.filter(
-    (truck) =>
-      truck.current_location != undefined &&
-      typeof truck.current_location.lat === 'number' &&
-      typeof truck.current_location.lng === 'number',
-  );
-
-  // initialMapCenter is derived from defaultCenter prop or userLocation if available.
   const initialMapCenter: LatLngExpression =
     userLocation && typeof userLocation.lat === 'number' && typeof userLocation.lng === 'number'
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
 
   if (!isMounted) {
-    // You can return a placeholder or null until the component is mounted
-    // This helps prevent Leaflet from initializing on a container that might be
-    // part of a double-render in StrictMode before full client-side hydration.
     return (
       <div
         style={{
@@ -118,25 +98,7 @@ const MapDisplay = ({
         center={selectedTruckLocation}
         zoom={selectedTruckLocation ? 13 : undefined}
       />
-      {validTrucks.map((truck) => (
-        <Marker
-          key={truck.id}
-          position={[truck.current_location.lat!, truck.current_location.lng!]}
-          icon={foodTruckIcon}
-          eventHandlers={{
-            click: () => {
-              if (onSelectTruck) {
-                onSelectTruck(truck.id);
-              }
-            },
-          }}
-        >
-          <Popup>
-            <h4 className="font-bold">{truck.name}</h4>
-            {truck.current_location.address != undefined && truck.current_location.address != '' && <div>{truck.current_location.address}</div>}
-          </Popup>
-        </Marker>
-      ))}
+      <TruckMarkers trucks={trucks} onSelectTruck={onSelectTruck} />
       {userLocation && (
         <Marker position={[userLocation.lat, userLocation.lng]}>
           <Popup>You are here</Popup>

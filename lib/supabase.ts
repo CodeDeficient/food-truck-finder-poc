@@ -612,6 +612,46 @@ export const DataProcessingService = {
   },
 };
 
+export const DataQualityService = {
+  calculateQualityScore: (truck: FoodTruck) => {
+    // Placeholder for actual quality score calculation logic
+    // This should be implemented based on defined data quality rules
+    let score = 0;
+    if (truck.name) score += 20;
+    if (truck.current_location?.lat && truck.current_location?.lng) score += 30;
+    if (truck.contact_info?.phone || truck.contact_info?.email || truck.contact_info?.website) score += 25;
+    if (truck.menu && truck.menu.length > 0) score += 15;
+    if (truck.operating_hours) score += 10;
+    return { score: Math.min(100, score) };
+  },
+
+  async updateTruckQualityScore(truckId: string): Promise<FoodTruck> {
+    if (!supabaseAdmin) {
+      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    }
+    const { data: truck, error: fetchError } = await supabaseAdmin
+      .from('food_trucks')
+      .select('*')
+      .eq('id', truckId)
+      .single();
+
+    if (fetchError) throw fetchError;
+    if (!truck) throw new Error(`Truck with ID ${truckId} not found.`);
+
+    const { score } = this.calculateQualityScore(truck);
+
+    const { data, error } = await supabaseAdmin
+      .from('food_trucks')
+      .update({ data_quality_score: score })
+      .eq('id', truckId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+};
+
 export const APIUsageService = {
   async trackUsage(serviceName: string, requests: number, tokens: number): Promise<ApiUsage> {
     if (!supabaseAdmin) {

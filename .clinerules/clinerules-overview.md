@@ -29,3 +29,9 @@ This file documents the rules, best practices, and key learnings I develop while
 ### **2. Documentation & Reporting**
    - **Rule 2.1:** All significant actions, analyses, and status changes must be logged in `🚨_LINTING_REMEDIATION_COMMAND_CENTER_🚨.md`. This is the central coordination point.
    - **Rule 2.2:** Any new, broadly applicable learning or operational standard must be codified and added to this `.clinerules` file.
+
+## **Rule Set: Code Style**
+
+### **1. Function Length**
+    - **Rule 1.1:** New functions cannot exceed 50 lines.
+    - **Rule 1.2:** This rule is enforced by the `max-lines-per-function` linting rule.

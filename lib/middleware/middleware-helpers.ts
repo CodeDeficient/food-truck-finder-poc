@@ -1,0 +1,81 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { AuditLogger } from '@/lib/security/auditLogger';
+import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
+
+interface RequestMetadata {
+  ip: string;
+  userAgent: string;
+  url: string;
+  method: string;
+}
+
+export async function protectAdminRoutes(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata) {
+  const supabase = createSupabaseMiddlewareClient(req, res);
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    await AuditLogger.logSecurityEvent({
+      event_type: 'permission_denied',
+      ip_address: requestMetadata.ip,
+      user_agent: requestMetadata.userAgent,
+      details: {
+        attempted_url: requestMetadata.url,
+        reason: 'no_session',
+        error: userError?.message,
+      },
+      severity: 'warning',
+    });
+
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = '/login';
+    redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  const { data: profile, error: profileQueryError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileQueryError || profile?.role !== 'admin') {
+    await AuditLogger.logSecurityEvent({
+      event_type: 'permission_denied',
+      user_id: user.id,
+      user_email: user.email,
+      ip_address: requestMetadata.ip,
+      user_agent: requestMetadata.userAgent,
+      details: {
+        attempted_url: requestMetadata.url,
+        user_role: profile?.role ?? 'none',
+        reason: 'insufficient_privileges',
+        error: profileQueryError?.message,
+      },
+      severity: 'error',
+    });
+
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = '/access-denied';
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
+    await AuditLogger.logDataAccess(
+      user.id,
+      user.email ?? 'unknown',
+      'admin_panel',
+      req.nextUrl.pathname,
+      req.method === 'GET' ? 'read' : 'admin_access',
+      {
+        ip: requestMetadata.ip,
+        userAgent: requestMetadata.userAgent,
+      },
+    );
+  }
+
+  return res;
+}

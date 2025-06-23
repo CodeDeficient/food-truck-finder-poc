@@ -1,50 +1,87 @@
 {
-  "timestamp": "2025-06-22T23:39:45.559Z",
-  "totalErrors": 382,
+  "timestamp": "2025-06-23T02:09:57.261Z",
+  "totalErrors": 394,
   "errorCounts": {
-    "sonarjs/unused-import": 38,
-    "@typescript-eslint/no-unsafe-assignment": 40,
+    "sonarjs/unused-import": 28,
+    "sonarjs/prefer-read-only-props": 61,
+    "@typescript-eslint/no-unsafe-assignment": 34,
     "sonarjs/no-unused-vars": 6,
-    "@typescript-eslint/no-explicit-any": 17,
-    "sonarjs/different-types-comparison": 14,
+    "@typescript-eslint/no-explicit-any": 19,
+    "sonarjs/different-types-comparison": 13,
     "@typescript-eslint/await-thenable": 1,
     "sonarjs/no-invalid-await": 1,
-    "max-lines-per-function": 57,
-    "@typescript-eslint/no-unsafe-call": 8,
+    "@typescript-eslint/strict-boolean-expressions": 44,
+    "@typescript-eslint/no-misused-promises": 2,
+    "max-lines-per-function": 51,
     "sonarjs/no-redundant-jump": 2,
-    "sonarjs/prefer-read-only-props": 57,
     "@typescript-eslint/no-unsafe-member-access": 36,
-    "@typescript-eslint/strict-boolean-expressions": 22,
     "sonarjs/no-all-duplicated-branches": 1,
     "unicorn/no-null": 24,
-    "@typescript-eslint/no-unsafe-argument": 6,
+    "@typescript-eslint/no-unsafe-argument": 9,
     "@typescript-eslint/prefer-nullish-coalescing": 1,
     "@typescript-eslint/no-floating-promises": 1,
-    "max-params": 6,
+    "max-params": 7,
     "sonarjs/deprecation": 8,
     "sonarjs/no-dead-store": 5,
+    "@typescript-eslint/no-redundant-type-constituents": 1,
     "@typescript-eslint/require-await": 8,
     "unicorn/prefer-default-parameters": 1,
     "sonarjs/no-nested-template-literals": 1,
-    "@typescript-eslint/no-misused-promises": 1,
+    "@typescript-eslint/no-unsafe-call": 5,
     "sonarjs/pseudo-random": 1,
-    "sonarjs/cognitive-complexity": 6,
+    "unicorn/filename-case": 7,
+    "sonarjs/cognitive-complexity": 5,
     "max-depth": 3,
     "@typescript-eslint/unbound-method": 4,
     "@typescript-eslint/no-unsafe-return": 1,
-    "unicorn/filename-case": 2,
     "unicorn/no-empty-file": 2,
     "sonarjs/slow-regex": 1
   },
   "automationCandidates": [
     {
       "ruleId": "sonarjs/unused-import",
-      "count": 38,
+      "count": 28,
       "confidence": "HIGH",
       "method": "eslint-autofix",
       "description": "Remove unused imports",
-      "estimatedFixes": 36,
-      "priority": 108
+      "estimatedFixes": 26,
+      "priority": 78
+    },
+    {
+      "ruleId": "@typescript-eslint/no-unsafe-assignment",
+      "count": 34,
+      "confidence": "MEDIUM",
+      "method": "type-annotation",
+      "description": "Add type annotations for unsafe assignments",
+      "estimatedFixes": 10,
+      "priority": 20
+    },
+    {
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "count": 19,
+      "confidence": "MEDIUM",
+      "method": "pattern-replacement",
+      "description": "Replace any with unknown in safe contexts",
+      "estimatedFixes": 7,
+      "priority": 14
+    },
+    {
+      "ruleId": "@typescript-eslint/strict-boolean-expressions",
+      "count": 44,
+      "confidence": "LOW",
+      "method": "manual-review",
+      "description": "Complex boolean expression fixes",
+      "estimatedFixes": 4,
+      "priority": 4
+    },
+    {
+      "ruleId": "max-lines-per-function",
+      "count": 51,
+      "confidence": "MANUAL_ONLY",
+      "method": "manual-ide-refactor",
+      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.",
+      "estimatedFixes": 0,
+      "priority": null
     },
     {
       "ruleId": "unicorn/no-null",
@@ -56,33 +93,6 @@
       "priority": 60
     },
     {
-      "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 40,
-      "confidence": "MEDIUM",
-      "method": "type-annotation",
-      "description": "Add type annotations for unsafe assignments",
-      "estimatedFixes": 12,
-      "priority": 24
-    },
-    {
-      "ruleId": "@typescript-eslint/no-explicit-any",
-      "count": 17,
-      "confidence": "MEDIUM",
-      "method": "pattern-replacement",
-      "description": "Replace any with unknown in safe contexts",
-      "estimatedFixes": 6,
-      "priority": 12
-    },
-    {
-      "ruleId": "max-lines-per-function",
-      "count": 57,
-      "confidence": "MANUAL_ONLY",
-      "method": "manual-ide-refactor",
-      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.",
-      "estimatedFixes": 0,
-      "priority": null
-    },
-    {
       "ruleId": "sonarjs/no-dead-store",
       "count": 5,
       "confidence": "MEDIUM",
@@ -90,15 +100,6 @@
       "description": "Remove dead store assignments",
       "estimatedFixes": 3,
       "priority": 6
-    },
-    {
-      "ruleId": "@typescript-eslint/strict-boolean-expressions",
-      "count": 22,
-      "confidence": "LOW",
-      "method": "manual-review",
-      "description": "Complex boolean expression fixes",
-      "estimatedFixes": 2,
-      "priority": 2
     }
   ],
   "recommendations": {
@@ -106,12 +107,12 @@
       "candidates": [
         {
           "ruleId": "sonarjs/unused-import",
-          "count": 38,
+          "count": 28,
           "confidence": "HIGH",
           "method": "eslint-autofix",
           "description": "Remove unused imports",
-          "estimatedFixes": 36,
-          "priority": 108
+          "estimatedFixes": 26,
+          "priority": 78
         },
         {
           "ruleId": "unicorn/no-null",
@@ -123,7 +124,7 @@
           "priority": 60
         }
       ],
-      "totalFixes": 56,
+      "totalFixes": 46,
       "methods": [
         "eslint-autofix",
         "pattern-replacement"
@@ -133,21 +134,21 @@
       "candidates": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 40,
+          "count": 34,
           "confidence": "MEDIUM",
           "method": "type-annotation",
           "description": "Add type annotations for unsafe assignments",
-          "estimatedFixes": 12,
-          "priority": 24
+          "estimatedFixes": 10,
+          "priority": 20
         },
         {
           "ruleId": "@typescript-eslint/no-explicit-any",
-          "count": 17,
+          "count": 19,
           "confidence": "MEDIUM",
           "method": "pattern-replacement",
           "description": "Replace any with unknown in safe contexts",
-          "estimatedFixes": 6,
-          "priority": 12
+          "estimatedFixes": 7,
+          "priority": 14
         },
         {
           "ruleId": "sonarjs/no-dead-store",
@@ -159,7 +160,7 @@
           "priority": 6
         }
       ],
-      "totalFixes": 21,
+      "totalFixes": 20,
       "methods": [
         "type-annotation",
         "pattern-replacement"
