@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface ScrapingJobsStatusProps {
-  scrapingJobs?: any;
+  readonly scrapingJobs?: any;
 }
 
 export function ScrapingJobsStatus({ scrapingJobs }: ScrapingJobsStatusProps) {

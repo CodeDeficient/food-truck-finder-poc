@@ -2,8 +2,8 @@ import React from 'react';
 import { Phone, Globe, Star } from 'lucide-react';
 
 interface ContactSectionProps {
-  contactInfo?: { phone?: string; website?: string };
-  verificationStatus?: string;
+  readonly contactInfo?: { phone?: string; website?: string };
+  readonly verificationStatus?: string;
 }
 
 export function ContactSection({ contactInfo, verificationStatus }: ContactSectionProps) {

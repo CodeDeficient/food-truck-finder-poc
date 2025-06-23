@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FoodTruck } from '@/lib/types/foodTruck';
 
 interface TruckCardFooterProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
 export function TruckCardFooter({ truck }: TruckCardFooterProps) {

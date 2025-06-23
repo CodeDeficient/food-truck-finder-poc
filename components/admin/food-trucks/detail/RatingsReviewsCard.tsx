@@ -5,7 +5,7 @@ import { Star, Users } from 'lucide-react';
 import { type FoodTruck } from '@/lib/supabase';
 
 interface RatingsReviewsCardProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
 export function RatingsReviewsCard({ truck }: RatingsReviewsCardProps) {

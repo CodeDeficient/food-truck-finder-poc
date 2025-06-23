@@ -6,12 +6,12 @@ import 'leaflet-defaulticon-compatibility';
 
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import type { LatLngExpression } from 'leaflet';
-import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import TruckMarkers from './map/TruckMarkers';
+import { MapViewUpdater } from './map/MapViewUpdater';
 
 interface MapDisplayProps {
-  trucks: Array<{
+  readonly trucks: Array<{
     id: string;
     name: string;
     current_location: {
@@ -20,40 +20,21 @@ interface MapDisplayProps {
       address?: string;
     };
   }>;
-  userLocation?: { lat: number; lng: number };
-  // defaultCenter will be the initial, stable center
-  defaultCenter: LatLngExpression;
-  defaultZoom?: number;
-  onSelectTruck?: (truckId: string) => void;
-  selectedTruckLocation?: LatLngExpression;
+  readonly userLocation?: { lat: number; lng: number };
+  readonly defaultCenter: LatLngExpression;
+  readonly defaultZoom?: number;
+  readonly onSelectTruck?: (truckId: string) => void;
+  readonly selectedTruckLocation?: LatLngExpression;
 }
 
-// Component to handle map view updates
-const MapViewUpdater = ({
-  center,
-  zoom,
-}: {
-  center: LatLngExpression | undefined;
-  zoom?: number;
-}) => {
-  const map = useMap();
-  useEffect(() => {
-    if (center) {
-      map.flyTo(center, zoom ?? map.getZoom());
-    }
-  }, [center, zoom, map]);
-  // Empty fragment instead of null
-  return <></>;
-};
-
-const MapDisplay = ({
+export default function MapDisplay({
   trucks,
   userLocation,
   defaultCenter,
   defaultZoom = 10,
   onSelectTruck,
   selectedTruckLocation,
-}: MapDisplayProps) => {
+}: MapDisplayProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -106,6 +87,4 @@ const MapDisplay = ({
       )}
     </MapContainer>
   );
-};
-
-export default MapDisplay;
+}

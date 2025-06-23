@@ -8,7 +8,7 @@ interface OperatingHoursCardProps {
   truck: FoodTruck;
 }
 
-export function OperatingHoursCard({ truck }: OperatingHoursCardProps) {
+export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>) {
   return (
     <Card>
       <CardHeader>

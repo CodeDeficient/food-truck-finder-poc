@@ -12,15 +12,15 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 interface UserDisplayData {
-  id: string;
-  email: string | undefined;
-  created_at: string;
-  last_sign_in_at: string | undefined;
-  role: string;
+  readonly id: string;
+  readonly email: string | undefined;
+  readonly created_at: string;
+  readonly last_sign_in_at: string | undefined;
+  readonly role: string;
 }
 
 interface UserTableProps {
-  users: UserDisplayData[];
+  readonly users: UserDisplayData[];
 }
 
 export function UserTable({ users }: UserTableProps) {

@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { type QualityCategory } from '@/lib/utils/data-quality-formatters';
+import { type QualityCategory } from '@/lib/utils/dataQualityFormatters';
 
 interface TruckDetailHeaderProps {
-  truck: { id: string; name: string };
-  badgeClasses: string;
-  qualityCategory: QualityCategory;
+  readonly truck: { id: string; name: string };
+  readonly badgeClasses: string;
+  readonly qualityCategory: QualityCategory;
 }
 
 export function TruckDetailHeader({

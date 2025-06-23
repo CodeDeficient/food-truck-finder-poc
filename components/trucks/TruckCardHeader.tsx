@@ -5,10 +5,10 @@ import { MapPin } from 'lucide-react';
 import { FoodTruck } from '@/lib/types/foodTruck';
 
 interface TruckCardHeaderProps {
-  truck: FoodTruck;
-  isOpen: boolean;
-  popularItems: Array<{ name: string; price?: number }>;
-  priceRange: string | undefined;
+  readonly truck: FoodTruck;
+  readonly isOpen: boolean;
+  readonly popularItems: Array<{ name: string; price?: number }>;
+  readonly priceRange: string | undefined;
 }
 
 export function TruckCardHeader({

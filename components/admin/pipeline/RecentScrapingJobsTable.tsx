@@ -23,7 +23,7 @@ function getBadgeVariant(status: string) {
 }
 
 interface RecentScrapingJobsTableProps {
-  scrapingJobs: {
+  readonly scrapingJobs: {
     pending: ScrapingJob[];
     running: ScrapingJob[];
     failed: ScrapingJob[];

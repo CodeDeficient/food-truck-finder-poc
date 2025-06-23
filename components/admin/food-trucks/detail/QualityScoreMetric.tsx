@@ -1,9 +1,9 @@
 import React from 'react';
 
 interface QualityScoreMetricProps {
-  value: React.ReactNode;
-  label: string;
-  className?: string;
+  readonly value: React.ReactNode;
+  readonly label: string;
+  readonly className?: string;
 }
 
 export function QualityScoreMetric({
