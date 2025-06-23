@@ -22,7 +22,7 @@ export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
           const handle = socialMedia[key];
-          if (handle === undefined || handle.length === 0) return null; // Changed to return null and explicit check
+          if (!handle) return null; // Simplified to handle undefined, null, and empty strings
 
           return (
             <a

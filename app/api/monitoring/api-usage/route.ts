@@ -30,11 +30,20 @@ export function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const rawBody: unknown = await request.json();
-    if (typeof rawBody !== 'object' || rawBody === null || !('action' in rawBody) || typeof (rawBody as any).action !== 'string') {
-      return NextResponse.json({ success: false, error: 'Invalid request body' }, { status: 400 });
+
+    if (typeof rawBody !== 'object' || rawBody === null) {
+      return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
-    const body: { action: string; service?: string; level?: string } = rawBody as { action: string; service?: string; level?: string };
-    const { action } = body;
+
+    // Explicitly type and validate the body
+    const body = rawBody as Record<string, unknown>;
+    const action = typeof body.action === 'string' ? body.action : undefined;
+    const service = typeof body.service === 'string' ? body.service : undefined;
+    const level = typeof body.level === 'string' ? body.level : undefined;
+
+    if (!action) {
+      return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+    }
 
     switch (action) {
       case 'clear-alerts': {
@@ -44,13 +53,13 @@ export async function POST(request: NextRequest) {
         return handleGetAlerts();
       }
       case 'test-alert': {
-        if (body.service === undefined || body.level === undefined) {
+        if (!service || !level) {
           return NextResponse.json(
             { success: false, error: 'Missing service or level for test-alert action' },
             { status: 400 },
           );
         }
-        return handleTestAlert({ service: body.service, level: body.level });
+        return handleTestAlert({ service, level });
       }
       default: {
         return NextResponse.json(

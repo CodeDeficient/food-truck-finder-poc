@@ -18,11 +18,11 @@ export async function GET(request: NextRequest) {
   const offset = Number.parseInt(searchParams.get('offset') ?? '0');
 
   try {
-    if (typeof id === 'string' && id.length > 0) {
+    if (id !== null && id.length > 0) {
       return await handleGetTruckById(id);
     }
 
-    if (typeof lat === 'string' && lat.length > 0 && typeof lng === 'string' && lng.length > 0) {
+    if (lat !== null && lat.length > 0 && lng !== null && lng.length > 0) {
       return await handleGetTrucksByLocation(lat, lng, radius);
     }
 
