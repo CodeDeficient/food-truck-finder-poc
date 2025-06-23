@@ -16,10 +16,10 @@ function getSelectedTruckLocation(
   selectedTruckId: string | undefined,
   filteredTrucks: FoodTruck[]
 ): [number, number] | undefined {
-  if (selectedTruckId === undefined) return undefined;
+  if (selectedTruckId == null) return undefined;
 
   const truck = filteredTrucks.find((t) => t.id === selectedTruckId);
-  return (truck?.current_location?.lat === undefined) || (truck?.current_location?.lng === undefined)
+  return (truck?.current_location?.lat == null) || (truck?.current_location?.lng == null)
     ? undefined
     : [truck.current_location.lat, truck.current_location.lng];
 }

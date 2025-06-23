@@ -7,7 +7,7 @@ interface RatingSectionProps {
 }
 
 export function RatingSection({ averageRating, reviewCount }: Readonly<RatingSectionProps>) {
-  if (averageRating === undefined) return undefined;
+  if (averageRating === undefined) return;
 
   return (
     <div>

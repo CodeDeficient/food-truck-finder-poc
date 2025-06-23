@@ -16,14 +16,18 @@ export function SystemAlertItem({ alert, onAcknowledgeAlert }: Readonly<SystemAl
       return 'border-gray-300 bg-gray-50 text-gray-500';
     }
     switch (type) {
-      case 'warning':
+      case 'warning': {
         return 'border-yellow-500 bg-yellow-50 text-yellow-800';
-      case 'error':
+      }
+      case 'error': {
         return 'border-red-500 bg-red-50 text-red-800';
-      case 'critical':
+      }
+      case 'critical': {
         return 'border-red-700 bg-red-100 text-red-900 font-bold';
-      default:
+      }
+      default: {
         return 'border-gray-300 bg-gray-50 text-gray-800';
+      }
     }
   };
 

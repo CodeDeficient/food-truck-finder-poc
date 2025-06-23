@@ -48,7 +48,7 @@ export type RateLimitType = keyof typeof RATE_LIMIT_CONFIGS;
 export class RateLimiter {
   // Extract logic from checkRateLimit to reduce function size
   private static isBlocked(entry: RateLimitEntry | undefined, now: number): boolean {
-    return Boolean(entry && entry.blocked && entry.blockUntil !== undefined && now < entry.blockUntil);
+    return Boolean(entry && entry.blocked && entry.blockUntil != null && now < entry.blockUntil);
   }
 
   private static resetEntry(entry: RateLimitEntry, now: number, config: typeof RATE_LIMIT_CONFIGS[RateLimitType]): void {

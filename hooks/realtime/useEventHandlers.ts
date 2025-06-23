@@ -18,7 +18,7 @@ export function useEventHandlers(
     // Handle different event types
     switch (event.type) {
       case 'heartbeat': {
-        if (event.data !== undefined && typeof event.data === 'object') {
+        if (event.data != null && typeof event.data === 'object') {
           setLatestMetrics(event.data as unknown as RealtimeMetrics);
         }
         break;
