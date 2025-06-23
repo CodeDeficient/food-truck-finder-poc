@@ -7,7 +7,7 @@ interface TotalFoodTrucksCardProps {
   pendingVerifications: number;
 }
 
-export function TotalFoodTrucksCard({ totalFoodTrucks, pendingVerifications }: TotalFoodTrucksCardProps) {
+export function TotalFoodTrucksCard({ totalFoodTrucks, pendingVerifications }: Readonly<TotalFoodTrucksCardProps>) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

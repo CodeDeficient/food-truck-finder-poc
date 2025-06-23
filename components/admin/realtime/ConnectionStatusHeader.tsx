@@ -4,11 +4,11 @@ import { CardHeader, CardTitle } from '@/components/ui/card';
 import { RefreshCw, Zap } from 'lucide-react';
 
 interface ConnectionStatusHeaderProps {
-  isConnected: boolean;
-  isConnecting: boolean;
-  lastEventTime?: Date;
-  connect: () => void;
-  disconnect: () => void;
+  readonly isConnected: boolean;
+  readonly isConnecting: boolean;
+  readonly lastEventTime?: Date;
+  readonly connect: () => void;
+  readonly disconnect: () => void;
 }
 
 export function ConnectionStatusHeader({

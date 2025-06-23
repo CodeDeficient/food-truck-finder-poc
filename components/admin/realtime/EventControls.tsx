@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface EventControlsProps {
-  recentEventsCount: number;
-  onClearEvents: () => void;
+  readonly recentEventsCount: number;
+  readonly onClearEvents: () => void;
 }
 
 export function EventControls({ recentEventsCount, onClearEvents }: EventControlsProps) {

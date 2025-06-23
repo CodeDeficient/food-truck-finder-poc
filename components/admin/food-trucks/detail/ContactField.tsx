@@ -15,7 +15,7 @@ export function ContactField({
   value,
   href,
   unavailableText
-}: ContactFieldProps) {
+}: Readonly<ContactFieldProps>) {
   if (value == undefined || value === '') {
     return (
       <div className="flex items-center gap-3 text-gray-400">
@@ -37,7 +37,7 @@ export function ContactField({
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 underline"
           >
-            {href.startsWith('http') ? value : value}
+            {value}
           </a>
         ) : (
           <p className="text-gray-900">{value}</p>

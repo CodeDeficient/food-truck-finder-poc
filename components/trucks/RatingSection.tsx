@@ -2,8 +2,8 @@ import React from 'react';
 import { Star } from 'lucide-react';
 
 interface RatingSectionProps {
-  averageRating?: number;
-  reviewCount?: number;
+  readonly averageRating?: number;
+  readonly reviewCount?: number;
 }
 
 export function RatingSection({ averageRating, reviewCount }: RatingSectionProps) {

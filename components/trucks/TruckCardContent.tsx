@@ -9,10 +9,10 @@ import { OperatingHoursSection } from './OperatingHoursSection';
 import { formatHours } from '@/lib/utils/foodTruckHelpers';
 
 interface TruckCardContentProps {
-  truck: FoodTruck;
-  todayHours?: { open: string; close: string; closed: boolean };
-  popularItems: { name: string; price: number }[];
-  formatPrice: (price: number) => string;
+  readonly truck: FoodTruck;
+  readonly todayHours?: { open: string; close: string; closed: boolean };
+  readonly popularItems: { name: string; price: number }[];
+  readonly formatPrice: (price: number) => string;
 }
 
 export function TruckCardContent({

@@ -3,18 +3,18 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 interface SystemAlert {
-  id: string;
-  type: 'info' | 'warning' | 'error' | 'critical';
-  message: string;
-  timestamp: string;
-  acknowledged?: boolean;
+  readonly id: string;
+  readonly type: 'info' | 'warning' | 'error' | 'critical';
+  readonly message: string;
+  readonly timestamp: string;
+  readonly acknowledged?: boolean;
 }
 
 interface SystemAlertsProps {
-  alerts: SystemAlert[];
-  showDetails: boolean;
-  onToggleDetails: () => void;
-  onAcknowledgeAlert: (alertId: string) => void;
+  readonly alerts: SystemAlert[];
+  readonly showDetails: boolean;
+  readonly onToggleDetails: () => void;
+  readonly onAcknowledgeAlert: (alertId: string) => void;
 }
 
 export function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: SystemAlertsProps) {

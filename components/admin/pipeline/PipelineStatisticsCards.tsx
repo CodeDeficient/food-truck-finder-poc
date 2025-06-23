@@ -4,13 +4,13 @@ import { RefreshCcw, PlayCircle, XCircle } from 'lucide-react';
 import { ScrapingJob, DataProcessingQueue } from '@/lib/supabase';
 
 interface PipelineStatisticsCardsProps {
-  scrapingJobs: {
+  readonly scrapingJobs: {
     pending: ScrapingJob[];
     running: ScrapingJob[];
     failed: ScrapingJob[];
     completed: ScrapingJob[];
   };
-  processingQueue: {
+  readonly processingQueue: {
     pending: DataProcessingQueue[];
     processing: DataProcessingQueue[];
     failed: DataProcessingQueue[];

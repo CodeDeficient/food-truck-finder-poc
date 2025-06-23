@@ -5,11 +5,11 @@ import { TruckListSection } from './TruckListSection';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 
 interface MainContentProps {
-  filteredTrucks: FoodTruck[];
-  userLocation: { lat: number; lng: number } | undefined;
-  selectedTruckId: string | undefined;
-  setSelectedTruckId: (id: string | undefined) => void;
-  isOpen: (truck: FoodTruck) => boolean;
+  readonly filteredTrucks: FoodTruck[];
+  readonly userLocation: { lat: number; lng: number } | undefined;
+  readonly selectedTruckId: string | undefined;
+  readonly setSelectedTruckId: (id: string | undefined) => void;
+  readonly isOpen: (truck: FoodTruck) => boolean;
 }
 
 export function MainContent({
