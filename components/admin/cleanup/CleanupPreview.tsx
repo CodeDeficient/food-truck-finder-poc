@@ -4,12 +4,12 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface CleanupPreviewProps {
-  previewData: unknown;
+  readonly previewData: unknown;
 }
 
-export function CleanupPreview({ previewData }: CleanupPreviewProps) {
+export function CleanupPreview({ previewData }: Readonly<CleanupPreviewProps>) {
   if (previewData == undefined) {
-    return;
+    return null;
   }
 
   return (

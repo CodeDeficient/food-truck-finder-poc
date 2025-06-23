@@ -4,6 +4,8 @@
  * and improve type safety across the codebase
  */
 
+// Canonical type guards utility file. Use this file for all type guard utilities.
+
 // Type guard for non-null/undefined strings
 export function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.length > 0;

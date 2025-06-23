@@ -52,7 +52,7 @@ export function useTooltipLabel({
 }: UseTooltipLabelProps) {
   return React.useMemo(() => {
     if (hideLabel === true || (payload?.length ?? 0) === 0) {
-      return undefined;
+      return;
     }
 
     const [item] = payload;
@@ -69,7 +69,7 @@ export function useTooltipLabel({
     }
 
     if (value === undefined || value === null || value === '') {
-      return undefined;
+      return;
     }
 
     return <div className={cn('font-medium', labelClassName)}>{value}</div>;

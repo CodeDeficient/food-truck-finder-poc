@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatPrice } from '@/lib/utils/foodTruckHelpers'; // Assuming formatPrice is moved here
+import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 
 interface MenuItem {
   readonly name: string;
@@ -8,10 +8,9 @@ interface MenuItem {
 
 interface MenuSectionProps {
   readonly popularItems: MenuItem[];
-  readonly formatPrice: (price: number) => string;
 }
 
-export function MenuSection({ popularItems, formatPrice }: MenuSectionProps) {
+export function MenuSection({ popularItems }: Readonly<MenuSectionProps>) {
   return (
     <div>
       <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Popular Items</h4>

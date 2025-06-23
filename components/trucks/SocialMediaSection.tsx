@@ -5,8 +5,8 @@ interface SocialMediaSectionProps {
   readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }
 
-export function SocialMediaSection({ socialMedia }: SocialMediaSectionProps) {
-  if (!socialMedia || Object.keys(socialMedia).length === 0) return null;
+export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionProps>) {
+  if (socialMedia === undefined || Object.keys(socialMedia).length === 0) return null;
 
   return (
     <div>

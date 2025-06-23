@@ -2,19 +2,19 @@ import React from 'react';
 import { Wifi, WifiOff, Activity, Server, Database } from 'lucide-react';
 
 export interface StatusMetric {
-  readonly label: string;
-  readonly value: number | string;
-  readonly unit?: string;
-  readonly trend?: 'up' | 'down' | 'stable';
-  readonly status: 'healthy' | 'warning' | 'error';
-  readonly icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  unit?: string;
+  trend?: 'up' | 'down' | 'stable';
+  status: 'healthy' | 'warning' | 'error';
+  icon: React.ReactNode;
 }
 
 export function useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics }: {
-  readonly isConnected: boolean;
-  readonly isConnecting: boolean;
-  readonly connectionError?: string;
-  readonly latestMetrics?: any;
+  isConnected: boolean;
+  isConnecting: boolean;
+  connectionError?: string;
+  latestMetrics?: any;
 }): StatusMetric[] {
   return [
     {
@@ -26,7 +26,7 @@ export function useSystemMetrics({ isConnected, isConnecting, connectionError, l
       })(),
       status: (() => {
         if (isConnected) return 'healthy';
-        if (connectionError === undefined) return 'warning';
+        if (connectionError == undefined) return 'warning';
         return 'error';
       })(),
       icon: isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />

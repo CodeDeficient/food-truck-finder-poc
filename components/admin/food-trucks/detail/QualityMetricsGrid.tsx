@@ -15,7 +15,7 @@ interface QualityMetricsGridProps {
 
 export function QualityMetricsGrid({
   truck,
-  qualityCategory
+  qualityCategory: _qualityCategory // Renamed to _qualityCategory
 }: QualityMetricsGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -40,12 +40,12 @@ export function QualityMetricsGrid({
       />
 
       <QualityScoreMetric
-        value={truck.created_at ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
+        value={(typeof truck.created_at === 'string' && truck.created_at.length > 0) ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
         label="Created"
       />
 
       <QualityScoreMetric
-        value={truck.updated_at ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
+        value={(typeof truck.updated_at === 'string' && truck.updated_at.length > 0) ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
         label="Updated"
       />
     </div>

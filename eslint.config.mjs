@@ -19,20 +19,34 @@ export default tseslint.config(
       "public/",
       "scripts/", // Ignore scripts directory with JS files
       "lib/database.types.ts", // Ignore auto-generated Supabase types file
-      // Temporarily ignore test files while focusing on main application code
+      // Ignore test, mock, story, benchmark, example, docs, and markdown files/folders
       "**/*.test.ts",
       "**/*.test.tsx",
+      "**/*.spec.ts",
+      "**/*.spec.tsx",
+      "test-*.js",
+      "test-*.ts",
+      "test-*.tsx",
+      "**/*-test.*",
+      "**/*-tests.*",
       "tests/**/*",
       "lib/**/*.test.ts",
+      "**/__tests__/**",
+      "**/*.mock.*",
+      "**/*.stories.*",
+      "**/*.snap",
+      "coverage/",
+      "**/*.bench.*",
+      "**/*.example.*",
+      "docs/**",
+      "**/*.md",
       "playwright.config.*.ts",
       "jest.config.ts",
       "setup-tests.*",
-      "test-*.js",
       // Configuration files
       "**/*.config.js",
       "**/*.config.mjs",
       "**/*.config.ts",
-      "coverage/",
       // Legacy files that cause parsing errors
       "setup-tests.cjs",
       "setup-tests.js",

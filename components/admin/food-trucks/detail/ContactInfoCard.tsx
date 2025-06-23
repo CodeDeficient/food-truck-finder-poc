@@ -23,7 +23,7 @@ export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
           icon={Phone}
           label="Phone"
           value={truck.contact_info?.phone}
-          href={truck.contact_info?.phone ? `tel:${truck.contact_info.phone}` : undefined}
+          href={(typeof truck.contact_info?.phone === 'string' && truck.contact_info.phone.length > 0) ? `tel:${truck.contact_info.phone}` : undefined}
           unavailableText="No phone number available"
         />
 
@@ -31,7 +31,7 @@ export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
           icon={Mail}
           label="Email"
           value={truck.contact_info?.email}
-          href={truck.contact_info?.email ? `mailto:${truck.contact_info.email}` : undefined}
+          href={(typeof truck.contact_info?.email === 'string' && truck.contact_info.email.length > 0) ? `mailto:${truck.contact_info.email}` : undefined}
           unavailableText="No email address available"
         />
 

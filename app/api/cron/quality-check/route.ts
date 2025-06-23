@@ -12,8 +12,19 @@ interface QualityAssessment {
 interface QualityService {
   calculateQualityScore: (truck: FoodTruck) => QualityAssessment;
   categorizeQualityScore: (score: number) => string;
-  batchUpdateQualityScores: (limit: number) => Promise<unknown>;
-  updateTruckQualityScore: (truckId: string) => Promise<unknown>;
+  batchUpdateQualityScores: (limit: number) => Promise<{ updatedCount: number; errors: unknown[]; }>;
+  updateTruckQualityScore: (truckId: string) => Promise<{ success: boolean; }>;
+}
+
+interface QualityCheckResults {
+  totalTrucks: number;
+  trucksWithMissingData: number;
+  lowQualityTrucks: number;
+  staleDataCount: number;
+  averageQualityScore: number;
+  qualityBreakdown: { high: number; medium: number; low: number };
+  updateResults: { updatedCount: number; errors: unknown[]; };
+  timestamp: string;
 }
 
 function verifyCronSecret(request: NextRequest): NextResponse | undefined {
@@ -41,7 +52,7 @@ function logQualityCheckStart() {
   });
 }
 
-function logQualityCheckCompletion(qualityResults: any) {
+function logQualityCheckCompletion(qualityResults: QualityCheckResults) {
   logActivity({
     type: 'cron_job',
     action: 'quality_check_completed',
@@ -60,7 +71,7 @@ function logQualityCheckFailure(error: unknown) {
     action: 'quality_check_failed',
     details: {
       timestamp: new Date().toISOString(),
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : String(error),
     },
   });
 }
@@ -73,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     logQualityCheckStart();
-    const qualityResults = await performDataQualityCheck();
+    const qualityResults: QualityCheckResults = await performDataQualityCheck();
     logQualityCheckCompletion(qualityResults);
 
     return NextResponse.json({
@@ -84,13 +95,13 @@ export async function POST(request: NextRequest) {
         timestamp: new Date().toISOString(),
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     logQualityCheckFailure(error);
     return NextResponse.json(
       {
         success: false,
         error: 'Quality check failed',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? error.message : String(error),
       },
       { status: 500 },
     );
@@ -125,7 +136,7 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
       lowQualityTrucks++;
     }
 
-    if (truck.current_location?.timestamp !== undefined && truck.current_location.timestamp !== null) {
+    if (truck.current_location?.timestamp !== undefined && truck.current_location?.timestamp !== null) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
       if (daysSinceUpdate > 7) {
@@ -148,9 +159,9 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
 function aggregateQualityCheckResults(
   totalTrucks: number,
   assessmentResults: ReturnType<typeof assessTrucksQuality>,
-  updateResults: unknown,
+  updateResults: { updatedCount: number; errors: unknown[]; },
   timestamp: string
-) {
+): QualityCheckResults { // Explicitly type the return
   return {
     totalTrucks: totalTrucks,
     trucksWithMissingData: assessmentResults.trucksWithMissingData,
@@ -167,7 +178,7 @@ async function performDataQualityCheck() {
   try {
     const { trucks, total } = await FoodTruckService.getAllTrucks(1000, 0);
 
-    const assessmentResults = await assessTrucksQuality(trucks);
+    const assessmentResults = assessTrucksQuality(trucks); // Removed await
 
     const updateResults = await (DataQualityService as QualityService).batchUpdateQualityScores(100);
 
@@ -177,7 +188,7 @@ async function performDataQualityCheck() {
       updateResults,
       new Date().toISOString()
     );
-  } catch (error) {
+  } catch (error: unknown) { // Typed catch block
     console.error('Error performing data quality check:', error);
     throw error;
   }

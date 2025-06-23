@@ -50,3 +50,5 @@ export default function FoodTruckFinder() {
     </div>
   );
 }
+
+// No 'any' usage found in this file. All hooks and props are typed. If any dynamic values are used in MainContent or AppHeader, ensure their types are correct in their respective files.
