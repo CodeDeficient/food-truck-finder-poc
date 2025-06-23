@@ -2,7 +2,7 @@ import React from 'react';
 import { Globe } from 'lucide-react';
 
 interface SocialMediaLinksProps {
-  socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
+  readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }
 
 export function SocialMediaLinks({ socialMedia }: SocialMediaLinksProps) {

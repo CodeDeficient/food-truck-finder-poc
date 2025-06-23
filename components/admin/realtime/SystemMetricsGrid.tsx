@@ -2,10 +2,10 @@ import React from 'react';
 import { StatusMetric } from './useSystemMetrics';
 
 interface SystemMetricsGridProps {
-  metrics: StatusMetric[];
-  getStatusColor: (status: string) => string;
-  getStatusIcon: (status: string) => React.ReactNode;
-  getTrendIcon: (trend?: string) => React.ReactNode;
+  readonly metrics: StatusMetric[];
+  readonly getStatusColor: (status: string) => string;
+  readonly getStatusIcon: (status: string) => React.ReactNode;
+  readonly getTrendIcon: (trend?: string) => React.ReactNode;
 }
 
 export function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIcon }: SystemMetricsGridProps) {

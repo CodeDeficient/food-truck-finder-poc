@@ -11,12 +11,12 @@ import { TruckCard } from '@/components/TruckCard';
 import { FoodTruck } from '@/lib/types/foodTruck';
 
 interface TruckListSectionProps {
-  filteredTrucks: FoodTruck[];
-  selectedTruckId: string | undefined;
-  setSelectedTruckId: (id: string | undefined) => void;
-  isOpen: (truck: FoodTruck) => boolean;
-  userLocation: { lat: number; lng: number } | undefined;
-  formatPrice: (price: number) => string;
+  readonly filteredTrucks: FoodTruck[];
+  readonly selectedTruckId: string | undefined;
+  readonly setSelectedTruckId: (id: string | undefined) => void;
+  readonly isOpen: (truck: FoodTruck) => boolean;
+  readonly userLocation: { lat: number; lng: number } | undefined;
+  readonly formatPrice: (price: number) => string;
 }
 
 export function TruckListSection({
@@ -37,9 +37,7 @@ export function TruckListSection({
         collapsible
         className="w-full"
         value={selectedTruckId ?? undefined}
-        onValueChange={(value: string | undefined) =>
-          setSelectedTruckId((currentId) => (value === currentId ? undefined : value))
-        }
+        onValueChange={(value) => setSelectedTruckId(value === "" ? undefined : value)}
       >
         {filteredTrucks.map((truck) => (
           <AccordionItem value={truck.id} key={truck.id}>

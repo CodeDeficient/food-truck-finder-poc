@@ -4,13 +4,13 @@ import { formatQualityScore, type QualityCategory } from '@/lib/utils/dataQualit
 import { QualityScoreMetric } from './QualityScoreMetric';
 
 interface QualityMetricsGridProps {
-  truck: {
+  readonly truck: {
     data_quality_score?: number;
     verification_status?: string;
     created_at?: string;
     updated_at?: string
   };
-  qualityCategory: QualityCategory;
+  readonly qualityCategory: QualityCategory;
 }
 
 export function QualityMetricsGrid({

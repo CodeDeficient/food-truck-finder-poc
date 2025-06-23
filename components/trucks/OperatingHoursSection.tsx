@@ -2,8 +2,8 @@ import React from 'react';
 import { Clock } from 'lucide-react';
 
 interface OperatingHoursSectionProps {
-  todayHours: { open: string; close: string; closed: boolean } | undefined;
-  formatHours: (hours: { open: string; close: string; closed: boolean }) => string;
+  readonly todayHours: { open: string; close: string; closed: boolean } | undefined;
+  readonly formatHours: (hours: { open: string; close: string; closed: boolean }) => string;
 }
 
 export function OperatingHoursSection({ todayHours, formatHours }: OperatingHoursSectionProps) {

@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { DataProcessingQueue } from '@/lib/supabase';
 
 interface FailedProcessingQueueTableProps {
-  processingQueue: {
+  readonly processingQueue: {
     pending: DataProcessingQueue[];
     processing: DataProcessingQueue[];
     failed: DataProcessingQueue[];

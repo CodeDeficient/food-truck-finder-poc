@@ -14,7 +14,7 @@ interface TruckCardProps {
   readonly onSelectTruck: () => void;
   readonly formatPrice: (price: number) => string;
   readonly userLocation?: { lat: number; lng: number };
-  readonly hideHeader?: boolean; // Add option to hide header when used in accordion
+  readonly hideHeader?: boolean;
 }
 
 export function TruckCard({

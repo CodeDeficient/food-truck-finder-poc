@@ -5,10 +5,10 @@ import { ContactField } from './ContactField';
 import { SocialMediaLinks } from './SocialMediaLinks';
 
 interface ContactInfoCardProps {
-  truck: { contact_info?: { phone?: string; email?: string; website?: string }; social_media?: { instagram?: string; facebook?: string; twitter?: string } };
+  readonly truck: { contact_info?: { phone?: string; email?: string; website?: string }; social_media?: { instagram?: string; facebook?: string; twitter?: string } };
 }
 
-export function ContactInfoCard({ truck }: ContactInfoCardProps) {
+export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
   return (
     <Card>
       <CardHeader>
