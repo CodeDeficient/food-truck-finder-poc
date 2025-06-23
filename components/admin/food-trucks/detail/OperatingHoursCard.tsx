@@ -5,7 +5,7 @@ import { Clock } from 'lucide-react';
 import { type FoodTruck, type OperatingHours } from '@/lib/supabase';
 
 interface OperatingHoursCardProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
 export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>) {
@@ -33,8 +33,8 @@ export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>)
                       return <span className="text-red-600 text-sm">Closed</span>;
                     }
                     if (
-                      dayData?.open !== null && dayData?.open !== undefined && dayData.open.length > 0 &&
-                      dayData?.close !== null && dayData?.close !== undefined && dayData.close.length > 0
+                      dayData?.open !== undefined && dayData.open !== '' &&
+                      dayData?.close !== undefined && dayData.close !== ''
                     ) {
                       return (
                         <span className="text-gray-900 text-sm">

@@ -3,7 +3,7 @@ import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 
 interface TruckMarkersProps {
-  trucks: Array<{
+  readonly trucks: Array<{
     id: string;
     name: string;
     current_location: {
@@ -12,7 +12,7 @@ interface TruckMarkersProps {
       address?: string;
     };
   }>;
-  onSelectTruck?: (truckId: string) => void;
+  readonly onSelectTruck?: (truckId: string) => void;
 }
 
 // Custom food truck icon

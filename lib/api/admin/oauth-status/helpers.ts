@@ -22,7 +22,7 @@ export async function handleGetRequest(_request: NextRequest) {
   });
 }
 
-export async function handlePostRequest(_request: NextRequest) {
+export  function handlePostRequest(_request: NextRequest) {
   const baseUrl = process.env.NODE_ENV === 'production'
     ? 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app'
     : 'http://localhost:3000';

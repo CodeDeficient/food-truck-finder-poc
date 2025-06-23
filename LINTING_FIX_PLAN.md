@@ -2,7 +2,7 @@
 
 ## ⚠️ Status Update (as of 6/23/2025)
 
-- **Current Error Count (as of 6/23/2025): 100 problems (80 errors, 20 warnings)**
+- **Current Error Count (as of 6/23/2025): 333 problems (299 errors, 34 warnings)**
 - **New high-frequency errors and stricter rules detected:**
   - `@typescript-eslint/strict-boolean-expressions` (handle all nullable/any checks in conditionals explicitly)
   - `max-lines-per-function`, `max-params` (reduce function size and parameter count)
@@ -13,6 +13,16 @@
   - `unicorn/filename-case` (file naming conventions)
   - `@typescript-eslint/require-await` (async functions without await)
   - `sonarjs/slow-regex` (regex performance)
+  - `sonarjs/different-types-comparison` (correctly compare different types)
+  - `@typescript-eslint/no-misused-promises` (handle promises in event handlers)
+  - `unicorn/prefer-global-this` (prefer `globalThis.window`)
+  - `sonarjs/void-use` (remove unnecessary `void` operator)
+  - `@typescript-eslint/no-empty-object-type` (use `object` or `unknown` for empty interfaces)
+  - `unicorn/switch-case-braces` (add braces to switch case clauses)
+  - `@typescript-eslint/unbound-method` (bind `this` or use arrow functions for class methods)
+  - `sonarjs/no-nested-template-literals` (refactor nested template literals)
+  - `max-depth` (reduce nesting depth)
+  - `sonarjs/no-redundant-optional` (remove redundant `undefined` or `?` specifiers)
 - **Most problematic files (by error count/severity):**
   - `lib/ScraperEngine.ts`
   - `lib/api/test-integration/helpers.ts`
@@ -27,305 +37,253 @@
 
 ## Revised Next Steps (Post-Lint Run)
 
-1. **Prioritize and fix by error category and file:**
-   - Strict boolean expressions and type safety in all conditionals.
-   - Reduce function size and parameter count to meet limits.
-   - Mark all React props as `readonly`.
-   - Remove all unused variables/imports.
-   - Fix file naming to match conventions.
-   - Eliminate all `any` usage and unsafe assignments.
-   - Replace all `null` with `undefined` and remove useless `undefined`.
-2. **Work file-by-file, starting with the highest-error files:**
-   - Begin with `lib/ScraperEngine.ts`, `lib/api/test-integration/helpers.ts`, `components/admin/RealtimeStatusIndicator.tsx`, `components/ui/chart.tsx`, etc.
-   - For each file: fix all errors, re-run linter, and update this checklist.
-3. **Iteratively re-run the linter and update the checklist.**
-4. **Continue until all errors and warnings are resolved.**
+1.  **Prioritize and fix by error category and file:**
+    *   **`@typescript-eslint/strict-boolean-expressions`**:
+        *   **How to fix**: Ensure all conditional checks (`if`, `? :`, `&&`, `||`) explicitly handle `null`, `undefined`, `0`, `''` (empty string), `NaN`, or `any` values.
+        *   **Examples**:
+            *   Instead of `if (value)`, use `if (value !== null && value !== undefined)` or `if (value != null)`.
+            *   For strings, `if (value && value.length > 0)` or `if (typeof value === 'string' && value.length > 0)`.
+            *   For numbers, `if (typeof value === 'number' && !isNaN(value) && value !== 0)`.
+            *   For `any` values, cast to `unknown` first and then narrow the type using `typeof` or `instanceof`.
+    *   **`max-lines-per-function`, `max-params`**:
+        *   **How to fix**:
+            *   **Component Extraction**: For React components, extract logical blocks of JSX and their related state/logic into smaller, focused sub-components. Pass necessary data as props.
+            *   **Custom Hook Extraction**: Encapsulate reusable stateful logic (e.g., data fetching, form handling, complex calculations) into custom hooks (`use...`).
+            *   **Service/Helper Function Extraction**: Decompose pure functions or non-UI business logic into separate utility modules or helper functions with single responsibilities.
+            *   **Reduce Parameters**: Group related parameters into a single object or interface.
+    *   **`sonarjs/prefer-read-only-props`**:
+        *   **How to fix**: Mark all React component props interfaces as `readonly`.
+        *   **Example**: `interface MyProps { readonly prop1: string; readonly prop2: number; }` or `({ prop1, prop2 }: Readonly<MyProps>)`.
+    *   **`@typescript-eslint/no-unused-vars`, `sonarjs/unused-import`**:
+        *   **How to fix**: Remove unused `import` statements and variable declarations. For intentionally unused parameters (e.g., in callbacks where an argument is required but not used), prefix the variable name with an underscore (`_`).
+        *   **Example**: `const _unusedVar = 1;` or `function myFunc(_event: Event) { /* ... */ }`.
+    *   **`@typescript-eslint/no-unsafe-assignment`, `@typescript-eslint/no-unsafe-member-access`, `@typescript-eslint/no-explicit-any`**:
+        *   **How to fix**: Avoid `any` type. Provide explicit type annotations for variables, function parameters, and return types. Use type guards (`typeof`, `instanceof`, custom type predicates) to safely narrow `unknown` types before accessing properties.
+        *   **Example**: Instead of `const data: any = ...`, use `const data: MyType = ...`. Instead of `value.prop`, use `if (isMyType(value)) { value.prop }`.
+    *   **`unicorn/no-null`, `unicorn/no-useless-undefined`**:
+        *   **How to fix**: Prefer `undefined` over `null` for representing the absence of a value. Simplify conditional checks for `undefined`.
+        *   **Example**: Instead of `useState(null)`, use `useState<Type | undefined>()`. Instead of `if (value === undefined || value.length === 0)`, use `if (!value)`.
+    *   **`unicorn/filename-case`**:
+        *   **How to fix**: Rename files to `camelCase` (e.g., `myHelper.ts`) or `PascalCase` (e.g., `MyComponent.tsx`) as appropriate for their content (e.g., components usually PascalCase, utilities camelCase).
+    *   **`@typescript-eslint/require-await`**:
+        *   **How to fix**: If an `async` function does not use `await`, either add an `await` expression (if it performs an asynchronous operation) or remove the `async` keyword if it's purely synchronous.
+    *   **`sonarjs/slow-regex`**:
+        *   **How to fix**: Optimize regular expression patterns to prevent super-linear runtime due to backtracking, which can lead to ReDoS (Regular Expression Denial of Service) vulnerabilities. Consult regex optimization resources.
+    *   **`sonarjs/different-types-comparison`**:
+        *   **How to fix**: Ensure comparisons are type-safe. For checking both `null` and `undefined`, use `value == null` (loose equality) or `value === null || value === undefined` (strict equality). Avoid `!==` when `!=` is intended for nullish checks.
+    *   **`@typescript-eslint/no-misused-promises`**:
+        *   **How to fix**: When an `async` function is used as an event handler or callback that expects a `void` return, explicitly mark the promise as ignored using the `void` operator.
+        *   **Example**: `onClick={() => { void handleSubmit(); }}`.
+    *   **`unicorn/prefer-global-this`**:
+        *   **How to fix**: Use `globalThis.window` instead of `window` for better cross-environment compatibility.
+    *   **`sonarjs/void-use`**:
+        *   **How to fix**: Remove the `void` operator if the promise is already being handled (e.g., awaited, or `.then().catch()` is chained). Only use `void` when explicitly ignoring a promise's return value.
+    *   **`@typescript-eslint/no-empty-object-type`**:
+        *   **How to fix**: Replace empty interface declarations (`interface MyType {}`) with `object` (for any non-nullish object) or `unknown` (for any value) to be more explicit about the intended type. If an empty interface is truly intended to allow any non-nullish value, consider disabling the rule with an inline comment.
+    *   **`unicorn/switch-case-braces`**:
+        *   **How to fix**: Add curly braces `{}` around the content of each `case` clause in `switch` statements.
+    *   **`@typescript-eslint/unbound-method`**:
+        *   **How to fix**: When passing class methods as callbacks, ensure `this` context is preserved. Use arrow functions for class methods (`myMethod = () => { ... }`) or bind them in the constructor (`this.myMethod = this.myMethod.bind(this);`).
+    *   **`sonarjs/no-nested-template-literals`**:
+        *   **How to fix**: Refactor template literals to avoid nesting them. Break down complex string constructions into simpler parts or use string concatenation if necessary.
+    *   **`max-depth`**:
+        *   **How to fix**: Reduce the nesting level of code blocks (e.g., `if` statements, `for` loops, `try-catch` blocks). This often involves extracting logic into separate functions or using early returns.
+    *   **`sonarjs/no-redundant-optional`**:
+        *   **How to fix**: Remove redundant `undefined` type annotations or `?` (optional property) specifiers when one already implies the other (e.g., `string | undefined` and `string?` are often equivalent, choose one).
+2.  **Work file-by-file, starting with the highest-error files:**
+    *   Begin with `lib/ScraperEngine.ts`, `lib/api/test-integration/helpers.ts`, `components/admin/RealtimeStatusIndicator.tsx`, `components/ui/chart.tsx`, etc.
+    *   For each file: fix all errors, re-run linter, and update this checklist.
+3.  **Iteratively re-run the linter and update the checklist.**
+4.  **Continue until all errors and warnings are resolved.**
 
 ---
 
 # Progress Log (as of 6/23/2025)
 
-- Linter run revealed 100 problems (80 errors, 20 warnings).
+- Linter run revealed 333 problems (299 errors, 34 warnings).
 - New top error categories: strict boolean expressions, function size, readonly props, unused code, type safety, file naming, and null/undefined handling.
 - Next: Begin remediation in the highest-error files and update this plan after each batch of fixes.
 
 ### Detailed Error List:
 
-**app\admin\food-trucks\[id]\page.tsx**
-- Error: 'FoodTruck' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'FoodTruck'. (Rule: sonarjs/unused-import)
-
-**app\admin\users\page.tsx**
-- Error: 'PostgrestError' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'PostgrestError'. (Rule: sonarjs/unused-import)
-- Error: 'Profile' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-
-**app\api\admin\automated-cleanup\route.ts**
-- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
-
-**app\api\admin\data-cleanup\route.ts**
-- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
-
-**app\api\cron\auto-scrape\route.ts**
-- Error: '_' is assigned a value but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove the declaration of the unused '_' variable. (Rule: sonarjs/no-unused-vars)
-
 **app\api\cron\quality-check\route.ts**
-- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
-- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
 - Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
-- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
-- Error: Unexpected `await` of a non-Promise (non-"Thenable") value. (Rule: @typescript-eslint/await-thenable)
-- Error: Refactor this redundant 'await' on a non-promise. (Rule: sonarjs/no-invalid-await)
 
 **app\api\monitoring\api-usage\route.ts**
-- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
-
-**app\api\trucks\route.ts**
+- Error: Async function 'POST' has too many lines (53). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-
-**app\auth\callback\route.ts**
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 
 **app\login\page.tsx**
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
 
 **app\page.tsx**
 - Error: Promise-returning function provided to attribute where a void return was expected. (Rule: @typescript-eslint/no-misused-promises)
 
-**components\MapDisplay.tsx**
-- Error: 'useMap' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'useMap'. (Rule: sonarjs/unused-import)
-- Error: Function 'MapDisplay' has too many lines (61). Maximum allowed is 50. (Rule: max-lines-per-function)
-
-**components\SearchFilters.tsx**
-- Error: Function 'MainSearchSection' has too many lines (53). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Function 'SearchFilters' has too many lines (83). Maximum allowed is 50. (Rule: max-lines-per-function)
-
-**components\TruckCard.tsx**
-- Error: 'formatPrice' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-
 **components\WebVitalsReporter.tsx**
-- Error: Remove this redundant jump. (Rule: sonarjs/no-redundant-jump)
+- Error: Prefer `globalThis.window` over `window` (Rule: unicorn/prefer-global-this)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\admin\RealtimeStatusIndicator.tsx**
-- Error: Function 'SystemAlerts' has too many lines (52). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Function 'RealtimeStatusIndicator' has too many lines (89). Maximum allowed is 50. (Rule: max-lines-per-function)
+- Error: Function 'RealtimeStatusIndicator' has too many lines (80). Maximum allowed is 50. (Rule: max-lines-per-function)
 
 **components\admin\UserMenu.tsx**
-- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
-- Error: Unsafe member access .user_metadata on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-- Error: Unsafe member access .user_metadata on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-- Error: Unsafe member access .email on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-
-**components\admin\cleanup\CleanupHeader.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
+- Warning: 'UserMetadata' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
 
 **components\admin\cleanup\CleanupPreview.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-
-**components\admin\cleanup\CleanupResults.tsx**
-- Error: Function 'CleanupResults' has too many lines (86). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-
-**components\admin\cleanup\OperationSelector.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\admin\food-trucks\detail\ContactField.tsx**
-- Error: 'Mail' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'Mail'. (Rule: sonarjs/unused-import)
-- Error: 'Phone' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'Phone'. (Rule: sonarjs/unused-import)
-- Error: 'Globe' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'Globe'. (Rule: sonarjs/unused-import)
+- Error: Remove this "===" check; it will always be false. Did you mean to use "=="? (Rule: sonarjs/different-types-comparison)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 
 **components\admin\food-trucks\detail\ContactInfoCard.tsx**
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
+- Error: Prefer using an optional chain expression instead, as it's more concise and easier to read. (Rule: @typescript-eslint/prefer-optional-chain)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
+- Error: Prefer using an optional chain expression instead, as it's more concise and easier to read. (Rule: @typescript-eslint/prefer-optional-chain)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
 
 **components\admin\food-trucks\detail\OperatingHoursCard.tsx**
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
 
 **components\admin\food-trucks\detail\QualityMetricsGrid.tsx**
-- Error: 'qualityCategory' is defined but never used. Allowed unused args must match /^_/u. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
+- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
 
 **components\admin\food-trucks\detail\SocialMediaLinks.tsx**
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
+- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
-**components\admin\pipeline\RecentScrapingJobsTable.tsx**
-- Error: Function 'RecentScrapingJobsTable' has too many lines (63). Maximum allowed is 50. (Rule: max-lines-per-function)
+**components\admin\realtime\AlertListDisplay.tsx**
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
 
-**components\admin\realtime\StatusHelpers.tsx**
-- Error: 'StatusMetric' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'StatusMetric'. (Rule: sonarjs/unused-import)
+**components\admin\realtime\AlertToggleButton.tsx**
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
-**components\admin\realtime\SystemAlerts.tsx**
-- Error: Function 'SystemAlerts' has too many lines (52). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
+**components\admin\realtime\ConnectionStatusHeader.tsx**
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
 
-**components\admin\realtime\useSystemMetrics.ts**
-- Error: Parsing error: '>' expected. (Rule: null)
-
-**components\admin\realtime\useSystemMetrics.tsx**
-- Error: Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser.
-The file was not found in any of the provided project(s): components\admin\realtime\useSystemMetrics.tsx (Rule: null)
+**components\admin\realtime\EventControls.tsx**
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
 
 **components\admin\realtime\ScrapingJobsStatus.tsx**
-- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
-- Error: Unexpected any value in conditional. An explicit comparison or type conversion is required. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
-- Error: Unsafe member access .active on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-- Error: Unsafe member access .completed on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-- Error: Unsafe member access .pending on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-- Error: Unsafe member access .failed on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
+
+**components\admin\realtime\StatusHelpers.tsx**
+- Error: Do not use useless `undefined` (Rule: unicorn/no-useless-undefined)
+
+**components\admin\realtime\SystemAlertItem.tsx**
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
+
+**components\admin\realtime\SystemAlerts.tsx**
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
+
+**components\admin\realtime\SystemMetricsGrid.tsx**
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
+
+**components\admin\realtime\status-helpers.ts**
+- Error: Parsing error: '>' expected. (Rule: null)
+
+**components\admin\realtime\status-helpers.tsx**
+- Error: Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser. The file was not found in any of the provided project(s): components\admin\realtime\status-helpers.tsx (Rule: null)
+
+**components\admin\realtime\useSystemMetrics.tsx**
+- Error: Function 'useSystemMetrics' has too many lines (58). Maximum allowed is 50. (Rule: max-lines-per-function)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\home\AppHeader.tsx**
-- Error: 'useThemeSwitcher' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'useThemeSwitcher'. (Rule: sonarjs/unused-import)
+- Error: Remove this use of the "void" operator (Rule: sonarjs/void-use)
 
 **components\home\MapSection.tsx**
-- Error: Remove this "===" check; it will always be false. Did you mean to use "=="? (Rule: sonarjs/different-types-comparison)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
-**components\home\TruckListSection.tsx**
-- Error: 'Link' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'Link'. (Rule: sonarjs/unused-import)
-- Error: Function 'TruckListSection' has too many lines (51). Maximum allowed is 50. (Rule: max-lines-per-function)
+**components\map\UserLocationMarker.tsx**
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
-**components\login\EmailFormFields.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: 'loading' is defined but never used. Allowed unused args must match /^_/u. (Rule: @typescript-eslint/no-unused-vars)
-
-**components\map\MapViewUpdater.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
+**components\map\map-helpers.ts**
+- Error: Filename is not in camel case or pascal case. Rename it to `mapHelpers.ts` or `MapHelpers.ts` (Rule: unicorn/filename-case)
 
 **components\monitoring\ApiMonitoringDashboard.tsx**
-- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
-- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
-- Error: Unsafe argument of type `any` assigned to a parameter of type `SetStateAction<APIUsageData | null>`. (Rule: @typescript-eslint/no-unsafe-argument)
-- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
-- Error: Unsafe argument of type `any` assigned to a parameter of type `SetStateAction<string | null>`. (Rule: @typescript-eslint/no-unsafe-argument)
-- Error: Unexpected any value in conditional. An explicit comparison or type conversion is required. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Unsafe member access .message on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
-- Error: Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator. (Rule: @typescript-eslint/prefer-nullish-coalescing)
-- Error: Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator. (Rule: @typescript-eslint/no-floating-promises)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
-**components\monitoring\FeatureOverviewCards.tsx**
-- Error: Function 'FeatureOverviewCards' has too many lines (57). Maximum allowed is 50. (Rule: max-lines-per-function)
+**components\monitoring\FeatureCard.tsx**
+- Warning: 'LucideIcon' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'LucideIcon' (Rule: sonarjs/unused-import)
 
-**components\monitoring\MonitoringFeaturesCard.tsx**
-- Error: Function 'MonitoringFeaturesCard' has too many lines (59). Maximum allowed is 50. (Rule: max-lines-per-function)
+**components\monitoring\FeatureList.tsx**
+- Warning: 'LucideIcon' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'LucideIcon' (Rule: sonarjs/unused-import)
+
+**components\monitoring\FeatureOverviewContent.tsx**
+- Error: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`. (Rule: @typescript-eslint/no-empty-object-type)
+
+**components\monitoring\MonitoringFeaturesContent.tsx**
+- Warning: 'Card' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'Card' (Rule: sonarjs/unused-import)
+- Warning: 'CardContent' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'CardContent' (Rule: sonarjs/unused-import)
+- Warning: 'CardDescription' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'CardDescription' (Rule: sonarjs/unused-import)
+- Warning: 'CardHeader' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'CardHeader' (Rule: sonarjs/unused-import)
+- Warning: 'CardTitle' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'CardTitle' (Rule: sonarjs/unused-import)
+- Error: An empty interface declaration allows any non-nullish value, including literals like `0` and `""`. (Rule: @typescript-eslint/no-empty-object-type)
 
 **components\test-pipeline\ErrorDisplay.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\test-pipeline\StageResultCard.tsx**
 - Error: Function 'StageResultCard' has too many lines (83). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\test-pipeline\TestPipelineForm.tsx**
-- Error: Function 'TestPipelineForm' has too many lines (84). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-
-**components\test-pipeline\TestPipelineSubmitHandler.ts**
-- Error: 'FormEvent' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'FormEvent'. (Rule: sonarjs/unused-import)
-
-**components\test-pipeline\TestResultsDisplay.tsx**
-- Error: Function 'TestResultsDisplay' has too many lines (52). Maximum allowed is 50. (Rule: max-lines-per-function)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
-
-**components\trucks\ContactSection.tsx**
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-
-**components\trucks\MenuSection.tsx**
-- Error: 'formatPrice' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'formatPrice'. (Rule: sonarjs/unused-import)
+- Error: Function 'TestPipelineForm' has too many lines (73). Maximum allowed is 50. (Rule: max-lines-per-function)
 
 **components\trucks\OperatingHoursSection.tsx**
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\trucks\RatingSection.tsx**
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\trucks\SocialMediaSection.tsx**
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
-
-**components\trucks\TruckBasicInfo.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-
-**components\trucks\TruckCardHeader.tsx**
-- Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
-- Error: Unexpected nullable number value in conditional. Please handle the nullish/zero/NaN cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-
-**components\trucks\TruckContactInfo.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-
-**components\trucks\TruckDetailHeader.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-
-**components\trucks\TruckLocationInfo.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-
-**components\trucks\TruckOperatingHours.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
-
-**components\trucks\TruckRatingsReviews.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\ui\carousel.tsx**
 - Error: Arrow function has too many lines (91). Maximum allowed is 50. (Rule: max-lines-per-function)
 
 **components\ui\chart.tsx**
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 - Error: Arrow function has too many lines (101). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: This assertion is unnecessary since it does not change the type of the expression. (Rule: @typescript-eslint/no-unnecessary-type-assertion)
 - Error: Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 - Error: Unexpected object value in conditional. The condition is always true. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 - Error: Unexpected negated condition. (Rule: unicorn/no-negated-condition)
 - Error: Function has too many parameters (5). Maximum allowed is 4. (Rule: max-params)
 - Error: Arrow function has too many lines (55). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: Unexpected object value in conditional. The condition is always true. (Rule: @typescript-eslint/strict-boolean-expressions)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\ui\chart\TooltipIndicator.tsx**
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **components\ui\chart\TooltipItemContent.tsx**
 - Error: Function has too many parameters (5). Maximum allowed is 4. (Rule: max-params)
-- Error: Mark the props of the component as read-only. (Rule: sonarjs/prefer-read-only-props)
+- Error: Mark the props of the component as read-only (Rule: sonarjs/prefer-read-only-props)
 
 **components\ui\chart\useTooltipLabel.tsx**
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
-- Error: Do not use useless `undefined`. (Rule: unicorn/no-useless-undefined)
+- Error: Do not use useless `undefined` (Rule: unicorn/no-useless-undefined)
+- Error: Do not use useless `undefined` (Rule: unicorn/no-useless-undefined)
 
 **components\ui\dataQualityCharts.tsx**
 - Error: Remove this redundant jump. (Rule: sonarjs/no-redundant-jump)
@@ -498,7 +456,7 @@ The file was not found in any of the provided project(s): components\admin\realt
 - Error: Unsafe argument of type `any[]` assigned to a parameter of type `{ metric_name: string; metric_value: number; rating: string; }[]`. (Rule: @typescript-eslint/no-unsafe-argument)
 
 **lib\api\cron\auto-scrape\handlers.ts**
-- Error: Use `undefined` instead of `null`. (Rule: unicorn/no-null)
+- Error: Use `undefined` instead of `null` (Rule: unicorn/no-null)
 
 **lib\api\firecrawl\handlers.ts**
 - Error: Async function 'handleSearchOperation' has no 'await' expression. (Rule: @typescript-eslint/require-await)
@@ -510,7 +468,7 @@ The file was not found in any of the provided project(s): components\admin\realt
 - Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
 
 **lib\api\test-integration\pipeline-runner.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `pipelineRunner.ts` or `PipelineRunner.ts`. (Rule: unicorn/filename-case)
+- Error: Filename is not in camel case or pascal case. Rename it to `pipelineRunner.ts` or `PipelineRunner.ts` (Rule: unicorn/filename-case)
 - Error: 'NextResponse' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
 - Error: Remove this unused import of 'NextResponse'. (Rule: sonarjs/unused-import)
 - Error: 'StageResult' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
@@ -518,12 +476,12 @@ The file was not found in any of the provided project(s): components\admin\realt
 - Error: Async function 'runTestPipeline' has too many lines (60). Maximum allowed is 50. (Rule: max-lines-per-function)
 
 **lib\api\test-integration\schema-mapper.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `schemaMapper.ts` or `SchemaMapper.ts`. (Rule: unicorn/filename-case)
+- Error: Filename is not in camel case or pascal case. Rename it to `schemaMapper.ts` or `SchemaMapper.ts` (Rule: unicorn/filename-case)
 - Error: Function 'mapExtractedDataToTruckSchema' has too many lines (55). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: Unexpected object value in conditional. The condition is always true. (Rule: @typescript-eslint/strict-boolean-expressions)
 
 **lib\api\test-integration\stage-handlers.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `stageHandlers.ts` or `StageHandlers.ts`. (Rule: unicorn/filename-case)
+- Error: Filename is not in camel case or pascal case. Rename it to `stageHandlers.ts` or `StageHandlers.ts` (Rule: unicorn/filename-case)
 - Error: Async function 'handleFirecrawlStage' has too many lines (58). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
@@ -542,9 +500,9 @@ The file was not found in any of the provided project(s): components\admin\realt
 - Error: Unsafe argument of type `any` assigned to a parameter of type `Partial<FoodTruck>`. (Rule: @typescript-eslint/no-unsafe-argument)
 
 **lib\auth\auth-helpers.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `authHelpers.ts` or `AuthHelpers.ts`. (Rule: unicorn/filename-case)
-- Error: 'NextRequest' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'NextRequest'. (Rule: sonarjs/unused-import)
+- Error: Filename is not in camel case or pascal case. Rename it to `authHelpers.ts` or `AuthHelpers.ts` (Rule: unicorn/filename-case)
+- Warning: 'NextRequest' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'NextRequest' (Rule: sonarjs/unused-import)
 - Error: Async function 'handleSuccessfulAuth' has too many parameters (5). Maximum allowed is 4. (Rule: max-params)
 
 **lib\data-quality\batchCleanup.ts**
@@ -571,28 +529,32 @@ The file was not found in any of the provided project(s): components\admin\realt
 - Error: Async method 'crawlWebsite' has too many lines (60). Maximum allowed is 50. (Rule: max-lines-per-function)
 
 **lib\gemini.ts**
-- Error: 'APIMonitor' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'APIMonitor'. (Rule: sonarjs/unused-import)
-- Error: 'errorContext' is defined but never used. Allowed unused args must match /^_/u. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`.
-If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead. (Rule: @typescript-eslint/unbound-method)
-- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`.
-If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead. (Rule: @typescript-eslint/unbound-method)
-- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`.
-If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead. (Rule: @typescript-eslint/unbound-method)
-- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`.
-If your function does not access `this`, you can annotate it with `this: void`, or consider using an arrow function instead. (Rule: @typescript-eslint/unbound-method)
+- Warning: 'APIMonitor' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'APIMonitor' (Rule: sonarjs/unused-import)
+- Warning: 'errorContext' is defined but never used. Allowed unused args must match /^_/u (Rule: @typescript-eslint/no-unused-vars)
+- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`. (Rule: @typescript-eslint/unbound-method)
+- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`. (Rule: @typescript-eslint/unbound-method)
+- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`. (Rule: @typescript-eslint/unbound-method)
+- Error: Avoid referencing unbound methods which may cause unintentional scoping of `this`. (Rule: @typescript-eslint/unbound-method)
 
 **lib\gemini\promptTemplates.ts**
 - Error: Method 'foodTruckExtraction' has too many lines (79). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 
 **lib\gemini\usageLimits.ts**
-- Error: 'limits' is assigned a value but never used. Allowed unused args must match /^_/u. (Rule: @typescript-eslint/no-unused-vars)
+- Warning: 'limits' is assigned a value but never used. Allowed unused args must match /^_/u (Rule: @typescript-eslint/no-unused-vars)
 
 **lib\middleware\middleware-helpers.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `middlewareHelpers.ts` or `MiddlewareHelpers.ts`. (Rule: unicorn/filename-case)
-- Error: Async function 'protectAdminRoutes' has too many lines (70). Maximum allowed is 50. (Rule: max-lines-per-function)
+- Error: Filename is not in camel case or pascal case. Rename it to `middlewareHelpers.ts` or `MiddlewareHelpers.ts` (Rule: unicorn/filename-case)
+- Error: Async function 'logAndRedirect' has too many parameters (5). Maximum allowed is 4. (Rule: max-params)
+- Error: Async function 'logAndRedirectDenied' has too many parameters (6). Maximum allowed is 4. (Rule: max-params)
+- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
+- Error: Unexpected any. Specify a different type. (Rule: @typescript-eslint/no-explicit-any)
+- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
+- Error: Unsafe member access .id on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
+- Error: Unsafe assignment of an `any` value. (Rule: @typescript-eslint/no-unsafe-assignment)
+- Error: Unsafe member access .email on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
+- Error: Unsafe member access .role on an `any` value. (Rule: @typescript-eslint/no-unsafe-member-access)
 
 **lib\monitoring\apiMonitor.ts**
 - Error: Static method 'generateAlerts' has too many lines (93). Maximum allowed is 50. (Rule: max-lines-per-function)
@@ -605,8 +567,8 @@ If your function does not access `this`, you can annotate it with `this: void`, 
 - Error: Function 'getPerformanceOptimizationSuggestions' has too many lines (102). Maximum allowed is 50. (Rule: max-lines-per-function)
 
 **lib\pipeline\pipelineHelpers.ts**
-- Error: 'PostgrestError' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'PostgrestError'. (Rule: sonarjs/unused-import)
+- Warning: 'PostgrestError' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'PostgrestError' (Rule: sonarjs/unused-import)
 - Error: Function 'buildTruckDataSchema' has too many lines (66). Maximum allowed is 50. (Rule: max-lines-per-function)
 - Error: Remove this "===" check; it will always be false. Did you mean to use "=="? (Rule: sonarjs/different-types-comparison)
 - Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
@@ -644,8 +606,8 @@ If your function does not access `this`, you can annotate it with `this: void`, 
 - Error: Unsafe return of a value of type `any`. (Rule: @typescript-eslint/no-unsafe-return)
 
 **lib\utils\foodTruckHelpers.ts**
-- Error: 'TrucksApiResponse' is defined but never used. (Rule: @typescript-eslint/no-unused-vars)
-- Error: Remove this unused import of 'TrucksApiResponse'. (Rule: sonarjs/unused-import)
+- Warning: 'TrucksApiResponse' is defined but never used (Rule: @typescript-eslint/no-unused-vars)
+- Error: Remove this unused import of 'TrucksApiResponse' (Rule: sonarjs/unused-import)
 - Error: Unexpected nullable boolean value in array predicate return type. Please handle the nullish case explicitly. (Rule: @typescript-eslint/strict-boolean-expressions)
 - Error: Unexpected object value in conditional. The condition is always true. (Rule: @typescript-eslint/strict-boolean-expressions)
 - Error: Remove this "!==" check; it will always be true. Did you mean to use "!="? (Rule: sonarjs/different-types-comparison)
@@ -654,8 +616,7 @@ If your function does not access `this`, you can annotate it with `this: void`, 
 - Error: Remove this "===" check; it will always be false. Did you mean to use "=="? (Rule: sonarjs/different-types-comparison)
 
 **lib\utils\quality-scorer.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `qualityScorer.ts` or `QualityScorer.ts`. (Rule: unicorn/filename-case)
-- Error: Empty files are not allowed. (Rule: unicorn/no-empty-file)
+- Error: Filename is not in camel case or pascal case. Rename it to `qualityScorer.ts` or `QualityScorer.ts` (Rule: unicorn/filename-case)
 
 **lib\utils\qualityScorer.ts**
 - Error: Make sure the regex used here, which is vulnerable to super-linear runtime due to backtracking, cannot lead to denial of service. (Rule: sonarjs/slow-regex)
@@ -663,47 +624,7 @@ If your function does not access `this`, you can annotate it with `this: void`, 
 - Error: Async method 'updateTruckQualityScore' has no 'await' expression. (Rule: @typescript-eslint/require-await)
 
 **lib\utils\type-guards.ts**
-- Error: Filename is not in camel case or pascal case. Rename it to `typeGuards.ts` or `TypeGuards.ts`. (Rule: unicorn/filename-case)
-- Error: Empty files are not allowed. (Rule: unicorn/no-empty-file)
-
----
-
-# LINTING_FIX_PLAN.md
-
-## Linting Fix Plan (Updated June 23, 2025)
-
-### Status Summary
-
-- **Core linting dependencies** upgraded and config migrated to modern ESLint flat config.
-- **Autofix pass** (`pnpm lint --fix`) completed; remaining issues are mostly type safety, code quality, and grouped errors.
-- **Highest-impact files and error groups prioritized and addressed:**
-  - See above for new top error files and categories.
-
-### Next Steps
-
-- **If further lint/code quality issues remain:**
-  - Review lower-priority files or less frequent error groups as needed.
-  - Address any new issues that arise from future code changes.
-- **Ongoing:**
-  - Maintain type safety and code quality in all new code.
-  - Continue to use Pareto principle: focus on high-impact files and error clusters first.
-
-### Completed Fixes (2025-06-23)
-
-- [x] `components/test-pipeline/ErrorDisplay.tsx` – All linter errors fixed (readonly props, strict conditionals, useless undefined)
-- [x] `lib/utils/type-guards.ts` – Canonicalized, re-exported, and no longer empty
-- [x] `lib/utils/typeGuards.ts` – Canonical, all errors fixed
-- [x] `lib/utils/qualityScorer.ts` – Regex, async, and comment issues fixed
-- [x] `lib/utils/quality-scorer.ts` – Deprecated, re-exported, not empty
-- [x] `components/MapDisplay.tsx` – Function size, unused import, and typing fixed
-- [x] `components/SearchFilters.tsx` – Function size, readonly props, and logic split
-- [x] `components/WebVitalsReporter.tsx` – Redundant jump removed
-- [x] `components/admin/RealtimeStatusIndicator.tsx` – Function size, readonly props, and type errors fixed
-- [x] `components/admin/cleanup/CleanupHeader.tsx` – Readonly props confirmed
-- [x] `components/admin/cleanup/CleanupOperationDetails.tsx` – Readonly props confirmed
-- [x] `lib/security/rateLimiter.ts` – Function size, method structure, and syntax fixed
-- [x] `lib/monitoring/apiMonitor.ts` – Function size, logic extraction
-- [x] `lib/middleware/middleware-helpers.ts` – Function size, null/undefined, and logic split
+- Error: Filename is not in camel case or pascal case. Rename it to `typeGuards.ts` or `TypeGuards.ts` (Rule: unicorn/filename-case)
 
 ---
 

@@ -27,6 +27,40 @@ export function GET(request: NextRequest) {
   }
 }
 
+async function handlePostAction(
+  action: string | undefined,
+  service: string | undefined,
+  level: string | undefined,
+): Promise<NextResponse> {
+  if (action === undefined) {
+    return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+  }
+
+  switch (action) {
+    case 'clear-alerts': {
+      return handleClearAlerts();
+    }
+    case 'get-alerts': {
+      return handleGetAlerts();
+    }
+    case 'test-alert': {
+      if (service === undefined || level === undefined) {
+        return NextResponse.json(
+          { success: false, error: 'Missing service or level for test-alert action' },
+          { status: 400 },
+        );
+      }
+      return handleTestAlert({ service, level });
+    }
+    default: {
+      return NextResponse.json(
+        { success: false, error: `Unknown action: ${action}` },
+        { status: 400 },
+      );
+    }
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const rawBody: unknown = await request.json();
@@ -35,39 +69,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
 
-    // Explicitly type and validate the body
     const body = rawBody as Record<string, unknown>;
     const action = typeof body.action === 'string' ? body.action : undefined;
     const service = typeof body.service === 'string' ? body.service : undefined;
     const level = typeof body.level === 'string' ? body.level : undefined;
 
-    if (!action) {
-      return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
-    }
-
-    switch (action) {
-      case 'clear-alerts': {
-        return handleClearAlerts();
-      }
-      case 'get-alerts': {
-        return handleGetAlerts();
-      }
-      case 'test-alert': {
-        if (!service || !level) {
-          return NextResponse.json(
-            { success: false, error: 'Missing service or level for test-alert action' },
-            { status: 400 },
-          );
-        }
-        return handleTestAlert({ service, level });
-      }
-      default: {
-        return NextResponse.json(
-          { success: false, error: `Unknown action: ${action}` },
-          { status: 400 },
-        );
-      }
-    }
+    return handlePostAction(action, service, level);
   } catch (error: unknown) {
     console.error('API monitoring POST error:', error);
     return NextResponse.json(

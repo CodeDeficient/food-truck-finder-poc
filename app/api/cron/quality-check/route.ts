@@ -38,7 +38,7 @@ function verifyCronSecret(request: NextRequest): NextResponse | undefined {
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
-  if (authHeader !== `Bearer ${cronSecret}`) {
+  if (authHeader === null || authHeader !== `Bearer ${cronSecret}`) {
     console.error('Unauthorized cron attempt:', authHeader);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

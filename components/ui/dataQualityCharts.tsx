@@ -34,19 +34,19 @@ interface DataQualityStats {
 }
 
 interface DataQualityChartsProps {
-  qualityStats: DataQualityStats;
+  readonly qualityStats: DataQualityStats;
 }
 
 // Custom tooltip for better accessibility and UX
 interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{
+  readonly active?: boolean;
+  readonly payload?: Array<{
     value: number;
     payload: {
       percentage?: string;
     };
   }>;
-  label?: string;
+  readonly label?: string;
 }
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
@@ -64,7 +64,6 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
       </div>
     );
   }
-  return;
 };
 
 // Quality Distribution Pie Chart Component

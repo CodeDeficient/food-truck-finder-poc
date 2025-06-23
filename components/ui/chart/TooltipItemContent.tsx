@@ -2,13 +2,13 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface TooltipItemContentProps {
-  formatter?: (value: number, name: string, item: unknown, index: number, payload: Record<string, unknown>[]) => React.ReactNode;
-  itemData: { name?: string; dataKey?: string; payload?: unknown; color?: string; value?: number };
-  item: unknown;
-  index: number;
-  itemConfig?: { label?: React.ReactNode };
-  nestLabel: boolean;
-  tooltipLabel: React.ReactNode;
+  readonly formatter?: (value: number, name: string, item: unknown, index: number, payload: Record<string, unknown>[]) => React.ReactNode;
+  readonly itemData: { name?: string; dataKey?: string; payload?: unknown; color?: string; value?: number };
+  readonly item: unknown;
+  readonly index: number;
+  readonly itemConfig?: { label?: React.ReactNode };
+  readonly nestLabel: boolean;
+  readonly tooltipLabel: React.ReactNode;
 }
 
 export function TooltipItemContent({

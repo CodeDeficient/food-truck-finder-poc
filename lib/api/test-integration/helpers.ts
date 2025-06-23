@@ -85,7 +85,7 @@ interface FormattedTestResults {
   };
 }
 
-async function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): Promise<FoodTruck> {
+ function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): Promise<FoodTruck> {
   return FoodTruckService.createTruck({
     name: 'Test Food Truck',
     description: 'Integration test truck',
@@ -120,7 +120,7 @@ async function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): P
   });
 }
 
-async function createTestScrapingJob(testUrl: string): Promise<ScrapingJob> {
+ function createTestScrapingJob(testUrl: string): Promise<ScrapingJob> {
   return ScrapingJobService.createJob({
     job_type: 'integration_test',
     target_url: testUrl,
@@ -129,7 +129,7 @@ async function createTestScrapingJob(testUrl: string): Promise<ScrapingJob> {
   });
 }
 
-async function addTestToProcessingQueue(truckId: string): Promise<DataProcessingQueue> {
+ function addTestToProcessingQueue(truckId: string): Promise<DataProcessingQueue> {
   return DataProcessingService.addToQueue({
     truck_id: truckId,
     processing_type: 'integration_test',

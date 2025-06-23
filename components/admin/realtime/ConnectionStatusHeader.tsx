@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Zap, RefreshCw } from 'lucide-react';
 
 interface ConnectionStatusHeaderProps {
-  isConnected: boolean;
-  isConnecting: boolean;
-  lastEventTime?: Date;
-  connect: () => void;
-  disconnect: () => void;
+  readonly isConnected: boolean;
+  readonly isConnecting: boolean;
+  readonly lastEventTime?: Date;
+  readonly connect: () => void;
+  readonly disconnect: () => void;
 }
 
 export function ConnectionStatusHeader({
@@ -19,7 +19,7 @@ export function ConnectionStatusHeader({
   lastEventTime,
   connect,
   disconnect
-}: ConnectionStatusHeaderProps) {
+}: Readonly<ConnectionStatusHeaderProps>) {
   return (
     <CardHeader className="pb-3">
       <div className="flex items-center justify-between">

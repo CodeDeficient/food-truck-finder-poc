@@ -10,11 +10,11 @@ import { initWebVitalsMonitoring } from '@/lib/performance/webVitals';
 export function WebVitalsReporter() {
   useEffect(() => {
     // Only initialize in browser environment
-    if (typeof window !== 'undefined') {
+    if (typeof globalThis.window !== 'undefined') {
       initWebVitalsMonitoring();
     }
   }, []);
 
   // This component doesn't render anything
-  return null;
+  return undefined;
 }

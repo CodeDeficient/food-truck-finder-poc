@@ -4,7 +4,7 @@ import { Phone, Mail, Globe } from 'lucide-react';
 import type { FoodTruck } from '@/lib/supabase';
 
 interface TruckContactInfoProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
 function ContactField({ 
@@ -53,7 +53,7 @@ function ContactField({
 
 function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string> }) {
   if (!socialMedia || Object.keys(socialMedia).length === 0) {
-    return;
+    
   }
 
   const socialPlatforms = [
