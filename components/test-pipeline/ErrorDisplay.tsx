@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function ErrorDisplay({ error }: { readonly error?: string }) {
-  if (error === undefined) return undefined;
+  if (error === undefined) return;
 
   return (
     <Card className="border-red-500">

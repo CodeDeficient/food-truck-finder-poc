@@ -12,7 +12,7 @@ interface SystemAlertsProps {
 }
 
 export function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: SystemAlertsProps) {
-  if (alerts.length === 0) return undefined;
+  if (alerts.length === 0) return;
   return (
     <div className="mt-4">
       <h4 className="text-sm font-medium text-gray-900 mb-2">Recent Alerts</h4>

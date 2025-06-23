@@ -4,12 +4,12 @@ import { PutRequestBody } from './types';
 
 export function handleSchedulerStatus() {
   return NextResponse.json({
-    isRunning: schedulerInstance !== undefined,
+    isRunning: schedulerInstance != null,
     tasks: schedulerTasks,
     summary: {
       totalTasks: schedulerTasks.length,
       enabledTasks: schedulerTasks.filter((t) => t.enabled).length,
-      runningTasks: schedulerTasks.filter((t) => t.enabled && t.nextRun !== undefined).length,
+      runningTasks: schedulerTasks.filter((t) => t.enabled && t.nextRun != null).length,
       totalSuccesses: schedulerTasks.reduce((acc, t) => acc + t.successCount, 0),
       totalErrors: schedulerTasks.reduce((acc, t) => acc + t.errorCount, 0),
     },
@@ -86,7 +86,7 @@ export function handleStopScheduler() {
 }
 
 export function handleExecuteTask(taskId: string) {
-  if (taskId === undefined || taskId === '') {
+  if (taskId == null || taskId === '') {
     return NextResponse.json({ error: 'Task ID is required for execution' }, { status: 400 });
   }
 
@@ -135,7 +135,7 @@ export function handleUpdateTask(body: PutRequestBody) {
   };
 
   // Update next run time if interval changed
-  if (config.intervalMinutes !== undefined && config.intervalMinutes > 0 && schedulerTasks[taskIndex].enabled) {
+  if (config.intervalMinutes != null && config.intervalMinutes > 0 && schedulerTasks[taskIndex].enabled) {
     const lastRun = new Date(schedulerTasks[taskIndex].lastRun ?? Date.now());
     const nextRun = new Date(lastRun.getTime() + config.intervalMinutes * 60 * 1000);
     schedulerTasks[taskIndex].nextRun = nextRun.toISOString();

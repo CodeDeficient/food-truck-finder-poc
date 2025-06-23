@@ -8,18 +8,18 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (supabaseUrl === undefined || supabaseUrl === '') {
+if (supabaseUrl == null || supabaseUrl === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
-if (supabaseAnonKey === undefined || supabaseAnonKey === '') {
+if (supabaseAnonKey == null || supabaseAnonKey === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Only create admin client on server side where service key is available
-export const supabaseAdmin = (supabaseServiceKey !== undefined && supabaseServiceKey !== '')
+export const supabaseAdmin = (supabaseServiceKey != null && supabaseServiceKey !== '')
   ? createClient(supabaseUrl, supabaseServiceKey)
   : undefined;
 
@@ -221,7 +221,7 @@ export const FoodTruckService = {
     const updatesWithoutMenu = { ...updates };
     delete updatesWithoutMenu.menu;
     const truck = await updateTruckData(id, updatesWithoutMenu);
-    if (menuData !== undefined) {
+    if (menuData != null) {
       await updateTruckMenu(id, menuData);
     }
     return truck;
@@ -399,7 +399,7 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
   const timestamp = loc.timestamp;
 
   truck.current_location =
-    lat === undefined || lng === undefined || (lat === 0 && lng === 0)
+    lat == null || lng == null || (lat === 0 && lng === 0)
       ? { ...fallback, address: address ?? fallback.address }
       : {
           lat,
@@ -631,7 +631,7 @@ export const DataQualityService = {
          (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
     ) score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours !== undefined && truck.operating_hours !== null) score += 10;
+    if (truck.operating_hours != null && truck.operating_hours != null) score += 10;
     return { score: Math.min(100, score) };
   },
 
@@ -777,6 +777,6 @@ async function insertMenuItems(truckId: string, menuData: MenuCategory[] | undef
 // Fix all strict-boolean-expressions and always-true/false comparisons below
 // Example: if (someString) => if (typeof someString === 'string' && someString.trim() !== '')
 // Example: if (someNumber) => if (typeof someNumber === 'number' && !Number.isNaN(someNumber) && someNumber !== 0)
-// Example: if (someObject) => if (someObject !== undefined && someObject !== null)
+// Example: if (someObject) => if (someObject != null && someObject != null)
 
 // For all other conditionals, ensure explicit nullish/empty/NaN checks as above
