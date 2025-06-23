@@ -151,19 +151,19 @@ export class ScraperEngine {
       }
 
       const returnedData: WebsiteScrapeData = {};
-      if (firecrawlResult.data.markdown !== undefined && firecrawlResult.data.markdown !== '') {
+      if (firecrawlResult.data.markdown != null && firecrawlResult.data.markdown !== '') {
         returnedData.markdown = firecrawlResult.data.markdown;
       }
-      if (firecrawlResult.data.html !== undefined && firecrawlResult.data.html !== '') {
+      if (firecrawlResult.data.html != null && firecrawlResult.data.html !== '') {
         returnedData.html = firecrawlResult.data.html;
       }
-      if (firecrawlResult.data.metadata !== undefined) {
+      if (firecrawlResult.data.metadata != null) {
         returnedData.metadata = firecrawlResult.data.metadata;
       }
 
       if (
-        (returnedData.markdown === undefined || returnedData.markdown === '') &&
-        (returnedData.html === undefined || returnedData.html === '')
+        (returnedData.markdown == null || returnedData.markdown === '') &&
+        (returnedData.html == null || returnedData.html === '')
       ) {
         throw new Error('Firecrawl returned no markdown or HTML content.');
       }
@@ -310,7 +310,7 @@ export class ScraperEngine {
   private getRandomUserAgent(): string {
     // Use Node.js crypto for stronger randomness if available, fallback to Math.random otherwise.
     let idx: number;
-    if (globalThis.window?.crypto?.getRandomValues !== undefined) {
+    if (globalThis.window?.crypto?.getRandomValues != null) {
       const array = globalThis.window.crypto.getRandomValues(new Uint32Array(1));
       idx = array[0] % this.userAgents.length;
     } else if (typeof crypto.randomInt === 'function') {
@@ -324,7 +324,7 @@ export class ScraperEngine {
   private  randomDelay(): Promise<void> {
     // Use Node.js crypto for stronger randomness if available, fallback to Math.random otherwise.
     let randomMs: number;
-    if (globalThis.window?.crypto?.getRandomValues !== undefined) {
+    if (globalThis.window?.crypto?.getRandomValues != null) {
       const array = globalThis.window.crypto.getRandomValues(new Uint32Array(1));
       randomMs = array[0] % 1000;
     } else if (typeof crypto.randomInt === 'function') {
@@ -410,7 +410,7 @@ interface TruckData {
 
 export class DataQualityAssessor {
   private assessBasicInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.name === undefined || truckData.name.trim().length === 0) {
+    if (truckData.name == null || truckData.name.trim().length === 0) {
       issues.push('Missing or empty truck name');
       score -= 20;
     }
@@ -418,18 +418,18 @@ export class DataQualityAssessor {
   }
 
   private assessLocationInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.location?.current === undefined) {
+    if (truckData.location?.current == null) {
       issues.push('Missing current location data');
       score -= 25;
     } else {
       if (
-        truckData.location.current.lat === undefined ||
-        truckData.location.current.lng === undefined
+        truckData.location.current.lat == null ||
+        truckData.location.current.lng == null
       ) {
         issues.push('Missing GPS coordinates');
         score -= 15;
       }
-      if (truckData.location.current.address === undefined || truckData.location.current.address === '') {
+      if (truckData.location.current.address == null || truckData.location.current.address === '') {
         issues.push('Missing address information');
         score -= 10;
       }
@@ -438,19 +438,19 @@ export class DataQualityAssessor {
   }
 
   private assessContactInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.contact === undefined) {
+    if (truckData.contact == null) {
       issues.push('Missing contact information');
       score -= 20;
     } else {
-      if ((truckData.contact.phone === undefined || truckData.contact.phone === '') && (truckData.contact.email === undefined || truckData.contact.email === '')) {
+      if ((truckData.contact.phone == null || truckData.contact.phone === '') && (truckData.contact.email == null || truckData.contact.email === '')) {
         issues.push('No phone or email contact available');
         score -= 15;
       }
-      if (truckData.contact.phone !== undefined && truckData.contact.phone !== '' && !this.isValidPhone(truckData.contact.phone)) {
+      if (truckData.contact.phone != null && truckData.contact.phone !== '' && !this.isValidPhone(truckData.contact.phone)) {
         issues.push('Invalid phone number format');
         score -= 5;
       }
-      if (truckData.contact.email !== undefined && truckData.contact.email !== '' && !this.isValidEmail(truckData.contact.email)) {
+      if (truckData.contact.email != null && truckData.contact.email !== '' && !this.isValidEmail(truckData.contact.email)) {
         issues.push('Invalid email format');
         score -= 5;
       }
@@ -459,7 +459,7 @@ export class DataQualityAssessor {
   }
 
   private assessOperatingHours(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.operating_hours === undefined || Object.keys(truckData.operating_hours).length === 0) {
+    if (truckData.operating_hours == null || Object.keys(truckData.operating_hours).length === 0) {
       issues.push('Missing operating hours');
       score -= 15;
     }
@@ -467,7 +467,7 @@ export class DataQualityAssessor {
   }
 
   private assessMenuInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.menu === undefined || truckData.menu.length === 0) {
+    if (truckData.menu == null || truckData.menu.length === 0) {
       issues.push('Missing menu information');
       score -= 10;
     } else {
@@ -479,7 +479,7 @@ export class DataQualityAssessor {
   }
 
   private assessLastUpdated(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.last_updated !== undefined && truckData.last_updated !== '') {
+    if (truckData.last_updated != null && truckData.last_updated !== '') {
       const lastUpdate = new Date(truckData.last_updated);
       const daysSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
 
@@ -512,17 +512,17 @@ export class DataQualityAssessor {
   }
 
   private validateMenuCategory(category: MenuCategory, categoryIndex: number, issues: string[]): void {
-    if (category.category === undefined || category.category.trim().length === 0) {
+    if (category.category == null || category.category.trim().length === 0) {
       issues.push(`Menu category ${categoryIndex + 1} missing name`);
     }
   }
 
   private validateMenuItems(category: MenuCategory, issues: string[]): void {
-    if (category.items === undefined || category.items.length === 0) {
+    if (category.items == null || category.items.length === 0) {
       issues.push(`Menu category "${category.category ?? 'Unknown'}" has no items`);
     } else {
       for (const [itemIndex, item] of category.items.entries()) {
-        if (item.name === undefined || item.name.trim().length === 0) {
+        if (item.name == null || item.name.trim().length === 0) {
           issues.push(`Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`);
         }
         if (typeof item.price !== 'number' || item.price <= 0) {
@@ -681,7 +681,7 @@ export class GeminiDataProcessor {
 
   private validateGeminiLocationResponse(parsedResponse: unknown): GeminiLocationData {
     if (
-      parsedResponse === null ||
+      parsedResponse == null ||
       typeof parsedResponse !== 'object' ||
       !('coordinates' in parsedResponse) ||
       typeof (parsedResponse as Record<string, unknown>).coordinates !== 'object'
@@ -728,7 +728,7 @@ export class GeminiDataProcessor {
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
       const parsed = JSON.parse(response);
-      if (parsed === null || typeof parsed !== 'object') {
+      if (parsed == null || typeof parsed !== 'object') {
         throw new Error('Invalid Gemini hours response');
       }
       return parsed as GeminiOperatingHours;
@@ -763,7 +763,7 @@ export class GeminiDataProcessor {
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
       const parsed = JSON.parse(response);
-      if (parsed === null || typeof parsed !== 'object') {
+      if (parsed == null || typeof parsed !== 'object') {
         throw new Error('Invalid Gemini sentiment response');
       }
       return parsed as GeminiSentimentAnalysis;

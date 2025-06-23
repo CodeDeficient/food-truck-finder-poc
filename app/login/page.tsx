@@ -140,7 +140,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <LoginHeader />
         <CardContent className="space-y-4">
-          {error != null && error.length > 0 && (
+          {error != undefined && error.length > 0 && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>

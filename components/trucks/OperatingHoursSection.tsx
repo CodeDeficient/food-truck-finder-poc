@@ -7,7 +7,7 @@ interface OperatingHoursSectionProps {
 }
 
 export function OperatingHoursSection({ todayHours, formatHours }: Readonly<OperatingHoursSectionProps>) {
-  if (todayHours === undefined) return undefined;
+  if (todayHours === undefined) return;
 
   return (
     <div>

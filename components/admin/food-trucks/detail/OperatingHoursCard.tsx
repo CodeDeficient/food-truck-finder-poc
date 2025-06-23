@@ -33,8 +33,8 @@ export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>)
                       return <span className="text-red-600 text-sm">Closed</span>;
                     }
                     if (
-                      dayData?.open !== undefined && dayData.open !== '' &&
-                      dayData?.close !== undefined && dayData.close !== ''
+                      dayData?.open != null && dayData.open !== '' &&
+                      dayData?.close != null && dayData.close !== ''
                     ) {
                       return (
                         <span className="text-gray-900 text-sm">

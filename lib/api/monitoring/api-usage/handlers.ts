@@ -68,7 +68,7 @@ export function handleGetAlerts() {
 
 export function handleTestAlert(body: { service: string; level: string }) {
   const { service, level } = body;
-  if (service === undefined || level === undefined) {
+  if (service == null || level == null) {
     return NextResponse.json(
       { success: false, error: 'Missing service or level' },
       { status: 400 },

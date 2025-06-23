@@ -2,18 +2,17 @@
 
 ## ⚠️ Status Update (as of 6/23/2025)
 
-- **Current Error Count (as of 6/23/2025): 333 problems (299 errors, 34 warnings)**
+- **Current Error Count (as of 6/23/2025): 270 problems (242 errors, 28 warnings)**
 - **New high-frequency errors and stricter rules detected:**
   - `@typescript-eslint/strict-boolean-expressions` (handle all nullable/any checks in conditionals explicitly)
   - `max-lines-per-function`, `max-params` (reduce function size and parameter count)
   - `sonarjs/prefer-read-only-props` (mark all React props as readonly)
   - `@typescript-eslint/no-unused-vars`, `sonarjs/unused-import` (remove unused code)
   - `@typescript-eslint/no-unsafe-assignment`, `@typescript-eslint/no-unsafe-member-access`, `@typescript-eslint/no-explicit-any` (type safety)
-  - `unicorn/no-null`, `unicorn/no-useless-undefined` (prefer `undefined`)
+  - `unicorn/no-null` (prefer `undefined`)
   - `unicorn/filename-case` (file naming conventions)
   - `@typescript-eslint/require-await` (async functions without await)
   - `sonarjs/slow-regex` (regex performance)
-  - `sonarjs/different-types-comparison` (correctly compare different types)
   - `@typescript-eslint/no-misused-promises` (handle promises in event handlers)
   - `unicorn/prefer-global-this` (prefer `globalThis.window`)
   - `sonarjs/void-use` (remove unnecessary `void` operator)
@@ -60,17 +59,15 @@
     *   **`@typescript-eslint/no-unsafe-assignment`, `@typescript-eslint/no-unsafe-member-access`, `@typescript-eslint/no-explicit-any`**:
         *   **How to fix**: Avoid `any` type. Provide explicit type annotations for variables, function parameters, and return types. Use type guards (`typeof`, `instanceof`, custom type predicates) to safely narrow `unknown` types before accessing properties.
         *   **Example**: Instead of `const data: any = ...`, use `const data: MyType = ...`. Instead of `value.prop`, use `if (isMyType(value)) { value.prop }`.
-    *   **`unicorn/no-null`, `unicorn/no-useless-undefined`**:
-        *   **How to fix**: Prefer `undefined` over `null` for representing the absence of a value. Simplify conditional checks for `undefined`.
-        *   **Example**: Instead of `useState(null)`, use `useState<Type | undefined>()`. Instead of `if (value === undefined || value.length === 0)`, use `if (!value)`.
+    *   **`unicorn/no-null`**:
+        *   **How to fix**: Prefer `undefined` over `null` for representing the absence of a value.
+        *   **Example**: Instead of `useState(null)`, use `useState<Type | undefined>()`.
     *   **`unicorn/filename-case`**:
         *   **How to fix**: Rename files to `camelCase` (e.g., `myHelper.ts`) or `PascalCase` (e.g., `MyComponent.tsx`) as appropriate for their content (e.g., components usually PascalCase, utilities camelCase).
     *   **`@typescript-eslint/require-await`**:
         *   **How to fix**: If an `async` function does not use `await`, either add an `await` expression (if it performs an asynchronous operation) or remove the `async` keyword if it's purely synchronous.
     *   **`sonarjs/slow-regex`**:
         *   **How to fix**: Optimize regular expression patterns to prevent super-linear runtime due to backtracking, which can lead to ReDoS (Regular Expression Denial of Service) vulnerabilities. Consult regex optimization resources.
-    *   **`sonarjs/different-types-comparison`**:
-        *   **How to fix**: Ensure comparisons are type-safe. For checking both `null` and `undefined`, use `value == null` (loose equality) or `value === null || value === undefined` (strict equality). Avoid `!==` when `!=` is intended for nullish checks.
     *   **`@typescript-eslint/no-misused-promises`**:
         *   **How to fix**: When an `async` function is used as an event handler or callback that expects a `void` return, explicitly mark the promise as ignored using the `void` operator.
         *   **Example**: `onClick={() => { void handleSubmit(); }}`.

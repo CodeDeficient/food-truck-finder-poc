@@ -52,7 +52,7 @@ export function buildTruckDataSchema(
           timestamp: new Date().toISOString(),
         }))
       : undefined,
-    operating_hours: extractedTruckData.operating_hours === undefined
+    operating_hours: extractedTruckData.operating_hours == null
       ? {
           monday: { closed: true },
           tuesday: { closed: true },
@@ -93,7 +93,7 @@ export function buildTruckDataSchema(
       : [],
     data_quality_score: 0.5, // Default score - confidence_score not available in type
     verification_status: 'pending',
-    source_urls: sourceUrl !== undefined && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
+    source_urls: sourceUrl != null && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
     last_scraped_at: new Date().toISOString(),
   };
 }
@@ -152,7 +152,7 @@ export async function finalizeJobStatus(
 
 // Helper function to validate input data
 function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruckDetails): boolean {
-  if (extractedTruckData === undefined || typeof extractedTruckData !== 'object') {
+  if (extractedTruckData == null || typeof extractedTruckData !== 'object') {
     console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`);
     return false;
   }

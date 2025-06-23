@@ -21,7 +21,7 @@ export function TooltipIndicator({
   }
 
   if (hideIndicator) {
-    return undefined;
+    return;
   }
 
   return (
