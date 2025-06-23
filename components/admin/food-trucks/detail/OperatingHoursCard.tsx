@@ -19,7 +19,7 @@ export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>)
         <CardDescription>Daily operating schedule</CardDescription>
       </CardHeader>
       <CardContent>
-        {(truck.operating_hours !== undefined) && Object.keys(truck.operating_hours).length > 0 ? (
+        {truck.operating_hours != undefined && Object.keys(truck.operating_hours).length > 0 ? (
           <div className="space-y-2">
             {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
               const dayData = truck.operating_hours?.[day as keyof OperatingHours];
@@ -32,7 +32,12 @@ export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>)
                     if (dayData?.closed === true) {
                       return <span className="text-red-600 text-sm">Closed</span>;
                     }
-                    if (dayData?.open && dayData?.close) {
+                    if (
+                      typeof dayData?.open === 'string' &&
+                      dayData.open.length > 0 &&
+                      typeof dayData?.close === 'string' &&
+                      dayData.close.length > 0
+                    ) {
                       return (
                         <span className="text-gray-900 text-sm">
                           {dayData.open} - {dayData.close}

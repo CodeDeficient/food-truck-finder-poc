@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Eye, RefreshCw, Play } from 'lucide-react';
 
 interface CleanupHeaderProps {
-  isRunning: boolean;
-  onPreview: () => void;
-  onDryRun: () => void;
-  onRunCleanup: () => void;
+  readonly isRunning: boolean;
+  readonly onPreview: () => void;
+  readonly onDryRun: () => void;
+  readonly onRunCleanup: () => void;
 }
 
-export function CleanupHeader({ isRunning, onPreview, onDryRun, onRunCleanup }: CleanupHeaderProps) {
+export function CleanupHeader({ isRunning, onPreview, onDryRun, onRunCleanup }: Readonly<CleanupHeaderProps>) {
   return (
     <div className="flex items-center justify-between">
       <div>

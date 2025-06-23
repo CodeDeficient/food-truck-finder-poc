@@ -18,8 +18,21 @@ export function Toaster() {
     <ToastProvider>
       {toasts.map((toast: ToasterToast) => {
         const { id, title, description, action, ...props } = toast;
+        // Only spread props that are safe and expected by <Toast>
+        const safeProps = Object.fromEntries(
+          Object.entries(props).filter(([key]) =>
+            [
+              'type',
+              'duration',
+              'onOpenChange',
+              'open',
+              'variant',
+              // add other allowed keys as needed
+            ].includes(key)
+          )
+        );
         return (
-          <Toast key={id} {...props}>
+          <Toast key={id} {...safeProps}>
             <div className="grid gap-1">
               {title != undefined && title !== '' && <ToastTitle>{title}</ToastTitle>}
               {description != undefined && description !== '' && <ToastDescription>{description}</ToastDescription>}

@@ -3,11 +3,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 interface EmailFormFieldsProps {
-  email: string;
-  setEmail: (email: string) => void;
-  password: string;
-  setPassword: (password: string) => void;
-  loading: boolean;
+  readonly email: string;
+  readonly setEmail: (email: string) => void;
+  readonly password: string;
+  readonly setPassword: (password: string) => void;
+  readonly loading: boolean;
 }
 
 export function EmailFormFields({
@@ -15,8 +15,8 @@ export function EmailFormFields({
   setEmail,
   password,
   setPassword,
-  loading,
-}: EmailFormFieldsProps) {
+  loading: _loading,
+}: Readonly<EmailFormFieldsProps>) {
   return (
     <>
       <div className="space-y-2">

@@ -1,4 +1,5 @@
 import { firecrawl } from './firecrawl'; // Import the firecrawl singleton
+import * as crypto from 'node:crypto'; // Node.js crypto for secure randomness
 
 interface InstagramPost {
   id: string;
@@ -150,17 +151,20 @@ export class ScraperEngine {
       }
 
       const returnedData: WebsiteScrapeData = {};
-      if (firecrawlResult.data.markdown != undefined && firecrawlResult.data.markdown !== '') {
+      if (firecrawlResult.data.markdown !== undefined && firecrawlResult.data.markdown !== '') {
         returnedData.markdown = firecrawlResult.data.markdown;
       }
-      if (firecrawlResult.data.html != undefined && firecrawlResult.data.html !== '') {
+      if (firecrawlResult.data.html !== undefined && firecrawlResult.data.html !== '') {
         returnedData.html = firecrawlResult.data.html;
       }
-      if (firecrawlResult.data.metadata != undefined) {
+      if (firecrawlResult.data.metadata !== undefined) {
         returnedData.metadata = firecrawlResult.data.metadata;
       }
 
-      if ((returnedData.markdown == undefined || returnedData.markdown === '') && (returnedData.html == undefined || returnedData.html === '')) {
+      if (
+        (returnedData.markdown === undefined || returnedData.markdown === '') &&
+        (returnedData.html === undefined || returnedData.html === '')
+      ) {
         throw new Error('Firecrawl returned no markdown or HTML content.');
       }
 
@@ -304,15 +308,31 @@ export class ScraperEngine {
   }
 
   private getRandomUserAgent(): string {
-    // Using Math.random() for non-cryptographic purposes (e.g., selecting a user agent) is acceptable.
-    // eslint-disable-next-line sonarjs/pseudo-random
-    return this.userAgents[Math.floor(Math.random() * this.userAgents.length)];
+    // Use Node.js crypto for stronger randomness if available, fallback to Math.random otherwise.
+    let idx: number;
+    if (globalThis.window?.crypto?.getRandomValues !== undefined) {
+      const array = globalThis.window.crypto.getRandomValues(new Uint32Array(1));
+      idx = array[0] % this.userAgents.length;
+    } else if (typeof crypto.randomInt === 'function') {
+      idx = crypto.randomInt(0, this.userAgents.length);
+    } else {
+      idx = Math.floor(Math.random() * this.userAgents.length);
+    }
+    return this.userAgents[idx];
   }
 
   private async randomDelay(): Promise<void> {
-    // Using Math.random() for non-cryptographic purposes (e.g., simulating delay) is acceptable.
-    // eslint-disable-next-line sonarjs/pseudo-random
-    const delay = this.requestDelay + Math.random() * 1000;
+    // Use Node.js crypto for stronger randomness if available, fallback to Math.random otherwise.
+    let randomMs: number;
+    if (globalThis.window?.crypto?.getRandomValues !== undefined) {
+      const array = globalThis.window.crypto.getRandomValues(new Uint32Array(1));
+      randomMs = array[0] % 1000;
+    } else if (typeof crypto.randomInt === 'function') {
+      randomMs = crypto.randomInt(0, 1000);
+    } else {
+      randomMs = Math.floor(Math.random() * 1000);
+    }
+    const delay = this.requestDelay + randomMs;
     return new Promise((resolve) => setTimeout(resolve, delay));
   }
 
@@ -325,13 +345,12 @@ export class ScraperEngine {
     operation: () => Promise<T>,
     maxRetries: number = this.maxRetries,
   ): Promise<T> {
-    let lastError: unknown; // Changed to unknown
+    let lastError: unknown;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
       } catch (error: unknown) {
-        // Catch error as unknown
         lastError = error;
         if (attempt === maxRetries) {
           throw lastError instanceof Error ? lastError : new Error(String(lastError));
@@ -391,7 +410,7 @@ interface TruckData {
 
 export class DataQualityAssessor {
   private assessBasicInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.name == undefined || truckData.name.trim().length === 0) {
+    if (truckData.name === undefined || truckData.name.trim().length === 0) {
       issues.push('Missing or empty truck name');
       score -= 20;
     }
@@ -399,7 +418,7 @@ export class DataQualityAssessor {
   }
 
   private assessLocationInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.location?.current == undefined) {
+    if (truckData.location?.current === undefined) {
       issues.push('Missing current location data');
       score -= 25;
     } else {
@@ -410,7 +429,7 @@ export class DataQualityAssessor {
         issues.push('Missing GPS coordinates');
         score -= 15;
       }
-      if (truckData.location.current.address == undefined || truckData.location.current.address === '') {
+      if (truckData.location.current.address === undefined || truckData.location.current.address === '') {
         issues.push('Missing address information');
         score -= 10;
       }
@@ -419,19 +438,19 @@ export class DataQualityAssessor {
   }
 
   private assessContactInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.contact == undefined) {
+    if (truckData.contact === undefined) {
       issues.push('Missing contact information');
       score -= 20;
     } else {
-      if ((truckData.contact.phone == undefined || truckData.contact.phone === '') && (truckData.contact.email == undefined || truckData.contact.email === '')) {
+      if ((truckData.contact.phone === undefined || truckData.contact.phone === '') && (truckData.contact.email === undefined || truckData.contact.email === '')) {
         issues.push('No phone or email contact available');
         score -= 15;
       }
-      if (truckData.contact.phone != undefined && truckData.contact.phone !== '' && !this.isValidPhone(truckData.contact.phone)) {
+      if (truckData.contact.phone !== undefined && truckData.contact.phone !== '' && !this.isValidPhone(truckData.contact.phone)) {
         issues.push('Invalid phone number format');
         score -= 5;
       }
-      if (truckData.contact.email != undefined && truckData.contact.email !== '' && !this.isValidEmail(truckData.contact.email)) {
+      if (truckData.contact.email !== undefined && truckData.contact.email !== '' && !this.isValidEmail(truckData.contact.email)) {
         issues.push('Invalid email format');
         score -= 5;
       }
@@ -440,7 +459,7 @@ export class DataQualityAssessor {
   }
 
   private assessOperatingHours(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.operating_hours == undefined || Object.keys(truckData.operating_hours).length === 0) {
+    if (truckData.operating_hours === undefined || Object.keys(truckData.operating_hours).length === 0) {
       issues.push('Missing operating hours');
       score -= 15;
     }
@@ -448,7 +467,7 @@ export class DataQualityAssessor {
   }
 
   private assessMenuInfo(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.menu == undefined || truckData.menu.length === 0) {
+    if (truckData.menu === undefined || truckData.menu.length === 0) {
       issues.push('Missing menu information');
       score -= 10;
     } else {
@@ -460,7 +479,7 @@ export class DataQualityAssessor {
   }
 
   private assessLastUpdated(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.last_updated != undefined && truckData.last_updated !== '') {
+    if (truckData.last_updated !== undefined && truckData.last_updated !== '') {
       const lastUpdate = new Date(truckData.last_updated);
       const daysSinceUpdate = (Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
 
@@ -493,17 +512,17 @@ export class DataQualityAssessor {
   }
 
   private validateMenuCategory(category: MenuCategory, categoryIndex: number, issues: string[]): void {
-    if (category.category == undefined || category.category.trim().length === 0) {
+    if (category.category === undefined || category.category.trim().length === 0) {
       issues.push(`Menu category ${categoryIndex + 1} missing name`);
     }
   }
 
   private validateMenuItems(category: MenuCategory, issues: string[]): void {
-    if (category.items == undefined || category.items.length === 0) {
+    if (category.items === undefined || category.items.length === 0) {
       issues.push(`Menu category "${category.category ?? 'Unknown'}" has no items`);
     } else {
       for (const [itemIndex, item] of category.items.entries()) {
-        if (item.name == undefined || item.name.trim().length === 0) {
+        if (item.name === undefined || item.name.trim().length === 0) {
           issues.push(`Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`);
         }
         if (typeof item.price !== 'number' || item.price <= 0) {
@@ -524,10 +543,9 @@ export class DataQualityAssessor {
     return issues;
   }
   private isValidPhone(phone: string): boolean {
-    // Regex for phone number validation. Removed duplicate characters in character class.
-    // This regex is not vulnerable to super-linear runtime due to backtracking.
-
-    const phoneRegex = /^\+?[\d\s-()]{10,}$/;
+    // Regex for phone number validation. Not vulnerable to super-linear runtime due to backtracking.
+    // Accepts +, digits, spaces, dashes, and parentheses. At least 10 digits.
+    const phoneRegex = /^\+?[\d\s\-()]{10,}$/;
     return phoneRegex.test(phone);
   }
   private isValidEmail(email: string): boolean {
@@ -542,8 +560,8 @@ interface GeminiLocationData {
   city: string;
   state: string;
   coordinates: {
-    lat: number | undefined;
-    lng: number | undefined;
+    lat?: number;
+    lng?: number;
   };
   confidence: number;
 }
@@ -613,7 +631,12 @@ export class GeminiDataProcessor {
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
 
-      return JSON.parse(response) as { categories: MenuCategory[] };
+      // Ensure type safety for parsed response
+      const parsed = JSON.parse(response);
+      if (!parsed || typeof parsed !== 'object' || !('categories' in parsed)) {
+        throw new Error('Invalid Gemini menu response');
+      }
+      return parsed as { categories: MenuCategory[] };
     } catch (error) {
       console.error('Error processing menu data with Gemini:', error);
       throw error;
@@ -647,14 +670,34 @@ export class GeminiDataProcessor {
       `;
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
-      const parsedResponse = JSON.parse(response) as GeminiLocationData;
-      parsedResponse.coordinates.lat ??= undefined;
-      parsedResponse.coordinates.lng ??= undefined;
-      return parsedResponse;
+      const parsedResponse: unknown = JSON.parse(response);
+      const validatedResponse = this.validateGeminiLocationResponse(parsedResponse);
+      return validatedResponse;
     } catch (error) {
       console.error('Error extracting location with Gemini:', error);
       throw error;
     }
+  }
+
+  private validateGeminiLocationResponse(parsedResponse: unknown): GeminiLocationData {
+    if (
+      parsedResponse === null ||
+      typeof parsedResponse !== 'object' ||
+      !('coordinates' in parsedResponse) ||
+      typeof (parsedResponse as Record<string, unknown>).coordinates !== 'object'
+    ) {
+      throw new Error('Invalid Gemini location response');
+    }
+    const coordinates = (parsedResponse as { coordinates?: { lat?: unknown; lng?: unknown } }).coordinates;
+    if (coordinates && typeof coordinates === 'object') {
+      if (typeof coordinates.lat !== 'number') {
+        (coordinates as { lat?: number | undefined }).lat = undefined;
+      }
+      if (typeof coordinates.lng !== 'number') {
+        (coordinates as { lng?: number | undefined }).lng = undefined;
+      }
+    }
+    return parsedResponse as GeminiLocationData;
   }
 
   async standardizeOperatingHours(hoursText: string): Promise<GeminiOperatingHours> {
@@ -684,8 +727,11 @@ export class GeminiDataProcessor {
 
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
-
-      return JSON.parse(response) as GeminiOperatingHours;
+      const parsed = JSON.parse(response);
+      if (parsed === null || typeof parsed !== 'object') {
+        throw new Error('Invalid Gemini hours response');
+      }
+      return parsed as GeminiOperatingHours;
     } catch (error) {
       console.error('Error standardizing hours with Gemini:', error);
       throw error;
@@ -716,8 +762,11 @@ export class GeminiDataProcessor {
 
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
-
-      return JSON.parse(response) as GeminiSentimentAnalysis;
+      const parsed = JSON.parse(response);
+      if (parsed === null || typeof parsed !== 'object') {
+        throw new Error('Invalid Gemini sentiment response');
+      }
+      return parsed as GeminiSentimentAnalysis;
     } catch (error) {
       console.error('Error analyzing sentiment with Gemini:', error);
       throw error;
@@ -725,12 +774,11 @@ export class GeminiDataProcessor {
   }
 
   private async makeGeminiRequest(prompt: string): Promise<string> {
-    // Simulate Gemini API call
-    // In real implementation, would make actual API call to Google Gemini
-
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API delay
+    return this.getMockGeminiResponse(prompt);
+  }
 
-    // Mock responses based on prompt content
+  private getMockGeminiResponse(prompt: string): string {
     if (prompt.includes('menu text')) {
       return JSON.stringify({
         categories: [
@@ -776,7 +824,6 @@ export class GeminiDataProcessor {
         summary: 'Customer enjoyed the food and service',
       });
     }
-
     return '{"processed": true}';
   }
 

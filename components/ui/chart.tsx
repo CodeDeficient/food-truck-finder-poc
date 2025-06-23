@@ -133,9 +133,14 @@ const ChartTooltipContent = React.forwardRef<
   ) => {
     const { config } = useChart();
 
+    // Ensure payload is properly typed
+    const safePayload: Payload<ValueType, NameType>[] = Array.isArray(payload)
+      ? (payload)
+      : [];
+
     const tooltipLabel = useTooltipLabel({
       hideLabel,
-      payload,
+      payload: safePayload,
       label,
       labelFormatter,
       labelClassName,
@@ -143,36 +148,44 @@ const ChartTooltipContent = React.forwardRef<
       labelKey
     });
 
-    if (!active || !payload || payload.length === 0) {
+    if (!active || !safePayload || safePayload.length === 0) {
       return null;
     }
 
-    const nestLabel = payload.length === 1 && indicator !== 'dot';
+    const nestLabel = safePayload.length === 1 && indicator !== 'dot';
 
     return (
       <div
         ref={ref}
         className={cn(
-          'grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl',\
+          'grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl',
           className,
         )}
       >
         {nestLabel ? undefined : tooltipLabel}
         <div className="grid gap-1.5">
-          {(payload as Payload<ValueType, NameType>[]).map((item, index) => {
-            const itemData = item as { name?: string; dataKey?: string; payload?: unknown; color?: string; value?: number };
-            const key = `${nameKey ?? itemData.name ?? itemData.dataKey ?? 'value'}`;
+          {safePayload.map((item, index) => {
+            // Add explicit type for itemData
+            const dataKey = typeof item.dataKey === 'string' ? item.dataKey : undefined;
+            const itemData: { name?: string; dataKey?: string; payload?: Record<string, unknown>; color?: string; value?: number } = {
+              name: item.name === undefined ? undefined : String(item.name),
+              dataKey,
+              payload: typeof item.payload === 'object' && item.payload !== null ? (item.payload as Record<string, unknown>) : undefined,
+              color: typeof item.color === 'string' ? item.color : undefined,
+              value: typeof item.value === 'number' ? item.value : undefined,
+            };
+            const key = nameKey ?? itemData.name ?? itemData.dataKey ?? 'value';
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
             const indicatorColor =
               color ??
-              (itemData.payload !== undefined && itemData.payload !== null && typeof itemData.payload === 'object' && 'fill' in itemData.payload
-                ? String((itemData.payload as Record<string, unknown>).fill)
+              (itemData.payload && typeof itemData.payload === 'object' && 'fill' in itemData.payload
+                ? String(itemData.payload.fill)
                 : undefined) ??
               itemData.color;
 
             return (
               <div
-                key={itemData.dataKey}
+                key={itemData.dataKey ?? index}
                 className={cn(
                   'flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground',
                   indicator === 'dot' && 'items-center',
@@ -186,7 +199,7 @@ const ChartTooltipContent = React.forwardRef<
                   itemConfig={itemConfig}
                 />
                 <TooltipItemContent
-                  formatter={formatter as ((value: number, name: string, item: Payload<ValueType, NameType>, index: number, payload: Payload<ValueType, NameType>[]) => React.ReactNode) | undefined}
+                  formatter={formatter as ((value: number, name: string, item: unknown, index: number, payload: Record<string, unknown>[]) => React.ReactNode) | undefined}
                   itemData={itemData}
                   item={item}
                   index={index}
@@ -216,7 +229,11 @@ const ChartLegendContent = React.forwardRef<
 >(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
   const { config } = useChart();
 
-  if (!payload || payload.length === 0) {
+  const safePayload: Payload<ValueType, NameType>[] = Array.isArray(payload)
+    ? (payload as Payload<ValueType, NameType>[])
+    : [];
+
+  if (!safePayload || safePayload.length === 0) {
     return null;
   }
 
@@ -229,15 +246,20 @@ const ChartLegendContent = React.forwardRef<
         className,
       )}
     >
-      {(payload as Payload<ValueType, NameType>[]).map((item) => {
-        const itemData = item as { dataKey?: string; value?: string; color?: string };
+      {safePayload.map((item, idx) => {
+        const dataKey = typeof item.dataKey === 'string' ? item.dataKey : undefined;
+        const itemData: { dataKey?: string; value?: string; color?: string } = {
+          dataKey,
+          value: typeof item.value === 'string' ? item.value : undefined,
+          color: typeof item.color === 'string' ? item.color : undefined,
+        };
         const keyValue = nameKey ?? (itemData.dataKey !== undefined && itemData.dataKey !== '' ? String(itemData.dataKey) : 'value');
-        const key = `${keyValue}`;
+        const key = keyValue;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (
           <div
-            key={itemData.value as string}
+            key={itemData.value ?? idx}
             className={cn(
               'flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground',
             )}

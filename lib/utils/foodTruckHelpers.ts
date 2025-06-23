@@ -1,4 +1,4 @@
-import { FoodTruck, TrucksApiResponse } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types/foodTruck';
 
 export const getCurrentDay = () => {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -19,7 +19,8 @@ export const formatHours = (hours: { open: string; close: string; }) => {
 }
 
 export const getPopularItems = (truck: FoodTruck) => {
-    return truck.menu?.flatMap(category => category.items).filter(item => item.is_popular) ?? [];
+    // Explicitly check for nullish and boolean
+    return truck.menu?.flatMap(category => category.items).filter(item => Boolean(item && item.is_popular === true)) ?? [];
 }
 
 export const getPriceRange = (truck: FoodTruck) => {

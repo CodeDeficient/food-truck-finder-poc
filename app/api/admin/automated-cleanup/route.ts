@@ -47,12 +47,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         return await handleGetDefault();
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Automated cleanup GET error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to process cleanup request',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
 }
@@ -64,14 +64,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body: RequestBody = await request.json();
+    const rawBody: unknown = await request.json();
+    if (typeof rawBody !== 'object' || rawBody === null || !('action' in rawBody)) {
+      return NextResponse.json({ success: false, error: 'Invalid request body' }, { status: 400 });
+    }
+    const body: RequestBody = rawBody as RequestBody;
     return await handlePostRequest(body);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Automated cleanup POST error:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to process cleanup request',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
 }

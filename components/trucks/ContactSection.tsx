@@ -6,12 +6,12 @@ interface ContactSectionProps {
   readonly verificationStatus?: string;
 }
 
-export function ContactSection({ contactInfo, verificationStatus }: ContactSectionProps) {
+export function ContactSection({ contactInfo, verificationStatus }: Readonly<ContactSectionProps>) {
   return (
     <div>
       <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
       <div className="space-y-1 dark:text-gray-300">
-        {(contactInfo?.phone !== undefined) && (
+        {contactInfo?.phone !== undefined && (
           <a
             href={`tel:${contactInfo.phone}`}
             className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
@@ -20,7 +20,7 @@ export function ContactSection({ contactInfo, verificationStatus }: ContactSecti
             <span className="truncate">{contactInfo.phone}</span>
           </a>
         )}
-        {(contactInfo?.website !== undefined) && (
+        {contactInfo?.website !== undefined && (
           <a
             href={contactInfo.website}
             target="_blank"
@@ -31,7 +31,7 @@ export function ContactSection({ contactInfo, verificationStatus }: ContactSecti
             <span className="truncate">Website</span>
           </a>
         )}
-        {verificationStatus && (
+        {verificationStatus !== undefined && (
           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
             <Star className="h-3 w-3 mr-1" />
             <span className="capitalize">{verificationStatus}</span>
