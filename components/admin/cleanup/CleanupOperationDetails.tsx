@@ -1,0 +1,56 @@
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
+import { CleanupResult } from '@/hooks/useDataCleanup';
+import { operationConfig } from './OperationSelector';
+
+interface CleanupOperationDetailsProps {
+  readonly operations: CleanupResult['operations'];
+}
+
+export function CleanupOperationDetails({ operations }: CleanupOperationDetailsProps) {
+  return (
+    <div className="space-y-3">
+      <h4 className="font-semibold">Operation Details</h4>
+      {operations.map((operation, index) => (
+        <div key={index} className="border rounded-lg p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              {operationConfig[operation.type as keyof typeof operationConfig]?.icon}
+              <span className="font-medium">{operation.description}</span>
+            </div>
+            <Badge variant={operation.errorCount > 0 ? 'destructive' : 'default'}>
+              {operation.successCount}/{operation.affectedCount}
+            </Badge>
+          </div>
+          
+          {operation.affectedCount > 0 && (
+            <Progress 
+              value={(operation.successCount / operation.affectedCount) * 100} 
+              className="h-2 mb-2"
+            />
+          )}
+          
+          {operation.errors.length > 0 && (
+            <Alert variant="destructive" className="mt-2">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Errors ({operation.errors.length})</AlertTitle>
+              <AlertDescription>
+                <div className="max-h-20 overflow-y-auto text-xs">
+                  {operation.errors.slice(0, 3).map((error, i) => (
+                    <div key={i}>{error}</div>
+                  ))}
+                  {operation.errors.length > 3 && (
+                    <div>... and {operation.errors.length - 3} more</div>
+                  )}
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}

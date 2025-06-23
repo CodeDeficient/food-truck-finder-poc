@@ -185,9 +185,50 @@ export class APIMonitor {
     };
   }
 
-  /**
-   * Generate alerts for a specific service
-   */
+  // Helper for token alerts
+  private static generateTokenAlerts(service: APIService, usage: APIUsageData, limits: typeof API_LIMITS[APIService], timestamp: string): APIUsageAlert[] {
+    const alerts: APIUsageAlert[] = [];
+    if (usage.tokens && limits.tokens.daily > 0) {
+      const tokenPercentage = usage.tokens.percentage;
+      if (tokenPercentage > limits.alertThresholds.critical * 100) {
+        alerts.push({
+          service,
+          level: 'critical',
+          message: `Critical: ${service} token usage at ${tokenPercentage.toFixed(1)}%`,
+          usage: {
+            current: usage.tokens.used,
+            limit: usage.tokens.limit,
+            percentage: tokenPercentage
+          },
+          timestamp,
+          recommendations: [
+            'Reduce prompt complexity',
+            'Implement response caching',
+            'Optimize token usage patterns'
+          ]
+        });
+      } else if (tokenPercentage > limits.alertThresholds.warning * 100) {
+        alerts.push({
+          service,
+          level: 'warning',
+          message: `Warning: ${service} token usage at ${tokenPercentage.toFixed(1)}%`,
+          usage: {
+            current: usage.tokens.used,
+            limit: usage.tokens.limit,
+            percentage: tokenPercentage
+          },
+          timestamp,
+          recommendations: [
+            'Monitor token consumption',
+            'Optimize prompt efficiency',
+            'Consider response caching'
+          ]
+        });
+      }
+    }
+    return alerts;
+  }
+
   private static generateAlerts(service: APIService, usage: APIUsageData): APIUsageAlert[] {
     const alerts: APIUsageAlert[] = [];
     const limits = API_LIMITS[service];
@@ -231,45 +272,8 @@ export class APIMonitor {
       });
     }
 
-    // Check token usage if applicable
-    if (usage.tokens && limits.tokens.daily > 0) {
-      const tokenPercentage = usage.tokens.percentage;
-      if (tokenPercentage > limits.alertThresholds.critical * 100) {
-        alerts.push({
-          service,
-          level: 'critical',
-          message: `Critical: ${service} token usage at ${tokenPercentage.toFixed(1)}%`,
-          usage: {
-            current: usage.tokens.used,
-            limit: usage.tokens.limit,
-            percentage: tokenPercentage
-          },
-          timestamp,
-          recommendations: [
-            'Reduce prompt complexity',
-            'Implement response caching',
-            'Optimize token usage patterns'
-          ]
-        });
-      } else if (tokenPercentage > limits.alertThresholds.warning * 100) {
-        alerts.push({
-          service,
-          level: 'warning',
-          message: `Warning: ${service} token usage at ${tokenPercentage.toFixed(1)}%`,
-          usage: {
-            current: usage.tokens.used,
-            limit: usage.tokens.limit,
-            percentage: tokenPercentage
-          },
-          timestamp,
-          recommendations: [
-            'Monitor token consumption',
-            'Optimize prompt efficiency',
-            'Consider response caching'
-          ]
-        });
-      }
-    }
+    // Token alerts
+    alerts.push(...this.generateTokenAlerts(service, usage, limits, timestamp));
 
     // Store alerts in history
     this.alertHistory.push(...alerts);

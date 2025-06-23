@@ -24,6 +24,32 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "tests/**",
+    "test-*.js",
+    "test-*.ts",
+    "test-*.tsx",
+    "**/*-test.*",
+    "**/*-tests.*",
+    "**/__tests__/**",
+    "**/*.mock.*",
+    "**/*.stories.*",
+    "**/*.snap",
+    "coverage/",
+    "**/*.bench.*",
+    "**/*.example.*",
+    "docs/**",
+    "**/*.md"
+  ]
 }

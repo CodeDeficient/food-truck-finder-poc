@@ -139,7 +139,7 @@ export const FoodTruckService = {
           const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
             await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
           if (menuError) throw menuError;
-          menuItems = items ?? [];
+          menuItems = Array.isArray(items) ? items : [];
         }
       } catch (menuError) {
         handleSupabaseError(menuError, 'getAllTrucks:menu_items');
@@ -167,7 +167,7 @@ export const FoodTruckService = {
       .select('*')
       .eq('food_truck_id', id);
     if (menuError) throw menuError;
-    truck.menu = groupMenuItems(items ?? []);
+    truck.menu = groupMenuItems(Array.isArray(items) ? items : []);
     return truck;
   },
 
@@ -384,6 +384,7 @@ function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
   }));
 }
 
+// Remove redundant type constituent in normalizeTruckLocation
 function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
   const fallback: FoodTruckLocation = {
     lat: undefined,
@@ -392,13 +393,13 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
     timestamp: new Date().toISOString(),
   };
   const loc = truck.exact_location ?? truck.current_location ?? truck.city_location ?? {};
-  const lat = loc.lat ?? undefined;
-  const lng = loc.lng ?? undefined;
+  const lat = typeof loc.lat === 'number' ? loc.lat : undefined;
+  const lng = typeof loc.lng === 'number' ? loc.lng : undefined;
   const address = loc.address;
   const timestamp = loc.timestamp;
 
   truck.current_location =
-    typeof lat !== 'number' || typeof lng !== 'number' || (lat === 0 && lng === 0)
+    lat === undefined || lng === undefined || (lat === 0 && lng === 0)
       ? { ...fallback, address: address ?? fallback.address }
       : {
           lat,
@@ -763,3 +764,10 @@ async function insertMenuItems(truckId: string, menuData: MenuCategory[] | undef
     console.error('Error inserting menu items for truck', truckId, menuError);
   }
 }
+
+// Fix all strict-boolean-expressions and always-true/false comparisons below
+// Example: if (someString) => if (typeof someString === 'string' && someString.trim() !== '')
+// Example: if (someNumber) => if (typeof someNumber === 'number' && !Number.isNaN(someNumber) && someNumber !== 0)
+// Example: if (someObject) => if (someObject !== undefined && someObject !== null)
+
+// For all other conditionals, ensure explicit nullish/empty/NaN checks as above

@@ -7,21 +7,23 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
+interface TestPipelineFormProps {
+  readonly url: string;
+  readonly setUrl: (url: string) => void;
+  readonly rawText: string;
+  readonly setRawText: (text: string) => void;
+  readonly useRawText: boolean;
+  readonly setUseRawText: (use: boolean) => void;
+  readonly isDryRun: boolean;
+  readonly setIsDryRun: (isDry: boolean) => void;
+  readonly isLoading: boolean;
+  readonly onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}
+
 export function TestPipelineForm({
   url, setUrl, rawText, setRawText, useRawText, setUseRawText,
   isDryRun, setIsDryRun, isLoading, onSubmit
-}: {
-  url: string;
-  setUrl: (url: string) => void;
-  rawText: string;
-  setRawText: (text: string) => void;
-  useRawText: boolean;
-  setUseRawText: (use: boolean) => void;
-  isDryRun: boolean;
-  setIsDryRun: (isDry: boolean) => void;
-  isLoading: boolean;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}) {
+}: Readonly<TestPipelineFormProps>) {
   return (
     <Card className="mb-6">
       <CardHeader>

@@ -6,7 +6,7 @@ interface RatingSectionProps {
   readonly reviewCount?: number;
 }
 
-export function RatingSection({ averageRating, reviewCount }: RatingSectionProps) {
+export function RatingSection({ averageRating, reviewCount }: Readonly<RatingSectionProps>) {
   if (averageRating === undefined) return null;
 
   return (

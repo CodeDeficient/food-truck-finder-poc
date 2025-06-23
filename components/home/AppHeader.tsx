@@ -1,5 +1,5 @@
 import React from 'react';
-import { useThemeSwitcher } from '@/components/ThemeProvider';
+// Removed useThemeSwitcher import
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sun, Moon } from 'lucide-react';
@@ -35,7 +35,7 @@ export function AppHeader({
           className="w-64"
         />
         {userLocation && (
-          <Button onClick={loadNearbyTrucks} variant="outline">
+          <Button onClick={() => { void loadNearbyTrucks(); }} variant="outline">
             Nearby Trucks
           </Button>
         )}

@@ -6,20 +6,18 @@ import { MenuSection } from './MenuSection';
 import { ContactSection } from './ContactSection';
 import { SocialMediaSection } from './SocialMediaSection';
 import { OperatingHoursSection } from './OperatingHoursSection';
-import { formatHours } from '@/lib/utils/foodTruckHelpers';
+import { formatHours, formatPrice } from '@/lib/utils/foodTruckHelpers';
 
 interface TruckCardContentProps {
   readonly truck: FoodTruck;
   readonly todayHours?: { open: string; close: string; closed: boolean };
   readonly popularItems: { name: string; price: number }[];
-  readonly formatPrice: (price: number) => string;
 }
 
 export function TruckCardContent({
   truck,
   todayHours,
   popularItems,
-  formatPrice,
 }: TruckCardContentProps) {
   return (
     <>
@@ -35,7 +33,7 @@ export function TruckCardContent({
 
         {/* Menu & Contact Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <MenuSection popularItems={popularItems} formatPrice={formatPrice} />
+          <MenuSection popularItems={popularItems} />
           <ContactSection contactInfo={truck.contact_info} verificationStatus={truck.verification_status} />
         </div>
 

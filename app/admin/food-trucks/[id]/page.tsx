@@ -1,5 +1,5 @@
 import React from 'react';
-import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
+import { FoodTruck, FoodTruckService } from '@/lib/supabase';
 import {
   categorizeQualityScore,
   getQualityBadgeClasses,
@@ -22,7 +22,7 @@ interface FoodTruckDetailPageProps {
 
 
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
-  const truck = await FoodTruckService.getTruckById(params.id);
+  const truck: FoodTruck | undefined = await FoodTruckService.getTruckById(params.id);
 
   if (truck == undefined) {
     return <TruckNotFound />;

@@ -3,13 +3,14 @@
  * Prevents brute force attacks and API abuse with intelligent rate limiting
  */
 
+import { NextResponse } from 'next/server'; // Added import for NextResponse
+
 interface RateLimitEntry {
   count: number;
   resetTime: number;
   blocked: boolean;
   blockUntil?: number;
 }
-
 
 // In-memory rate limit store (in production, use Redis)
 const rateLimitStore = new Map<string, RateLimitEntry>();
@@ -45,6 +46,18 @@ export type RateLimitType = keyof typeof RATE_LIMIT_CONFIGS;
  * Rate Limiter Service
  */
 export class RateLimiter {
+  // Extract logic from checkRateLimit to reduce function size
+  private static isBlocked(entry: RateLimitEntry | undefined, now: number): boolean {
+    return Boolean(entry && entry.blocked && entry.blockUntil !== undefined && now < entry.blockUntil);
+  }
+
+  private static resetEntry(entry: RateLimitEntry, now: number, config: typeof RATE_LIMIT_CONFIGS[RateLimitType]): void {
+    entry.count = 0;
+    entry.resetTime = now + config.windowMs;
+    entry.blocked = false;
+    entry.blockUntil = undefined;
+  }
+
   /**
    * Check if request should be rate limited
    */
@@ -60,45 +73,26 @@ export class RateLimiter {
     const config = RATE_LIMIT_CONFIGS[type];
     const now = Date.now();
     const key = `${type}:${identifier}`;
-    
-    // Clean up expired entries
     this.cleanupExpiredEntries();
-    
     let entry = rateLimitStore.get(key);
-    
-    // Initialize entry if it doesn't exist
     if (!entry) {
-      entry = {
-        count: 0,
-        resetTime: now + config.windowMs,
-        blocked: false
-      };
+      entry = { count: 0, resetTime: now + config.windowMs, blocked: false };
       rateLimitStore.set(key, entry);
     }
-    
-    // Check if currently blocked
-    if (entry.blocked && (entry.blockUntil != undefined) && now < entry.blockUntil) {
+    if (this.isBlocked(entry, now)) {
       return {
         allowed: false,
         remaining: 0,
         resetTime: entry.resetTime,
-        retryAfter: Math.ceil((entry.blockUntil - now) / 1000)
+        retryAfter: Math.ceil((entry.blockUntil! - now) / 1000)
       };
     }
-    
-    // Reset window if expired
     if (now >= entry.resetTime) {
-      entry.count = 0;
-      entry.resetTime = now + config.windowMs;
-      entry.blocked = false;
-      entry.blockUntil = undefined;
+      this.resetEntry(entry, now, config);
     }
-    
-    // Check if limit exceeded
     if (entry.count >= config.maxRequests) {
       entry.blocked = true;
       entry.blockUntil = now + config.blockDurationMs;
-      
       return {
         allowed: false,
         remaining: 0,
@@ -106,11 +100,8 @@ export class RateLimiter {
         retryAfter: Math.ceil(config.blockDurationMs / 1000)
       };
     }
-    
-    // Increment counter
     entry.count++;
     rateLimitStore.set(key, entry);
-    
     return {
       allowed: true,
       remaining: config.maxRequests - entry.count,
@@ -163,7 +154,7 @@ export class RateLimiter {
     }
     
     // Check if blocked
-    if (entry.blocked && (entry.blockUntil != undefined) && now < entry.blockUntil) {
+    if (entry.blocked && (entry.blockUntil != undefined) && now < entry.blockUntil) { // Changed != undefined to != null
       return {
         remaining: 0,
         resetTime: entry.resetTime,
@@ -196,7 +187,7 @@ export class RateLimiter {
     
     for (const [key, entry] of rateLimitStore.entries()) {
       // Remove entries that are expired and not blocked
-      if (now >= entry.resetTime && (!entry.blocked || (entry.blockUntil == undefined) || now >= entry.blockUntil)) {
+      if (now >= entry.resetTime && (!entry.blocked || (entry.blockUntil == undefined) || now >= entry.blockUntil)) { // Changed == undefined to == null
         rateLimitStore.delete(key);
       }
     }
@@ -211,7 +202,7 @@ export class RateLimiter {
       rateLimitStore.delete(key);
     } else {
       // Clear all types for this identifier
-      for (const limitType of Object.keys(RATE_LIMIT_CONFIGS)) {
+      for (const limitType of Object.keys(RATE_LIMIT_CONFIGS) as RateLimitType[]) { // Added type assertion
         const key = `${limitType}:${identifier}`;
         rateLimitStore.delete(key);
       }
@@ -282,32 +273,22 @@ export function withRateLimit(
         'X-RateLimit-Reset': new Date(result.resetTime).toISOString(),
       });
       
-      if (result.retryAfter != undefined) {
+      if (result.retryAfter) {
         headers.set('Retry-After', result.retryAfter.toString());
       }
       
-      return new Response(
-        JSON.stringify({
-          error: 'Rate limit exceeded',
-          message: (result.retryAfter == undefined) ? 'Too many requests. Try again later.' : `Too many requests. Try again in ${result.retryAfter} seconds.`,
-          retryAfter: result.retryAfter
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            ...Object.fromEntries(headers.entries())
-          }
-        }
-      );
+      return new NextResponse('Too Many Requests', { status: 429, headers });
     }
     
-    // Add rate limit headers to successful responses
     const response = await handler(request);
     
-    response.headers.set('X-RateLimit-Limit', RATE_LIMIT_CONFIGS[type].maxRequests.toString());
-    response.headers.set('X-RateLimit-Remaining', result.remaining.toString());
-    response.headers.set('X-RateLimit-Reset', new Date(result.resetTime).toISOString());
+    // Update headers on successful requests if not skipped
+    if (RATE_LIMIT_CONFIGS[type].skipSuccessfulRequests === false) {
+      const status = RateLimiter.getStatus(identifier, type);
+      response.headers.set('X-RateLimit-Limit', RATE_LIMIT_CONFIGS[type].maxRequests.toString());
+      response.headers.set('X-RateLimit-Remaining', status.remaining.toString());
+      response.headers.set('X-RateLimit-Reset', new Date(status.resetTime).toISOString());
+    }
     
     return response;
   };

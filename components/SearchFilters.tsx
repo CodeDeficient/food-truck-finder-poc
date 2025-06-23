@@ -1,22 +1,45 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
-import { Search, Filter, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import { SearchInputWithIcon } from './search/SearchInputWithIcon';
+import { FilterToggleButton } from './search/FilterToggleButton'; // Import the new component
+import { useSearchFiltersLogic } from '@/hooks/useSearchFiltersLogic';
+import { SearchFilterContent } from './search/SearchFilterContent'; // Import the new component
 
-// Main search section component
-function MainSearchSection({
+export interface SearchFilters {
+  query: string;
+  cuisine: string;
+  openNow: boolean;
+  radius: number;
+}
+
+interface SearchFiltersProps {
+  readonly onSearch: (filters: SearchFilters) => void;
+  readonly loading?: boolean;
+}
+
+export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
+  return (
+    <Card className="dark:bg-slate-800 dark:border-slate-700">
+      <CardContent className="p-4">
+        <SearchFilterContent onSearch={onSearch} loading={loading} />
+      </CardContent>
+    </Card>
+  );
+}
+
+// Exporting sub-components for use in SearchFilterContent
+export function MainSearchSection({
   filters,
   setFilters,
   loading,
   handleSearch,
   showAdvanced,
   setShowAdvanced,
-  activeFilterCount
+  activeFilterCount,
 }: {
   readonly filters: SearchFilters;
   readonly setFilters: (filters: SearchFilters) => void;
@@ -28,43 +51,29 @@ function MainSearchSection({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 sm:space-x-2">
-      <div className="relative flex-grow min-w-[200px]">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
-        <Input
-          placeholder="Search food trucks, cuisine, or menu items..."
-          value={filters.query}
-          onChange={(e) => setFilters({ ...filters, query: e.target.value })}
-          className="pl-10 w-full dark:bg-slate-700 dark:text-gray-100 dark:placeholder-gray-400"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-      </div>
+      <SearchInputWithIcon
+        placeholder="Search food trucks, cuisine, or menu items..."
+        value={filters.query}
+        onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSearch();
+          }
+        }}
+      />
       <Button onClick={handleSearch} disabled={loading} className="flex-shrink-0">
-        <Search className="h-4 w-4 mr-2" />
         Search
       </Button>
-      <Button
-        variant="outline"
-        onClick={() => setShowAdvanced(!showAdvanced)}
-        className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700 flex-shrink-0"
-      >
-        <Filter className="h-4 w-4 mr-2" />
-        Filters
-        {activeFilterCount > 0 && (
-          <Badge variant="secondary" className="ml-2 dark:bg-slate-700 dark:text-gray-300">
-            {activeFilterCount}
-          </Badge>
-        )}
-      </Button>
+      <FilterToggleButton
+        showAdvanced={showAdvanced}
+        setShowAdvanced={setShowAdvanced}
+        activeFilterCount={activeFilterCount}
+      />
     </div>
   );
 }
 
-// Quick filters section component
-function QuickFiltersSection({
+export function QuickFiltersSection({
   filters,
   setFilters,
   clearFilters
@@ -96,8 +105,7 @@ function QuickFiltersSection({
   );
 }
 
-// Cuisine types section component
-function CuisineTypesSection({
+export function CuisineTypesSection({
   filters,
   setFilters,
   cuisineTypes
@@ -132,8 +140,7 @@ function CuisineTypesSection({
   );
 }
 
-// Distance slider section component
-function DistanceSliderSection({
+export function DistanceSliderSection({
   filters,
   setFilters
 }: {
@@ -161,98 +168,22 @@ function DistanceSliderSection({
   );
 }
 
-interface SearchFiltersProps {
-  readonly onSearch: (filters: SearchFilters) => void;
-  readonly loading?: boolean;
-}
-
-interface SearchFilters {
-  query: string;
-  cuisine: string;
-  openNow: boolean;
-  radius: number;
-}
-
-export function SearchFilters({ onSearch, loading }: SearchFiltersProps) {
-  const [filters, setFilters] = useState<SearchFilters>({
-    query: '',
-    cuisine: '',
-    openNow: false,
-    radius: 10,
-  });
-
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
-  const cuisineTypes = [
-    'Mexican',
-    'American',
-    'Asian',
-    'Italian',
-    'BBQ',
-    'Burgers',
-    'Tacos',
-    'Pizza',
-    'Sandwiches',
-    'Desserts',
-  ];
-
-  const handleSearch = () => {
-    onSearch(filters);
-  };
-
-  const clearFilters = () => {
-    const clearedFilters = {
-      query: '',
-      cuisine: '',
-      openNow: false,
-      radius: 10,
-    };
-    setFilters(clearedFilters);
-    onSearch(clearedFilters);
-  };
-
-  const activeFilterCount = [
-    filters.query !== '',
-    filters.cuisine !== '',
-    filters.openNow === true
-  ].filter(Boolean).length;
-
+export function AdvancedFilters({
+  filters,
+  setFilters,
+  clearFilters,
+  cuisineTypes,
+}: {
+  readonly filters: SearchFilters;
+  readonly setFilters: (filters: SearchFilters) => void;
+  readonly clearFilters: () => void;
+  readonly cuisineTypes: readonly string[];
+}) {
   return (
-    <Card className="dark:bg-slate-800 dark:border-slate-700">
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          <MainSearchSection
-            filters={filters}
-            setFilters={setFilters}
-            loading={loading}
-            handleSearch={handleSearch}
-            showAdvanced={showAdvanced}
-            setShowAdvanced={setShowAdvanced}
-            activeFilterCount={activeFilterCount}
-          />
-
-          {showAdvanced && (
-            <div className="space-y-4 pt-4 border-t dark:border-slate-700">
-              <QuickFiltersSection
-                filters={filters}
-                setFilters={setFilters}
-                clearFilters={clearFilters}
-              />
-
-              <CuisineTypesSection
-                filters={filters}
-                setFilters={setFilters}
-                cuisineTypes={cuisineTypes}
-              />
-
-              <DistanceSliderSection
-                filters={filters}
-                setFilters={setFilters}
-              />
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-4 pt-4 border-t dark:border-slate-700">
+      <QuickFiltersSection filters={filters} setFilters={setFilters} clearFilters={clearFilters} />
+      <CuisineTypesSection filters={filters} setFilters={setFilters} cuisineTypes={cuisineTypes} />
+      <DistanceSliderSection filters={filters} setFilters={setFilters} />
+    </div>
   );
 }

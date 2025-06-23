@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     userAgent: request.headers.get('user-agent') ?? 'unknown',
   };
 
-  if (code) {
+  if (typeof code === 'string' && code.length > 0) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {

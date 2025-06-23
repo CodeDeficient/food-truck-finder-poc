@@ -7,8 +7,8 @@ import { CheckCircle, Trash2, Phone, MapPin, Star, Merge } from 'lucide-react';
 export { operationConfig };
 
 interface OperationSelectorProps {
-  selectedOperations: string[];
-  onToggleOperation: (operation: string) => void;
+  readonly selectedOperations: string[];
+  readonly onToggleOperation: (operation: string) => void;
 }
 
 const operationConfig = {
@@ -44,7 +44,7 @@ const operationConfig = {
   }
 };
 
-export function OperationSelector({ selectedOperations, onToggleOperation }: OperationSelectorProps) {
+export function OperationSelector({ selectedOperations, onToggleOperation }: Readonly<OperationSelectorProps>) {
   return (
     <Card>
       <CardHeader>
