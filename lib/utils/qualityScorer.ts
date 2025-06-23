@@ -262,10 +262,13 @@ export const DataQualityService = {
   // If it's meant to be a method of this service, it needs to be implemented.
   // For now, I'll add a placeholder for it.
   batchUpdateQualityScores: async (limit: number) => {
+    // No await needed, so remove async if not needed, or add a dummy await
+    await Promise.resolve();
     console.warn(`DataQualityService.batchUpdateQualityScores called with limit: ${limit}. This function needs to be properly implemented.`);
     return { updatedCount: 0, errors: [] };
   },
   updateTruckQualityScore: async (truckId: string) => {
+    await Promise.resolve();
     console.warn(`DataQualityService.updateTruckQualityScore called for truckId: ${truckId}. This function needs to be properly implemented.`);
     return { success: true };
   }

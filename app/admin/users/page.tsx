@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
 import Link from 'next/link';
-import { User, PostgrestError } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { UserTable } from '@/components/admin/users/UserTable';
 
 interface UserDisplayData {
@@ -28,11 +28,6 @@ async function getUsersData(): Promise<UserDisplayData[]> {
   }
 
   const users: User[] = data.users ?? [];
-
-  interface Profile {
-    id: string;
-    role: string;
-  }
 
   // Fetch profiles to get roles
   const { data: profiles, error: profilesError } = await supabaseAdmin

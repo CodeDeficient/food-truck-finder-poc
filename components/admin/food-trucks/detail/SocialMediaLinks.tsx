@@ -5,9 +5,9 @@ interface SocialMediaLinksProps {
   readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }
 
-export function SocialMediaLinks({ socialMedia }: SocialMediaLinksProps) {
+export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps>) { // Added readonly
   if (!socialMedia || Object.keys(socialMedia).length === 0) {
-    return null;
+    return null; // Changed to return null
   }
 
   const socialPlatforms = [
@@ -22,7 +22,7 @@ export function SocialMediaLinks({ socialMedia }: SocialMediaLinksProps) {
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
           const handle = socialMedia[key];
-          if (handle == undefined || handle === '') return null;
+          if (handle === undefined || handle.length === 0) return null; // Changed to return null and explicit check
 
           return (
             <a

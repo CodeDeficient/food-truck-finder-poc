@@ -3,20 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StageResult, TestPipelineResults } from '@/lib/types';
 
+interface TestResultsDisplayProps {
+  readonly results?: TestPipelineResults;
+  readonly renderStageResult: (stageName: string, result?: StageResult) => React.ReactElement | undefined;
+}
+
 export function TestResultsDisplay({
   results,
   renderStageResult
-}: {
-  results?: TestPipelineResults;
-  renderStageResult: (stageName: string, result?: StageResult) => React.ReactElement | undefined;
-}) {
-  if (!results || results.error != undefined) return null;
+}: Readonly<TestResultsDisplayProps>) {
+  if (!results || results.error !== undefined) return;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Test Results</CardTitle>
-        {results.overallStatus != undefined && (
+        {results.overallStatus !== undefined && (
           <CardDescription>Overall Status: {results.overallStatus}</CardDescription>
         )}
       </CardHeader>
@@ -43,7 +45,7 @@ export function TestResultsDisplay({
             {renderStageResult('Supabase Interaction Stage', results.supabase)}
           </TabsContent>
         </Tabs>
-        {results.logs != undefined && results.logs.length > 0 && (
+        {results.logs !== undefined && results.logs.length > 0 && (
           <div className="mt-4">
             <h3 className="text-lg font-semibold">Logs:</h3>
             <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-800 rounded-md overflow-x-auto text-sm">

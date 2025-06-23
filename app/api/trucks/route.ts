@@ -18,18 +18,18 @@ export async function GET(request: NextRequest) {
   const offset = Number.parseInt(searchParams.get('offset') ?? '0');
 
   try {
-    if (id) {
+    if (typeof id === 'string' && id.length > 0) {
       return await handleGetTruckById(id);
     }
 
-    if (lat && lng) {
+    if (typeof lat === 'string' && lat.length > 0 && typeof lng === 'string' && lng.length > 0) {
       return await handleGetTrucksByLocation(lat, lng, radius);
     }
 
     return await handleGetAllTrucks(limit, offset);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching food trucks:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }
 
@@ -145,12 +145,12 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as ZInfer<typeof FoodTruckSchema>;
     const validatedData = FoodTruckSchema.parse(body);
     return await handlePostTruck(validatedData);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating food truck:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Failed to create food truck' }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }
 
@@ -160,11 +160,11 @@ export async function PUT(request: NextRequest) {
     const validatedData = UpdateFoodTruckSchema.parse(body);
     const { id, ...updates } = validatedData;
     return await handlePutTruck(id, updates);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error updating food truck:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Failed to update food truck' }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

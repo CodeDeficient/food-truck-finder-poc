@@ -14,13 +14,13 @@ export function GET(request: NextRequest) {
     const service = searchParams.get('service') as APIService | null;
 
     return service ? handleServiceSpecificMonitoring(request, service) : handleComprehensiveMonitoring();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('API monitoring error:', error);
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to get API monitoring data',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 },
     );
@@ -29,7 +29,11 @@ export function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: { action: string; service?: string; level?: string } = await request.json();
+    const rawBody: unknown = await request.json();
+    if (typeof rawBody !== 'object' || rawBody === null || !('action' in rawBody) || typeof (rawBody as any).action !== 'string') {
+      return NextResponse.json({ success: false, error: 'Invalid request body' }, { status: 400 });
+    }
+    const body: { action: string; service?: string; level?: string } = rawBody as { action: string; service?: string; level?: string };
     const { action } = body;
 
     switch (action) {
@@ -55,13 +59,13 @@ export async function POST(request: NextRequest) {
         );
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('API monitoring POST error:', error);
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to process monitoring request',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 },
     );

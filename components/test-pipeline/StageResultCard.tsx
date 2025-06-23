@@ -3,11 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { StageResult } from '@/lib/types';
 
-export function StageResultCard({ stageName, result }: { stageName: string; result?: StageResult }) {
-  if (!result) return null;
+interface StageResultCardProps {
+  readonly stageName: string;
+  readonly result?: StageResult;
+}
+
+export function StageResultCard({ stageName, result }: Readonly<StageResultCardProps>) {
+  if (!result) return;
 
   return (
-    <Card className="mt-4">
+    <Card className="border-red-500">
       <CardHeader>
         <CardTitle>{stageName}</CardTitle>
         <CardDescription>
@@ -18,17 +23,17 @@ export function StageResultCard({ stageName, result }: { stageName: string; resu
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {result.error != undefined && (
+        {result.error !== undefined && (
           <p className="text-red-500">
             <strong>Error:</strong> {result.error}
           </p>
         )}
-        {result.details != undefined && (
+        {result.details !== undefined && (
           <p>
             <strong>Details:</strong> {result.details}
           </p>
         )}
-        {result.prompt != undefined && (
+        {result.prompt !== undefined && (
           <div>
             <strong>Prompt:</strong>
             <Textarea
@@ -38,7 +43,7 @@ export function StageResultCard({ stageName, result }: { stageName: string; resu
             />
           </div>
         )}
-        {result.rawContent != undefined && (
+        {result.rawContent !== undefined && (
           <div>
             <strong>Raw Content (Firecrawl):</strong>
             <Textarea
@@ -48,7 +53,7 @@ export function StageResultCard({ stageName, result }: { stageName: string; resu
             />
           </div>
         )}
-        {result.data != undefined && (
+        {result.data !== undefined && (
           <div className="mt-2">
             <strong>Data Output:</strong>{' '}
             <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
@@ -56,7 +61,7 @@ export function StageResultCard({ stageName, result }: { stageName: string; resu
             </pre>
           </div>
         )}
-        {result.preparedData != undefined && (
+        {result.preparedData !== undefined && (
           <div className="mt-2">
             <strong>Data Prepared for Supabase:</strong>{' '}
             <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
@@ -64,7 +69,7 @@ export function StageResultCard({ stageName, result }: { stageName: string; resu
             </pre>
           </div>
         )}
-        {result.recordId != undefined && (
+        {result.recordId !== undefined && (
           <p>
             <strong>Supabase Record id:</strong> {result.recordId}
           </p>
@@ -74,7 +79,7 @@ export function StageResultCard({ stageName, result }: { stageName: string; resu
             <strong>Gemini Tokens Used:</strong> {result.tokensUsed}
           </p>
         )}
-        {result.metadata != undefined && (
+        {result.metadata !== undefined && (
           <div>
             <strong>Metadata (Firecrawl):</strong>{' '}
             <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">

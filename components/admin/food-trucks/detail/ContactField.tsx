@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, Globe } from 'lucide-react';
+// Removed Mail, Phone, Globe imports as they are not directly used here
 
 interface ContactFieldProps {
   icon: React.ComponentType<{ className?: string }>;
@@ -16,7 +16,7 @@ export function ContactField({
   href,
   unavailableText
 }: Readonly<ContactFieldProps>) {
-  if (value == undefined || value === '') {
+  if (value === null || value === undefined || value.length === 0) {
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />

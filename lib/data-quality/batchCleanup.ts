@@ -368,7 +368,7 @@ export class BatchCleanupService {
           operation.successCount++;
         } else {
           try {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+             
             await DataQualityService.updateTruckQualityScore(truck.id);
             operation.successCount++;
           } catch (error) {

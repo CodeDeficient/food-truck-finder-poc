@@ -4,10 +4,10 @@ import { Badge } from '@/components/ui/badge';
 import type { FoodTruck } from '@/lib/supabase';
 
 interface TruckBasicInfoProps {
-  truck: FoodTruck;
+  readonly truck: FoodTruck;
 }
 
-export function TruckBasicInfo({ truck }: TruckBasicInfoProps) {
+export function TruckBasicInfo({ truck }: Readonly<TruckBasicInfoProps>) {
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>

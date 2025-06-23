@@ -10,9 +10,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogOut } from 'lucide-react';
+import { User } from '@supabase/supabase-js'; // Import User type
+
+interface UserMetadata {
+  avatar_url?: string;
+  full_name?: string;
+}
 
 interface UserMenuProps {
-  user: any; // Consider a more specific type if available
+  user: User | null; // Use Supabase User type
   userInitials: string;
   handleSignOut: () => Promise<void>;
 }
@@ -23,7 +29,7 @@ export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMen
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
           <Avatar>
-            <AvatarImage src={user?.user_metadata?.avatar_url as string} alt="Avatar" />
+            <AvatarImage src={(user?.user_metadata as UserMetadata)?.avatar_url} alt="Avatar" />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
           <span className="sr-only">Toggle user menu</span>
@@ -32,8 +38,8 @@ export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMen
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium">{user?.user_metadata?.full_name ?? 'Admin'}</p>
-            <p className="text-xs text-muted-foreground">{user?.email}</p>
+            <p className="text-sm font-medium">{(user?.user_metadata as UserMetadata)?.full_name ?? 'Admin'}</p>
+            <p className="text-xs text-muted-foreground">{user?.email ?? 'N/A'}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

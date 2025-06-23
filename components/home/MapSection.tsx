@@ -19,7 +19,7 @@ function getSelectedTruckLocation(
   if (selectedTruckId === undefined) return undefined;
 
   const truck = filteredTrucks.find((t) => t.id === selectedTruckId);
-  return (truck?.current_location?.lat === undefined) || (truck?.current_location?.lng === undefined)
+  return (truck?.current_location?.lat == undefined) || (truck?.current_location?.lng == undefined)
     ? undefined
     : [truck.current_location.lat, truck.current_location.lng];
 }
@@ -36,7 +36,7 @@ export function MapSection({
   userLocation,
   selectedTruckId,
   setSelectedTruckId
-}: MapSectionProps) {
+}: Readonly<MapSectionProps>) { // Added readonly
   return (
     <div
       key="map-container-parent"

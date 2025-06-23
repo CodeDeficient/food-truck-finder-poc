@@ -1,11 +1,18 @@
 import React from 'react';
 
-interface ScrapingJobsStatusProps {
-  readonly scrapingJobs?: any;
+interface ScrapingJobsMetrics {
+  active: number;
+  completed: number;
+  failed: number;
+  pending: number;
 }
 
-export function ScrapingJobsStatus({ scrapingJobs }: ScrapingJobsStatusProps) {
-  if (!scrapingJobs) return null;
+interface ScrapingJobsStatusProps {
+  readonly scrapingJobs?: ScrapingJobsMetrics; // Use specific interface
+}
+
+export function ScrapingJobsStatus({ scrapingJobs }: Readonly<ScrapingJobsStatusProps>) { // Added readonly
+  if (scrapingJobs == undefined) return null; // Changed to explicit null check and return null
 
   return (
     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
