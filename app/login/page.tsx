@@ -4,11 +4,10 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, Mail } from 'lucide-react';
 import { useAuthHandlers } from '@/hooks/useAuthHandlers';
+import { EmailFormFields } from '@/components/login/EmailFormFields';
 
 // Login header component
 function LoginHeader() {
@@ -30,7 +29,7 @@ function EmailLoginForm({
   password,
   setPassword,
   loading,
-  handleEmailLogin
+  handleEmailLogin,
 }: {
   readonly email: string;
   readonly setEmail: (email: string) => void;
@@ -48,28 +47,13 @@ function EmailLoginForm({
       }}
       className="space-y-4"
     >
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="user@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
+      <EmailFormFields
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        loading={loading}
+      />
       <Button type="submit" disabled={loading} className="w-full" size="lg">
         {loading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -85,7 +69,7 @@ function EmailLoginForm({
 // Google login button component
 function GoogleLoginButton({
   loading,
-  handleGoogleLogin
+  handleGoogleLogin,
 }: {
   readonly loading: boolean;
   readonly handleGoogleLogin: () => Promise<void>;
@@ -156,7 +140,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <LoginHeader />
         <CardContent className="space-y-4">
-          {error !== undefined && error !== '' && (
+          {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -173,10 +157,7 @@ export default function LoginPage() {
 
           <LoginDivider />
 
-          <GoogleLoginButton
-            loading={loading}
-            handleGoogleLogin={handleGoogleLogin}
-          />
+          <GoogleLoginButton loading={loading} handleGoogleLogin={handleGoogleLogin} />
 
           <LoginFooter />
         </CardContent>
