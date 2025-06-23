@@ -1,14 +1,14 @@
+'use client';
+
 import React from 'react';
-import { StatusMetric } from './useSystemMetrics';
+import { type StatusMetric } from './useSystemMetrics'; // Import StatusMetric type
+import { getStatusColor, getStatusIcon, getTrendIcon } from './status-helpers'; // Import helper functions
 
 interface SystemMetricsGridProps {
-  readonly metrics: StatusMetric[];
-  readonly getStatusColor: (status: string) => string;
-  readonly getStatusIcon: (status: string) => React.ReactNode;
-  readonly getTrendIcon: (trend?: string) => React.ReactNode;
+  metrics: StatusMetric[];
 }
 
-export function SystemMetricsGrid({ metrics, getStatusColor, getStatusIcon, getTrendIcon }: SystemMetricsGridProps) {
+export function SystemMetricsGrid({ metrics }: SystemMetricsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {metrics.map((metric, index) => (
