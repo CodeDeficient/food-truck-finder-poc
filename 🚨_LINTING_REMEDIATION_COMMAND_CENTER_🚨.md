@@ -81,9 +81,9 @@ powershell -ExecutionPolicy Bypass -File scripts/count-errors.ps1
 npx eslint . --format json | ConvertFrom-Json | ForEach-Object { $_.errorCount } | Measure-Object -Sum
 ```
 
-**CURRENT COUNT**: 379 errors (ESLint run: 2025-06-22, see below for breakdown)
+**CURRENT COUNT**: 406 errors (ESLint run: 2025-06-22, see below for breakdown)
 **LAST UPDATED**: 6/22/2025, End of Session - Manual refactoring session
-**UPDATED BY**: Cline Agent - Refactored 3 high-impact components
+**UPDATED BY**: Cline Agent - Refactored `components/MapDisplay.tsx`, `components/ui/chart.tsx`, `hooks/useRealtimeAdminEvents.ts`, `hooks/useRealtimeAdminEventsHelpers.ts`, `lib/supabase.ts`, `lib/data-quality/batchCleanup.ts`, `lib/api/monitoring/api-usage/handlers.ts`, and `app/api/monitoring/api-usage/route.ts`
 
 #### 🔥 **TOP ERROR TYPES (ESLINT, 2025-06-22):**
 - **max-lines-per-function**: 57 errors (Manual Refactor Required)
@@ -110,6 +110,7 @@ npx eslint . --format json | ConvertFrom-Json | ForEach-Object { $_.errorCount }
 - `lib/pipelineProcessor.ts`
 - `app/page.tsx`
 - `components/TruckCard.tsx`
+- `components/MapDisplay.tsx`
 
 #### 🔥 **AUTOMATION SAFETY STATUS:**
 - **High-Confidence Automation (~76 errors)**: `sonarjs/unused-import`, `unicorn/no-null`, `@typescript-eslint/require-await`, `sonarjs/no-unused-vars`.

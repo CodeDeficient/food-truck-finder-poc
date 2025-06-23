@@ -145,36 +145,43 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
   };
 }
 
+function aggregateQualityCheckResults(
+  totalTrucks: number,
+  assessmentResults: ReturnType<typeof assessTrucksQuality>,
+  updateResults: unknown,
+  timestamp: string
+) {
+  return {
+    totalTrucks: totalTrucks,
+    trucksWithMissingData: assessmentResults.trucksWithMissingData,
+    lowQualityTrucks: assessmentResults.lowQualityTrucks,
+    staleDataCount: assessmentResults.staleDataCount,
+    averageQualityScore: Math.round(assessmentResults.averageQualityScore * 100) / 100,
+    qualityBreakdown: assessmentResults.qualityBreakdown,
+    updateResults: updateResults,
+    timestamp: timestamp,
+  };
+}
+
 async function performDataQualityCheck() {
   try {
     const { trucks, total } = await FoodTruckService.getAllTrucks(1000, 0);
 
-    const {
-      trucksWithMissingData,
-      lowQualityTrucks,
-      staleDataCount,
-      averageQualityScore,
-      qualityBreakdown,
-    } = await assessTrucksQuality(trucks);
+    const assessmentResults = await assessTrucksQuality(trucks);
 
     const updateResults = await (DataQualityService as QualityService).batchUpdateQualityScores(100);
 
-    return {
-      totalTrucks: total,
-      trucksWithMissingData,
-      lowQualityTrucks,
-      staleDataCount,
-      averageQualityScore: Math.round(averageQualityScore * 100) / 100,
-      qualityBreakdown,
+    return aggregateQualityCheckResults(
+      total,
+      assessmentResults,
       updateResults,
-      timestamp: new Date().toISOString()
-    };
+      new Date().toISOString()
+    );
   } catch (error) {
     console.error('Error performing data quality check:', error);
     throw error;
   }
 }
-
 // Only allow POST requests for cron jobs
 export function GET() {
   return NextResponse.json(

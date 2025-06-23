@@ -22,7 +22,7 @@ async function getUsersData(): Promise<UserDisplayData[]> {
 
   const { data, error } = await supabaseAdmin.auth.admin.listUsers();
 
-  if (error !== null) {
+  if (error) {
     console.error('Error fetching users:', error);
     return [];
   }
@@ -35,11 +35,11 @@ async function getUsersData(): Promise<UserDisplayData[]> {
   }
 
   // Fetch profiles to get roles
-  const { data: profiles, error: profilesError } = (await supabaseAdmin
+  const { data: profiles, error: profilesError } = await supabaseAdmin
     .from('profiles')
-    .select('id, role')) as { data: Profile[] | null; error: PostgrestError | null };
+    .select('id, role');
 
-  if (profilesError !== null) {
+  if (profilesError) {
     console.error('Error fetching profiles:', profilesError);
     // Continue with users data even if profiles fetch fails
   }
@@ -69,7 +69,7 @@ function PageHeader() {
   );
 }
 
-function UserListCard({ users }: { readonly users: UserDisplayData[] }) {
+function UserListCard({ users }: { users: Readonly<UserDisplayData[]> }) {
   return (
     <Card>
       <CardHeader>
@@ -79,7 +79,7 @@ function UserListCard({ users }: { readonly users: UserDisplayData[] }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <UserTable users={users} />
+        <UserTable users={[...users]} />
       </CardContent>
     </Card>
   );

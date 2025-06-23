@@ -29,9 +29,7 @@ export function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const body = await request.json();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const body: { action: string; service?: string; level?: string } = await request.json();
     const { action } = body;
 
     switch (action) {
@@ -42,7 +40,13 @@ export async function POST(request: NextRequest) {
         return handleGetAlerts();
       }
       case 'test-alert': {
-        return handleTestAlert(body);
+        if (body.service === undefined || body.level === undefined) {
+          return NextResponse.json(
+            { success: false, error: 'Missing service or level for test-alert action' },
+            { status: 400 },
+          );
+        }
+        return handleTestAlert({ service: body.service, level: body.level });
       }
       default: {
         return NextResponse.json(

@@ -39,8 +39,8 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
         <BasicInfoCard truck={truck} />
         <ContactInfoCard truck={truck} />
         <LocationInfoCard truck={truck} />
-        <OperatingHoursCard truck={truck as { operating_hours?: Record<string, { closed?: boolean; open?: string; close?: string }> }} />
-        <RatingsReviewsCard truck={truck as { average_rating?: number; review_count?: number }} />
+        <OperatingHoursCard truck={truck} />
+        <RatingsReviewsCard truck={truck} />
       </div>
 
       <DataQualityCard truck={truck} qualityCategory={qualityCategory} />
