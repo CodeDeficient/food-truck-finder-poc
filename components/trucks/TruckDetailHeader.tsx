@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 interface TruckDetailHeaderProps {
-  truckName: string;
+  readonly truckName: string;
 }
 
 export function TruckDetailHeader({ truckName }: TruckDetailHeaderProps) {

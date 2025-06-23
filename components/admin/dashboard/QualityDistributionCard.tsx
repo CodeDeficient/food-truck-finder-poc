@@ -9,7 +9,7 @@ interface DataQualityStats {
 }
 
 interface QualityDistributionCardProps {
-  dataQualityStats: DataQualityStats;
+  readonly dataQualityStats: DataQualityStats;
 }
 
 export function QualityDistributionCard({ dataQualityStats }: Readonly<QualityDistributionCardProps>) {

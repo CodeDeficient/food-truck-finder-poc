@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { LucideIcon } from 'lucide-react'; // Import LucideIcon type
+// Removed LucideIcon import
 
 interface FeatureCardProps {
   readonly title: string;

@@ -82,7 +82,7 @@ export async function handleCrawlOperation(url: string, options: Record<string, 
   return pollCrawlStatus(crawlJob.jobId);
 }
 
-export async function handleSearchOperation() {
+export  function handleSearchOperation() {
   return NextResponse.json(
     {
       success: false,

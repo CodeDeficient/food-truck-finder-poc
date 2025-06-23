@@ -1,6 +1,7 @@
 import React from 'react';
 import { FoodTruck } from '@/lib/types/foodTruck';
 import { TruckAccordionContent } from './TruckAccordionContent';
+import { TruckListHeader } from './TruckListHeader'; // Import the new component
 
 interface TruckListSectionProps {
   readonly filteredTrucks: FoodTruck[];
@@ -19,9 +20,7 @@ export function TruckListSection({
 }: Readonly<TruckListSectionProps>) {
   return (
     <div className="lg:col-span-1 space-y-4">
-      <h3 className="text-lg font-semibold dark:text-gray-100">
-        Nearby Trucks ({filteredTrucks.length})
-      </h3>
+      <TruckListHeader truckCount={filteredTrucks.length} />
       <TruckAccordionContent
         filteredTrucks={filteredTrucks}
         selectedTruckId={selectedTruckId}

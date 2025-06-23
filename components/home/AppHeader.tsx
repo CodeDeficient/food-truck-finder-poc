@@ -35,7 +35,7 @@ export function AppHeader({
           className="w-64"
         />
         {userLocation && (
-          <Button onClick={() => { void loadNearbyTrucks(); }} variant="outline">
+          <Button onClick={loadNearbyTrucks} variant="outline">
             Nearby Trucks
           </Button>
         )}

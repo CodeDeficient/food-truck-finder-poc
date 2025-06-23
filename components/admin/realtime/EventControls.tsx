@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface EventControlsProps {
-  recentEventsCount: number;
-  onClearEvents: () => void;
+  readonly recentEventsCount: number;
+  readonly onClearEvents: () => void;
 }
 
-export function EventControls({ recentEventsCount, onClearEvents }: EventControlsProps) {
+export function EventControls({ recentEventsCount, onClearEvents }: Readonly<EventControlsProps>) {
   return (
     <div className="mt-4 flex items-center gap-2">
       <Button

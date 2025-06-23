@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
 
 interface RecentErrorsCardProps {
-  failedProcessingQueueItemsCount: number;
+  readonly failedProcessingQueueItemsCount: number;
 }
 
 export function RecentErrorsCard({ failedProcessingQueueItemsCount }: Readonly<RecentErrorsCardProps>) {

@@ -6,7 +6,7 @@ import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTo
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
   if (typeof payload !== 'object' || payload === null) {
-    return;
+    
   }
 
   const payloadPayload =
@@ -52,7 +52,7 @@ export function useTooltipLabel({
 }: UseTooltipLabelProps) {
   return React.useMemo(() => {
     if (hideLabel === true || (payload?.length ?? 0) === 0) {
-      return;
+      
     }
 
     const [item] = payload;
@@ -69,7 +69,7 @@ export function useTooltipLabel({
     }
 
     if (value === undefined || value === null || value === '') {
-      return;
+      
     }
 
     return <div className={cn('font-medium', labelClassName)}>{value}</div>;

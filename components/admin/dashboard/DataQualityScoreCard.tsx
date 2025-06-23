@@ -7,7 +7,7 @@ interface DataQualityStats {
 }
 
 interface DataQualityScoreCardProps {
-  dataQualityStats: DataQualityStats;
+  readonly dataQualityStats: DataQualityStats;
 }
 
 export function DataQualityScoreCard({ dataQualityStats }: Readonly<DataQualityScoreCardProps>) {

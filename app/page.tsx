@@ -37,7 +37,7 @@ export default function FoodTruckFinder() {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         userLocation={userLocation}
-        loadNearbyTrucks={loadNearbyTrucks}
+        loadNearbyTrucks={() => { void loadNearbyTrucks(); }}
       />
 
       <MainContent

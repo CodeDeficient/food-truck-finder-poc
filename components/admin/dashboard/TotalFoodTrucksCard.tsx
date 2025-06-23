@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Truck } from 'lucide-react';
 
 interface TotalFoodTrucksCardProps {
-  totalFoodTrucks: number;
-  pendingVerifications: number;
+  readonly totalFoodTrucks: number;
+  readonly pendingVerifications: number;
 }
 
 export function TotalFoodTrucksCard({ totalFoodTrucks, pendingVerifications }: Readonly<TotalFoodTrucksCardProps>) {
