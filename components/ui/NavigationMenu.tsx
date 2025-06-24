@@ -1,9 +1,6 @@
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-navigation-men... Remove this comment to see the full error message
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
-// @ts-expect-error TS(2792): Cannot find module 'class-variance-authority'. Did... Remove this comment to see the full error message
 import { cva } from 'class-variance-authority';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { ChevronDown } from 'lucide-react';
 
 import { cn } from '@/lib/utils';

@@ -1,25 +1,82 @@
 # LINTING AND CODE QUALITY GUIDE
 
+<!--
+TODO (Future Improvement):
+Centralize and standardize error handling in all service methods (e.g., lib/supabase.ts, lib/gemini.ts) so that:
+- All user-facing errors return a generic message (e.g., "That didn't work, please try again later.")
+- All technical error details are logged to the console for developer diagnostics
+- Consider a shared error utility or error result type for consistency
+This will further reduce the risk of leaking technical details and improve maintainability.
+-->
+
 This comprehensive guide consolidates all linting, code quality, and related governance documentation for the Food Truck Finder project. It aims to provide a single source of truth for maintaining high code standards, preventing errors, and ensuring efficient multi-agent development.
 
 ## 1. Executive Summary & Current Status
 
 The project has systematically addressed significant linting and complexity issues, reducing the overall error count. The focus is now on maintaining these improvements and preventing regressions through robust quality gates.
 
-### Current Error Overview (as of 2025-06-23)
+### Current Error Overview (as of 2025-06-24)
 
-Based on the latest `lint-results.json`:
+Based on the latest `lint-results.json` and `error-analysis.json`:
 
--   **Total Problems**: 270 problems (242 errors, 28 warnings)
+-   **Total Problems**: 249 problems
+-   **Unique Error Types**: 33
+-   **Files with Errors**: 65
 -   **Key High-Frequency Errors**:
-    -   `@typescript-eslint/strict-boolean-expressions`: 14 occurrences
-    -   `max-lines-per-function`: 14 occurrences
-    -   `sonarjs/prefer-read-only-props`: 14 occurrences
-    -   `unicorn/no-null`: 9 occurrences
-    -   `@typescript-eslint/no-unused-vars` / `sonarjs/unused-import`: 16 occurrences
-    -   Type safety issues (`no-unsafe-assignment`, `no-explicit-any`, `no-unsafe-member-access`, `no-unsafe-argument`): 21 occurrences
-    -   Complexity issues (`sonarjs/cognitive-complexity`, `max-params`, `max-depth`): 12 occurrences
-    -   Filename casing (`unicorn/filename-case`): 4 occurrences
+    -   `@typescript-eslint/no-unsafe-assignment`: 38 occurrences
+    -   `@typescript-eslint/strict-boolean-expressions`: 37 occurrences
+    -   `max-lines-per-function`: 37 occurrences
+    -   `sonarjs/unused-import`: 17 occurrences
+    -   `@typescript-eslint/no-unsafe-member-access`: 14 occurrences
+    -   `@typescript-eslint/no-unsafe-call`: 12 occurrences
+    -   `@typescript-eslint/no-unsafe-argument`: 11 occurrences
+    -   `@typescript-eslint/no-explicit-any`: 11 occurrences
+    -   `max-params`: 10 occurrences
+    -   `sonarjs/deprecation`: 8 occurrences
+    -   `unicorn/no-null`: 5 occurrences
+    -   `sonarjs/no-unused-vars`: 5 occurrences
+    -   `sonarjs/no-dead-store`: 5 occurrences
+    -   `sonarjs/cognitive-complexity`: 5 occurrences
+    -   `sonarjs/prefer-read-only-props`: 4 occurrences
+
+### Prioritized Files for Manual Remediation
+
+**✅ = Remediated (2025-06-24)**
+
+Based on `scripts/get-high-impact-files.cjs` (sorted by error count):
+
+#### HIGH-IMPACT FILES (20+ errors):
+-   ✅ 24 errors: `/lib/api/test-integration/pipelineRunner.ts`
+
+#### MEDIUM-IMPACT FILES (10-19 errors):
+-   ✅ 17 errors: `/lib/api/admin/oauth-status/helpers.ts`
+-   ✅ 13 errors: `/lib/api/admin/data-quality/handlers.ts`
+-   ✅ 11 errors: `/hooks/realtime/createEventSourceConnection.ts`
+-   ✅ 11 errors: `/lib/api/test-integration/stageHandlers.ts`
+-   ✅ 11 errors: `/lib/data-quality/batchCleanup.ts`
+
+#### LOWER-IMPACT FILES (5-9 errors):
+-   ✅ 9 errors: `/lib/middleware/middlewareHelpers.ts`
+-   ✅ 8 errors: `/hooks/realtime/setupEventSourceListeners.ts`
+-   ✅ 8 errors: `/lib/ScraperEngine.ts`
+-   ✅ 8 errors: `/lib/api/admin/realtime-events/handlers.ts`
+-   ✅ 8 errors: `/lib/supabase.ts`
+-   ✅ 7 errors: `/hooks/realtime/useConnectionManagement.ts`
+-   ✅ 7 errors: `/lib/api/trucks/handlers.ts`
+-   ✅ 6 errors: `/components/ui/chart.tsx`
+-   ✅ 6 errors: `/lib/pipeline/pipelineHelpers.ts`
+-   ✅ 5 errors: `/components/trucks/TruckContactInfo.tsx`
+-   ✅ 5 errors: `/lib/gemini.ts`
+
+---
+
+## NEXT SET TO REMEDIATE
+
+**Continue with the next highest-impact files (<5 errors) or flagged for complexity.**
+
+---
+
+(After these, proceed to any remaining files with 5–9 errors not yet remediated, then files with <5 errors or flagged for complexity.)
 
 ### Phase 1 Completion - Systematic Complexity Refactoring Success
 
@@ -44,6 +101,45 @@ Significant progress has been made in reducing function complexity and line coun
 ## 2. Remediation Plan & Fix Strategies
 
 This section outlines the systematic approach to addressing remaining linter errors.
+
+### Remediation Workflow
+
+This diagram visualizes the systematic workflow for analyzing, researching, and remediating linting errors across the codebase.
+
+```mermaid
+graph TD
+    subgraph Phase 1: Analysis
+        A[Get Fresh Lint Data] --> B[Analyze Error Patterns];
+        A --> C[Identify High-Impact Files];
+        B & C --> D[Update LINTING_AND_CODE_QUALITY_GUIDE.md];
+    end
+
+    subgraph Phase 2: Research
+        E[Tavily: SOTA Research]
+        F[Context7: Rule-Specific Docs]
+    end
+
+    subgraph Phase 3: Automation
+        G["Run eslint --fix"]
+        H["Run Safe Custom Scripts"]
+    end
+
+    subgraph Phase 4: Manual Fixes
+        I{Work through Prioritized List};
+        J[Pick Top File];
+        K[Apply Manual Refactoring];
+        L[Verify Fixes];
+        M[Next File];
+        I --> J --> K --> L --> M;
+        M --> J;
+    end
+
+    D --> E;
+    D --> F;
+    F --> G;
+    F --> H;
+    G & H --> I;
+```
 
 ### Phase 1: Quick Wins & High Frequency (Automated/Semi-Automated)
 

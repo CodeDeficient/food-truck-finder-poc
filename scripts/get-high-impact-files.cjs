@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
 try {
   console.log('🔍 Getting high-impact files for linting remediation...');
   
-  // Get ESLint results
-  const output = execSync('npx eslint . --format json', {
-    encoding: 'utf8',
-    stdio: ['pipe', 'pipe', 'pipe'],
-    timeout: 120000
-  });
+  // Read ESLint results from the pre-generated file
+  const lintResultsPath = path.join(process.cwd(), 'test-results', 'lint-results.json');
+  const output = fs.readFileSync(lintResultsPath, 'utf8');
   
   const data = JSON.parse(output);
   

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { OAuthStatus } from './types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export async function handleGetRequest(_request: NextRequest) {
   const status = await getOAuthStatus();
@@ -22,7 +23,7 @@ export async function handleGetRequest(_request: NextRequest) {
   });
 }
 
-export  function handlePostRequest(_request: NextRequest) {
+export function handlePostRequest(_request: NextRequest) {
   const baseUrl = process.env.NODE_ENV === 'production'
     ? 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app'
     : 'http://localhost:3000';
@@ -86,7 +87,7 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
   return status;
 }
 
-async function checkSupabaseConnection(status: OAuthStatus, supabase: any) {
+async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseClient) {
   try {
     const { error } = await supabase.from('profiles').select('count').limit(1);
     if (error == undefined) {
@@ -125,7 +126,7 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
   }
 }
 
-async function testOAuthProvider(status: OAuthStatus, supabase: any) {
+async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) {
   try {
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',

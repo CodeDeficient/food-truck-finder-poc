@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type SystemAlert } from './StatusHelpers';
+import { type SystemAlert } from './status-helpers';
 import { type RealtimeEvent as RealtimeAdminEvent } from '@/hooks/useRealtimeAdminEvents.types';
 
 interface UseSystemAlertsLogicProps {

@@ -1,5 +1,4 @@
 // app/api/auto-scrape-initiate/route.ts
-// @ts-expect-error TS(2792): Cannot find module 'next/server'. Did you mean to ... Remove this comment to see the full error message
 import { NextResponse } from 'next/server';
 import { ensureDefaultTrucksAreScraped } from '@/lib/autoScraper';
 

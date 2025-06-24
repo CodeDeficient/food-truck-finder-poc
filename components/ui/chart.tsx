@@ -35,11 +35,9 @@ const ChartContext = React.createContext<ChartContextProps | undefined>(undefine
 
 function useChart() {
   const context = React.useContext(ChartContext);
-
   if (context === undefined) {
     throw new Error('useChart must be used within a <ChartContainer />');
   }
-
   return context;
 }
 
@@ -102,6 +100,10 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
+function isNonEmptyArray<T>(arr: T[] | undefined | null): arr is T[] {
+  return Array.isArray(arr) && arr.length > 0;
+}
+
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
@@ -132,12 +134,7 @@ const ChartTooltipContent = React.forwardRef<
     ref,
   ) => {
     const { config } = useChart();
-
-    // Ensure payload is properly typed
-    const safePayload: Payload<ValueType, NameType>[] = Array.isArray(payload)
-      ? (payload)
-      : [];
-
+    const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload : [];
     const tooltipLabel = useTooltipLabel({
       hideLabel,
       payload: safePayload,
@@ -147,9 +144,8 @@ const ChartTooltipContent = React.forwardRef<
       config,
       labelKey
     });
-
-    if (!active || !safePayload || safePayload.length === 0) {
-      return;
+    if (!active || !isNonEmptyArray(safePayload)) {
+      return null;
     }
 
     const nestLabel = safePayload.length === 1 && indicator !== 'dot';
@@ -228,13 +224,9 @@ const ChartLegendContent = React.forwardRef<
     }
 >(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
   const { config } = useChart();
-
-  const safePayload: Payload<ValueType, NameType>[] = Array.isArray(payload)
-    ? (payload as Payload<ValueType, NameType>[])
-    : [];
-
-  if (!safePayload || safePayload.length === 0) {
-    return;
+  const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload as Payload<ValueType, NameType>[] : [];
+  if (!isNonEmptyArray(safePayload)) {
+    return null;
   }
 
   return (

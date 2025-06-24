@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { FoodTruckService } from '@/lib/supabase';
-import { FoodTruck } from '@/lib/types';
 
 export async function handleGetTruckById(id: string) {
   const truck = await FoodTruckService.getTruckById(id);
@@ -26,6 +25,8 @@ export async function handleGetTrucksByLocation(lat: string, lng: string, radius
 export async function handleGetAllTrucks(limit: number, offset: number) {
   const { trucks, total } = await FoodTruckService.getAllTrucks(limit, offset);
 
+  const hasTrucks = Array.isArray(trucks) && trucks.length > 0;
+
   return NextResponse.json({
     trucks,
     total,
@@ -35,19 +36,19 @@ export async function handleGetAllTrucks(limit: number, offset: number) {
     summary: {
       totalTrucks: total,
       averageQuality:
-        trucks && trucks.length > 0
+        hasTrucks
           ? trucks.reduce((acc, t) => acc + (t.data_quality_score ?? 0), 0) / trucks.length
           : 0,
       lastUpdated:
-        trucks && trucks.length > 0
+        hasTrucks
           ? Math.max(...trucks.map((t) => new Date(t.updated_at).getTime()))
           : 0,
     },
   });
 }
 
-export async function handlePostTruck(truckData: any) {
-  const newTruck = await FoodTruckService.createTruck(truckData);
+export async function handlePostTruck(truckData: unknown) {
+  const newTruck = await FoodTruckService.createTruck(truckData as Partial<import('@/lib/supabase').FoodTruck>);
   return NextResponse.json(
     {
       message: 'Food truck created successfully',
@@ -57,8 +58,8 @@ export async function handlePostTruck(truckData: any) {
   );
 }
 
-export async function handlePutTruck(id: string, updates: any) {
-  const updatedTruck = await FoodTruckService.updateTruck(id, updates);
+export async function handlePutTruck(id: string, updates: unknown) {
+  const updatedTruck = await FoodTruckService.updateTruck(id, updates as Partial<import('@/lib/supabase').FoodTruck>);
   return NextResponse.json({
     message: 'Food truck updated successfully',
     truck: updatedTruck,

@@ -41,13 +41,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const jobId = searchParams.get('jobId');
   const status = searchParams.get('status');
 
   try {
-    if (jobId != undefined && jobId != '') {
+    if (jobId !== null && jobId !== '') {
       // Get specific job status
       const jobs = await ScrapingJobService.getJobsByStatus('all');
       const job = jobs?.find((j) => j.id === jobId);

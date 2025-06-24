@@ -2,12 +2,12 @@ import React from 'react';
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin } from 'lucide-react';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck, MenuItem } from '@/lib/types';
 
 interface TruckCardHeaderProps {
   readonly truck: FoodTruck;
   readonly isOpen: boolean;
-  readonly popularItems: Array<{ name: string; price?: number }>;
+  readonly popularItems: Array<{ name: string; price?: number | string | undefined }>;
   readonly priceRange: string | undefined;
 }
 
@@ -22,7 +22,7 @@ export function TruckCardHeader({
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-          {(truck.current_location?.address != null) && (
+          {(truck.current_location?.address != undefined) && (
             <CardDescription className="flex items-center mt-1 dark:text-gray-400">
               <MapPin className="h-4 w-4 mr-1" />
               {truck.current_location.address}

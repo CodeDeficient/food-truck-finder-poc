@@ -2,7 +2,6 @@ import React from 'react';
 import { DataCleanupDashboard } from '@/components/admin/DataCleanupDashboard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Shield, Zap, RefreshCw, Merge } from 'lucide-react';
 
 // Helper component for page header

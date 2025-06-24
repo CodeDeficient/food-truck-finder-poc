@@ -9,6 +9,12 @@ import {
 } from '@/lib/types';
 import { mapExtractedDataToTruckSchema } from './schema-mapper';
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  return fallback;
+}
+
 export async function handleFirecrawlStage(
   url: string,
   rawText: string | undefined,
@@ -40,11 +46,8 @@ export async function handleFirecrawlStage(
       } else {
         throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
       }
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during Firecrawl scrape.';
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, 'An unknown error occurred during Firecrawl scrape.');
       logs.push(`Firecrawl error: ${errorMessage}`);
       firecrawlResult = { status: 'Error', error: errorMessage };
     }
@@ -93,11 +96,8 @@ export async function handleGeminiStage(
     } else {
       throw new Error(geminiOutput.error ?? 'Gemini processing failed to return data.');
     }
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : 'An unknown error occurred during Gemini processing.';
+  } catch (error) {
+    const errorMessage = getErrorMessage(error, 'An unknown error occurred during Gemini processing.');
     logs.push(`Gemini error: ${errorMessage}`);
     geminiResult = { status: 'Error', error: errorMessage };
   }
@@ -139,11 +139,8 @@ export async function handleSupabaseStage(
       };
       logs.push(`Data saved to Supabase. Record ID: ${createdTruck.id}`);
     }
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : 'An unknown error occurred during Supabase interaction.';
+  } catch (error) {
+    const errorMessage = getErrorMessage(error, 'An unknown error occurred during Supabase interaction.');
     logs.push(`Supabase interaction error: ${errorMessage}`);
     supabaseResult = { ...supabaseResult, status: 'Error', error: errorMessage };
   }

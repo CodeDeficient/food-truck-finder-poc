@@ -1,13 +1,14 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
+import { DailyOperatingHours } from '@/lib/types'; // Import DailyOperatingHours
 
 interface OperatingHoursSectionProps {
-  readonly todayHours: { open: string; close: string; closed: boolean } | undefined;
-  readonly formatHours: (hours: { open: string; close: string; closed: boolean }) => string;
+  readonly todayHours: DailyOperatingHours | undefined; // Update type
+  readonly formatHours: (hours: DailyOperatingHours) => string; // Update type
 }
 
 export function OperatingHoursSection({ todayHours, formatHours }: Readonly<OperatingHoursSectionProps>) {
-  if (todayHours === undefined) return;
+  if (todayHours === undefined) return null; // Return null if no hours
 
   return (
     <div>
@@ -15,7 +16,7 @@ export function OperatingHoursSection({ todayHours, formatHours }: Readonly<Oper
       <div className="flex items-center gap-2">
         <Clock className="h-3 w-3 text-gray-500" />
         <span className="text-sm dark:text-gray-300">
-          {formatHours(todayHours)}
+          {todayHours.closed ? 'Closed' : formatHours(todayHours)}
         </span>
       </div>
     </div>

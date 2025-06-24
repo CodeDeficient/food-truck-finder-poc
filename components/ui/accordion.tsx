@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-accordion'. Di... Remove this comment to see the full error message
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { ChevronDown } from 'lucide-react';
 
 import { cn } from '@/lib/utils';

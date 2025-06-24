@@ -8,18 +8,18 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (supabaseUrl == null || supabaseUrl === '') {
+if (supabaseUrl == undefined || supabaseUrl === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
-if (supabaseAnonKey == null || supabaseAnonKey === '') {
+if (supabaseAnonKey == undefined || supabaseAnonKey === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Only create admin client on server side where service key is available
-export const supabaseAdmin = (supabaseServiceKey != null && supabaseServiceKey !== '')
+export const supabaseAdmin = (supabaseServiceKey != undefined && supabaseServiceKey !== '')
   ? createClient(supabaseUrl, supabaseServiceKey)
   : undefined;
 
@@ -33,37 +33,25 @@ import {
 } from './types';
 
 export interface FoodTruckLocation {
-  lat?: number;
-  lng?: number;
+  lat: number;
+  lng: number;
   address?: string;
   timestamp: string;
 }
 
 // Re-exporting from types.ts to ensure consistency
 
-export interface FoodTruck {
+import { FoodTruckSchema } from './types';
+
+export interface FoodTruck extends FoodTruckSchema {
   id: string;
-  name: string;
-  description?: string;
-  current_location: FoodTruckLocation;
-  scheduled_locations?: ExtractedFoodTruckDetails['scheduled_locations']; // Use type from types.ts
-  operating_hours?: OperatingHours; // Use type from types.ts
-  menu?: MenuCategory[]; // Use type from types.ts
-  contact_info?: ExtractedFoodTruckDetails['contact_info']; // Use type from types.ts
-  social_media?: ExtractedFoodTruckDetails['social_media']; // Use type from types.ts
-  cuisine_type?: string[];
-  price_range?: PriceRange; // Use type from types.ts
-  specialties?: string[];
-  data_quality_score?: number;
-  verification_status: 'pending' | 'verified' | 'flagged' | 'rejected';
-  source_urls?: string[];
   created_at: string;
   updated_at: string;
-  last_scraped_at?: string;
+  is_active?: boolean; // This property is in lib/types.ts but not in lib/supabase.ts
+  // Add any other properties that are in the database but not in FoodTruckSchema
+  // For example, if the database has 'exact_location' or 'city_location'
   exact_location?: FoodTruckLocation;
   city_location?: FoodTruckLocation;
-  average_rating?: number; // Added for ratings
-  review_count?: number; // Added for ratings
 }
 
 export interface ScrapingJob {
@@ -109,20 +97,23 @@ export interface ApiUsage {
 function buildMenuByTruck(menuItems: RawMenuItemFromDB[]): Record<string, RawMenuItemFromDB[]> {
   const menuByTruck: Record<string, RawMenuItemFromDB[]> = {};
   for (const item of menuItems) {
-    if (!menuByTruck[item.food_truck_id as string]) {
-      menuByTruck[item.food_truck_id as string] = [];
+    if (typeof item.food_truck_id === 'string' && item.food_truck_id !== '' && !menuByTruck[item.food_truck_id]) {
+      menuByTruck[item.food_truck_id] = [];
     }
-    menuByTruck[item.food_truck_id as string].push(item);
+    if (typeof item.food_truck_id === 'string' && item.food_truck_id !== '') {
+      menuByTruck[item.food_truck_id].push(item);
+    }
   }
   return menuByTruck;
 }
 
 function handleSupabaseError(error: unknown, context: string) {
+  // Log technical details for developers
   console.warn(`Error in ${context}:`, error);
 }
 
 export const FoodTruckService = {
-  async getAllTrucks(limit = 50, offset = 0): Promise<{ trucks: FoodTruck[]; total: number }> {
+  async getAllTrucks(limit = 50, offset = 0): Promise<{ trucks: FoodTruck[]; total: number; error?: string }> {
     try {
       const { data, error, count }: PostgrestResponse<FoodTruck> = await supabase
         .from('food_trucks')
@@ -151,27 +142,32 @@ export const FoodTruckService = {
       return { trucks, total: count ?? 0 };
     } catch (error) {
       handleSupabaseError(error, 'getAllTrucks');
-      return { trucks: [], total: 0 };
+      return { trucks: [], total: 0, error: "That didn't work, please try again later." };
     }
   },
-  async getTruckById(id: string): Promise<FoodTruck> {
-    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabase
-      .from('food_trucks')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (error) throw error;
-    const truck: FoodTruck = normalizeTruckLocation(data);
-    const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> = await supabase
-      .from('menu_items')
-      .select('*')
-      .eq('food_truck_id', id);
-    if (menuError) throw menuError;
-    truck.menu = groupMenuItems(Array.isArray(items) ? items : []);
-    return truck;
+  async getTruckById(id: string): Promise<FoodTruck | { error: string }> {
+    try {
+      const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabase
+        .from('food_trucks')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      const truck: FoodTruck = normalizeTruckLocation(data);
+      const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> = await supabase
+        .from('menu_items')
+        .select('*')
+        .eq('food_truck_id', id);
+      if (menuError) throw menuError;
+      truck.menu = groupMenuItems(Array.isArray(items) ? items : []);
+      return truck;
+    } catch (error) {
+      handleSupabaseError(error, 'getTruckById');
+      return { error: "That didn't work, please try again later." };
+    }
   },
 
-  async getTrucksByLocation(lat: number, lng: number, radiusKm: number): Promise<FoodTruck[]> {
+  async getTrucksByLocation(lat: number, lng: number, radiusKm: number): Promise<FoodTruck[] | { error: string }> {
     try {
       const { trucks } = await FoodTruckService.getAllTrucks();
       const nearbyTrucks = trucks.filter((truck) => {
@@ -192,8 +188,8 @@ export const FoodTruckService = {
       });
       return nearbyTrucks;
     } catch (error: unknown) {
-      console.warn('Error fetching trucks by location:', error);
-      return [];
+      handleSupabaseError(error, 'getTrucksByLocation');
+      return { error: "That didn't work, please try again later." };
     }
   },
   async createTruck(truckData: Partial<FoodTruck>): Promise<FoodTruck> {
@@ -221,7 +217,7 @@ export const FoodTruckService = {
     const updatesWithoutMenu = { ...updates };
     delete updatesWithoutMenu.menu;
     const truck = await updateTruckData(id, updatesWithoutMenu);
-    if (menuData != null) {
+    if (menuData != undefined) {
       await updateTruckMenu(id, menuData);
     }
     return truck;
@@ -387,19 +383,19 @@ function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
 // Remove redundant type constituent in normalizeTruckLocation
 function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
   const fallback: FoodTruckLocation = {
-    lat: undefined,
-    lng: undefined,
+    lat: 0,
+    lng: 0,
     address: 'Unknown',
     timestamp: new Date().toISOString(),
   };
   const loc = truck.exact_location ?? truck.current_location ?? truck.city_location ?? {};
-  const lat = typeof loc.lat === 'number' ? loc.lat : undefined;
-  const lng = typeof loc.lng === 'number' ? loc.lng : undefined;
+  const lat = typeof loc.lat === 'number' ? loc.lat : 0;
+  const lng = typeof loc.lng === 'number' ? loc.lng : 0;
   const address = loc.address;
   const timestamp = loc.timestamp;
 
   truck.current_location =
-    lat == null || lng == null || (lat === 0 && lng === 0)
+    lat === 0 || lng === 0
       ? { ...fallback, address: address ?? fallback.address }
       : {
           lat,
@@ -631,7 +627,7 @@ export const DataQualityService = {
          (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
     ) score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours != null && truck.operating_hours != null) score += 10;
+    if (truck.operating_hours != undefined && truck.operating_hours != undefined) score += 10;
     return { score: Math.min(100, score) };
   },
 
@@ -752,15 +748,15 @@ export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange 
 
 // Helper to prepare menu items for DB insertion
 function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | undefined) {
-  if (!menuData || menuData.length === 0) return [];
+  if (!Array.isArray(menuData) || menuData.length === 0) return [];
   return menuData.flatMap((category) =>
-    (category.items ?? []).map((item) => ({
+    (Array.isArray(category.items) ? category.items : []).map((item) => ({
       food_truck_id: truckId,
-      category: category.name ?? 'Uncategorized',
-      name: item.name ?? 'Unknown Item',
-      description: item.description ?? undefined,
-      price: typeof item.price === 'number' ? item.price : undefined,
-      dietary_tags: item.dietary_tags ?? [],
+      category: typeof category.name === 'string' && category.name !== '' ? category.name : 'Uncategorized',
+      name: typeof item.name === 'string' && item.name !== '' ? item.name : 'Unknown Item',
+      description: typeof item.description === 'string' && item.description !== '' ? item.description : undefined,
+      price: typeof item.price === 'number' && !Number.isNaN(item.price) ? item.price : undefined,
+      dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
     }))
   );
 }
