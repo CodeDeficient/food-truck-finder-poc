@@ -5,7 +5,7 @@ import { SystemMetricsGrid } from './SystemMetricsGrid';
 import { ScrapingJobsStatus } from './ScrapingJobsStatus';
 import { SystemAlerts } from './SystemAlerts';
 import { EventControls } from './EventControls';
-import { type SystemAlert } from './StatusHelpers';
+import { type SystemAlert } from './status-helpers';
 import { type StatusMetric } from './useSystemMetrics';
 import { type RealtimeEvent } from '@/hooks/useRealtimeAdminEvents.types';
 

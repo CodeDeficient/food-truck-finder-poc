@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { TruckCardHeader } from './trucks/TruckCardHeader';
 import { TruckCardContent } from './trucks/TruckCardContent';

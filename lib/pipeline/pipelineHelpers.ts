@@ -1,7 +1,6 @@
 import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '../types';
-import { ScrapingJobService, FoodTruckService } from '../supabase';
+import { ScrapingJobService, FoodTruckService, FoodTruck } from '../supabase';
 import { DuplicatePreventionService } from '../data-quality/duplicatePrevention';
-import { PostgrestError } from '@supabase/supabase-js';
 
 // Helper function to validate input and prepare basic data
 export async function validateInputAndPrepare(
@@ -52,7 +51,7 @@ export function buildTruckDataSchema(
           timestamp: new Date().toISOString(),
         }))
       : undefined,
-    operating_hours: extractedTruckData.operating_hours == null
+    operating_hours: extractedTruckData.operating_hours == undefined
       ? {
           monday: { closed: true },
           tuesday: { closed: true },
@@ -93,7 +92,7 @@ export function buildTruckDataSchema(
       : [],
     data_quality_score: 0.5, // Default score - confidence_score not available in type
     verification_status: 'pending',
-    source_urls: sourceUrl != null && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
+    source_urls: sourceUrl != undefined && sourceUrl !== '' ? [sourceUrl] : [], // Ensure source_urls is always an array
     last_scraped_at: new Date().toISOString(),
   };
 }
@@ -103,12 +102,12 @@ export async function handleDuplicateCheck(
   jobId: string,
   truckData: FoodTruckSchema,
   name: string
-): Promise<any> {
+): Promise<FoodTruck> {
   // Check for duplicates before creating
   console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
   const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
 
-  let truck;
+  let truck: FoodTruck;
   if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
     const { bestMatch } = duplicateCheck;
     console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
@@ -137,7 +136,7 @@ export async function handleDuplicateCheck(
 // Helper function to finalize job status
 export async function finalizeJobStatus(
   jobId: string,
-  truck: any,
+  truck: FoodTruck,
   sourceUrl: string
 ): Promise<void> {
   console.info(
@@ -152,7 +151,7 @@ export async function finalizeJobStatus(
 
 // Helper function to validate input data
 function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruckDetails): boolean {
-  if (extractedTruckData == null || typeof extractedTruckData !== 'object') {
+  if (extractedTruckData == undefined || typeof extractedTruckData !== 'object') {
     console.error(`Job ${jobId}: Invalid extractedTruckData, cannot create/update food truck.`);
     return false;
   }

@@ -1,13 +1,9 @@
 import React from 'react';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
-
-interface MenuItem {
-  readonly name: string;
-  readonly price?: number;
-}
+import { MenuItem } from '@/lib/types'; // Import MenuItem from lib/types
 
 interface MenuSectionProps {
-  readonly popularItems: MenuItem[];
+  readonly popularItems: MenuItem[]; // Use the imported MenuItem type
 }
 
 export function MenuSection({ popularItems }: Readonly<MenuSectionProps>) {
@@ -18,7 +14,8 @@ export function MenuSection({ popularItems }: Readonly<MenuSectionProps>) {
         {popularItems.map((item, idx) => (
           <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
             <span className="truncate dark:text-gray-200">{item.name}</span>
-            {typeof item.price === 'number' && item.price > 0 && (
+            {/* Handle price as string or number */}
+            {item.price !== undefined && item.price !== null && (
               <span className="text-green-600 dark:text-green-400 ml-2">
                 {formatPrice(item.price)}
               </span>

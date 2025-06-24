@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module 'embla-carousel-react'. Did you... Remove this comment to see the full error message
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -48,7 +46,6 @@ const Carousel = React.forwardRef<
 >(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
   const [carouselRef, api] = useEmblaCarousel(
     {
-      // @ts-expect-error TS(2698): Spread types may only be created from object types... Remove this comment to see the full error message
       ...opts,
       axis: orientation === 'horizontal' ? 'x' : 'y',
     },
@@ -59,7 +56,7 @@ const Carousel = React.forwardRef<
 
   const onSelect = React.useCallback((api: CarouselApi) => {
     if (!api) {
-      
+      return; // Added return to prevent further execution if api is null
     }
 
     setCanScrollPrev(api.canScrollPrev());
@@ -89,7 +86,7 @@ const Carousel = React.forwardRef<
 
   React.useEffect(() => {
     if (!api || !setApi) {
-      
+      return; // Added return to prevent further execution if api or setApi is null
     }
 
     setApi(api);
@@ -97,7 +94,7 @@ const Carousel = React.forwardRef<
 
   React.useEffect(() => {
     if (!api) {
-      
+      return; // Added return to prevent further execution if api is null
     }
 
     onSelect(api);
@@ -115,8 +112,7 @@ const Carousel = React.forwardRef<
         carouselRef,
         api: api,
         opts,
-        // @ts-expect-error TS(2571): Object is of type 'unknown'.
-        orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
+        orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'), // Removed ts-expect-error
         scrollPrev,
         scrollNext,
         canScrollPrev,
@@ -181,15 +177,13 @@ const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
 CarouselItem.displayName = 'CarouselItem';
 
 const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
-  // @ts-expect-error TS(2339): Property 'variant' does not exist on type 'Omit<Bu... Remove this comment to see the full error message
-  ({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+  ({ className, variant = 'outline', size = 'icon', ...props }, ref) => { // Removed ts-expect-error
     const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
     return (
       <Button
         ref={ref}
-        // @ts-expect-error TS(2322): Type '{ children: Element[]; defaultChecked?: bool... Remove this comment to see the full error message
-        variant={variant}
+        variant={variant} // Removed ts-expect-error
         size={size}
         className={cn(
           'absolute  h-8 w-8 rounded-full',
@@ -211,15 +205,13 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
 CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
-  // @ts-expect-error TS(2339): Property 'variant' does not exist on type 'Omit<Bu... Remove this comment to see the full error message
-  ({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+  ({ className, variant = 'outline', size = 'icon', ...props }, ref) => { // Removed ts-expect-error
     const { orientation, scrollNext, canScrollNext } = useCarousel();
 
     return (
       <Button
         ref={ref}
-        // @ts-expect-error TS(2322): Type '{ children: Element[]; defaultChecked?: bool... Remove this comment to see the full error message
-        variant={variant}
+        variant={variant} // Removed ts-expect-error
         size={size}
         className={cn(
           'absolute h-8 w-8 rounded-full',

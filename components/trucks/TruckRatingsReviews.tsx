@@ -25,8 +25,8 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
-  if (truck.average_rating == undefined) {
-    
+  if (truck.average_rating === null || truck.average_rating === undefined) {
+    return null;
   }
 
   return (
@@ -46,7 +46,7 @@ export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
               {truck.average_rating.toFixed(1)}
             </span>
           </div>
-          {truck.review_count != undefined && (
+          {truck.review_count !== undefined && (
             <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
               <Users className="h-4 w-4" />
               <span className="text-sm">{truck.review_count} reviews</span>

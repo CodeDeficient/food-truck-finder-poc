@@ -14,13 +14,6 @@ interface QualityAssessment {
   recommendations: string[];
 }
 
-interface TruckData {
-  id: string;
-  name: string;
-  data_quality_score: number;
-  verification_status: string;
-}
-
 interface QualityCategory {
   label: string;
   color: string;
@@ -87,9 +80,7 @@ async function handleStatsAction() {
 }
 
 async function handleAssessAction(truckId: string) {
-  const truckRaw = await FoodTruckService.getTruckById(truckId);
-
-  const truck = truckRaw as TruckData;
+  const truck = await FoodTruckService.getTruckById(truckId);
 
   return NextResponse.json({
     success: true,
@@ -146,11 +137,10 @@ async function handleRecalculateAll() {
 
   for (const truck of trucks) {
     try {
-      const truckData = truck as TruckData;
+      // If update logic is needed, add here
       updated++;
-    } catch (error: unknown) {
-      const truckData = truck as TruckData;
-      console.error(`Failed to update truck ${truckData.id}:`, error);
+    } catch (error) {
+      console.error(`Failed to update truck ${truck.id}:`, error);
       errors++;
     }
   }

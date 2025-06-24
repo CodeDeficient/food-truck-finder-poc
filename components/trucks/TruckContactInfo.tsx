@@ -14,13 +14,13 @@ function ContactField({
   href, 
   unavailableText 
 }: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value?: string;
-  href?: string;
-  unavailableText: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly value?: string;
+  readonly href?: string;
+  readonly unavailableText: string;
 }) {
-  if (value == undefined) {
+  if (value == undefined || value === '') {
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />
@@ -51,9 +51,9 @@ function ContactField({
   );
 }
 
-function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string> }) {
+function SocialMediaLinks({ socialMedia }: { readonly socialMedia?: Record<string, string> }) {
   if (!socialMedia || Object.keys(socialMedia).length === 0) {
-    
+    return null;
   }
 
   const socialPlatforms = [
@@ -68,7 +68,7 @@ function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
           const handle = socialMedia[key];
-          if (handle == undefined) return;
+          if (handle == undefined || handle === '') return null;
 
           return (
             <a

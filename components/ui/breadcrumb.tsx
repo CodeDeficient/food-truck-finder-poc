@@ -1,7 +1,5 @@
 import * as React from "react"
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-slot'. Did you... Remove this comment to see the full error message
 import { Slot } from "@radix-ui/react-slot"
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"

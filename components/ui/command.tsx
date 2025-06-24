@@ -1,11 +1,8 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-dialog'. Did y... Remove this comment to see the full error message
 import { type DialogProps } from '@radix-ui/react-dialog';
-// @ts-expect-error TS(2792): Cannot find module 'cmdk'. Did you mean to set the... Remove this comment to see the full error message
 import { Command as CommandPrimitive } from 'cmdk';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Search } from 'lucide-react';
 
 import { cn } from '@/lib/utils';

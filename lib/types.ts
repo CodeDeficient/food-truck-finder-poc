@@ -12,6 +12,7 @@ export interface MenuItem {
   description: string | undefined;
   price: number | string | undefined;
   dietary_tags: string[];
+  is_popular?: boolean;
 }
 
 export interface LocationData {
@@ -40,6 +41,7 @@ export interface OperatingHours {
   friday: DailyOperatingHours;
   saturday: DailyOperatingHours;
   sunday: DailyOperatingHours;
+  [key: string]: DailyOperatingHours; // Add index signature
 }
 
 export interface SentimentAnalysisResult {
@@ -145,6 +147,15 @@ export interface FoodTruckSchema {
   source_urls: string[];
   last_scraped_at: string;
   test_run_flag?: boolean;
+  website?: string;
+  phone_number?: string;
+  email?: string;
+  instagram_handle?: string;
+  facebook_handle?: string;
+  twitter_handle?: string;
+  schedule?: any[]; // Assuming schedule is an array, adjust type if known
+  average_rating?: number;
+  review_count?: number;
 }
 
 // Database record type with additional fields
