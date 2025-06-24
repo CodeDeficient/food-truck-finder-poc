@@ -72,7 +72,9 @@ Based on `scripts/get-high-impact-files.cjs` (sorted by error count):
 
 ## NEXT SET TO REMEDIATE
 
-**Continue with the next highest-impact files (<5 errors) or flagged for complexity.**
+**All prioritized high/medium/low-impact files have been remediated as of 2025-06-24.**
+
+**Continue with the next highest-impact files (<5 errors) or those flagged for complexity.**
 
 ---
 
@@ -360,3 +362,35 @@ Effective multi-agent development requires clear governance and coordination pro
 **Last Updated**: June 23, 2025
 **Estimated Resolution Effort**: Ongoing
 **Business Risk Level**: MEDIUM - Type safety issues pose runtime stability risks.
+
+---
+
+## 7. Automation of Simple Lint Fixes (Comparison and Null Checks)
+
+### Automated Fixes for Comparison and Null Checks
+
+For recurring issues such as:
+- `sonarjs/different-types-comparison` (e.g., always-true/false `===`/`!==` checks between different types)
+- `unicorn/no-null` (use of `null` instead of `undefined`)
+
+**Do not fix these manually in individual files.**
+
+Instead, use the provided scripts (see `scripts/automated-nullish-coalescing-converter.cjs` and similar) to batch-fix these patterns across the codebase. This ensures consistency and saves time.
+
+**Remediation Pattern:**
+- Run the automated scripts to convert all `===`/`!==` null/undefined checks to `==`/`!=` where appropriate.
+- Replace all `null` with `undefined` for codebase-wide consistency.
+- Only address these manually if the script cannot safely handle a specific case.
+
+**Documented June 24, 2025.**
+
+## 8. Known Linter False Positives and Temporary Suppressions
+
+### `sonarjs/deprecation` for `React.MutableRefObject`
+
+- **Context**: The linter currently flags `React.MutableRefObject` as deprecated (rule: `sonarjs/deprecation`).
+- **Reality**: This is a known false positive. `MutableRefObject` is still the correct and standard type for refs created by `useRef` in React 18+ and is not deprecated in the React or TypeScript type definitions.
+- **Action**: Do not attempt to manually replace or suppress these warnings in individual files. We will address all such deprecation errors in a single batch update or linter config change in the future.
+- **Reference**: See [DefinitelyTyped Issue #66808](https://github.com/DefinitelyTyped/DefinitelyTyped/issues/66808) for details.
+
+---

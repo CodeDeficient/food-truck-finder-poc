@@ -80,7 +80,7 @@ function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
         </div>
       </TableCell>
       <TableCell>
-        {(truck.last_scraped_at === undefined)
+        {(truck.last_scraped_at == undefined)
           ? 'N/A'
           : new Date(truck.last_scraped_at).toLocaleDateString()}
       </TableCell>

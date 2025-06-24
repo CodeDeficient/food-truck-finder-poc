@@ -7,12 +7,71 @@ import {
   GeminiResponse,
   StageResult,
 } from '@/lib/types';
-import { mapExtractedDataToTruckSchema } from './schema-mapper';
+import { mapExtractedDataToTruckSchema } from './schemaMapper';
 
 function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
   return fallback;
+}
+
+async function handleUrlScrape(
+  url: string,
+  logs: string[],
+): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string }> {
+  logs.push(`Starting Firecrawl scrape for URL: ${url}`);
+  try {
+    const fcOutput: GeminiResponse<FirecrawlOutputData> =
+      await firecrawl.scrapeFoodTruckWebsite(url);
+    if (fcOutput.success && fcOutput.data?.markdown !== undefined && fcOutput.data?.markdown !== '') {
+      return {
+        contentToProcess: fcOutput.data.markdown,
+        sourceUrlForProcessing: fcOutput.data.source_url ?? url,
+        firecrawlResult: {
+          status: 'Success',
+          rawContent: fcOutput.data.markdown,
+          metadata: { name: fcOutput.data.name, source_url: fcOutput.data.source_url },
+          details: `Markdown length: ${fcOutput.data.markdown.length}`,
+        },
+      };
+    } else {
+      throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
+    }
+  } catch (error) {
+    const errorMessage = getErrorMessage(error, 'An unknown error occurred during Firecrawl scrape.');
+    logs.push(`Firecrawl error: ${errorMessage}`);
+    return { firecrawlResult: { status: 'Error', error: errorMessage }, contentToProcess: undefined, sourceUrlForProcessing: url };
+  }
+}
+
+function handleRawTextProcessing(
+  rawText: string,
+  logs: string[],
+): { firecrawlResult: StageResult; contentToProcess: string; sourceUrlForProcessing: string } {
+  logs.push('Using raw text input for processing.');
+  return {
+    contentToProcess: rawText,
+    sourceUrlForProcessing: 'raw_text_input',
+    firecrawlResult: {
+      status: 'Skipped (Raw Text Provided)',
+      details: `Raw text length: ${rawText.length}`,
+    },
+  };
+}
+
+function determineFirecrawlStageOutput(
+  url: string,
+  rawText: string | undefined,
+  logs: string[],
+): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string }> {
+  if (url && rawText === undefined) {
+    return handleUrlScrape(url, logs);
+  } else if (rawText === undefined) {
+    logs.push('No URL or raw text provided.');
+    throw new Error('Either a URL or raw text must be provided for testing.');
+  } else {
+    return Promise.resolve(handleRawTextProcessing(rawText, logs));
+  }
 }
 
 export async function handleFirecrawlStage(
@@ -24,51 +83,14 @@ export async function handleFirecrawlStage(
   contentToProcess: string | undefined;
   sourceUrlForProcessing: string;
 }> {
-  let firecrawlResult: StageResult;
-  let contentToProcess: string | undefined;
-  let sourceUrlForProcessing: string = url ?? 'raw_text_input';
+  const stageOutput = await determineFirecrawlStageOutput(url, rawText, logs);
 
-  if (url && !rawText) {
-    logs.push(`Starting Firecrawl scrape for URL: ${url}`);
-    try {
-      const fcOutput: GeminiResponse<FirecrawlOutputData> =
-        await firecrawl.scrapeFoodTruckWebsite(url);
-      if (fcOutput.success && fcOutput.data?.markdown) {
-        contentToProcess = fcOutput.data.markdown;
-        sourceUrlForProcessing = fcOutput.data.source_url ?? url;
-        firecrawlResult = {
-          status: 'Success',
-          rawContent: fcOutput.data.markdown,
-          metadata: { name: fcOutput.data.name, source_url: fcOutput.data.source_url },
-          details: `Markdown length: ${fcOutput.data.markdown.length}`,
-        };
-        logs.push('Firecrawl scrape successful.');
-      } else {
-        throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
-      }
-    } catch (error) {
-      const errorMessage = getErrorMessage(error, 'An unknown error occurred during Firecrawl scrape.');
-      logs.push(`Firecrawl error: ${errorMessage}`);
-      firecrawlResult = { status: 'Error', error: errorMessage };
-    }
-  } else if (rawText) {
-    logs.push('Using raw text input for processing.');
-    contentToProcess = rawText;
-    firecrawlResult = {
-      status: 'Skipped (Raw Text Provided)',
-      details: `Raw text length: ${rawText.length}`,
-    };
-  } else {
-    logs.push('No URL or raw text provided.');
-    throw new Error('Either a URL or raw text must be provided for testing.');
-  }
-
-  if (!contentToProcess) {
+  if (stageOutput.contentToProcess === undefined) {
     logs.push('Content to process is empty after Firecrawl/raw text stage.');
     throw new Error('Content to process is empty.');
   }
 
-  return { firecrawlResult, contentToProcess, sourceUrlForProcessing };
+  return stageOutput;
 }
 
 export async function handleGeminiStage(
@@ -127,10 +149,11 @@ export async function handleSupabaseStage(
       logs.push('Supabase interaction skipped (Dry Run).');
     } else {
       logs.push('Attempting to save to Supabase (Dry Run is FALSE).');
-      const createdTruck = await FoodTruckService.createTruck(truckDataToSave);
-      if (!createdTruck) {
-        throw new Error('Failed to create truck in Supabase.');
+      const createdTruckResult = await FoodTruckService.createTruck(truckDataToSave);
+      if ('error' in createdTruckResult) {
+        throw new Error(`Failed to create truck in Supabase: ${createdTruckResult.error}`);
       }
+      const createdTruck = createdTruckResult;
       supabaseResult = {
         status: 'Success (Saved)',
         preparedData: truckDataToSave,

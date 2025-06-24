@@ -14,14 +14,14 @@ import { Button } from '@/components/ui/button';
 import { Edit, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { DataQualityCharts } from '@/components/ui/dataQualityCharts';
-import { SimpleQualityPanel } from '@/components/ui/simple-quality-panel';
+import { SimpleQualityPanel } from '@/components/ui/SimpleQualityPanel';
 import {
   formatQualityScore,
   categorizeQualityScore,
   getQualityBadgeClasses,
   getQualityScoreAriaLabel,
   type QualityCategory
-} from '@/lib/utils/quality-scorer';
+} from '@/lib/utils/QualityScorer';
 
 // Define the data quality stats type based on the database function
 interface DataQualityStats {
@@ -115,7 +115,7 @@ function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
         </Badge>
       </TableCell>
       <TableCell>
-        {(truck.last_scraped_at === undefined)
+        {(truck.last_scraped_at == undefined)
           ? 'N/A'
           : new Date(truck.last_scraped_at).toLocaleDateString()}
       </TableCell>

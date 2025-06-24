@@ -2,11 +2,12 @@ import { useCallback } from 'react';
 import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
 import { useConnectionState } from './useConnectionState';
 import { createEventSourceConnection } from './createEventSourceConnection';
+import { disconnectEventSource, clearRecentEvents } from './connectionManagementHelpers';
 
 interface UseConnectionManagementOptions {
-  eventSourceRef: React.MutableRefObject<EventSource | undefined>;
-  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>;
-  isManuallyDisconnectedRef: React.MutableRefObject<boolean>;
+  eventSourceRef: React.RefObject<EventSource | undefined>;
+  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  isManuallyDisconnectedRef: React.RefObject<boolean>;
   connectionState: ReturnType<typeof useConnectionState>;
   handleEvent: (event: RealtimeEvent) => void;
   connectionAttempts: number;
@@ -16,55 +17,37 @@ interface UseConnectionManagementOptions {
 }
 
 export function useConnectionManagement(options: UseConnectionManagementOptions) {
-  const {
-    eventSourceRef,
-    reconnectTimeoutRef,
-    isManuallyDisconnectedRef,
-    connectionState,
-    handleEvent,
-    connectionAttempts,
-    maxReconnectAttempts,
-    reconnectInterval,
-    isConnecting
-  } = options;
-
+  const { connectionState } = options;
   const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents } = connectionState;
 
   const connect = useCallback(() => {
     createEventSourceConnection({
-      eventSourceRef,
-      isConnecting,
-      isManuallyDisconnectedRef,
-      connectionAttempts,
-      maxReconnectAttempts,
-      reconnectInterval,
-      reconnectTimeoutRef,
-      handleEvent,
-      connectionState,
+      eventSourceRef: options.eventSourceRef,
+      isConnecting: options.isConnecting,
+      isManuallyDisconnectedRef: options.isManuallyDisconnectedRef,
+      connectionAttempts: options.connectionAttempts,
+      maxReconnectAttempts: options.maxReconnectAttempts,
+      reconnectInterval: options.reconnectInterval,
+      reconnectTimeoutRef: options.reconnectTimeoutRef,
+      handleEvent: options.handleEvent,
+      connectionState: options.connectionState,
       connect: () => connect()
     });
-  }, [handleEvent, connectionAttempts, maxReconnectAttempts, reconnectInterval, isConnecting, connectionState]);
+  }, [options]);
 
   const disconnect = useCallback(() => {
-    isManuallyDisconnectedRef.current = true;
-
-    if (reconnectTimeoutRef.current) {
-      clearTimeout(reconnectTimeoutRef.current);
-      reconnectTimeoutRef.current = undefined;
-    }
-
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-      eventSourceRef.current = undefined;
-    }
-
-    setIsConnected(false);
-    setIsConnecting(false);
-    setConnectionError(undefined);
-  }, [setIsConnected, setIsConnecting, setConnectionError]);
+    disconnectEventSource({
+      eventSourceRef: options.eventSourceRef,
+      reconnectTimeoutRef: options.reconnectTimeoutRef,
+      isManuallyDisconnectedRef: options.isManuallyDisconnectedRef,
+      setIsConnected,
+      setIsConnecting,
+      setConnectionError
+    });
+  }, [options.eventSourceRef, options.reconnectTimeoutRef, options.isManuallyDisconnectedRef, setIsConnected, setIsConnecting, setConnectionError]);
 
   const clearEvents = useCallback(() => {
-    setRecentEvents([]);
+    clearRecentEvents(setRecentEvents);
   }, [setRecentEvents]);
 
   return { connect, disconnect, clearEvents };
