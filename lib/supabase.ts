@@ -192,9 +192,9 @@ export const FoodTruckService = {
       return { error: "That didn't work, please try again later." };
     }
   },
-  async createTruck(truckData: Partial<FoodTruck>): Promise<FoodTruck> {
+  async createTruck(truckData: Partial<FoodTruck>): Promise<FoodTruck | { error: string }> {
     if (!supabaseAdmin) {
-      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+      return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
     const menuData = truckData.menu;
     const truckDataWithoutMenu = { ...truckData };
@@ -204,23 +204,29 @@ export const FoodTruckService = {
       .insert([truckDataWithoutMenu])
       .select()
       .single();
-    if (error) throw error;
+    if (error) {
+      handleSupabaseError(error, 'createTruck');
+      return { error: "Failed to create truck." };
+    }
     await insertMenuItems(truck.id, menuData);
     return truck;
   },
 
-  async updateTruck(id: string, updates: Partial<FoodTruck>): Promise<FoodTruck> {
+  async updateTruck(id: string, updates: Partial<FoodTruck>): Promise<FoodTruck | { error: string }> {
     if (!supabaseAdmin) {
-      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+      return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
     const menuData = updates.menu;
     const updatesWithoutMenu = { ...updates };
     delete updatesWithoutMenu.menu;
-    const truck = await updateTruckData(id, updatesWithoutMenu);
+    const truckResult = await updateTruckData(id, updatesWithoutMenu);
+    if ('error' in truckResult) {
+      return truckResult;
+    }
     if (menuData != undefined) {
       await updateTruckMenu(id, menuData);
     }
-    return truck;
+    return truckResult;
   },
 
   async getDataQualityStats(): Promise<{
@@ -278,9 +284,9 @@ export const FoodTruckService = {
 async function updateTruckData(
   id: string,
   updatesWithoutMenu: Partial<FoodTruck>,
-): Promise<FoodTruck> {
+): Promise<FoodTruck | { error: string }> {
   if (!supabaseAdmin) {
-    throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+    return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
   }
 
   const { data: truck, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
@@ -290,7 +296,10 @@ async function updateTruckData(
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    handleSupabaseError(error, 'updateTruckData');
+    return { error: "Failed to update truck data." };
+  }
   return truck;
 }
 
@@ -631,9 +640,9 @@ export const DataQualityService = {
     return { score: Math.min(100, score) };
   },
 
-  async updateTruckQualityScore(truckId: string): Promise<FoodTruck> {
+  async updateTruckQualityScore(truckId: string): Promise<FoodTruck | { error: string }> {
     if (!supabaseAdmin) {
-      throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+      return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
     const { data: truck, error: fetchError } = await supabaseAdmin
       .from('food_trucks')
@@ -641,8 +650,13 @@ export const DataQualityService = {
       .eq('id', truckId)
       .single();
 
-    if (fetchError) throw fetchError;
-    if (!truck) throw new Error(`Truck with ID ${truckId} not found.`);
+    if (fetchError) {
+      handleSupabaseError(fetchError, 'updateTruckQualityScore:fetch');
+      return { error: `Failed to fetch truck with ID ${truckId}.` };
+    }
+    if (!truck) {
+      return { error: `Truck with ID ${truckId} not found.` };
+    }
 
     const { score } = this.calculateQualityScore(truck);
 
@@ -653,7 +667,10 @@ export const DataQualityService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      handleSupabaseError(error, 'updateTruckQualityScore:update');
+      return { error: `Failed to update quality score for truck with ID ${truckId}.` };
+    }
     return data;
   },
 };

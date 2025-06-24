@@ -1,5 +1,4 @@
 import { APIUsageService } from './supabase';
-import { APIMonitor } from './monitoring/apiMonitor';
 import { GeminiApiClient } from './gemini/geminiApiClient';
 import { GeminiUsageLimits } from './gemini/usageLimits';
 import { PromptTemplates } from './gemini/promptTemplates';
@@ -24,22 +23,21 @@ export class GeminiService {
     this.apiClient = new GeminiApiClient();
   }
 
-   checkUsageLimits() {
+  checkUsageLimits = () => {
     return GeminiUsageLimits.checkUsageLimits({
       dailyRequestLimit: this.dailyRequestLimit,
       dailyTokenLimit: this.dailyTokenLimit,
     });
-  }
+  };
 
-  private  makeGeminiRequest<T>(
+  private makeGeminiRequest = async <T>(
     prompt: string,
     parser: (text: string) => T,
-    errorContext: string
-  ): Promise<GeminiResponse<T>> {
+  ): Promise<GeminiResponse<T>> => {
     return this.apiClient.makeRequestWithParsing(prompt, parser);
-  }
+  };
 
-  async processMenuData(rawMenuText: string): Promise<GeminiResponse<MenuCategory[]>> {
+  processMenuData = async (rawMenuText: string): Promise<GeminiResponse<MenuCategory[]>> => {
     const estimatedTokens = Math.ceil(rawMenuText.length / 4) + 500;
     const usageCheck = await GeminiUsageLimits.checkWithMonitoring(estimatedTokens);
 
@@ -58,11 +56,10 @@ export class GeminiService {
         const parsedData = JSON.parse(text) as { categories: MenuCategory[] };
         return parsedData.categories;
       },
-      'menu processing'
     );
-  }
+  };
 
-  async extractLocationFromText(textInput: string): Promise<GeminiResponse<LocationData>> {
+  extractLocationFromText = async (textInput: string): Promise<GeminiResponse<LocationData>> => {
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       console.error('Gemini API usage limit error: Daily API limits exceeded');
@@ -76,11 +73,10 @@ export class GeminiService {
     return this.makeGeminiRequest(
       prompt,
       (text: string) => GeminiResponseParser.parseLocationData(text),
-      'location extraction'
     );
-  }
+  };
 
-  async standardizeOperatingHours(hoursText: string): Promise<GeminiResponse<OperatingHours>> {
+  standardizeOperatingHours = async (hoursText: string): Promise<GeminiResponse<OperatingHours>> => {
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       console.error('Gemini API usage limit error: Daily API limits exceeded');
@@ -94,11 +90,10 @@ export class GeminiService {
     return this.makeGeminiRequest(
       prompt,
       (text: string) => GeminiResponseParser.parseOperatingHours(text),
-      'hours standardization'
     );
-  }
+  };
 
-  async analyzeSentiment(reviewText: string): Promise<GeminiResponse<SentimentAnalysisResult>> {
+  analyzeSentiment = async (reviewText: string): Promise<GeminiResponse<SentimentAnalysisResult>> => {
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       console.error('Gemini API usage limit error: Daily API limits exceeded');
@@ -112,11 +107,10 @@ export class GeminiService {
     return this.makeGeminiRequest(
       prompt,
       (text: string) => GeminiResponseParser.parseSentimentAnalysis(text),
-      'sentiment analysis'
     );
-  }
+  };
 
-  async enhanceFoodTruckData(rawData: unknown): Promise<GeminiResponse<EnhancedFoodTruckData>> {
+  enhanceFoodTruckData = async (rawData: unknown): Promise<GeminiResponse<EnhancedFoodTruckData>> => {
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       console.error('Gemini API usage limit error: Daily API limits exceeded');
@@ -130,13 +124,12 @@ export class GeminiService {
     return this.makeGeminiRequest(
       prompt,
       (text: string) => GeminiResponseParser.parseEnhancedFoodTruckData(text),
-      'data enhancement'
     );
-  }
+  };
 
-  async batchProcess(
+  batchProcess = async (
     items: Array<{ type: string; data: unknown }>,
-  ): Promise<Array<GeminiResponse<unknown>>> {
+  ): Promise<Array<GeminiResponse<unknown>>> => {
     const results: Array<GeminiResponse<unknown>> = [];
 
     for (const item of items) {
@@ -172,17 +165,17 @@ export class GeminiService {
     }
 
     return results;
-  }
+  };
 
-  async getUsageStats(): Promise<{ requests_count: number; tokens_used: number } | undefined> {
+  getUsageStats = async (): Promise<{ requests_count: number; tokens_used: number } | undefined> => {
     const usage = await APIUsageService.getTodayUsage('gemini');
     return usage ?? undefined;
-  }
+  };
 
-  async extractFoodTruckDetailsFromMarkdown(
+  extractFoodTruckDetailsFromMarkdown = async (
     markdownContent: string,
     sourceUrl?: string,
-  ): Promise<GeminiResponse<ExtractedFoodTruckDetails>> {
+  ): Promise<GeminiResponse<ExtractedFoodTruckDetails>> => {
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       console.error('Gemini API usage limit error: Daily API limits exceeded for Gemini');
@@ -200,7 +193,6 @@ export class GeminiService {
         const cleanedText = GeminiResponseParser.cleanMarkdownResponse(text);
         return GeminiResponseParser.parseExtractedFoodTruckDetails(cleanedText);
       },
-      'food truck extraction'
     );
 
     // Add promptSent to response for this specific method
@@ -208,36 +200,8 @@ export class GeminiService {
       ...response,
       promptSent: prompt,
     };
-  }
+  };
 }
 
 // Export singleton instance
 export const gemini = new GeminiService();
-
-// Centralized Gemini operation dispatcher to eliminate duplication
-export async function dispatchGeminiOperation(
-  type: 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance',
-  data: unknown
-): Promise<unknown> {
-  switch (type) {
-    case 'menu': {
-      return await gemini.processMenuData(data as string);
-    }
-    case 'location': {
-      return await gemini.extractLocationFromText(data as string);
-    }
-    case 'hours': {
-      return await gemini.standardizeOperatingHours(data as string);
-    }
-    case 'sentiment': {
-      return await gemini.analyzeSentiment(data as string);
-    }
-    case 'enhance': {
-      return await gemini.enhanceFoodTruckData(data);
-    }
-    default: {
-      console.error('Unknown Gemini operation type in dispatchGeminiOperation:', type);
-      throw new Error('That didn\'t work, please try again later.');
-    }
-  }
-}

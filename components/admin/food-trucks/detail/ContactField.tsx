@@ -16,7 +16,7 @@ export function ContactField({
   href,
   unavailableText
 }: Readonly<ContactFieldProps>) {
-  if (value == undefined || value === '') {
+  if (value === null || value === undefined || value === '') {
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />

@@ -7,20 +7,22 @@ interface TruckContactInfoProps {
   readonly truck: FoodTruck;
 }
 
+interface ContactFieldProps {
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly value?: string | null;
+  readonly href?: string;
+  readonly unavailableText: string;
+}
+
 function ContactField({ 
   icon: Icon, 
   label, 
   value, 
   href, 
   unavailableText 
-}: {
-  readonly icon: React.ComponentType<{ className?: string }>;
-  readonly label: string;
-  readonly value?: string;
-  readonly href?: string;
-  readonly unavailableText: string;
-}) {
-  if (value == undefined || value === '') {
+}: Readonly<ContactFieldProps>) {
+  if (value === null || value === undefined || value.length === 0) { // Handles null, undefined, and empty string
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />
@@ -51,8 +53,8 @@ function ContactField({
   );
 }
 
-function SocialMediaLinks({ socialMedia }: { readonly socialMedia?: Record<string, string> }) {
-  if (!socialMedia || Object.keys(socialMedia).length === 0) {
+function SocialMediaLinks({ socialMedia }: Readonly<{ readonly socialMedia?: Record<string, string> }>) {
+  if (socialMedia === null || socialMedia === undefined || Object.keys(socialMedia).length === 0) {
     return null;
   }
 
@@ -68,7 +70,7 @@ function SocialMediaLinks({ socialMedia }: { readonly socialMedia?: Record<strin
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
           const handle = socialMedia[key];
-          if (handle == undefined || handle === '') return null;
+          if (handle === null || handle === undefined || handle.length === 0) return null; // Handles null, undefined, and empty string
 
           return (
             <a
@@ -88,7 +90,7 @@ function SocialMediaLinks({ socialMedia }: { readonly socialMedia?: Record<strin
   );
 }
 
-export function TruckContactInfo({ truck }: TruckContactInfoProps) {
+export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>

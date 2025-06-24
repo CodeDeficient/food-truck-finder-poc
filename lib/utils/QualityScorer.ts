@@ -11,11 +11,8 @@ export type QualityCategory = {
   color: string;
 };
 
-export function calculateQualityScore(truck: FoodTruck): QualityAssessment {
-  let score = 1; // Start with a perfect score
-  const issues: string[] = [];
-
-  // Check for essential fields
+function assessBasicInfo(truck: FoodTruck, issues: string[], currentScore: number): number {
+  let score = currentScore;
   if (!truck.name || truck.name.length === 0) {
     score -= 0.2;
     issues.push('Missing name');
@@ -40,6 +37,11 @@ export function calculateQualityScore(truck: FoodTruck): QualityAssessment {
     score -= 0.05;
     issues.push('Missing review count');
   }
+  return score;
+}
+
+function assessContactInfo(truck: FoodTruck, issues: string[], currentScore: number): number {
+  let score = currentScore;
   if (!truck.website || truck.website.length === 0) {
     score -= 0.05;
     issues.push('Missing website');
@@ -64,13 +66,15 @@ export function calculateQualityScore(truck: FoodTruck): QualityAssessment {
     score -= 0.02;
     issues.push('Missing Twitter handle');
   }
+  return score;
+}
 
-  // Check for location data
+function assessLocationData(truck: FoodTruck, issues: string[], currentScore: number): number {
+  let score = currentScore;
   if (!truck.current_location?.lat || !truck.current_location.lng) {
     score -= 0.15;
     issues.push('Missing current location data');
   } else {
-    // Check for stale location data (e.g., older than 7 days)
     if (truck.current_location.timestamp) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
@@ -83,12 +87,26 @@ export function calculateQualityScore(truck: FoodTruck): QualityAssessment {
       issues.push('Missing location timestamp');
     }
   }
+  return score;
+}
 
-  // Check for schedule data
+function assessScheduleData(truck: FoodTruck, issues: string[], currentScore: number): number {
+  let score = currentScore;
   if (!truck.schedule || truck.schedule.length === 0) {
     score -= 0.1;
     issues.push('Missing schedule data');
   }
+  return score;
+}
+
+export function calculateQualityScore(truck: FoodTruck): QualityAssessment {
+  let score = 1; // Start with a perfect score
+  const issues: string[] = [];
+
+  score = assessBasicInfo(truck, issues, score);
+  score = assessContactInfo(truck, issues, score);
+  score = assessLocationData(truck, issues, score);
+  score = assessScheduleData(truck, issues, score);
 
   // Ensure score doesn't go below 0
   score = Math.max(0, score);
@@ -140,7 +158,7 @@ export const DataQualityService = {
   async batchUpdateQualityScores(limit: number = 100): Promise<{ updatedCount: number; errors: string[] }> {
     const { data: trucks, error } = await supabase
       .from('food_trucks')
-      .select('id, name, description, cuisine_type, price_range, average_rating, review_count, website, phone_number, email, instagram_handle, facebook_handle, twitter_handle, current_location, schedule, verification_status, source_urls, last_scraped_at, test_run_flag')
+      .select('*')
       .limit(limit);
 
     if (error) {
@@ -172,7 +190,7 @@ export const DataQualityService = {
   async updateTruckQualityScore(truckId: string): Promise<{ success: boolean }> {
     const { data: truck, error: fetchError } = await supabase
       .from('food_trucks')
-      .select('id, name, description, cuisine_type, price_range, average_rating, review_count, website, phone_number, email, instagram_handle, facebook_handle, twitter_handle, current_location, schedule, verification_status, source_urls, last_scraped_at, test_run_flag')
+      .select('*')
       .eq('id', truckId)
       .single();
 

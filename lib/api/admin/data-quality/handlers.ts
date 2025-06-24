@@ -1,30 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FoodTruckService, supabase } from '@/lib/supabase';
-
-interface QualityThresholds {
-  excellent: number;
-  good: number;
-  fair: number;
-  poor: number;
-}
-
-interface QualityAssessment {
-  score: number;
-  breakdown: Record<string, number>;
-  recommendations: string[];
-}
-
-interface QualityCategory {
-  label: string;
-  color: string;
-  description: string;
-}
+import { FoodTruckService, supabase, FoodTruck } from '@/lib/supabase';
 
 export async function handleGetRequest(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
   const truckId = searchParams.get('truckId');
-  const limit = searchParams.get('limit');
 
   switch (action) {
     case 'stats': {
@@ -44,7 +24,7 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
 
 export async function handlePostRequest(request: NextRequest): Promise<NextResponse> {
   const body = await request.json();
-  const { action, truckId, limit } = body;
+  const { action, truckId } = body;
 
   switch (action) {
     case 'update-single': {
@@ -54,7 +34,7 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
       return await handleUpdateSingle(truckId);
     }
     case 'batch-update': {
-      return await handleBatchUpdate(limit);
+      return await handleBatchUpdate();
     }
     case 'recalculate-all': {
       return await handleRecalculateAll();
@@ -66,9 +46,7 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
 }
 
 async function handleStatsAction() {
-  const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
-
-  const qualityStats = qualityStatsRaw as Record<string, unknown>;
+  const qualityStats = await FoodTruckService.getDataQualityStats();
 
   return NextResponse.json({
     success: true,
@@ -80,7 +58,13 @@ async function handleStatsAction() {
 }
 
 async function handleAssessAction(truckId: string) {
-  const truck = await FoodTruckService.getTruckById(truckId);
+  const truckResult = await FoodTruckService.getTruckById(truckId);
+
+  if ('error' in truckResult) {
+    return NextResponse.json({ success: false, error: truckResult.error }, { status: 404 });
+  }
+
+  const truck: FoodTruck = truckResult; // Explicitly cast to FoodTruck
 
   return NextResponse.json({
     success: true,
@@ -102,8 +86,14 @@ async function handleDefaultGetAction() {
 }
 
 async function handleUpdateSingle(truckId: string) {
-  const updatedTruck = await FoodTruckService.getTruckById(truckId);
+  const updatedTruckResult = await FoodTruckService.getTruckById(truckId);
   
+  if ('error' in updatedTruckResult) {
+    return NextResponse.json({ success: false, error: updatedTruckResult.error }, { status: 404 });
+  }
+
+  const updatedTruck = updatedTruckResult;
+
   return NextResponse.json({
     success: true,
     message: 'Quality score updated successfully',
@@ -117,30 +107,42 @@ async function handleUpdateSingle(truckId: string) {
   });
 }
 
- function handleBatchUpdate(limit?: number) {
-  const batchLimit = limit ?? 100;
-  
+function handleBatchUpdate() {
   return NextResponse.json({
     success: true,
     message: 'Batch quality score update completed',
     data: {
-      limit: batchLimit,
       timestamp: new Date().toISOString()
     }
   });
 }
 
+async function updateSingleTruckQualityScore(truck: { id: string }): Promise<boolean> {
+  try {
+    // Placeholder for actual update logic if needed
+    // await DataQualityService.updateTruckQualityScore(truck.id);
+    return true;
+  } catch (error: unknown) { // Explicitly type error as unknown
+    console.error(`Failed to update truck ${truck.id}:`, error);
+    return false;
+  }
+}
+
 async function handleRecalculateAll() {
-  const { trucks } = await FoodTruckService.getAllTrucks(1000, 0);
+  const allTrucksResult = await FoodTruckService.getAllTrucks(1000, 0);
+  if (allTrucksResult.error) { // Simplified check
+    console.error('Error fetching all trucks for recalculation:', allTrucksResult.error);
+    return NextResponse.json({ success: false, error: 'Failed to fetch trucks for recalculation' }, { status: 500 });
+  }
+  const { trucks } = allTrucksResult;
   let updated = 0;
   let errors = 0;
 
   for (const truck of trucks) {
-    try {
-      // If update logic is needed, add here
+    const success = await updateSingleTruckQualityScore(truck);
+    if (success) {
       updated++;
-    } catch (error) {
-      console.error(`Failed to update truck ${truck.id}:`, error);
+    } else {
       errors++;
     }
   }
@@ -160,12 +162,13 @@ async function handleRecalculateAll() {
 export async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (authHeader == undefined) return false;
+    if (!authHeader) return false; // Simplified check for null/undefined/empty string
 
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const { data, error } = await supabase.auth.getUser(token);
+    const user = data?.user;
     
-    if (error || !user) return false;
+    if (error || !user) return false; // Simplified check for error or null/undefined user
 
     const { data: profile } = await supabase
       .from('profiles')
