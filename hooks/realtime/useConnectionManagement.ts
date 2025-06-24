@@ -1,19 +1,33 @@
-import { useCallback, useRef } from 'react';
-import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
+import { useCallback } from 'react';
+import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
 import { useConnectionState } from './useConnectionState';
 import { createEventSourceConnection } from './createEventSourceConnection';
 
-export function useConnectionManagement(
-  eventSourceRef: React.MutableRefObject<EventSource | undefined>,
-  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
-  isManuallyDisconnectedRef: React.MutableRefObject<boolean>,
-  connectionState: ReturnType<typeof useConnectionState>,
-  handleEvent: (event: RealtimeEvent) => void,
-  connectionAttempts: number,
-  maxReconnectAttempts: number,
-  reconnectInterval: number,
-  isConnecting: boolean
-) {
+interface UseConnectionManagementOptions {
+  eventSourceRef: React.MutableRefObject<EventSource | undefined>;
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>;
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean>;
+  connectionState: ReturnType<typeof useConnectionState>;
+  handleEvent: (event: RealtimeEvent) => void;
+  connectionAttempts: number;
+  maxReconnectAttempts: number;
+  reconnectInterval: number;
+  isConnecting: boolean;
+}
+
+export function useConnectionManagement(options: UseConnectionManagementOptions) {
+  const {
+    eventSourceRef,
+    reconnectTimeoutRef,
+    isManuallyDisconnectedRef,
+    connectionState,
+    handleEvent,
+    connectionAttempts,
+    maxReconnectAttempts,
+    reconnectInterval,
+    isConnecting
+  } = options;
+
   const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents } = connectionState;
 
   const connect = useCallback(() => {

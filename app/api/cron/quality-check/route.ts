@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logActivity } from '@/lib/activityLogger';
 import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
-import { DataQualityService } from '@/lib/utils/qualityScorer';
+import { DataQualityService } from '@/lib/utils/quality-scorer';
 
 // Type definitions for quality assessment
 interface QualityAssessment {
   score: number;
-  issues: string[]; // Changed from unknown[] to string[]
+  issues: string[];
 }
+
+import { type QualityCategory } from '@/lib/utils/quality-scorer';
 
 interface QualityService {
   calculateQualityScore: (truck: FoodTruck) => QualityAssessment;
-  categorizeQualityScore: (score: number) => string;
+  categorizeQualityScore: (score: number) => QualityCategory;
   batchUpdateQualityScores: (limit: number) => Promise<{ updatedCount: number; errors: string[]; }>;
 
   updateTruckQualityScore: (truckId: string) => Promise<{ success: boolean; }>;
@@ -33,12 +35,12 @@ function verifyCronSecret(request: NextRequest): NextResponse | undefined {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
-  if (cronSecret == null) {
+  if (cronSecret == undefined) {
     console.error('CRON_SECRET not configured');
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
-  if (authHeader == null || authHeader !== `Bearer ${cronSecret}`) {
+  if (authHeader == undefined || authHeader !== `Bearer ${cronSecret}`) {
     console.error('Unauthorized cron attempt:', authHeader);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -128,7 +130,7 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
     totalQualityScore += assessment.score;
 
     const category = (DataQualityService as QualityService).categorizeQualityScore(assessment.score);
-    qualityBreakdown[category as keyof typeof qualityBreakdown]++;
+    qualityBreakdown[category.label.toLowerCase() as keyof typeof qualityBreakdown]++;
 
     if (assessment.issues.length > 0) {
       trucksWithMissingData++;
@@ -138,7 +140,7 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
       lowQualityTrucks++;
     }
 
-    if (truck.current_location?.timestamp != null) {
+    if (truck.current_location?.timestamp != undefined) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
       if (daysSinceUpdate > 7) {

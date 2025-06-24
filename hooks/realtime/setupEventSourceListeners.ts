@@ -25,8 +25,9 @@ export function setupEventSourceListeners(
   });
 
   eventSource.addEventListener('message', (event: MessageEvent) => {
-    const adminEvent = parseEventData(event.data as string, 'message');
-    if (adminEvent) {
+    // event.data is always string per EventSource spec
+    const adminEvent = parseEventData(event.data, 'message');
+    if (adminEvent != undefined) {
       handleEvent(adminEvent);
     }
   });

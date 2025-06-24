@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService } from '@/lib/supabase';
+import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService, type ScrapingJob, type FoodTruck } from '@/lib/supabase';
 import { AdminEvent } from './types';
 
 interface RealtimeMetrics {
@@ -31,7 +31,7 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     const token = authHeader.slice(7);
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    if (error || !user) {
+    if (error != undefined || user == undefined) {
       return false;
     }
 
@@ -169,12 +169,11 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
 async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   try {
     const recentJobs = await ScrapingJobService.getJobsByStatus('all');
-    const typedJobs = recentJobs as Array<{ status?: string }>;
     const scrapingMetrics = {
-      active: typedJobs.filter(job => job.status === 'running').length,
-      completed: typedJobs.filter(job => job.status === 'completed').length,
-      failed: typedJobs.filter(job => job.status === 'failed').length,
-      pending: typedJobs.filter(job => job.status === 'pending').length
+      active: recentJobs.filter((job: ScrapingJob) => job.status === 'running').length,
+      completed: recentJobs.filter((job: ScrapingJob) => job.status === 'completed').length,
+      failed: recentJobs.filter((job: ScrapingJob) => job.status === 'failed').length,
+      pending: recentJobs.filter((job: ScrapingJob) => job.status === 'pending').length
     };
 
     const qualityStats = await FoodTruckService.getDataQualityStats();
@@ -209,27 +208,32 @@ async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   }
 }
 
+function isScrapingJob(obj: unknown): obj is ScrapingJob {
+  return typeof obj === 'object' && obj !== null && 'id' in obj && 'status' in obj;
+}
+
+function isFoodTruck(obj: unknown): obj is FoodTruck {
+  return typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj;
+}
+
 async function sendScrapingUpdateEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
   const recentJobs = await ScrapingJobService.getJobsByStatus('all');
 
-  if (recentJobs.length > 0) {
+  if (Array.isArray(recentJobs) && recentJobs.length > 0) {
     const event: AdminEvent = {
       id: generateEventId(),
       type: 'scraping_update',
       timestamp: new Date().toISOString(),
       data: {
-        recentJobs: recentJobs.map((job: unknown) => {
-          const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
-          return {
-            id: jobData.id,
-            status: jobData.status,
-            started_at: jobData.started_at,
-            completed_at: jobData.completed_at
-          };
-        }),
+        recentJobs: recentJobs.filter(isScrapingJob).map((job) => ({
+          id: job.id,
+          status: job.status,
+          started_at: job.started_at,
+          completed_at: job.completed_at
+        })),
         count: recentJobs.length
       },
       severity: 'info'
@@ -243,8 +247,9 @@ async function sendDataQualityChangeEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder
 ): Promise<void> {
-  const recentTrucks = await FoodTruckService.getAllTrucks(10, 0);
-  const recentlyUpdated = recentTrucks.trucks.filter(truck => {
+  const recentTrucksResult = await FoodTruckService.getAllTrucks(10, 0);
+  const recentlyUpdated = recentTrucksResult.trucks.filter((truck: FoodTruck) => {
+    if (!truck.updated_at) return false;
     const updatedAt = new Date(truck.updated_at);
     const oneMinuteAgo = new Date(Date.now() - 60_000);
     return updatedAt > oneMinuteAgo;

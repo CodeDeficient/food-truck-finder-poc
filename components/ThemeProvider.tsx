@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module 'next-themes'. Did you mean to ... Remove this comment to see the full error message
 import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes';
-// @ts-expect-error TS(2792): Cannot find module 'next-themes'. Did you mean to ... Remove this comment to see the full error message
 import { type ThemeProviderProps } from 'next-themes';
 
 export interface CustomThemeProviderProps extends ThemeProviderProps {

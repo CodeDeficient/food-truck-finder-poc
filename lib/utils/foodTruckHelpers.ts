@@ -1,26 +1,34 @@
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck, DailyOperatingHours, PriceRange, MenuItem } from '@/lib/types'; // Added DailyOperatingHours, PriceRange, MenuItem
 
 export const getCurrentDay = () => {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   return days[new Date().getDay()];
 };
 
-export const formatPrice = (price: number) => {
+export const formatPrice = (price: number | string) => { // Updated to accept string
+  if (typeof price === 'string') {
+    // Handle cases where price might be a string like "$10-$20" or "Varies"
+    return price;
+  }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
   }).format(price);
 };
 
-export const formatHours = (hours: { open: string; close: string; }) => {
+export const formatHours = (hours: DailyOperatingHours) => { // Updated to accept DailyOperatingHours
+    if (!hours || hours.closed) {
+        return 'Closed';
+    }
     const open = new Date(`1970-01-01T${hours.open}Z`).toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
     const close = new Date(`1970-01-01T${hours.close}Z`).toLocaleTimeString('en-US', {hour: 'numeric', minute: 'numeric', hour12: true});
     return `${open} - ${close}`;
 }
 
-export const getPopularItems = (truck: FoodTruck) => {
+export const getPopularItems = (truck: FoodTruck): MenuItem[] => { // Explicitly define return type
     // Explicitly check for nullish and boolean
-    return truck.menu?.flatMap(category => category.items).filter(item => Boolean(item && item.is_popular === true)) ?? [];
+    return (truck.menu?.flatMap(category => category.items)
+        .filter((item): item is MenuItem => Boolean(item && item.is_popular === true)) ?? []);
 }
 
 export const getPriceRange = (truck: FoodTruck) => {
@@ -28,9 +36,16 @@ export const getPriceRange = (truck: FoodTruck) => {
     if (!allItems || allItems.length === 0) {
         return 'N/A';
     }
-    const prices = allItems.map(item => item.price);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
+    const numericPrices = allItems
+        .map(item => item.price)
+        .filter((price): price is number => typeof price === 'number' && price !== undefined); // Filter for numbers
+
+    if (numericPrices.length === 0) {
+        return 'N/A'; // No numeric prices found
+    }
+
+    const minPrice = Math.min(...numericPrices);
+    const maxPrice = Math.max(...numericPrices);
     return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
 }
 
@@ -43,7 +58,7 @@ export const getTodayHours = (truck: FoodTruck) => {
 export function getUserLocationHelper(
   setUserLocation: (location: { lat: number; lng: number }) => void
 ) {
-  if (typeof navigator !== 'undefined' && navigator.geolocation != null) {
+  if (typeof navigator !== 'undefined' && navigator.geolocation != undefined) {
     // eslint-disable-next-line sonarjs/no-intrusive-permissions -- Geolocation is essential for finding nearby food trucks
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -72,7 +87,7 @@ export async function loadFoodTrucksHelper(
   try {
     const response = await fetch('/api/trucks');
     const data: unknown = await response.json();
-    if (typeof data === 'object' && data != null && 'trucks' in data && Array.isArray(data.trucks)) {
+    if (typeof data === 'object' && data != undefined && 'trucks' in data && Array.isArray(data.trucks)) {
       setTrucks(data.trucks as FoodTruck[]);
     } else {
       setTrucks([]);
@@ -96,7 +111,7 @@ export async function loadNearbyTrucksHelper(
       `/api/trucks?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=10`,
     );
     const data: unknown = await response.json();
-    if (typeof data === 'object' && data != null && 'trucks' in data && Array.isArray(data.trucks)) {
+    if (typeof data === 'object' && data != undefined && 'trucks' in data && Array.isArray(data.trucks)) {
       setTrucks(data.trucks as FoodTruck[]);
     } else {
       setTrucks([]);
@@ -112,7 +127,7 @@ export function isTruckOpen(truck: FoodTruck): boolean {
   const hours = truck.operating_hours?.[today];
 
   // Ensure hours and its properties are not null/undefined before accessing
-  if (hours == null || hours.closed === true || hours.open == null || hours.close == null) {
+  if (hours == undefined || hours.closed === true || hours.open == undefined || hours.close == undefined) {
     return false;
   }
 

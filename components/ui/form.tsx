@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-label'. Did yo... Remove this comment to see the full error message
 import * as LabelPrimitive from '@radix-ui/react-label';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-slot'. Did you... Remove this comment to see the full error message
 import { Slot } from '@radix-ui/react-slot';
 import {
   Controller,
@@ -12,7 +10,6 @@ import {
   FieldValues,
   FormProvider,
   useFormContext,
-// @ts-expect-error TS(2792): Cannot find module 'react-hook-form'. Did you mean... Remove this comment to see the full error message
 } from 'react-hook-form';
 
 import { cn } from '@/lib/utils';

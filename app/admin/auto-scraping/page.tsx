@@ -71,7 +71,7 @@ function MetricCard({
   readonly title: string;
   readonly value: string | number;
   readonly subtitle: string;
-  readonly icon: JSX.Element;
+  readonly icon: React.ReactNode;
 }) {
   return (
     <Card>
@@ -130,8 +130,8 @@ function CronJobRow({
   getStatusBadge
 }: {
   readonly job: CronJobStatus;
-  readonly getStatusIcon: (status: string) => JSX.Element;
-  readonly getStatusBadge: (status: string) => JSX.Element;
+  readonly getStatusIcon: (status: string) => React.ReactNode;
+  readonly getStatusBadge: (status: string) => React.ReactNode;
 }) {
   return (
     <TableRow>
@@ -175,8 +175,8 @@ function CronJobsTable({
   getStatusBadge
 }: {
   readonly cronJobs: CronJobStatus[];
-  readonly getStatusIcon: (status: string) => JSX.Element;
-  readonly getStatusBadge: (status: string) => JSX.Element;
+  readonly getStatusIcon: (status: string) => React.ReactNode;
+  readonly getStatusBadge: (status: string) => React.ReactNode;
 }) {
   return (
     <Card>
@@ -289,7 +289,9 @@ function useDashboardData() {
       setCronJobs(cronJobsData);
       setMetrics(metricsData);
     } catch (error_) {
-      setError(error_ instanceof Error ? error_.message : 'Unknown error');
+      // Log detailed error for developers
+      console.error('Dashboard data fetch error:', error_);
+      setError('That didn\'t work, please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -301,7 +303,9 @@ function useDashboardData() {
       await triggerScrape();
       setTimeout(() => { void fetchDashboardData(); }, 2000);
     } catch (error_) {
-      setError(error_ instanceof Error ? error_.message : 'Failed to trigger scrape');
+      // Log detailed error for developers
+      console.error('Manual scrape trigger error:', error_);
+      setError('That didn\'t work, please try again later.');
     }
   };
 
