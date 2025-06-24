@@ -174,7 +174,7 @@ We welcome contributions to the Food Truck Finder Application! Please follow the
 
 1.  Fork the repository.
 2.  Create a new branch for your feature or bug fix: `git checkout -b feature/your-feature-name` or `bugfix/your-bug-fix`.
-3.  Make your changes and ensure they adhere to our [Linting and Code Quality Guide](LINTING_AND_CODE_QUALITY_GUIDE.md).
+3.  Make your changes and ensure they adhere to our [Linting and Code Quality Guide](docs/LINTING_AND_CODE_QUALITY_GUIDE.md).
 4.  Write tests for your changes.
 5.  Ensure all tests pass and linting checks are clear.
 6.  Commit your changes with a descriptive message.
@@ -258,7 +258,7 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 4.  The `lint-staged` configuration in `package.json` specifies which commands to run on which file types.
 ## Documentation
 
-For a comprehensive overview of the application's architecture, data pipeline, and database schema, please refer to the [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md). For linting and code quality guidelines, refer to the [Linting and Code Quality Guide](LINTING_AND_CODE_QUALITY_GUIDE.md). For project planning and status updates, refer to the [Project Planning and Status](docs/PROJECT_PLANNING_AND_STATUS.md). For guidelines on agent interactions and development, refer to the [Agent Guidelines](docs/AGENT_GUIDELINES.md).
+For a comprehensive overview of the application's architecture, data pipeline, and database schema, please refer to the [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md). For linting and code quality guidelines, refer to the [Linting and Code Quality Guide](docs/LINTING_AND_CODE_QUALITY_GUIDE.md). For project planning and status updates, refer to the [Project Planning and Status](docs/PROJECT_PLANNING_AND_STATUS.md). For guidelines on agent interactions and development, refer to the [Agent Guidelines](docs/AGENT_GUIDELINES.md).
 
 ## 🔬 SOTA RESEARCH FINDINGS & IMPLEMENTATION GUIDELINES
 
