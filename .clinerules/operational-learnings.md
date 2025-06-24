@@ -37,3 +37,7 @@ This rule set documents key operational learnings and best practices derived fro
 - **Rule 1.9: Use `.tsx` for Files with JSX**: Ensure that files containing JSX syntax have a `.tsx` extension.
   - *Trigger Case*: When creating a new file with JSX, or when encountering JSX-related errors in a `.ts` file.
   - *Example*: Rename `status-helpers.ts` to `status-helpers.tsx` if it contains JSX.
+
+- **Rule 1.10: Script Multiple File Operations**: When performing multiple file system operations (e.g., moving or deleting many files), create a batch script (`.bat` for Windows or `.sh` for Unix-like systems) to execute all commands at once. This improves efficiency and reduces manual errors.
+  - *Trigger Case*: When more than two file `move` or `del` commands are needed.
+  - *Example*: Create `move_files.bat` containing `move "file1.txt" "dest/file1.txt"` and `move "file2.txt" "dest/file2.txt"`, then execute `.\move_files.bat`.

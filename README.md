@@ -1,55 +1,102 @@
-# Remote web server design
-
-_Automatically synced with your [v0.dev](https://v0.dev) deployments_
+# Food Truck Finder Application
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/codedeficients-projects/v0-remote-web-server-design)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/rQOrGwmrQGh)
 
 ## Overview
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+The Food Truck Finder Application is a modern web application designed to help users discover and locate food trucks in their vicinity. It provides real-time information on food truck locations, operating hours, menus, and ratings. The project emphasizes adherence to State-of-the-Art (SOTA) best practices in software development, including robust data pipelines, comprehensive testing, and high code quality standards.
 
-## Deployment
+## Features
 
-Your project is live at:
+-   **Food Truck Discovery**: Easily find food trucks based on location, cuisine type, and operating status.
+-   **Detailed Information**: View comprehensive details for each food truck, including menus, operating hours, contact information, and social media links.
+-   **Real-time Updates**: Get live updates on food truck locations and availability.
+-   **Search & Filtering**: Advanced search and filtering options to narrow down food truck results.
+-   **Admin Dashboard**: (Under Development) A secure admin interface for managing food truck data, monitoring system metrics, and overseeing data quality.
 
-**[https://vercel.com/codedeficients-projects/v0-remote-web-server-design](https://vercel.com/codedeficients-projects/v0-remote-web-server-design)**
+## Technologies Used
 
-## Build your app
+-   **Frontend**: Next.js, React, TypeScript, Tailwind CSS
+-   **Backend**: Next.js API Routes, Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+-   **Data Scraping**: Custom web scraping pipeline with robust error handling and data quality checks.
+-   **Testing**: Playwright (E2E), Jest (Unit/Integration)
+-   **Linting & Formatting**: ESLint, Prettier, Husky, lint-staged
+-   **Monitoring**: Custom API monitoring and system alerts.
 
-Continue building your app on:
+## Installation
 
-**[https://v0.dev/chat/projects/rQOrGwmrQGh](https://v0.dev/chat/projects/rQOrGwmrQGh)**
+To set up the project locally, follow these steps:
 
-## How It Works
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/codedeficients/food-truck-finder-poc.git
+    cd food-truck-finder-poc
+    ```
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    # or using pnpm
+    pnpm install
+    ```
+3.  **Set up Environment Variables**:
+    Create a `.env.local` file in the root directory and add your Supabase project credentials:
+    ```
+    NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+    ```
+    You can find these in your Supabase project settings under `API`.
 
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+4.  **Run Database Migrations**:
+    Ensure your Supabase database is set up and run any pending migrations. (Details on specific migration commands will be added here if needed).
 
-## Local Browser Debugging with browser-tools-mcp
+## Usage
+
+To run the application in development mode:
+
+```bash
+npm run dev
+# or using pnpm
+pnpm dev
+```
+
+The application will be accessible at `http://localhost:3000`.
+
+## Contributing
+
+We welcome contributions to the Food Truck Finder Application! Please follow these guidelines:
+
+1.  Fork the repository.
+2.  Create a new branch for your feature or bug fix: `git checkout -b feature/your-feature-name` or `bugfix/your-bug-fix`.
+3.  Make your changes and ensure they adhere to our [Linting and Code Quality Guide](LINTING_AND_CODE_QUALITY_GUIDE.md).
+4.  Write tests for your changes.
+5.  Ensure all tests pass and linting checks are clear.
+6.  Commit your changes with a descriptive message.
+7.  Push your branch and open a pull request.
+
+## Local Development & Debugging
+
+### Browser Debugging with browser-tools-mcp
 
 This project uses [browser-tools-mcp](https://marketplace.visualstudio.com/items?itemName=browser-tools-mcp) for local browser-based debugging and inspection. To use:
 
-1. Open the Command Palette in VS Code (`Ctrl+Shift+P`).
-2. Search for and run `Browser Tools: Open Browser`.
-3. Use the browser window to interact with your app at `http://localhost:3000` (or your dev server URL).
-4. Use the browser-tools-mcp sidebar for DOM inspection, console, network, and accessibility audits.
+1.  Open the Command Palette in VS Code (`Ctrl+Shift+P`).
+2.  Search for and run `Browser Tools: Open Browser`.
+3.  Use the browser window to interact with your app at `http://localhost:3000` (or your dev server URL).
+4.  Use the browser-tools-mcp sidebar for DOM inspection, console, network, and accessibility audits.
 
 See the [browser-tools-mcp documentation](https://marketplace.visualstudio.com/items?itemName=browser-tools-mcp) for advanced features and troubleshooting.
 
-## Pre-commit Hooks with Husky and lint-staged
+### Pre-commit Hooks with Husky and lint-staged
 
 This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks and [lint-staged](https://github.com/okonet/lint-staged) to run linters on staged files, ensuring code quality and consistency before commits.
 
 **How it works:**
 
-- When you attempt to commit changes, Husky triggers the pre-commit hook.
-- The pre-commit hook executes `pnpm exec lint-staged`.
-- `lint-staged` then runs configured linters (`eslint --fix` and `prettier --write`) only on the files you've staged for commit.
-- This process helps catch errors and enforce formatting standards automatically before code is added to the repository.
+-   When you attempt to commit changes, Husky triggers the pre-commit hook.
+-   The pre-commit hook executes `pnpm exec lint-staged`.
+-   `lint-staged` then runs configured linters (`eslint --fix` and `prettier --write`) only on the files you've staged for commit.
+-   This process helps catch errors and enforce formatting standards automatically before code is added to the repository.
 
 **Setup:**
 
@@ -58,41 +105,36 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 3.  The `.husky/pre-commit` hook is configured to run `pnpm exec lint-staged`.
 4.  The `lint-staged` configuration in `package.json` specifies which commands to run on which file types.
 
-# Food Truck Finder: Agentic Data Pipeline & Real-Time UI
+## Documentation
 
-## System Overview
+For a comprehensive overview of the application's architecture, data pipeline, and database schema, please refer to the [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md). For linting and code quality guidelines, refer to the [Linting and Code Quality Guide](LINTING_AND_CODE_QUALITY_GUIDE.md).
 
-This project implements an **agentic data pipeline** (autonomous web agent/data ingestion pipeline) that autonomously discovers, crawls, extracts, deduplicates, and ingests food truck data from the web. The system is designed for minimal manual intervention and leverages SOTA tools like Context7 and Tavily for discovery and extraction.
+## 🔬 SOTA RESEARCH FINDINGS & IMPLEMENTATION GUIDELINES
 
-## How the Data Pipeline Works
+### Next.js & TypeScript Best Practices (2024-2025)
 
-- **Autonomous Discovery:** The backend agent regularly searches for new food truck directories and individual truck URLs using Firecrawl/Tavily.
-- **URL Management:** Discovered directories and truck URLs are stored in a database table (e.g., `discovered_sources` or `pending_scrapes`).
-- **Job Scheduling:** The agent schedules and triggers scraping jobs for new/unprocessed URLs.
-- **Deduplication:** Ingestion logic upserts (updates if exists, inserts if not) based on a unique identifier (website URL or business name) to prevent duplicates.
-- **Normalization:** Menu/category data is normalized to a canonical schema before DB insert.
-- **Monitoring:** The pipeline tracks API usage, crawl coverage, and ingestion success/failure rates, alerting on anomalies.
+#### Code Quality Standards
+- **ESLint Configuration**: Use `next/core-web-vitals` and `next/typescript` for optimal linting
+- **Type Safety**: Leverage TypeScript for enhanced type safety and early error detection
+- **Error Boundaries**: Implement graceful error handling with proper error boundaries
+- **Performance**: Use `unstable_cache` with tags for efficient data caching strategies
 
-## Real-Time Data Delivery to Users
+#### Development Workflow
+- **Incremental Development**: Small, atomic changes with frequent linting verification
+- **Testing Strategy**: Comprehensive unit, integration, and E2E testing
+- **Code Organization**: Modular folder structure with clear separation of concerns
+- **Documentation**: JSDoc comments for complex functions and comprehensive API documentation
 
-- **Live UI Updates:** The frontend is designed to dynamically display new food trucks as they are scraped and ingested by the backend agent.
-- **Tab-Based Navigation:** Each food truck is presented as a tab or card in the UI. As new trucks are discovered and processed, new tabs/cards appear in real time—no page reload required.
-- **Fresh Data Guarantee:** The UI fetches the latest data from the backend (Supabase/PostgREST) using real-time subscriptions or polling, ensuring users always see the most up-to-date truck listings and menus.
-- **Data Consistency:** As the agent updates or deduplicates truck entries, the UI reflects these changes instantly, providing a seamless, always-fresh experience.
+### Food Truck Finder Application Best Practices
 
-## Key Search/Reference Terms
+#### Data Pipeline Excellence
+- **Web Scraping Ethics**: Respect robots.txt, implement rate limiting, and follow platform terms
+- **Data Quality Framework**: Implement comprehensive data validation and quality scoring
+- **Real-time Updates**: Use Server-Sent Events or WebSocket for live data updates
+- **Error Handling**: Robust error handling with retry mechanisms and graceful degradation
 
-- "agentic data pipeline"
-- "autonomous web agent"
-- "autonomous data ingestion pipeline"
-- "self-updating data pipeline"
-- "web agent for data discovery and ingestion"
-
-## Why This Matters
-
-- This architecture enables a truly autonomous, scalable, and real-time food truck discovery platform.
-- Using the right terminology in documentation and code ensures alignment with SOTA best practices and makes it easier to find and apply relevant workflows from the broader AI/data engineering community.
-
----
-
-_See `SUMMARY.md` for a detailed technical breakdown and ongoing context updates._
+#### Security & Performance
+- **Authentication**: Implement SOTA authentication patterns with proper session management
+- **Rate Limiting**: Intelligent rate limiting with backoff strategies for API calls
+- **Caching Strategy**: Multi-layer caching with appropriate invalidation strategies
+- **Monitoring**: Comprehensive monitoring with real-time alerts and performance tracking
