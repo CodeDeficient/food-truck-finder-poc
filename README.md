@@ -31,113 +31,43 @@ The Food Truck Finder Application is a modern web application designed to help u
 
 ```mermaid
 graph TD
+    A[User Accesses Web App] --> B{Authentication & Authorization};
+    B --> C{Frontend (Next.js)};
+    C --> D[Search & Filter Food Trucks];
+    C --> E[View Food Truck Details];
+    C --> F[View Events & Schedules];
+    C --> G[Admin Dashboard Access];
 
-    A[User Accesses Web App]; %%
+    D --> H(API: /api/search);
+    E --> I(API: /api/trucks/[id]);
+    F --> J(API: /api/events, /api/trucks/[id]/schedules);
+    G --> K(API: /api/admin/*);
 
-    B{Authentication & Authorization}; %%
+    H --> L[Supabase Database];
+    I --> L;
+    J --> L;
+    K --> L;
 
-    C{Frontend (Next.js)}; %%
-
-    D[Search & Filter Food Trucks]; %%
-
-    E[View Food Truck Details]; %%
-
-    F[View Events & Schedules]; %%
-
-    G[Admin Dashboard Access]; %%
-
-    H(API: /api/search); %%
-
-    I(API: /api/trucks/[id]); %%
-
-    J(API: /api/events, /api/trucks/[id]/schedules); %%
-
-    K(API: /api/admin/*); %%
-
-    L[Supabase Database]; %%
-
-    M[Data Pipeline]; %%
-
-    N[Manage Food Trucks]; %%
-
-    O[Manage Events]; %%
-
-    P[Monitor Data Quality]; %%
-
-    Q[Configure Scraping]; %%
-
-    R[View API Usage]; %%
-
-
-    A --> B; %%
-
-    B --> C; %%
-
-    C --> D; %%
-
-    C --> E; %%
-
-    C --> F; %%
-
-    C --> G; %%
-
-
-    D --> H; %%
-
-    E --> I; %%
-
-    F --> J; %%
-
-    G --> K; %%
-
-
-    H --> L; %%
-
-    I --> L; %%
-
-    J --> L; %%
-
-    K --> L; %%
-
-
-    L --> M; %%
-
-    M --> L; %%
-
+    L --> M[Data Pipeline];
+    M --> L;
 
     subgraph User Interactions
-
-        D --> C; %%
-
-        E --> C; %%
-
-        F --> C; %%
-
+        D --> C;
+        E --> C;
+        F --> C;
     end
 
-
     subgraph Admin Features
-
-        G --> N; %%
-
-        G --> O; %%
-
-        G --> P; %%
-
-        G --> Q; %%
-
-        G --> R; %%
-
-        N --> K; %%
-
-        O --> K; %%
-
-        P --> K; %%
-
-        Q --> K; %%
-
-        R --> K; %%
-
+        G --> N[Manage Food Trucks];
+        G --> O[Manage Events];
+        G --> P[Monitor Data Quality];
+        G --> Q[Configure Scraping];
+        G --> R[View API Usage];
+        N --> K;
+        O --> K;
+        P --> K;
+        Q --> K;
+        R --> K;
     end
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
@@ -164,82 +94,31 @@ graph TD
 
 ```mermaid
 graph TD
-
-    A[Data Sources: Websites, APIs]; %%
-
-    B(Scraping Engine: Firecrawl, Custom Scrapers); %%
-
-    C{Data Ingestion & Initial Processing}; %%
-
-    D[Raw Data Storage: Supabase (PostgreSQL)]; %%
-
-    E(Data Transformation & Enrichment: Pipeline Processor); %%
-
-    F{Data Quality Checks & Validation}; %%
-
-    G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)]; %%
-
-    H(API Endpoints: Search, Admin, Public); %%
-
-    I[Web Application: Next.js Frontend]; %%
-
-    J[User Interface]; %%
-
-    K[Monitoring & Logging: Supabase Logs, Custom Metrics]; %%
-
-    L[User Feedback & Reporting]; %%
-
-    M[Admin Dashboard]; %%
-
-
-    A --> B; %%
-
-    B --> C; %%
-
-    C --> D; %%
-
-    D --> E; %%
-
-    E --> F; %%
-
-    F --> G; %%
-
-    G --> H; %%
-
-    H --> I; %%
-
-    I --> J; %%
-
+    A[Data Sources: Websites, APIs] --> B(Scraping Engine: Firecrawl, Custom Scrapers);
+    B --> C{Data Ingestion & Initial Processing};
+    C --> D[Raw Data Storage: Supabase (PostgreSQL)];
+    D --> E(Data Transformation & Enrichment: Pipeline Processor);
+    E --> F{Data Quality Checks & Validation};
+    F --> G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)];
+    G --> H(API Endpoints: Search, Admin, Public);
+    H --> I[Web Application: Next.js Frontend];
+    I --> J[User Interface];
 
     subgraph Monitoring & Feedback
-
-        K --> E; %%
-
-        K --> F; %%
-
-        K --> H; %%
-
-        J --> L; %%
-
-        L --> A; %%
-
+        K[Monitoring & Logging: Supabase Logs, Custom Metrics] --> E;
+        K --> F;
+        K --> H;
+        J --> L[User Feedback & Reporting];
+        L --> A;
     end
 
-
     subgraph Admin & Management
-
-        M --> H; %%
-
-        M --> B; %%
-
-        M --> C; %%
-
-        M --> E; %%
-
-        M --> F; %%
-
-        M --> K; %%
-
+        M[Admin Dashboard] --> H;
+        M --> B;
+        M --> C;
+        M --> E;
+        M --> F;
+        M --> K;
     end
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
