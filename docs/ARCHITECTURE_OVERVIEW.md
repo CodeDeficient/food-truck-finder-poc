@@ -63,37 +63,32 @@ The web application workflow describes how users interact with the system, from 
 ```mermaid
 flowchart TD
     A[User Accesses Web App] --> B[Authentication & Authorization]
-    B --> C[Frontend (Next.js)]
-    C --> D[Search & Filter Food Trucks]
-    C --> E[View Food Truck Details]
-    C --> F[View Events & Schedules]
-    C --> G[Admin Dashboard Access]
-
-    D --> H[/api/search]
-    E --> I[/api/trucks/[id]]
-    F --> J[/api/events, /api/trucks/[id]/schedules]
-    G --> K[/api/admin/*]
-
-    H --> L[Supabase Database]
+    B --> C["Frontend (Next.js)"]
+    C --> D["Search & Filter Food Trucks"]
+    C --> E["View Food Truck Details"]
+    C --> F["View Events & Schedules"]
+    C --> G["Admin Dashboard Access"]
+    D --> H["/api/search"]
+    E --> I["/api/trucks/[id]"]
+    F --> J["/api/events, /api/trucks/[id]/schedules"]
+    G --> K["/api/admin/*"]
+    H --> L["Supabase Database"]
     I --> L
     J --> L
     K --> L
-
-    L --> M[Data Pipeline]
+    L --> M["Data Pipeline"]
     M --> L
-
     subgraph "User Interactions"
         D
         E
         F
     end
-
     subgraph "Admin Features"
-        G --> N[Manage Food Trucks]
-        G --> O[Manage Events]
-        G --> P[Monitor Data Quality]
-        G --> Q[Configure Scraping]
-        G --> R[View API Usage]
+        G --> N["Manage Food Trucks"]
+        G --> O["Manage Events"]
+        G --> P["Monitor Data Quality"]
+        G --> Q["Configure Scraping"]
+        G --> R["View API Usage"]
         N --> K
         O --> K
         P --> K
@@ -110,26 +105,26 @@ The Enhanced Data Pipeline is a comprehensive, automated system for discovering,
 
 ```mermaid
 graph TD
-    A[Data Sources: Websites, APIs] --> B(Scraping Engine: Firecrawl, Custom Scrapers);
-    B --> C[Data Ingestion & Initial Processing];
-    C --> D[Raw Data Storage: Supabase (PostgreSQL)];
-    D --> E[Data Transformation & Enrichment: Pipeline Processor];
-    E --> F[Data Quality Checks & Validation];
-    F --> G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)];
-    G --> H[API Endpoints: Search, Admin, Public];
-    H --> I[Web Application: Next.js Frontend];
-    I --> J[User Interface];
+    A["Data Sources: Websites, APIs"] --> B("Scraping Engine: Firecrawl, Custom Scrapers");
+    B --> C["Data Ingestion & Initial Processing"];
+    C --> D["Raw Data Storage: Supabase (PostgreSQL)"];
+    D --> E["Data Transformation & Enrichment: Pipeline Processor"];
+    E --> F["Data Quality Checks & Validation"];
+    F --> G["Cleaned & Structured Data Storage: Supabase (PostgreSQL)"];
+    G --> H["API Endpoints: Search, Admin, Public"];
+    H --> I["Web Application: Next.js Frontend"];
+    I --> J["User Interface"];
 
     subgraph "Monitoring & Feedback"
-        K[Monitoring & Logging: Supabase Logs, Custom Metrics] --> E;
+        K["Monitoring & Logging: Supabase Logs, Custom Metrics"] --> E;
         K --> F;
         K --> H;
-        J --> L[User Feedback & Reporting];
+        J --> L["User Feedback & Reporting"];
         L --> A;
     end
 
     subgraph "Admin & Management"
-        M[Admin Dashboard] --> H;
+        M["Admin Dashboard"] --> H;
         M --> B;
         M --> C;
         M --> E;
@@ -148,6 +143,11 @@ graph TD
     style I fill:#bbf,stroke:#333,stroke-width:2px
     style J fill:#bfb,stroke:#333,stroke-width:2px
     style K fill:#ccc,stroke:#333,stroke-width:2px
+    style L fill:#ccc,stroke:#333,stroke-width:2px
+    style M fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+### Workflow Details
     style L fill:#ccc,stroke:#333,stroke-width:2px
     style M fill:#f9f,stroke:#333,stroke-width:2px
 ```
