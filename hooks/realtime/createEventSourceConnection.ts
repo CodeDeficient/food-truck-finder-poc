@@ -1,8 +1,106 @@
 import React from 'react';
-import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
-import { parseEventData, setupEventListeners, setupEventSourceAuth } from '../useRealtimeAdminEventsHelpers';
+import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import { setupEventSourceAuth } from '../useRealtimeAdminEventsHelpers';
 import { useConnectionState } from './useConnectionState';
 import { setupEventSourceListeners } from './setupEventSourceListeners';
+
+function handleConnectionError(error: unknown, setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>, setConnectionError: React.Dispatch<React.SetStateAction<string | undefined>>) {
+  console.error('Failed to establish real-time connection:', error);
+  setIsConnecting(false);
+  setConnectionError((error instanceof Error ? error.message : 'Connection failed'));
+}
+
+function initializeEventSource({
+  connect,
+  eventSourceRef,
+  handleEvent,
+  isManuallyDisconnectedRef,
+  reconnectInterval,
+  reconnectTimeoutRef,
+  connectionAttempts,
+  maxReconnectAttempts,
+  connectionState
+}: {
+  connect: () => void;
+  eventSourceRef: React.RefObject<EventSource | undefined>;
+  handleEvent: (event: RealtimeEvent) => void;
+  isManuallyDisconnectedRef: React.RefObject<boolean>;
+  reconnectInterval: number;
+  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  connectionAttempts: number;
+  maxReconnectAttempts: number;
+  connectionState: ReturnType<typeof useConnectionState>;
+}) {
+  const eventSource = new EventSource('/api/admin/realtime-events');
+
+  // Setup all event listeners
+  setupEventSourceListeners({
+    eventSource,
+    handleEvent,
+    connectionState,
+    isManuallyDisconnectedRef,
+    connectionAttempts,
+    maxReconnectAttempts,
+    reconnectInterval,
+    reconnectTimeoutRef,
+    connect,
+  });
+
+  return eventSource;
+}
+
+function setupInitialConnectionState(
+  connectionState: ReturnType<typeof useConnectionState>,
+  isManuallyDisconnectedRef: React.RefObject<boolean>
+) {
+  const { setIsConnecting, setConnectionError } = connectionState;
+  setIsConnecting(true);
+  setConnectionError(undefined);
+  isManuallyDisconnectedRef.current = false;
+}
+
+function establishEventSourceConnection({
+  connect,
+  eventSourceRef,
+  handleEvent,
+  isManuallyDisconnectedRef,
+  reconnectInterval,
+  reconnectTimeoutRef,
+  connectionAttempts,
+  maxReconnectAttempts,
+  connectionState
+}: {
+  connect: () => void;
+  eventSourceRef: React.RefObject<EventSource | undefined>;
+  handleEvent: (event: RealtimeEvent) => void;
+  isManuallyDisconnectedRef: React.RefObject<boolean>;
+  reconnectInterval: number;
+  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  connectionAttempts: number;
+  maxReconnectAttempts: number;
+  connectionState: ReturnType<typeof useConnectionState>;
+}) {
+  try {
+    setupEventSourceAuth();
+    eventSourceRef.current = initializeEventSource({
+      connect,
+      eventSourceRef,
+      handleEvent,
+      isManuallyDisconnectedRef,
+      reconnectInterval,
+      reconnectTimeoutRef,
+      connectionAttempts,
+      maxReconnectAttempts,
+      connectionState
+    });
+  } catch (error) {
+    handleConnectionError(error, connectionState.setIsConnecting, connectionState.setConnectionError);
+  }
+}
+
+function shouldPreventConnection(eventSourceRef: React.RefObject<EventSource | undefined>, isConnecting: boolean): boolean {
+  return !!eventSourceRef.current || isConnecting;
+}
 
 export function createEventSourceConnection({
   eventSourceRef,
@@ -16,51 +114,32 @@ export function createEventSourceConnection({
   connectionState,
   connect
 }: {
-  eventSourceRef: React.MutableRefObject<EventSource | undefined>;
+  eventSourceRef: React.RefObject<EventSource | undefined>;
   isConnecting: boolean;
-  isManuallyDisconnectedRef: React.MutableRefObject<boolean>;
+  isManuallyDisconnectedRef: React.RefObject<boolean>;
   connectionAttempts: number;
   maxReconnectAttempts: number;
   reconnectInterval: number;
-  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>;
+  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
   handleEvent: (event: RealtimeEvent) => void;
   connectionState: ReturnType<typeof useConnectionState>;
   connect: () => void;
 }) {
-  if (eventSourceRef.current || isConnecting) {
+  if (shouldPreventConnection(eventSourceRef, isConnecting)) {
     return;
   }
 
-  const { setIsConnecting, setConnectionError, setIsConnected, setConnectionAttempts } = connectionState;
+  setupInitialConnectionState(connectionState, isManuallyDisconnectedRef);
 
-  setIsConnecting(true);
-  setConnectionError(undefined);
-  isManuallyDisconnectedRef.current = false;
-
-  try {
-    // Setup authentication
-    setupEventSourceAuth();
-
-    const eventSource = new EventSource('/api/admin/realtime-events');
-
-    // Setup all event listeners
-    setupEventSourceListeners(
-      eventSource,
-      handleEvent,
-      connectionState,
-      isManuallyDisconnectedRef,
-      connectionAttempts,
-      maxReconnectAttempts,
-      reconnectInterval,
-      reconnectTimeoutRef,
-      connect
-    );
-
-    eventSourceRef.current = eventSource;
-
-  } catch (error) {
-    console.error('Failed to establish real-time connection:', error);
-    setIsConnecting(false);
-    setConnectionError(error instanceof Error ? error.message : 'Connection failed');
-  }
+  establishEventSourceConnection({
+    connect,
+    eventSourceRef,
+    handleEvent,
+    isManuallyDisconnectedRef,
+    reconnectInterval,
+    reconnectTimeoutRef,
+    connectionAttempts,
+    maxReconnectAttempts,
+    connectionState
+  });
 }

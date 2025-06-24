@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuditLogger } from '@/lib/security/auditLogger';
+import { AuditLogger, SecurityEvent } from '@/lib/security/auditLogger';
 import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
 
 interface RequestMetadata {
@@ -18,67 +18,107 @@ interface SupabaseProfile {
   role?: string;
 }
 
-async function logAndRedirect(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata, reason: string, userError?: { message?: string }) {
-  await AuditLogger.logSecurityEvent({
-    event_type: 'permission_denied',
-    ip_address: requestMetadata.ip,
-    user_agent: requestMetadata.userAgent,
-    details: {
-      attempted_url: requestMetadata.url,
-      reason,
-      error: userError?.message,
-    },
-    severity: 'warning',
-  });
+interface LogAndRedirectParams {
+  req: NextRequest;
+  res: NextResponse;
+  requestMetadata: RequestMetadata;
+  reason: string;
+  userError?: { message?: string };
+}
+
+interface LogSecurityEventParams {
+  event_type: SecurityEvent['event_type'];
+  ip_address: string;
+  user_agent: string;
+  details: Record<string, any>;
+  severity: SecurityEvent['severity'];
+  user_id?: string;
+  user_email?: string;
+}
+
+async function logSecurityEventAndRedirect(
+  req: NextRequest,
+  res: NextResponse,
+  logParams: LogSecurityEventParams,
+  redirectPath: string,
+  redirectFromPath?: string
+) {
+  await AuditLogger.logSecurityEvent(logParams);
   const redirectUrl = req.nextUrl.clone();
-  redirectUrl.pathname = '/login';
-  redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
+  redirectUrl.pathname = redirectPath;
+  if (redirectFromPath) {
+    redirectUrl.searchParams.set(`redirectedFrom`, redirectFromPath);
+  }
   return NextResponse.redirect(redirectUrl);
 }
 
-async function logAndRedirectDenied(
-  req: NextRequest,
-  res: NextResponse,
-  requestMetadata: RequestMetadata,
-  user: SupabaseUser,
-  profile: SupabaseProfile | null,
-  profileQueryError?: { message?: string }
-) {
-  await AuditLogger.logSecurityEvent({
-    event_type: 'permission_denied',
-    user_id: user.id,
-    user_email: user.email,
-    ip_address: requestMetadata.ip,
-    user_agent: requestMetadata.userAgent,
-    details: {
-      attempted_url: requestMetadata.url,
-      user_role: profile?.role ?? 'none',
-      reason: 'insufficient_privileges',
-      error: profileQueryError?.message,
+async function logAndRedirect({ req, res, requestMetadata, reason, userError }: LogAndRedirectParams) {
+  return logSecurityEventAndRedirect(
+    req,
+    res,
+    {
+      event_type: 'permission_denied',
+      ip_address: requestMetadata.ip,
+      user_agent: requestMetadata.userAgent,
+      details: {
+        attempted_url: requestMetadata.url,
+        reason,
+        error: userError?.message,
+      },
+      severity: 'warning',
     },
-    severity: 'error',
-  });
-  const redirectUrl = req.nextUrl.clone();
-  redirectUrl.pathname = '/access-denied';
-  return NextResponse.redirect(redirectUrl);
+    '/login',
+    req.nextUrl.pathname
+  );
+}
+
+interface LogAndRedirectDeniedParams {
+  req: NextRequest;
+  res: NextResponse;
+  requestMetadata: RequestMetadata;
+  user: SupabaseUser;
+  profile: SupabaseProfile | null;
+  profileQueryError?: { message?: string } | null; // Changed to allow null
+}
+
+async function logAndRedirectDenied({ req, res, requestMetadata, user, profile, profileQueryError }: LogAndRedirectDeniedParams) {
+  return logSecurityEventAndRedirect(
+    req,
+    res,
+    {
+      event_type: 'permission_denied',
+      user_id: user.id,
+      user_email: user.email ?? undefined,
+      ip_address: requestMetadata.ip,
+      user_agent: requestMetadata.userAgent,
+      details: {
+        attempted_url: requestMetadata.url,
+        user_role: profile?.role ?? 'none',
+        reason: 'insufficient_privileges',
+        error: profileQueryError?.message,
+      },
+      severity: 'error',
+    },
+    '/access-denied'
+  );
 }
 
 export async function protectAdminRoutes(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata) {
   const supabase = createSupabaseMiddlewareClient(req, res);
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError != undefined || user == undefined) {
-    return logAndRedirect(req, res, requestMetadata, 'no_session', userError ?? undefined);
+  const { data, error: userError } = await supabase.auth.getUser();
+  const user = data?.user;
+
+  if (userError || !user) {
+    return logAndRedirect({ req, res, requestMetadata, reason: 'no_session', userError: userError ?? undefined });
   }
+  // Explicitly type the result of the Supabase query
   const { data: profile, error: profileQueryError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
-  if (profileQueryError != undefined || profile?.role !== 'admin') {
-    return logAndRedirectDenied(req, res, requestMetadata, user, profile ?? null, profileQueryError ?? undefined);
+    .single() as { data: SupabaseProfile | null; error: { message?: string } | null };
+  if (profileQueryError || (profile && profile.role !== 'admin')) {
+    return logAndRedirectDenied({ req, res, requestMetadata, user, profile: profile ?? null, profileQueryError: profileQueryError ?? undefined });
   }
   if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
     await AuditLogger.logDataAccess(
