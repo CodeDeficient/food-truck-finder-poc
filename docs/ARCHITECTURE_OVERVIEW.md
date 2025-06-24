@@ -61,7 +61,7 @@ The `food-truck-finder-poc` codebase is organized into several key directories, 
 The web application workflow describes how users interact with the system, from authentication to accessing various features.
 
 ```mermaid
-graph TD
+flowchart TD
     A[User Accesses Web App] --> B[Authentication & Authorization]
     B --> C[Frontend (Next.js)]
     C --> D[Search & Filter Food Trucks]
@@ -69,10 +69,10 @@ graph TD
     C --> F[View Events & Schedules]
     C --> G[Admin Dashboard Access]
 
-    D --> H[API: /api/search]
-    E --> I[API: /api/trucks/[id]]
-    F --> J[API: /api/events, /api/trucks/[id]/schedules]
-    G --> K[API: /api/admin/*]
+    D --> H[/api/search]
+    E --> I[/api/trucks/[id]]
+    F --> J[/api/events, /api/trucks/[id]/schedules]
+    G --> K[/api/admin/*]
 
     H --> L[Supabase Database]
     I --> L
@@ -83,9 +83,9 @@ graph TD
     M --> L
 
     subgraph "User Interactions"
-        D --> C
-        E --> C
-        F --> C
+        D
+        E
+        F
     end
 
     subgraph "Admin Features"
@@ -100,25 +100,6 @@ graph TD
         Q --> K
         R --> K
     end
-
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#bfb,stroke:#333,stroke-width:2px
-    style D fill:#f9f,stroke:#333,stroke-width:2px
-    style E fill:#f9f,stroke:#333,stroke-width:2px
-    style F fill:#f9f,stroke:#333,stroke-width:2px
-    style G fill:#f9f,stroke:#333,stroke-width:2px
-    style H fill:#bbf,stroke:#333,stroke-width:2px
-    style I fill:#bbf,stroke:#333,stroke-width:2px
-    style J fill:#bbf,stroke:#333,stroke-width:2px
-    style K fill:#bbf,stroke:#333,stroke-width:2px
-    style L fill:#fbb,stroke:#333,stroke-width:2px
-    style M fill:#bfb,stroke:#333,stroke-width:2px
-    style N fill:#ccc,stroke:#333,stroke-width:2px
-    style O fill:#ccc,stroke:#333,stroke-width:2px
-    style P fill:#ccc,stroke:#333,stroke-width:2px
-    style Q fill:#ccc,stroke:#333,stroke-width:2px
-    style R fill:#ccc,stroke:#333,stroke-width:2px
 ```
 
 ## 3. Enhanced Data Pipeline
@@ -128,47 +109,33 @@ The Enhanced Data Pipeline is a comprehensive, automated system for discovering,
 ### Architecture
 
 ```mermaid
-graph TD
-    A[Data Sources: Websites, APIs] --> B(Scraping Engine: Firecrawl, Custom Scrapers);
-    B --> C[Data Ingestion & Initial Processing];
-    C --> D[Raw Data Storage: Supabase (PostgreSQL)];
-    D --> E[Data Transformation & Enrichment: Pipeline Processor];
-    E --> F[Data Quality Checks & Validation];
-    F --> G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)];
-    G --> H[API Endpoints: Search, Admin, Public];
-    H --> I[Web Application: Next.js Frontend];
-    I --> J[User Interface];
+flowchart TD
+    A[Data Sources: Websites, APIs] --> B[Scraping Engine: Firecrawl, Custom Scrapers]
+    B --> C[Data Ingestion & Initial Processing]
+    C --> D[Raw Data Storage: Supabase (PostgreSQL)]
+    D --> E[Data Transformation & Enrichment: Pipeline Processor]
+    E --> F[Data Quality Checks & Validation]
+    F --> G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)]
+    G --> H[API Endpoints: Search, Admin, Public]
+    H --> I[Web Application: Next.js Frontend]
+    I --> J[User Interface]
 
     subgraph "Monitoring & Feedback"
-        K[Monitoring & Logging: Supabase Logs, Custom Metrics] --> E;
-        K --> F;
-        K --> H;
-        J --> L[User Feedback & Reporting];
-        L --> A;
+        K[Monitoring & Logging: Supabase Logs, Custom Metrics] --> E
+        K --> F
+        K --> H
+        J --> L[User Feedback & Reporting]
+        L --> A
     end
 
     subgraph "Admin & Management"
-        M[Admin Dashboard] --> H;
-        M --> B;
-        M --> C;
-        M --> E;
-        M --> F;
-        M --> K;
+        M[Admin Dashboard] --> H
+        M --> B
+        M --> C
+        M --> E
+        M --> F
+        M --> K
     end
-
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#bfb,stroke:#333,stroke-width:2px
-    style D fill:#fbb,stroke:#333,stroke-width:2px
-    style E fill:#bbf,stroke:#333,stroke-width:2px
-    style F fill:#bfb,stroke:#333,stroke-width:2px
-    style G fill:#fbb,stroke:#333,stroke-width:2px
-    style H fill:#f9f,stroke:#333,stroke-width:2px
-    style I fill:#bbf,stroke:#333,stroke-width:2px
-    style J fill:#bfb,stroke:#333,stroke-width:2px
-    style K fill:#ccc,stroke:#333,stroke-width:2px
-    style L fill:#ccc,stroke:#333,stroke-width:2px
-    style M fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ### Workflow Details
