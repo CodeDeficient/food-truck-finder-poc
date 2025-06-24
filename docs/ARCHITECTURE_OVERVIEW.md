@@ -62,43 +62,43 @@ The web application workflow describes how users interact with the system, from 
 
 ```mermaid
 graph TD
-    A[User Accesses Web App] --> B{Authentication & Authorization}
-    B --> C{Frontend (Next.js)}
-    C --> D[Search & Filter Food Trucks]
-    C --> E[View Food Truck Details]
-    C --> F[View Events & Schedules]
-    C --> G[Admin Dashboard Access]
+    A[User Accesses Web App] --> B{Authentication & Authorization};
+    B --> C{Frontend (Next.js)};
+    C --> D[Search & Filter Food Trucks];
+    C --> E[View Food Truck Details];
+    C --> F[View Events & Schedules];
+    C --> G[Admin Dashboard Access];
 
-    D --> H(API: /api/search)
-    E --> I(API: /api/trucks/[id])
-    F --> J(API: /api/events, /api/trucks/[id]/schedules)
-    G --> K(API: /api/admin/*)
+    D --> H(API: /api/search);
+    E --> I(API: /api/trucks/[id]);
+    F --> J(API: /api/events, /api/trucks/[id]/schedules);
+    G --> K(API: /api/admin/*);
 
-    H --> L[Supabase Database]
-    I --> L
-    J --> L
-    K --> L
+    H --> L[Supabase Database];
+    I --> L;
+    J --> L;
+    K --> L;
 
-    L --> M[Data Pipeline]
-    M --> L
+    L --> M[Data Pipeline];
+    M --> L;
 
     subgraph User Interactions
-        D --> C
-        E --> C
-        F --> C
+        D --> C;
+        E --> C;
+        F --> C;
     end
 
     subgraph Admin Features
-        G --> N[Manage Food Trucks]
-        G --> O[Manage Events]
-        G --> P[Monitor Data Quality]
-        G --> Q[Configure Scraping]
-        G --> R[View API Usage]
-        N --> K
-        O --> K
-        P --> K
-        Q --> K
-        R --> K
+        G --> N[Manage Food Trucks];
+        G --> O[Manage Events];
+        G --> P[Monitor Data Quality];
+        G --> Q[Configure Scraping];
+        G --> R[View API Usage];
+        N --> K;
+        O --> K;
+        P --> K;
+        Q --> K;
+        R --> K;
     end
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
@@ -129,31 +129,31 @@ The Enhanced Data Pipeline is a comprehensive, automated system for discovering,
 
 ```mermaid
 graph TD
-    A[Data Sources: Websites, APIs] --> B(Scraping Engine: Firecrawl, Custom Scrapers)
-    B --> C{Data Ingestion & Initial Processing}
-    C --> D[Raw Data Storage: Supabase (PostgreSQL)]
-    D --> E(Data Transformation & Enrichment: Pipeline Processor)
-    E --> F{Data Quality Checks & Validation}
-    F --> G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)]
-    G --> H(API Endpoints: Search, Admin, Public)
-    H --> I[Web Application: Next.js Frontend]
-    I --> J[User Interface]
+    A[Data Sources: Websites, APIs] --> B(Scraping Engine: Firecrawl, Custom Scrapers);
+    B --> C{Data Ingestion & Initial Processing};
+    C --> D[Raw Data Storage: Supabase (PostgreSQL)];
+    D --> E(Data Transformation & Enrichment: Pipeline Processor);
+    E --> F{Data Quality Checks & Validation};
+    F --> G[Cleaned & Structured Data Storage: Supabase (PostgreSQL)];
+    G --> H(API Endpoints: Search, Admin, Public);
+    H --> I[Web Application: Next.js Frontend];
+    I --> J[User Interface];
 
     subgraph Monitoring & Feedback
-        K[Monitoring & Logging: Supabase Logs, Custom Metrics] --> E
-        K --> F
-        K --> H
-        J --> L[User Feedback & Reporting]
-        L --> A
+        K[Monitoring & Logging: Supabase Logs, Custom Metrics] --> E;
+        K --> F;
+        K --> H;
+        J --> L[User Feedback & Reporting];
+        L --> A;
     end
 
     subgraph Admin & Management
-        M[Admin Dashboard] --> H
-        M --> B
-        M --> C
-        M --> E
-        M --> F
-        M --> K
+        M[Admin Dashboard] --> H;
+        M --> B;
+        M --> C;
+        M --> E;
+        M --> F;
+        M --> K;
     end
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
