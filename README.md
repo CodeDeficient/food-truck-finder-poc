@@ -144,12 +144,11 @@ To set up the project locally, follow these steps:
     pnpm install
     ```
 3.  **Set up Environment Variables**:
-    Create a `.env.local` file in the root directory and add your Supabase project credentials:
+    Create a `.env.local` file by copying the example file:
+    ```bash
+    cp .env.local.example .env.local
     ```
-    NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_URL
-    NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-    ```
-    You can find these in your Supabase project settings under `API`.
+    Then, fill in the required environment variables in the `.env.local` file. Refer to the comments in the `.env.local.example` file for guidance on where to find the necessary API keys and other values.
 
 4.  **Run Database Migrations**:
     Ensure your Supabase database is set up and run any pending migrations. You can apply migrations using the Supabase CLI:
