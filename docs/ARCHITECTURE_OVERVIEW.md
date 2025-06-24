@@ -132,24 +132,9 @@ graph TD
         M --> K;
     end
 
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333,stroke-width:2px
-    style C fill:#bfb,stroke:#333,stroke-width:2px
-    style D fill:#fbb,stroke:#333,stroke-width:2px
-    style E fill:#bbf,stroke:#333,stroke-width:2px
-    style F fill:#bfb,stroke:#333,stroke-width:2px
-    style G fill:#fbb,stroke:#333,stroke-width:2px
-    style H fill:#f9f,stroke:#333,stroke-width:2px
-    style I fill:#bbf,stroke:#333,stroke-width:2px
-    style J fill:#bfb,stroke:#333,stroke-width:2px
-    style K fill:#ccc,stroke:#333,stroke-width:2px
-    style L fill:#ccc,stroke:#333,stroke-width:2px
-    style M fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ### Workflow Details
-    style L fill:#ccc,stroke:#333,stroke-width:2px
-    style M fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ### Workflow Details

@@ -230,14 +230,14 @@ The `package.json` includes a variety of scripts to streamline development, test
 
 ### Browser Debugging with browser-tools-mcp
 
-This project uses [browser-tools-mcp](https://marketplace.visualstudio.com/items?itemName=browser-tools-mcp) for local browser-based debugging and inspection. To use:
+This project uses [browser-tools-mcp](https://github.com/AgentDeskAI/browser-tools-mcp) for local browser-based debugging and inspection. To use:
 
 1.  Open the Command Palette in VS Code (`Ctrl+Shift+P`).
 2.  Search for and run `Browser Tools: Open Browser`.
 3.  Use the browser window to interact with your app at `http://localhost:3000` (or your dev server URL).
 4.  Use the browser-tools-mcp sidebar for DOM inspection, console, network, and accessibility audits.
 
-See the [browser-tools-mcp documentation](https://marketplace.visualstudio.com/items?itemName=browser-tools-mcp) for advanced features and troubleshooting.
+See the [browser-tools-mcp documentation](https://github.com/AgentDeskAI/browser-tools-mcp) for advanced features and troubleshooting.
 
 ### Pre-commit Hooks with Husky and lint-staged
 
