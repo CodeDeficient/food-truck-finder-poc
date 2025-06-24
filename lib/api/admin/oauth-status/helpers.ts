@@ -23,12 +23,19 @@ export async function handleGetRequest(_request: NextRequest) {
   });
 }
 
-export function handlePostRequest(_request: NextRequest) {
+// 1. Refactor nested template literals in generateOAuthTestUrl
+function generateOAuthTestUrl(baseUrl: string): string {
+  const redirectPath = `${baseUrl}/auth/callback`;
+  const encodedRedirect = encodeURIComponent(redirectPath);
+  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodedRedirect}`;
+}
+
+export function handlePostRequest() { // Removed _request parameter
   const baseUrl = process.env.NODE_ENV === 'production'
     ? 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app'
     : 'http://localhost:3000';
 
-  const testUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(`${baseUrl}/auth/callback`)}`;
+  const testUrl = generateOAuthTestUrl(baseUrl);
 
   return NextResponse.json({
     success: true,
@@ -64,9 +71,9 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
       projectId: 'zkwliyjjkdnigizidlln'
     },
     environment_variables: {
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL != undefined,
-      supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY != undefined,
-      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY != undefined
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL !== undefined,
+      supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== undefined,
+      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY !== undefined
     },
     oauth_flow: {
       loginPageExists: true,
@@ -90,12 +97,12 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
 async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseClient) {
   try {
     const { error } = await supabase.from('profiles').select('count').limit(1);
-    if (error == undefined) {
+    if (error === null) {
       status.supabase.connected = true;
     } else {
       status.supabase.error = error.message;
     }
-  } catch (error) {
+  } catch (error: unknown) { // Explicitly type error as unknown
     status.supabase.error = error instanceof Error ? error.message : 'Unknown connection error';
   }
 }
@@ -103,7 +110,7 @@ async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseCl
 async function checkSupabaseAuthSettings(status: OAuthStatus) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (supabaseUrl != undefined && supabaseUrl !== '') {
+    if (supabaseUrl !== undefined && supabaseUrl !== '') { // Explicit check for undefined and empty string
       const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
       if (settingsResponse.ok === true) {
         const settings = await settingsResponse.json() as {
@@ -116,7 +123,7 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
           signupEnabled: settings.disable_signup !== true,
           autoconfirm: settings.autoconfirm ?? false
         };
-        if (settings.external?.google != undefined) {
+        if (settings.external?.google !== undefined) { // Explicit check for undefined
           status.oauth_flow.authProviderConfigured = true;
         }
       }
@@ -135,11 +142,11 @@ async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) 
         skipBrowserRedirect: true
       }
     });
-    if (!oauthError || oauthError.message !== 'Provider not found') {
+    if (oauthError && oauthError.message !== 'Provider not found') { // Explicitly check for oauthError existence
       status.oauth_flow.authProviderConfigured = true;
     }
-  } catch {
-    console.info('OAuth provider test failed (may be normal)');
+  } catch (error: unknown) { // Explicitly type error as unknown
+    console.info('OAuth provider test failed (may be normal):', error);
   }
 }
 
@@ -158,19 +165,19 @@ function generateRecommendations(status: OAuthStatus): string[] {
 
   if (!status.supabase.connected) {
     recommendations.push('❌ Fix Supabase connection issue');
-    if (status.supabase.error != undefined && status.supabase.error !== '') {
-      recommendations.push(`   Error: ${status.supabase.error}`);
-    }
+  if (status.supabase.error) { // Simplified check for truthy string
+    recommendations.push(`   Error: ${status.supabase.error}`);
+  }
   }
 
-  if (status.supabase.authSettings == undefined) {
-    recommendations.push('🔧 Configure Google OAuth in Supabase Dashboard', '   1. Create Google Cloud Console OAuth credentials', '   2. Add credentials to Supabase Auth settings');
-  } else {
-    if (status.supabase.authSettings.googleEnabled === true) {
+  if (status.supabase.authSettings) {
+    if (status.supabase.authSettings.googleEnabled) { // Simplified check for boolean true
       recommendations.push('✅ Google OAuth provider is enabled');
     } else {
       recommendations.push('🔧 Enable Google OAuth provider in Supabase Dashboard', '   Go to: Authentication > Providers > Google');
     }
+  } else { // Simplified check for undefined
+    recommendations.push('🔧 Configure Google OAuth in Supabase Dashboard', '   1. Create Google Cloud Console OAuth credentials', '   2. Add credentials to Supabase Auth settings');
   }
 
   if (status.overall_status === 'ready') {
@@ -185,7 +192,7 @@ function generateRecommendations(status: OAuthStatus): string[] {
 }
 
 function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not_configured' | 'error' {
-  if (status.supabase.connected !== true || (status.supabase.error != undefined && status.supabase.error !== '')) {
+  if (!status.supabase.connected || status.supabase.error) { // Simplified check for boolean false or truthy string
     return 'error';
   }
 

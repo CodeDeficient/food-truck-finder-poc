@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logActivity } from '@/lib/activityLogger';
 import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
-import { DataQualityService } from '@/lib/utils/quality-scorer';
+import { DataQualityService } from '@/lib/utils/QualityScorer';
 
 // Type definitions for quality assessment
 interface QualityAssessment {
@@ -9,7 +9,7 @@ interface QualityAssessment {
   issues: string[];
 }
 
-import { type QualityCategory } from '@/lib/utils/quality-scorer';
+import { type QualityCategory } from '@/lib/utils/QualityScorer';
 
 interface QualityService {
   calculateQualityScore: (truck: FoodTruck) => QualityAssessment;

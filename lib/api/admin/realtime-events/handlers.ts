@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+ import { NextRequest, NextResponse } from 'next/server';
 import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService, type ScrapingJob, type FoodTruck } from '@/lib/supabase';
 import { AdminEvent } from './types';
 
@@ -29,11 +29,12 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     }
 
     const token = authHeader.slice(7);
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const { data, error } = await supabase.auth.getUser(token);
 
-    if (error != undefined || user == undefined) {
+    if (error || !data?.user) {
       return false;
     }
+    const user = data.user;
 
     if (!supabaseAdmin) {
       return false;
@@ -145,8 +146,7 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
       default: {
         return new Response(JSON.stringify({
           success: false,
-          error: 'Unknown action',
-          available_actions: ['health_check', 'trigger_test_event']
+          error: "That didn't work, please try again later."
         }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
@@ -157,8 +157,7 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
     console.error('Realtime events POST error:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: "That didn't work, please try again later."
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }

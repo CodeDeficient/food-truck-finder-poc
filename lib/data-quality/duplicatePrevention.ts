@@ -52,13 +52,24 @@ export class DuplicatePreventionService {
   static async checkForDuplicates(candidateTruck: Partial<FoodTruck>): Promise<DuplicateDetectionResult> {
     try {
       // Get all existing trucks for comparison
-      const existingTrucks = await FoodTruckService.getAllTrucks();
-      
+      const existingTrucksResult = await FoodTruckService.getAllTrucks();
+
+      if ('error' in existingTrucksResult) {
+        console.error('Error fetching existing trucks:', existingTrucksResult.error);
+        return {
+          isDuplicate: false,
+          matches: [],
+          action: 'create',
+          reason: `Error fetching existing trucks: ${existingTrucksResult.error}`
+        };
+      }
+
+      const existingTrucks = existingTrucksResult.trucks;
       const matches: DuplicateMatch[] = [];
-      
-      for (const existingTruck of existingTrucks.trucks) {
+
+      for (const existingTruck of existingTrucks) {
         const similarity = this.calculateSimilarity(candidateTruck, existingTruck);
-        
+
         if (similarity.overall >= DUPLICATE_DETECTION_CONFIG.thresholds.overall) {
           matches.push({
             existingTruck,
@@ -69,30 +80,37 @@ export class DuplicatePreventionService {
           });
         }
       }
-      
-      // Sort matches by similarity (highest first)
-      matches.sort((a, b) => b.similarity - a.similarity);
-      
-      const bestMatch = matches[0];
-      const isDuplicate = matches.length > 0;
-      
-      return {
-        isDuplicate,
-        matches,
-        bestMatch,
-        action: this.determineAction(matches, candidateTruck),
-        reason: this.generateReason(matches, candidateTruck)
-      };
-      
+
+      return this.processDuplicateMatches(matches, candidateTruck);
+
     } catch (error) {
       console.error('Error checking for duplicates:', error);
       return {
         isDuplicate: false,
         matches: [],
         action: 'create',
-        reason: 'Error during duplicate detection - proceeding with creation'
+        reason: 'An unexpected error occurred during duplicate detection - proceeding with creation'
       };
     }
+  }
+
+  /**
+   * Processes the matches found during duplicate detection and returns the result.
+   */
+  private static processDuplicateMatches(matches: DuplicateMatch[], candidateTruck: Partial<FoodTruck>): DuplicateDetectionResult {
+    // Sort matches by similarity (highest first)
+    matches.sort((a, b) => b.similarity - a.similarity);
+
+    const bestMatch = matches.length > 0 ? matches[0] : undefined;
+    const isDuplicate = matches.length > 0;
+
+    return {
+      isDuplicate,
+      matches,
+      bestMatch,
+      action: this.determineAction(matches, candidateTruck),
+      reason: this.generateReason(matches, candidateTruck)
+    };
   }
   
   /**
@@ -202,22 +220,27 @@ export class DuplicatePreventionService {
    * Calculate location similarity
    */
   private static calculateLocationSimilarity(
-    loc1: FoodTruck['current_location'],
-    loc2: FoodTruck['current_location']
+    loc1: FoodTruck['current_location'] | undefined | null,
+    loc2: FoodTruck['current_location'] | undefined | null
   ): number {
-    if (loc1 == undefined || loc2 == undefined) return 0;
+    if (!loc1 || !loc2) return 0;
     
     let similarity = 0;
     let factors = 0;
     
     // Address similarity
-    if (loc1.address != undefined && loc2.address != undefined) {
+    if (loc1.address !== undefined && loc1.address !== null && loc2.address !== undefined && loc2.address !== null) {
       similarity += this.calculateStringSimilarity(loc1.address, loc2.address);
       factors++;
     }
     
     // GPS coordinate similarity (within 100 meters = high similarity)
-    if (loc1.lat != undefined && loc1.lng != undefined && loc2.lat != undefined && loc2.lng != undefined) {
+    if (
+      loc1.lat !== undefined && loc1.lat !== null &&
+      loc1.lng !== undefined && loc1.lng !== null &&
+      loc2.lat !== undefined && loc2.lat !== null &&
+      loc2.lng !== undefined && loc2.lng !== null
+    ) {
       const distance = this.calculateGPSDistance(
         loc1.lat, loc1.lng,
         loc2.lat, loc2.lng
@@ -251,8 +274,8 @@ export class DuplicatePreventionService {
    * Calculate contact similarity
    */
   private static calculateContactSimilarity(
-    contact1: FoodTruck['contact_info'],
-    contact2: FoodTruck['contact_info']
+    contact1: FoodTruck['contact_info'] | undefined | null,
+    contact2: FoodTruck['contact_info'] | undefined | null
   ): number {
     if (!contact1 || !contact2) return 0;
     
@@ -288,8 +311,8 @@ export class DuplicatePreventionService {
    * Calculate menu similarity (basic implementation)
    */
   private static calculateMenuSimilarity(
-    menu1: FoodTruck['menu'],
-    menu2: FoodTruck['menu']
+    menu1: FoodTruck['menu'] | undefined | null,
+    menu2: FoodTruck['menu'] | undefined | null
   ): number {
     if (!menu1 || !menu2 || menu1.length === 0 || menu2.length === 0) return 0;
     
@@ -358,10 +381,20 @@ export class DuplicatePreventionService {
   /**
    * Merge duplicate truck data intelligently
    */
-  static async mergeDuplicates(targetId: string, sourceId: string): Promise<FoodTruck> {
-    const target = await FoodTruckService.getTruckById(targetId);
-    const source = await FoodTruckService.getTruckById(sourceId);
-    
+  static async mergeDuplicates(targetId: string, sourceId: string): Promise<FoodTruck | { error: string }> {
+    const targetResult = await FoodTruckService.getTruckById(targetId);
+    const sourceResult = await FoodTruckService.getTruckById(sourceId);
+
+    if ('error' in targetResult) {
+      return { error: `Failed to retrieve target truck with ID ${targetId}: ${targetResult.error}` };
+    }
+    if ('error' in sourceResult) {
+      return { error: `Failed to retrieve source truck with ID ${sourceId}: ${sourceResult.error}` };
+    }
+
+    const target = targetResult;
+    const source = sourceResult;
+
     // Merge logic: prefer non-null, more complete data
     const mergedData: Partial<FoodTruck> = {
       name: target.name ?? source.name,
@@ -384,11 +417,14 @@ export class DuplicatePreventionService {
     };
 
     // Update target with merged data
-    const updatedTruck = await FoodTruckService.updateTruck(targetId, mergedData);
+    const updatedTruckResult = await FoodTruckService.updateTruck(targetId, mergedData);
 
-    // Note: Delete functionality would need to be implemented in FoodTruckService
+    if ('error' in updatedTruckResult) {
+      return { error: `Failed to update target truck with merged data: ${updatedTruckResult.error}` };
+    }
+
     console.info(`Merged truck ${sourceId} into ${targetId}`);
-    
-    return updatedTruck;
+
+    return updatedTruckResult;
   }
 }

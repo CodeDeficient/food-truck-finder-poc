@@ -1,57 +1,105 @@
 import React from 'react';
-import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
-import { parseEventData, setupEventListeners } from '../useRealtimeAdminEventsHelpers';
+import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
 import { useConnectionState } from './useConnectionState';
 
-export function setupEventSourceListeners(
-  eventSource: EventSource,
-  handleEvent: (event: RealtimeEvent) => void,
-  connectionState: ReturnType<typeof useConnectionState>,
-  isManuallyDisconnectedRef: React.MutableRefObject<boolean>,
-  connectionAttempts: number,
-  maxReconnectAttempts: number,
-  reconnectInterval: number,
-  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined>,
-  connect: () => void
-) {
+interface ConnectionStateActions {
+  setIsConnected: (connected: boolean) => void;
+  setIsConnecting: (connecting: boolean) => void;
+  setConnectionError: (error: string | undefined) => void;
+  setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
+}
+
+interface EventSourceRefs {
+  isManuallyDisconnectedRef: React.RefObject<boolean>;
+  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+}
+
+interface ReconnectLogicParams extends EventSourceRefs {
+  connectionAttempts: number;
+  maxReconnectAttempts: number;
+  reconnectInterval: number;
+  connect: () => void;
+  setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
+  setConnectionError: (error: string | undefined) => void;
+}
+
+const handleOpen = (connectionState: ConnectionStateActions) => () => {
+  console.info('Real-time admin events connected');
+  connectionState.setIsConnected(true);
+  connectionState.setIsConnecting(false);
+  connectionState.setConnectionError(undefined);
+  connectionState.setConnectionAttempts(0);
+};
+
+const handleMessage = (handleEvent: (event: RealtimeEvent) => void, setConnectionError: (error: string | undefined) => void) => (event: MessageEvent) => {
+  try {
+    const adminEvent: RealtimeEvent = JSON.parse(event.data) as RealtimeEvent;
+    handleEvent(adminEvent);
+  } catch (error) {
+    console.error('Error parsing event data:', error);
+    setConnectionError('Error parsing event data');
+  }
+};
+
+const handleError = (connectionState: ConnectionStateActions, refs: EventSourceRefs, reconnectParams: ReconnectLogicParams) => (error: Event) => {
+  console.error('Real-time admin events error:', error);
+  connectionState.setIsConnected(false);
+  connectionState.setIsConnecting(false);
+  connectionState.setConnectionError('Connection error occurred');
+
+  // Explicitly check for undefined on ref.current
+  if (refs.isManuallyDisconnectedRef.current !== true && reconnectParams.connectionAttempts < reconnectParams.maxReconnectAttempts) {
+    reconnectParams.setConnectionAttempts((prev) => prev + 1);
+
+    refs.reconnectTimeoutRef.current = setTimeout(() => {
+      if (refs.isManuallyDisconnectedRef.current !== true) {
+        reconnectParams.connect();
+      }
+    }, reconnectParams.reconnectInterval);
+  } else if (reconnectParams.connectionAttempts >= reconnectParams.maxReconnectAttempts) {
+    reconnectParams.setConnectionError('Max reconnection attempts reached');
+  }
+};
+
+interface SetupEventSourceListenersParams {
+  eventSource: EventSource;
+  handleEvent: (event: RealtimeEvent) => void;
+  connectionState: ReturnType<typeof useConnectionState>;
+  isManuallyDisconnectedRef: React.RefObject<boolean>;
+  connectionAttempts: number;
+  maxReconnectAttempts: number;
+  reconnectInterval: number;
+  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  connect: () => void;
+}
+
+export function setupEventSourceListeners({
+  eventSource,
+  handleEvent,
+  connectionState,
+  isManuallyDisconnectedRef,
+  connectionAttempts,
+  maxReconnectAttempts,
+  reconnectInterval,
+  reconnectTimeoutRef,
+  connect,
+}: SetupEventSourceListenersParams) {
   const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } = connectionState;
 
-  eventSource.addEventListener('open', () => {
-    console.info('Real-time admin events connected');
-    setIsConnected(true);
-    setIsConnecting(false);
-    setConnectionError(undefined);
-    setConnectionAttempts(0);
-  });
+  const refs: EventSourceRefs = { isManuallyDisconnectedRef, reconnectTimeoutRef };
+  const connectionActions: ConnectionStateActions = { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts };
+  const reconnectLogicParams: ReconnectLogicParams = {
+    connectionAttempts,
+    maxReconnectAttempts,
+    reconnectInterval,
+    connect,
+    setConnectionAttempts,
+    setConnectionError,
+    isManuallyDisconnectedRef,
+    reconnectTimeoutRef,
+  };
 
-  eventSource.addEventListener('message', (event: MessageEvent) => {
-    // event.data is always string per EventSource spec
-    const adminEvent = parseEventData(event.data, 'message');
-    if (adminEvent != undefined) {
-      handleEvent(adminEvent);
-    }
-  });
-
-  eventSource.addEventListener('error', (error) => {
-    console.error('Real-time admin events error:', error);
-    setIsConnected(false);
-    setIsConnecting(false);
-    setConnectionError('Connection error occurred');
-
-    // Attempt reconnection if not manually disconnected
-    if (!isManuallyDisconnectedRef.current && connectionAttempts < maxReconnectAttempts) {
-      setConnectionAttempts(prev => prev + 1);
-
-      reconnectTimeoutRef.current = setTimeout(() => {
-        if (!isManuallyDisconnectedRef.current) {
-          connect();
-        }
-      }, reconnectInterval);
-    } else if (connectionAttempts >= maxReconnectAttempts) {
-      setConnectionError('Max reconnection attempts reached');
-    }
-  });
-
-  // Handle specific event types
-  setupEventListeners(eventSource, handleEvent);
+  eventSource.addEventListener('open', handleOpen(connectionActions));
+  eventSource.addEventListener('message', handleMessage(handleEvent, setConnectionError));
+  eventSource.addEventListener('error', handleError(connectionActions, refs, reconnectLogicParams));
 }

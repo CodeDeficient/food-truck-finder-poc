@@ -29,6 +29,45 @@ export async function validateInputAndPrepare(
   return { isValid: true, name };
 }
 
+// New helper function for operating hours
+function buildOperatingHours(extractedOperatingHours: ExtractedFoodTruckDetails['operating_hours']) {
+  if (extractedOperatingHours === undefined) {
+    return {
+      monday: { closed: true as const },
+      tuesday: { closed: true as const },
+      wednesday: { closed: true as const },
+      thursday: { closed: true as const },
+      friday: { closed: true as const },
+      saturday: { closed: true as const },
+      sunday: { closed: true as const },
+    };
+  }
+  return {
+    monday: extractedOperatingHours.monday ?? { closed: true as const },
+    tuesday: extractedOperatingHours.tuesday ?? { closed: true as const },
+    wednesday: extractedOperatingHours.wednesday ?? { closed: true as const },
+    thursday: extractedOperatingHours.thursday ?? { closed: true as const },
+    friday: extractedOperatingHours.friday ?? { closed: true as const },
+    saturday: extractedOperatingHours.saturday ?? { closed: true as const },
+    sunday: extractedOperatingHours.sunday ?? { closed: true as const },
+  };
+}
+
+// New helper function for scheduled locations
+function buildScheduledLocations(scheduledLocations: ExtractedFoodTruckDetails['scheduled_locations']) {
+  if (!Array.isArray(scheduledLocations)) {
+    return;
+  }
+  return scheduledLocations.map((loc) => ({
+    lat: typeof loc.lat === 'number' ? loc.lat : 0,
+    lng: typeof loc.lng === 'number' ? loc.lng : 0,
+    address: loc.address ?? undefined,
+    start_time: loc.start_time ?? undefined,
+    end_time: loc.end_time ?? undefined,
+    timestamp: new Date().toISOString(),
+  }));
+}
+
 // Helper function to build truck data schema
 export function buildTruckDataSchema(
   extractedTruckData: ExtractedFoodTruckDetails,
@@ -41,48 +80,11 @@ export function buildTruckDataSchema(
     name: name,
     description: extractedTruckData.description ?? undefined, // Keep as undefined if null/missing
     current_location: currentLocation,
-    scheduled_locations: Array.isArray(extractedTruckData.scheduled_locations)
-      ? extractedTruckData.scheduled_locations.map((loc) => ({
-          lat: typeof loc.lat === 'number' ? loc.lat : 0,
-          lng: typeof loc.lng === 'number' ? loc.lng : 0,
-          address: loc.address ?? undefined,
-          start_time: loc.start_time ?? undefined,
-          end_time: loc.end_time ?? undefined,
-          timestamp: new Date().toISOString(),
-        }))
-      : undefined,
-    operating_hours: extractedTruckData.operating_hours == undefined
-      ? {
-          monday: { closed: true },
-          tuesday: { closed: true },
-          wednesday: { closed: true },
-          thursday: { closed: true },
-          friday: { closed: true },
-          saturday: { closed: true },
-          sunday: { closed: true },
-        }
-      : {
-          monday: extractedTruckData.operating_hours.monday ?? { closed: true },
-          tuesday: extractedTruckData.operating_hours.tuesday ?? { closed: true },
-          wednesday: extractedTruckData.operating_hours.wednesday ?? { closed: true },
-          thursday: extractedTruckData.operating_hours.thursday ?? { closed: true },
-          friday: extractedTruckData.operating_hours.friday ?? { closed: true },
-          saturday: extractedTruckData.operating_hours.saturday ?? { closed: true },
-          sunday: extractedTruckData.operating_hours.sunday ?? { closed: true },
-        },
+    scheduled_locations: buildScheduledLocations(extractedTruckData.scheduled_locations),
+    operating_hours: buildOperatingHours(extractedTruckData.operating_hours),
     menu: processMenuData(extractedTruckData),
-    contact_info: {
-      phone: extractedTruckData.contact_info?.phone ?? undefined,
-      email: extractedTruckData.contact_info?.email ?? undefined,
-      website: extractedTruckData.contact_info?.website ?? undefined,
-    },
-    social_media: {
-      instagram: extractedTruckData.social_media?.instagram ?? undefined,
-      facebook: extractedTruckData.social_media?.facebook ?? undefined,
-      twitter: extractedTruckData.social_media?.twitter ?? undefined,
-      tiktok: extractedTruckData.social_media?.tiktok ?? undefined,
-      yelp: extractedTruckData.social_media?.yelp ?? undefined,
-    },
+    contact_info: buildContactInfo(extractedTruckData.contact_info),
+    social_media: buildSocialMedia(extractedTruckData.social_media),
     cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
       ? extractedTruckData.cuisine_type
       : [],
@@ -97,6 +99,25 @@ export function buildTruckDataSchema(
   };
 }
 
+interface DuplicateCheckResult {
+  isDuplicate: boolean;
+  matches: {
+    existingTruck: FoodTruck;
+    similarity: number;
+    matchedFields: string[];
+    confidence: 'high' | 'medium' | 'low';
+    recommendation: 'merge' | 'update' | 'skip' | 'manual_review';
+  }[];
+  bestMatch?: {
+    existingTruck: FoodTruck;
+    similarity: number;
+    confidence: 'high' | 'medium' | 'low';
+    recommendation: 'merge' | 'update' | 'skip' | 'manual_review';
+  };
+  action: 'create' | 'update' | 'merge' | 'manual_review';
+  reason: string;
+}
+
 // Helper function to handle duplicate checking and resolution
 export async function handleDuplicateCheck(
   jobId: string,
@@ -105,9 +126,9 @@ export async function handleDuplicateCheck(
 ): Promise<FoodTruck> {
   // Check for duplicates before creating
   console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
-  const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truckData);
+  const duplicateCheck: DuplicateCheckResult = await DuplicatePreventionService.checkForDuplicates(truckData);
 
-  let truck: FoodTruck;
+  let truck: FoodTruck | { error: string };
   if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
     const { bestMatch } = duplicateCheck;
     console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
@@ -115,19 +136,47 @@ export async function handleDuplicateCheck(
     if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
       // Merge with existing truck
       truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
-      console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
+      if ('error' in truck) {
+        console.error(`Job ${jobId}: Error merging duplicates: ${truck.error}`);
+        // Fallback to creating a new truck if merge fails
+        truck = await FoodTruckService.createTruck(truckData);
+        if ('error' in truck) {
+          console.error(`Job ${jobId}: Error creating truck after merge failure: ${truck.error}`);
+          throw new Error(`Failed to merge or create truck: ${truck.error}`);
+        }
+      } else {
+        console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
+      }
     } else if (bestMatch.recommendation === 'update') {
       // Update existing truck with new data
       truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
-      console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
+      if ('error' in truck) {
+        console.error(`Job ${jobId}: Error updating existing truck: ${truck.error}`);
+        // Fallback to creating a new truck if update fails
+        truck = await FoodTruckService.createTruck(truckData);
+        if ('error' in truck) {
+          console.error(`Job ${jobId}: Error creating truck after update failure: ${truck.error}`);
+          throw new Error(`Failed to update or create truck: ${truck.error}`);
+        }
+      } else {
+        console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
+      }
     } else {
       // Create new truck but log the potential duplicate
       truck = await FoodTruckService.createTruck(truckData);
-      console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason})`);
+      if ('error' in truck) {
+        console.error(`Job ${jobId}: Error creating truck despite potential duplicate: ${truck.error}`);
+        throw new Error(`Failed to create truck: ${truck.error}`);
+      }
+      console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason ?? 'unknown reason'})`);
     }
   } else {
     // No duplicates found, create new truck
     truck = await FoodTruckService.createTruck(truckData);
+    if ('error' in truck) {
+      console.error(`Job ${jobId}: Error creating new truck: ${truck.error}`);
+      throw new Error(`Failed to create truck: ${truck.error}`);
+    }
   }
 
   return truck;
@@ -178,6 +227,54 @@ function buildLocationData(extractedTruckData: ExtractedFoodTruckDetails) {
   };
 }
 
+// New helper function for contact info
+function buildContactInfo(contactInfo: ExtractedFoodTruckDetails['contact_info']) {
+  return {
+    phone: contactInfo?.phone ?? undefined,
+    email: contactInfo?.email ?? undefined,
+    website: contactInfo?.website ?? undefined,
+  };
+}
+
+// New helper function for social media
+function buildSocialMedia(socialMedia: ExtractedFoodTruckDetails['social_media']) {
+  return {
+    instagram: socialMedia?.instagram ?? undefined,
+    facebook: socialMedia?.facebook ?? undefined,
+    twitter: socialMedia?.twitter ?? undefined,
+    tiktok: socialMedia?.tiktok ?? undefined,
+    yelp: socialMedia?.yelp ?? undefined,
+  };
+}
+
+// Define a more precise type for raw menu categories and items
+interface RawMenuItem {
+  name?: string;
+  description?: string;
+  price?: string | number;
+  dietary_tags?: string[];
+}
+
+interface RawMenuCategory {
+  items?: unknown[];
+  category?: string;
+  name?: string;
+}
+
+// Type guard for RawMenuCategory
+function isRawMenuCategory(obj: unknown): obj is RawMenuCategory {
+  return typeof obj === 'object' && obj !== null && (
+    'category' in obj || 'name' in obj || 'items' in obj
+  );
+}
+
+// Type guard for RawMenuItem
+function isRawMenuItem(obj: unknown): obj is RawMenuItem {
+  return typeof obj === 'object' && obj !== null && (
+    'name' in obj || 'description' in obj || 'price' in obj || 'dietary_tags' in obj
+  );
+}
+
 // Helper function to process menu data
 function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCategory[] {
   if (!Array.isArray(extractedTruckData.menu)) {
@@ -185,34 +282,42 @@ function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCat
   }
 
   return extractedTruckData.menu.map((category: unknown): MenuCategory => {
-    const categoryData = category as { items?: unknown[]; category?: string; name?: string };
-    const items = (Array.isArray(categoryData.items) ? categoryData.items : []).map(
+    if (!isRawMenuCategory(category)) {
+      console.warn('Invalid category data encountered:', category);
+      return { name: 'Invalid Category', items: [] };
+    }
+
+    const items = (Array.isArray(category.items) ? category.items : []).map(
       (item: unknown): MenuItem => {
-        const itemData = item as {
-          name?: string;
-          description?: string;
-          price?: string | number;
-          dietary_tags?: string[];
-        };
+        if (!isRawMenuItem(item)) {
+          console.warn('Invalid item data encountered:', item);
+          return {
+            name: 'Invalid Item',
+            description: undefined,
+            price: undefined,
+            dietary_tags: [],
+          };
+        }
+
         let price: number | undefined = undefined;
-        if (typeof itemData.price === 'number') {
-          price = itemData.price;
-        } else if (typeof itemData.price === 'string') {
-          const parsedPrice = Number.parseFloat(itemData.price.replaceAll(/[^\d.-]/g, ''));
+        if (typeof item.price === 'number') {
+          price = item.price;
+        } else if (typeof item.price === 'string') {
+          const parsedPrice = Number.parseFloat(item.price.replaceAll(/[^\d.-]/g, ''));
           if (!Number.isNaN(parsedPrice)) {
             price = parsedPrice;
           }
         }
         return {
-          name: itemData.name ?? 'Unknown Item',
-          description: itemData.description ?? undefined,
+          name: item.name ?? 'Unknown Item',
+          description: item.description ?? undefined,
           price: price,
-          dietary_tags: Array.isArray(itemData.dietary_tags) ? itemData.dietary_tags : [],
+          dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
         };
       },
     );
     return {
-      name: categoryData.category ?? categoryData.name ?? 'Uncategorized',
+      name: category.category ?? category.name ?? 'Uncategorized',
       items: items,
     };
   });
