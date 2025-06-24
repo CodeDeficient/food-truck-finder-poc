@@ -3,7 +3,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { type SystemAlert } from './StatusHelpers';
+import { type SystemAlert } from './status-helpers';
 
 interface SystemAlertItemProps {
   readonly alert: SystemAlert;

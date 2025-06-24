@@ -1,0 +1,169 @@
+{
+  "timestamp": "2025-06-24T13:24:57.820Z",
+  "totalErrors": 249,
+  "errorCounts": {
+    "@typescript-eslint/await-thenable": 2,
+    "sonarjs/no-invalid-await": 2,
+    "@typescript-eslint/require-await": 2,
+    "@typescript-eslint/no-unsafe-assignment": 38,
+    "@typescript-eslint/no-unsafe-call": 12,
+    "sonarjs/no-redundant-jump": 1,
+    "@typescript-eslint/strict-boolean-expressions": 37,
+    "sonarjs/unused-import": 17,
+    "max-lines-per-function": 37,
+    "unicorn/consistent-function-scoping": 1,
+    "unicorn/no-null": 5,
+    "sonarjs/prefer-read-only-props": 4,
+    "max-params": 10,
+    "@typescript-eslint/no-unsafe-argument": 11,
+    "@typescript-eslint/no-empty-object-type": 1,
+    "sonarjs/deprecation": 8,
+    "sonarjs/no-unused-vars": 5,
+    "sonarjs/no-dead-store": 5,
+    "@typescript-eslint/no-redundant-type-constituents": 1,
+    "sonarjs/pseudo-random": 3,
+    "sonarjs/no-redundant-optional": 2,
+    "@typescript-eslint/no-explicit-any": 11,
+    "unicorn/prefer-default-parameters": 1,
+    "sonarjs/no-nested-template-literals": 1,
+    "@typescript-eslint/no-unsafe-member-access": 14,
+    "@typescript-eslint/no-misused-promises": 1,
+    "sonarjs/cognitive-complexity": 5,
+    "max-depth": 3,
+    "@typescript-eslint/unbound-method": 4,
+    "@typescript-eslint/no-unsafe-return": 2,
+    "sonarjs/no-identical-expressions": 1,
+    "unicorn/filename-case": 1,
+    "unicorn/no-empty-file": 1
+  },
+  "automationCandidates": [
+    {
+      "ruleId": "sonarjs/unused-import",
+      "count": 17,
+      "confidence": "HIGH",
+      "method": "eslint-autofix",
+      "description": "Remove unused imports",
+      "estimatedFixes": 16,
+      "priority": 48
+    },
+    {
+      "ruleId": "@typescript-eslint/no-unsafe-assignment",
+      "count": 38,
+      "confidence": "MEDIUM",
+      "method": "type-annotation",
+      "description": "Add type annotations for unsafe assignments",
+      "estimatedFixes": 11,
+      "priority": 22
+    },
+    {
+      "ruleId": "unicorn/no-null",
+      "count": 5,
+      "confidence": "HIGH",
+      "method": "pattern-replacement",
+      "description": "Replace null with undefined",
+      "estimatedFixes": 4,
+      "priority": 12
+    },
+    {
+      "ruleId": "@typescript-eslint/no-explicit-any",
+      "count": 11,
+      "confidence": "MEDIUM",
+      "method": "pattern-replacement",
+      "description": "Replace any with unknown in safe contexts",
+      "estimatedFixes": 4,
+      "priority": 8
+    },
+    {
+      "ruleId": "@typescript-eslint/strict-boolean-expressions",
+      "count": 37,
+      "confidence": "LOW",
+      "method": "manual-review",
+      "description": "Complex boolean expression fixes",
+      "estimatedFixes": 3,
+      "priority": 3
+    },
+    {
+      "ruleId": "max-lines-per-function",
+      "count": 37,
+      "confidence": "MANUAL_ONLY",
+      "method": "manual-ide-refactor",
+      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.",
+      "estimatedFixes": 0,
+      "priority": null
+    },
+    {
+      "ruleId": "sonarjs/no-dead-store",
+      "count": 5,
+      "confidence": "MEDIUM",
+      "method": "pattern-replacement",
+      "description": "Remove dead store assignments",
+      "estimatedFixes": 3,
+      "priority": 6
+    }
+  ],
+  "recommendations": {
+    "highConfidence": {
+      "candidates": [
+        {
+          "ruleId": "sonarjs/unused-import",
+          "count": 17,
+          "confidence": "HIGH",
+          "method": "eslint-autofix",
+          "description": "Remove unused imports",
+          "estimatedFixes": 16,
+          "priority": 48
+        },
+        {
+          "ruleId": "unicorn/no-null",
+          "count": 5,
+          "confidence": "HIGH",
+          "method": "pattern-replacement",
+          "description": "Replace null with undefined",
+          "estimatedFixes": 4,
+          "priority": 12
+        }
+      ],
+      "totalFixes": 20,
+      "methods": [
+        "eslint-autofix",
+        "pattern-replacement"
+      ]
+    },
+    "mediumConfidence": {
+      "candidates": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "count": 38,
+          "confidence": "MEDIUM",
+          "method": "type-annotation",
+          "description": "Add type annotations for unsafe assignments",
+          "estimatedFixes": 11,
+          "priority": 22
+        },
+        {
+          "ruleId": "@typescript-eslint/no-explicit-any",
+          "count": 11,
+          "confidence": "MEDIUM",
+          "method": "pattern-replacement",
+          "description": "Replace any with unknown in safe contexts",
+          "estimatedFixes": 4,
+          "priority": 8
+        },
+        {
+          "ruleId": "sonarjs/no-dead-store",
+          "count": 5,
+          "confidence": "MEDIUM",
+          "method": "pattern-replacement",
+          "description": "Remove dead store assignments",
+          "estimatedFixes": 3,
+          "priority": 6
+        }
+      ],
+      "totalFixes": 18,
+      "methods": [
+        "type-annotation",
+        "pattern-replacement"
+      ]
+    }
+  }
+}

@@ -1,9 +1,7 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module 'input-otp'. Did you mean to se... Remove this comment to see the full error message
 import { OTPInput, OTPInputContext } from 'input-otp';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { Dot } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -36,8 +34,7 @@ const InputOTPSlot = React.forwardRef<
   React.ComponentPropsWithoutRef<'div'> & { index: number }
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext);
-  // @ts-expect-error TS(2571): Object is of type 'unknown'.
-  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index];
+  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]; // Removed ts-expect-error
 
   return (
     <div

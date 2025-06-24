@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck, DailyOperatingHours, MenuItem } from '@/lib/types';
 import { RatingSection } from './RatingSection';
 import { MenuSection } from './MenuSection';
 import { ContactSection } from './ContactSection';
@@ -10,8 +10,8 @@ import { formatHours, formatPrice } from '@/lib/utils/foodTruckHelpers';
 
 interface TruckCardContentProps {
   readonly truck: FoodTruck;
-  readonly todayHours?: { open: string; close: string; closed: boolean };
-  readonly popularItems: { name: string; price: number }[];
+  readonly todayHours?: DailyOperatingHours;
+  readonly popularItems: MenuItem[]; // Use the full MenuItem type
 }
 
 export function TruckCardContent({

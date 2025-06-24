@@ -1,7 +1,5 @@
 import * as React from "react"
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-slot'. Did you... Remove this comment to see the full error message
 import { Slot } from "@radix-ui/react-slot"
-// @ts-expect-error TS(2792): Cannot find module 'class-variance-authority'. Did... Remove this comment to see the full error message
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -42,7 +40,6 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  // @ts-expect-error TS(2339): Property 'variant' does not exist on type 'ButtonP... Remove this comment to see the full error message
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (

@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { runTestPipeline } from '@/lib/api/test-integration/pipeline-runner';
+import { runTestPipeline } from '@/lib/api/test-integration/pipelineRunner';
 
 export async function POST(request: NextRequest) {
   const logs: string[] = [];

@@ -1,4 +1,4 @@
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 import {
   getPopularItems,
   getPriceRange,

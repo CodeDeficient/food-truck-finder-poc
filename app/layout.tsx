@@ -1,6 +1,4 @@
-// @ts-expect-error TS(2792): Cannot find module 'next'. Did you mean to set the... Remove this comment to see the full error message
 import type { Metadata } from 'next';
-// @ts-expect-error TS(2792): Cannot find module 'next/font/google'. Did you mea... Remove this comment to see the full error message
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
@@ -23,14 +21,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider
-          // @ts-expect-error TS(2322): Type '{ children: (ReactNode | Element)[]; attribu... Remove this comment to see the full error message
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           {children}
-          // @ts-expect-error TS(2786): 'WebVitalsReporter' cannot be used as a JSX compon... Remove this comment to see the full error message
           <WebVitalsReporter />
         </ThemeProvider>
       </body>

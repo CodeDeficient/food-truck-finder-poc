@@ -9,6 +9,15 @@ interface RequestMetadata {
   method: string;
 }
 
+interface SupabaseUser {
+  id: string;
+  email?: string;
+}
+
+interface SupabaseProfile {
+  role?: string;
+}
+
 async function logAndRedirect(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata, reason: string, userError?: { message?: string }) {
   await AuditLogger.logSecurityEvent({
     event_type: 'permission_denied',
@@ -27,7 +36,14 @@ async function logAndRedirect(req: NextRequest, res: NextResponse, requestMetada
   return NextResponse.redirect(redirectUrl);
 }
 
-async function logAndRedirectDenied(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata, user: any, profile: any, profileQueryError?: { message?: string }) {
+async function logAndRedirectDenied(
+  req: NextRequest,
+  res: NextResponse,
+  requestMetadata: RequestMetadata,
+  user: SupabaseUser,
+  profile: SupabaseProfile | null,
+  profileQueryError?: { message?: string }
+) {
   await AuditLogger.logSecurityEvent({
     event_type: 'permission_denied',
     user_id: user.id,
@@ -53,7 +69,7 @@ export async function protectAdminRoutes(req: NextRequest, res: NextResponse, re
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  if (userError || !user) {
+  if (userError != undefined || user == undefined) {
     return logAndRedirect(req, res, requestMetadata, 'no_session', userError ?? undefined);
   }
   const { data: profile, error: profileQueryError } = await supabase
@@ -61,8 +77,8 @@ export async function protectAdminRoutes(req: NextRequest, res: NextResponse, re
     .select('role')
     .eq('id', user.id)
     .single();
-  if (profileQueryError || profile?.role !== 'admin') {
-    return logAndRedirectDenied(req, res, requestMetadata, user, profile, profileQueryError ?? undefined);
+  if (profileQueryError != undefined || profile?.role !== 'admin') {
+    return logAndRedirectDenied(req, res, requestMetadata, user, profile ?? null, profileQueryError ?? undefined);
   }
   if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
     await AuditLogger.logDataAccess(

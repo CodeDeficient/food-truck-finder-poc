@@ -1,5 +1,5 @@
 import React from 'react';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 import { MapSection } from './MapSection';
 import { TruckListSection } from './TruckListSection';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
