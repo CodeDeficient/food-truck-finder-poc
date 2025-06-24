@@ -5,7 +5,21 @@
 
 ## Overview
 
-The Food Truck Finder Application is a modern web application designed to help users discover and locate food trucks in their vicinity. It provides real-time information on food truck locations, operating hours, menus, and ratings. The project emphasizes adherence to State-of-the-Art (SOTA) best practices in software development, including robust data pipelines, comprehensive testing, and high code quality standards.
+The Food Truck Finder Application is a modern, full-stack web application designed to help users discover and locate food trucks in their vicinity. It provides real-time information on food truck locations, operating hours, menus, and ratings. This project showcases a commitment to State-of-the-Art (SOTA) best practices in software development, featuring a robust, AI-powered data pipeline, comprehensive testing, and high code quality standards.
+
+## Key Technologies
+
+-   **Framework**: Next.js (React)
+-   **Styling**: Tailwind CSS
+-   **State Management**: React Hooks
+-   **Backend & Database**: Next.js API Routes, Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+-   **Web Scraping**: Firecrawl
+-   **AI-Powered Search**: Tavily AI
+-   **AI/ML**: Google Gemini API (`@google/genai`)
+-   **Mapping**: Leaflet, React-Leaflet
+-   **UI Components**: Radix UI, Shadcn UI
+-   **Testing**: Playwright (E2E), Jest (Unit/Integration)
+-   **Type Safety**: TypeScript
 
 ## Features
 
@@ -24,6 +38,17 @@ The Food Truck Finder Application is a modern web application designed to help u
     -   **System Metrics & Alerts**: Real-time monitoring of application performance and system health, with configurable alerts.
     -   **Analytics**: Insights into application usage and food truck popularity.
     -   **Test Pipeline**: Tools for testing data scraping and processing pipelines.
+
+## AI-Powered Data Pipeline
+
+The backbone of the Food Truck Finder is its intelligent, automated data pipeline. This system is responsible for discovering, processing, and storing food truck data from various online sources.
+
+### Key Components:
+
+-   **Tavily AI for Intelligent Discovery**: The pipeline uses Tavily's AI-powered search API to intelligently discover new food trucks and their websites. This allows for a more efficient and targeted approach to data acquisition compared to traditional web scraping.
+-   **Firecrawl for Web Scraping**: Once a potential food truck website is identified, Firecrawl is used to reliably scrape the necessary data, such as menus, operating hours, and contact information. Firecrawl's robust infrastructure ensures a high success rate and handles the complexities of web scraping.
+-   **Gemini AI for Data Extraction**: The scraped data is then processed by Google's Gemini AI, which extracts and structures the information into a consistent format.
+-   **Supabase for Data Storage**: The cleaned and structured data is stored in a Supabase PostgreSQL database, providing a reliable and scalable data storage solution.
 
 ## Architecture Diagrams
 
@@ -102,26 +127,6 @@ flowchart TD
         M --> K
     end
 ```
-
-## Technologies Used
-
--   **Framework**: Next.js (React)
--   **Styling**: Tailwind CSS
--   **State Management**: React Hooks
--   **Backend & Database**: Next.js API Routes, Supabase (PostgreSQL, Auth, Storage, Edge Functions)
--   **Data Scraping**: Custom web scraping pipeline with robust error handling and data quality checks.
--   **Mapping**: Leaflet, React-Leaflet
--   **UI Components**: Radix UI, Shadcn UI, cmdk, vaul, sonner, input-otp, react-day-picker, react-resizable-panels
--   **Charting**: Recharts
--   **Date Handling**: date-fns
--   **Icons**: Lucide React
--   **Form Management**: React Hook Form, Zod (for validation)
--   **Type Safety**: TypeScript
--   **Linting & Formatting**: ESLint, Prettier, Husky, lint-staged
--   **Testing**: Playwright (E2E), Jest (Unit/Integration)
--   **Monitoring**: Custom API monitoring and system alerts.
--   **AI/ML**: Google Gemini API (`@google/genai`)
--   **Utilities**: clsx, tailwind-merge, next-themes, js-cookie, embla-carousel-react, zod
 
 ## Installation
 
