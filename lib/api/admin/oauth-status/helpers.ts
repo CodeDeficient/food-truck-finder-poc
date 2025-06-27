@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { NextResponse } from 'next/server';
+import { supabase, SupabaseClient } from '@/lib/supabase';
 import { OAuthStatus } from './types';
 
-export async function handleGetRequest(_request: NextRequest) {
+export async function handleGetRequest() {
   const status = await getOAuthStatus();
 
   return NextResponse.json({
@@ -22,12 +22,13 @@ export async function handleGetRequest(_request: NextRequest) {
   });
 }
 
-export  function handlePostRequest(_request: NextRequest) {
+export function handlePostRequest() {
   const baseUrl = process.env.NODE_ENV === 'production'
     ? 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app'
     : 'http://localhost:3000';
 
-  const testUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(`${baseUrl}/auth/callback`)}`;
+  const redirectUrl = encodeURIComponent(`${baseUrl}/auth/callback`);
+  const testUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${redirectUrl}`;
 
   return NextResponse.json({
     success: true,
@@ -86,9 +87,15 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
   return status;
 }
 
-async function checkSupabaseConnection(status: OAuthStatus, supabase: any) {
+interface AuthSettings {
+  external?: { google?: boolean };
+  disable_signup?: boolean;
+  autoconfirm?: boolean;
+}
+
+async function checkSupabaseConnection(status: OAuthStatus, supabaseClient: SupabaseClient) {
   try {
-    const { error } = await supabase.from('profiles').select('count').limit(1);
+    const { error } = await supabaseClient.from('profiles').select('count').limit(1);
     if (error == undefined) {
       status.supabase.connected = true;
     } else {
@@ -105,11 +112,7 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
     if (supabaseUrl != undefined && supabaseUrl !== '') {
       const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
       if (settingsResponse.ok === true) {
-        const settings = await settingsResponse.json() as {
-          external?: { google?: boolean };
-          disable_signup?: boolean;
-          autoconfirm?: boolean;
-        };
+        const settings = await settingsResponse.json() as AuthSettings;
         status.supabase.authSettings = {
           googleEnabled: settings.external?.google ?? false,
           signupEnabled: settings.disable_signup !== true,
@@ -125,9 +128,9 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
   }
 }
 
-async function testOAuthProvider(status: OAuthStatus, supabase: any) {
+async function testOAuthProvider(status: OAuthStatus, supabaseClient: SupabaseClient) {
   try {
-    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+    const { error: oauthError } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: 'http://localhost:3000/auth/callback',
@@ -204,7 +207,7 @@ function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not
   return 'not_configured';
 }
 
-function getStatusMessage(status: string): string {
+function getStatusMessage(status: OAuthStatus['overall_status']): string {
   switch (status) {
     case 'ready': {
       return 'Google OAuth is fully configured and ready to use';
@@ -219,7 +222,10 @@ function getStatusMessage(status: string): string {
       return 'Configuration error detected';
     }
     default: {
-      return 'Unknown configuration status';
+      // This case should ideally be unreachable if the type is strict enough
+      // Adding a check to satisfy linters that might not pick up exhaustiveness from types alone.
+      const _exhaustiveCheck: never = status;
+      return `Unknown configuration status: ${_exhaustiveCheck}`;
     }
   }
 }

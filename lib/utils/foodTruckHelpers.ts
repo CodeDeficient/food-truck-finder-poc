@@ -43,7 +43,7 @@ export const getTodayHours = (truck: FoodTruck) => {
 export function getUserLocationHelper(
   setUserLocation: (location: { lat: number; lng: number }) => void
 ) {
-  if (typeof navigator !== 'undefined' && navigator.geolocation != null) {
+  if (typeof navigator !== 'undefined' && navigator.geolocation != undefined) {
     // eslint-disable-next-line sonarjs/no-intrusive-permissions -- Geolocation is essential for finding nearby food trucks
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -72,7 +72,7 @@ export async function loadFoodTrucksHelper(
   try {
     const response = await fetch('/api/trucks');
     const data: unknown = await response.json();
-    if (typeof data === 'object' && data != null && 'trucks' in data && Array.isArray(data.trucks)) {
+    if (typeof data === 'object' && data != undefined && 'trucks' in data && Array.isArray(data.trucks)) {
       setTrucks(data.trucks as FoodTruck[]);
     } else {
       setTrucks([]);
@@ -96,7 +96,7 @@ export async function loadNearbyTrucksHelper(
       `/api/trucks?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=10`,
     );
     const data: unknown = await response.json();
-    if (typeof data === 'object' && data != null && 'trucks' in data && Array.isArray(data.trucks)) {
+    if (typeof data === 'object' && data != undefined && 'trucks' in data && Array.isArray(data.trucks)) {
       setTrucks(data.trucks as FoodTruck[]);
     } else {
       setTrucks([]);
@@ -112,7 +112,7 @@ export function isTruckOpen(truck: FoodTruck): boolean {
   const hours = truck.operating_hours?.[today];
 
   // Ensure hours and its properties are not null/undefined before accessing
-  if (hours == null || hours.closed === true || hours.open == null || hours.close == null) {
+  if (hours == undefined || hours.closed === true || hours.open == undefined || hours.close == undefined) {
     return false;
   }
 

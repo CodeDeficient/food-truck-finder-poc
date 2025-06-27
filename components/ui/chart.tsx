@@ -73,9 +73,10 @@ const ChartContainer = React.forwardRef<
 ChartContainer.displayName = 'Chart';
 
 const ChartStyle = ({ id, config }: { readonly id: string; readonly config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined);
+  const colorConfig = Object.entries(config).filter(([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) != undefined); // Explicit null check
   if (colorConfig.length === 0) {
-    return;
+    // No colors to apply, return null or an empty style tag
+    return null;
   }
 
   return (
@@ -148,8 +149,8 @@ const ChartTooltipContent = React.forwardRef<
       labelKey
     });
 
-    if (!active || !safePayload || safePayload.length === 0) {
-      return;
+    if (active !== true || safePayload == undefined || safePayload.length === 0) { // Explicit checks
+      return null;
     }
 
     const nestLabel = safePayload.length === 1 && indicator !== 'dot';
@@ -233,8 +234,8 @@ const ChartLegendContent = React.forwardRef<
     ? (payload as Payload<ValueType, NameType>[])
     : [];
 
-  if (!safePayload || safePayload.length === 0) {
-    return;
+  if (safePayload == undefined || safePayload.length === 0) { // Explicit checks
+    return null;
   }
 
   return (

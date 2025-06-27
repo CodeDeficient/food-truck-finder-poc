@@ -17,10 +17,13 @@ function ContactField({
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value?: string;
-  href?: string;
-  unavailableText: string;
+  readonly icon: React.ComponentType<{ className?: string }>;
+  readonly label: string;
+  readonly value?: string;
+  readonly href?: string;
+  readonly unavailableText: string;
 }) {
-  if (value == undefined) {
+  if (value == undefined || value === '') { // Explicit null and empty check
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />
@@ -34,14 +37,14 @@ function ContactField({
       <Icon className="h-4 w-4 text-gray-500" />
       <div>
         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</label>
-        {href ? (
+        {(href != undefined && href !== '') ? ( // Explicit null and empty check
           <a 
             href={href}
-            target={href.startsWith('http') ? '_blank' : undefined}
-            rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            target={(href.startsWith('http://') || href.startsWith('https://')) ? '_blank' : undefined} // More specific check
+            rel={(href.startsWith('http://') || href.startsWith('https://')) ? 'noopener noreferrer' : undefined} // More specific check
             className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
           >
-            {href.startsWith('http') ? 'Visit Website' : value}
+            {(href.startsWith('http://') || href.startsWith('https://')) ? 'Visit Website' : value} {/* More specific check */}
           </a>
         ) : (
           <p className="text-gray-900 dark:text-gray-200">{value}</p>
@@ -51,9 +54,9 @@ function ContactField({
   );
 }
 
-function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string> }) {
-  if (!socialMedia || Object.keys(socialMedia).length === 0) {
-    
+function SocialMediaLinks({ socialMedia }: { readonly socialMedia?: Record<string, string> }) { // Added readonly
+  if (socialMedia == undefined || Object.keys(socialMedia).length === 0) { // Explicit null check
+    return null; // Return null if no social media
   }
 
   const socialPlatforms = [
@@ -67,8 +70,8 @@ function SocialMediaLinks({ socialMedia }: { socialMedia?: Record<string, string
       <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Social Media</label>
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
-          const handle = socialMedia[key];
-          if (handle == undefined) return;
+          const handle = socialMedia?.[key]; // Optional chaining
+          if (handle == undefined || handle === '') return null; // Explicit check and return null
 
           return (
             <a
@@ -103,7 +106,7 @@ export function TruckContactInfo({ truck }: TruckContactInfoProps) {
           icon={Phone}
           label="Phone"
           value={truck.contact_info?.phone}
-          href={truck.contact_info?.phone ? `tel:${truck.contact_info.phone}` : undefined}
+          href={(truck.contact_info?.phone != undefined && truck.contact_info.phone !== '') ? `tel:${truck.contact_info.phone}` : undefined}
           unavailableText="No phone number available"
         />
 
@@ -111,7 +114,7 @@ export function TruckContactInfo({ truck }: TruckContactInfoProps) {
           icon={Mail}
           label="Email"
           value={truck.contact_info?.email}
-          href={truck.contact_info?.email ? `mailto:${truck.contact_info.email}` : undefined}
+          href={(truck.contact_info?.email != undefined && truck.contact_info.email !== '') ? `mailto:${truck.contact_info.email}` : undefined}
           unavailableText="No email available"
         />
 
@@ -119,7 +122,7 @@ export function TruckContactInfo({ truck }: TruckContactInfoProps) {
           icon={Globe}
           label="Website"
           value={truck.contact_info?.website}
-          href={truck.contact_info?.website}
+          href={(truck.contact_info?.website != undefined && truck.contact_info.website !== '') ? truck.contact_info.website : undefined}
           unavailableText="No website available"
         />
 

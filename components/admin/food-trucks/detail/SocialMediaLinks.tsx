@@ -7,7 +7,7 @@ interface SocialMediaLinksProps {
 
 export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps>) { // Added readonly
   if (socialMedia === undefined || Object.keys(socialMedia).length === 0) {
-    return;
+
   }
 
   const socialPlatforms = [

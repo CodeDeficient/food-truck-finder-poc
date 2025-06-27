@@ -1,10 +1,9 @@
 // lib/discoveryEngine.test.ts
-// @ts-expect-error TS(2724): '"./discoveryEngine"' has no exported member named... Remove this comment to see the full error message
-import { DiscoveryEngine } from './discoveryEngine';
-import { supabaseAdmin } from './supabase';
+import { FoodTruckDiscoveryEngine as DiscoveryEngine } from '@/lib/discoveryEngine'; // Corrected import
+import { supabaseAdmin } from '@/lib/supabase';
 
 // Mock dependencies
-jest.mock('./supabase', () => ({
+jest.mock('@/lib/supabase', () => ({
   supabaseAdmin: {
     from: jest.fn().mockReturnThis(),
     insert: jest.fn().mockReturnThis(),
@@ -28,11 +27,11 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('searchForFoodTrucks', () => {
-    it('should search for food trucks in a city successfully', () => {
+    it('should search for food trucks in a city successfully', async () => {
       // Mock successful Tavily API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json:  () => ({
+        json:  () => Promise.resolve({ // Ensure json returns a Promise
           success: true,
           data: {
             results: [
@@ -71,11 +70,12 @@ describe('DiscoveryEngine', () => {
       );
     });
 
-    it('should handle API errors gracefully', () => {
+    it('should handle API errors gracefully', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
+        json: () => Promise.resolve({}), // Ensure json returns a Promise
       } as Response);
 
       const result = await discoveryEngine.searchForFoodTrucks('Charleston', 'SC');
@@ -93,7 +93,7 @@ describe('DiscoveryEngine', () => {
       expect(result.errors.some((error: any) => error.includes('Network error'))).toBe(true);
     });
 
-    it('should extract URLs from search results', () => {
+    it('should extract URLs from search results', async () => {
       const mockResults = [
         {
           title: 'Food Truck Directory',
@@ -105,7 +105,7 @@ describe('DiscoveryEngine', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json:  () => ({
+        json:  () => Promise.resolve({ // Ensure json returns a Promise
           success: true,
           data: { results: mockResults },
         }),
@@ -132,10 +132,10 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('crawlDirectory', () => {
-    it('should crawl a directory URL successfully', () => {
+    it('should crawl a directory URL successfully', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json:  () => ({
+        json:  () => Promise.resolve({ // Ensure json returns a Promise
           success: true,
           data: {
             results: [
@@ -159,11 +159,12 @@ describe('DiscoveryEngine', () => {
       );
     });
 
-    it('should handle crawl errors', () => {
+    it('should handle crawl errors', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
+        json: () => Promise.resolve({}) // Ensure json returns a Promise
       } as Response);
 
       const result = await discoveryEngine.crawlDirectory('https://badurl.com');
@@ -174,12 +175,12 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('runDiscovery', () => {
-    it('should run complete discovery process', () => {
+    it('should run complete discovery process', async () => {
       // Mock search results
       mockFetch
         .mockResolvedValueOnce({
           ok: true,
-          json:  () => ({
+          json:  () => Promise.resolve({ // Ensure json returns a Promise
             success: true,
             data: {
               results: [
@@ -196,7 +197,7 @@ describe('DiscoveryEngine', () => {
         // Mock crawl results
         .mockResolvedValueOnce({
           ok: true,
-          json:  () => ({
+          json:  () => Promise.resolve({ // Ensure json returns a Promise
             success: true,
             data: {
               results: [
@@ -240,12 +241,12 @@ describe('DiscoveryEngine', () => {
       expect(result.urls_stored).toBeGreaterThan(0);
     });
 
-    it('should handle partial failures gracefully', () => {
+    it('should handle partial failures gracefully', async () => {
       // Mock one successful search, one failed crawl
       mockFetch
         .mockResolvedValueOnce({
           ok: true,
-          json:  () => ({
+          json:  () => Promise.resolve({ // Ensure json returns a Promise
             success: true,
             data: {
               results: [
@@ -263,6 +264,7 @@ describe('DiscoveryEngine', () => {
           ok: false,
           status: 500,
           statusText: 'Internal Server Error',
+          json: () => Promise.resolve({}) // Ensure json returns a Promise
         } as Response);
 
       // Mock URL extraction

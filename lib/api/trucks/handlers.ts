@@ -35,18 +35,18 @@ export async function handleGetAllTrucks(limit: number, offset: number) {
     summary: {
       totalTrucks: total,
       averageQuality:
-        trucks && trucks.length > 0
+        trucks != undefined && trucks.length > 0
           ? trucks.reduce((acc, t) => acc + (t.data_quality_score ?? 0), 0) / trucks.length
           : 0,
       lastUpdated:
-        trucks && trucks.length > 0
+        trucks != undefined && trucks.length > 0
           ? Math.max(...trucks.map((t) => new Date(t.updated_at).getTime()))
           : 0,
     },
   });
 }
 
-export async function handlePostTruck(truckData: any) {
+export async function handlePostTruck(truckData: Partial<FoodTruck>) {
   const newTruck = await FoodTruckService.createTruck(truckData);
   return NextResponse.json(
     {
@@ -57,7 +57,7 @@ export async function handlePostTruck(truckData: any) {
   );
 }
 
-export async function handlePutTruck(id: string, updates: any) {
+export async function handlePutTruck(id: string, updates: Partial<FoodTruck>) {
   const updatedTruck = await FoodTruckService.updateTruck(id, updates);
   return NextResponse.json({
     message: 'Food truck updated successfully',

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { User } from '@supabase/supabase-js';
 import { AuditLogger } from '@/lib/security/auditLogger';
 import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
 
@@ -9,7 +10,17 @@ interface RequestMetadata {
   method: string;
 }
 
-async function logAndRedirect(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata, reason: string, userError?: { message?: string }) {
+interface ErrorContext {
+  message?: string;
+}
+
+async function logAndRedirect(
+  req: NextRequest,
+  res: NextResponse,
+  requestMetadata: RequestMetadata,
+  reason: string,
+  errorContext?: ErrorContext
+) {
   await AuditLogger.logSecurityEvent({
     event_type: 'permission_denied',
     ip_address: requestMetadata.ip,
@@ -17,7 +28,7 @@ async function logAndRedirect(req: NextRequest, res: NextResponse, requestMetada
     details: {
       attempted_url: requestMetadata.url,
       reason,
-      error: userError?.message,
+      error: errorContext?.message,
     },
     severity: 'warning',
   });
@@ -27,18 +38,31 @@ async function logAndRedirect(req: NextRequest, res: NextResponse, requestMetada
   return NextResponse.redirect(redirectUrl);
 }
 
-async function logAndRedirectDenied(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata, user: any, profile: any, profileQueryError?: { message?: string }) {
+interface Profile {
+  role: string;
+}
+
+async function logAndRedirectDenied(
+  req: NextRequest,
+  res: NextResponse,
+  requestMetadata: RequestMetadata,
+  authContext: {
+    user: User;
+    profile: Profile | null;
+    profileQueryError?: { message?: string };
+  }
+) {
   await AuditLogger.logSecurityEvent({
     event_type: 'permission_denied',
-    user_id: user.id,
-    user_email: user.email,
+    user_id: authContext.user.id,
+    user_email: authContext.user.email ?? 'unknown', // Handle possible null email
     ip_address: requestMetadata.ip,
     user_agent: requestMetadata.userAgent,
     details: {
       attempted_url: requestMetadata.url,
-      user_role: profile?.role ?? 'none',
+      user_role: authContext.profile?.role ?? 'none',
       reason: 'insufficient_privileges',
-      error: profileQueryError?.message,
+      error: authContext.profileQueryError?.message,
     },
     severity: 'error',
   });
@@ -56,13 +80,17 @@ export async function protectAdminRoutes(req: NextRequest, res: NextResponse, re
   if (userError || !user) {
     return logAndRedirect(req, res, requestMetadata, 'no_session', userError ?? undefined);
   }
-  const { data: profile, error: profileQueryError } = await supabase
+  const { data: profileData, error: profileQueryError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single();
+
+  // Explicitly cast profileData to Profile type or null
+  const profile: Profile | null = profileData as Profile | null;
+
   if (profileQueryError || profile?.role !== 'admin') {
-    return logAndRedirectDenied(req, res, requestMetadata, user, profile, profileQueryError ?? undefined);
+    return logAndRedirectDenied(req, res, requestMetadata, { user, profile, profileQueryError: profileQueryError ?? undefined });
   }
   if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
     await AuditLogger.logDataAccess(
