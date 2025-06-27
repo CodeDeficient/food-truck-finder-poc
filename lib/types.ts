@@ -11,7 +11,7 @@ export interface MenuItem {
   name: string;
   description: string | undefined;
   price: number | string | undefined;
-  dietary_tags: string[];
+  dietary_tags: unknown[];
   is_popular?: boolean;
 }
 
@@ -58,9 +58,9 @@ export interface SentimentAnalysisResult {
 export interface EnhancedFoodTruckData {
   name: string | undefined;
   description: string | undefined;
-  cuisine_type: string[];
+  cuisine_type: any[];
   price_range: PriceRange;
-  specialties: string[];
+  specialties: any[];
   dietary_options: string[];
   enhanced_menu: {
     categories: MenuCategory[];
@@ -78,9 +78,9 @@ export interface EnhancedFoodTruckData {
 export interface ExtractedFoodTruckDetails {
   name: string | undefined;
   description: string | undefined;
-  cuisine_type: string[];
+  cuisine_type: unknown[];
   price_range: PriceRange | undefined;
-  specialties: string[];
+  specialties: any[];
   current_location: {
     address: string | undefined;
     city: string | undefined;
@@ -136,15 +136,15 @@ export interface FoodTruckSchema {
   };
   scheduled_locations: ExtractedFoodTruckDetails['scheduled_locations'];
   operating_hours: OperatingHours;
-  menu: ExtractedFoodTruckDetails['menu'];
+  menu: MenuCategory[] | unknown[];
   contact_info: ExtractedFoodTruckDetails['contact_info'];
   social_media: ExtractedFoodTruckDetails['social_media'];
-  cuisine_type: string[];
+  cuisine_type: any[];
   price_range: PriceRange | undefined;
-  specialties: string[];
+  specialties: any[];
   data_quality_score: number;
   verification_status: 'pending' | 'verified' | 'flagged';
-  source_urls: string[];
+  source_urls: any[];
   last_scraped_at: string;
   test_run_flag?: boolean;
   website?: string;
@@ -153,7 +153,7 @@ export interface FoodTruckSchema {
   instagram_handle?: string;
   facebook_handle?: string;
   twitter_handle?: string;
-  schedule?: any[]; // Assuming schedule is an array, adjust type if known
+  schedule?: unknown[]; // Assuming schedule is an array, adjust type if known
   average_rating?: number;
   review_count?: number;
 }

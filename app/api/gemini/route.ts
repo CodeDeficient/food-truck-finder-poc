@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await dispatchGeminiOperation(type as 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance', data);
+    const result: GeminiResponse<unknown> = await dispatchGeminiOperation(type as 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance', data);
     return NextResponse.json(result);
   } catch (error: unknown) {
     console.error('Gemini API error:', error);

@@ -13,7 +13,7 @@ import { LogOut } from 'lucide-react';
 import { User } from '@supabase/supabase-js'; // Import User type
 
 interface UserMenuProps {
-  readonly user: User | null; // Use Supabase User type
+  readonly user: User | undefined;
   readonly userInitials: string;
   readonly handleSignOut: () => Promise<void>;
 }

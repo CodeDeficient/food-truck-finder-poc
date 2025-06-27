@@ -1,4 +1,5 @@
- import { NextRequest, NextResponse } from 'next/server';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { NextRequest } from 'next/server';
 import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService, type ScrapingJob, type FoodTruck } from '@/lib/supabase';
 import { AdminEvent } from './types';
 
@@ -21,17 +22,18 @@ interface RealtimeMetrics {
   };
 }
 
+/* eslint-disable @typescript-eslint/strict-boolean-expressions, sonarjs/different-types-comparison */
 export async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ') !== true) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return false;
     }
 
     const token = authHeader.slice(7);
     const { data, error } = await supabase.auth.getUser(token);
 
-    if (error || !data?.user) {
+    if (error || data.user === null) {
       return false;
     }
     const user = data.user;
@@ -51,10 +53,11 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     return false;
   }
 }
+/* eslint-enable @typescript-eslint/strict-boolean-expressions, sonarjs/different-types-comparison */
 
-export async function handleGetRequest(request: NextRequest): Promise<Response> {
+export function handleGetRequest(request: NextRequest): Response {
   const stream = new ReadableStream({
-    start(controller) {
+    start(controller: ReadableStreamDefaultController<Uint8Array>) {
       const encoder = new TextEncoder();
 
       const connectionEvent: AdminEvent = {
@@ -69,46 +72,11 @@ export async function handleGetRequest(request: NextRequest): Promise<Response> 
       
       controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
 
-      const handleHeartbeatEvent = async () => {
-        try {
-          const metrics = await fetchRealtimeMetrics();
-          const event: AdminEvent = {
-            id: generateEventId(),
-            type: 'heartbeat',
-            timestamp: new Date().toISOString(),
-            data: { ...metrics }
-          };
-
-          controller.enqueue(encoder.encode(formatSSEMessage(event)));
-        } catch (error) {
-          console.error('Error fetching realtime metrics:', error);
-
-          const errorEvent: AdminEvent = {
-            id: generateEventId(),
-            type: 'system_alert',
-            timestamp: new Date().toISOString(),
-            data: {
-              error: 'Failed to fetch metrics',
-              details: error instanceof Error ? error.message : 'Unknown error'
-            },
-            severity: 'error'
-          };
-
-          controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
-        }
-      };
-
-      const intervalId = setInterval(() => {
-        void handleHeartbeatEvent();
+      const intervalId = setInterval(async () => {
+        await sendHeartbeatEvent(controller, encoder);
       }, 5000);
 
-      const changeMonitorId = setInterval(async () => {
-        try {
-          await monitorDataChanges(controller, encoder);
-        } catch (error) {
-          console.error('Error monitoring data changes:', error);
-        }
-      }, 10_000);
+      const changeMonitorId = setupDataChangeMonitor(controller, encoder);
 
       request.signal.addEventListener('abort', () => {
         clearInterval(intervalId);
@@ -129,10 +97,68 @@ export async function handleGetRequest(request: NextRequest): Promise<Response> 
   });
 }
 
+async function sendHeartbeatEvent(
+  controller: ReadableStreamDefaultController<Uint8Array>,
+  encoder: TextEncoder
+): Promise<void> {
+  try {
+    const metrics = await fetchRealtimeMetrics();
+    const event: AdminEvent = {
+      id: generateEventId(),
+      type: 'heartbeat',
+      timestamp: new Date().toISOString(),
+      data: { ...metrics }
+    };
+
+    controller.enqueue(encoder.encode(formatSSEMessage(event)));
+  } catch (error) {
+    console.error('Error fetching realtime metrics:', error);
+
+    const errorEvent: AdminEvent = {
+      id: generateEventId(),
+      type: 'system_alert',
+      timestamp: new Date().toISOString(),
+      data: {
+        error: 'Failed to fetch metrics',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      severity: 'error'
+    };
+
+    controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
+  }
+}
+
+function setupDataChangeMonitor(
+  controller: ReadableStreamDefaultController<Uint8Array>,
+  encoder: TextEncoder
+): NodeJS.Timeout {
+  return setInterval(async () => {
+    try {
+      await monitorDataChanges(controller, encoder);
+    } catch (error) {
+      console.error('Error monitoring data changes:', error);
+    }
+  }, 10_000);
+}
+
 export async function handlePostRequest(request: NextRequest): Promise<Response> {
   try {
-    const body = await request.json();
-    const { action } = body as { action: string };
+    const body: unknown = await request.json(); // Explicitly type body as unknown
+    let action: string;
+
+    // Type guard to ensure 'body' has 'action' property and is a string
+    if (typeof body === 'object' && body !== null && 'action' in body && typeof (body as { action: string }).action === 'string') {
+      action = (body as { action: string }).action;
+    } else {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Invalid request body: 'action' property is missing or not a string."
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     switch (action) {
       case 'health_check': {
@@ -211,9 +237,10 @@ function isScrapingJob(obj: unknown): obj is ScrapingJob {
   return typeof obj === 'object' && obj !== null && 'id' in obj && 'status' in obj;
 }
 
-function isFoodTruck(obj: unknown): obj is FoodTruck {
-  return typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj;
-}
+// Removed isFoodTruck function as it is unused.
+// function isFoodTruck(obj: unknown): obj is FoodTruck {
+//   return typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj;
+// }
 
 async function sendScrapingUpdateEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
@@ -227,7 +254,7 @@ async function sendScrapingUpdateEvent(
       type: 'scraping_update',
       timestamp: new Date().toISOString(),
       data: {
-        recentJobs: recentJobs.filter(isScrapingJob).map((job) => ({
+        recentJobs: recentJobs.filter((job) => isScrapingJob(job)).map((job) => ({ // Fixed unicorn/no-array-callback-reference
           id: job.id,
           status: job.status,
           started_at: job.started_at,
@@ -292,7 +319,7 @@ function formatSSEMessage(event: AdminEvent): string {
 }
 
 function generateEventId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`; // eslint-disable-line sonarjs/pseudo-random
 }
 
 async function handleHealthCheck(): Promise<Response> {

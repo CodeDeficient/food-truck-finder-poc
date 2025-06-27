@@ -38,7 +38,7 @@ export const getPriceRange = (truck: FoodTruck) => {
     }
     const numericPrices = allItems
         .map(item => item.price)
-        .filter((price): price is number => typeof price === 'number' && price !== undefined); // Filter for numbers
+        .filter((price): price is number => typeof price === 'number' && price != undefined); // Filter for numbers
 
     if (numericPrices.length === 0) {
         return 'N/A'; // No numeric prices found

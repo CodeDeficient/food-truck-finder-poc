@@ -12,8 +12,8 @@ export async function GET(request: NextRequest): Promise<Response> {
   }
 
   try {
-    return await handleGetRequest(request);
-  } catch (error) {
+    return handleGetRequest(request);
+  } catch (error: unknown) {
     console.error('Realtime events GET error:', error);
     return new Response(JSON.stringify({
       success: false,
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   try {
     return await handlePostRequest(request);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Realtime events POST error:', error);
     return new Response(JSON.stringify({
       success: false,

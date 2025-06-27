@@ -40,27 +40,14 @@ function useCarousel() {
   return context;
 }
 
-const Carousel = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CarouselProps
->(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
-  const [carouselRef, api] = useEmblaCarousel(
-    {
-      ...opts,
-      axis: orientation === 'horizontal' ? 'x' : 'y',
-    },
-    plugins,
-  );
+const useCarouselHandlers = (api: CarouselApi | undefined, setApi: ((api: CarouselApi) => void) | undefined) => {
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) {
-      return; // Added return to prevent further execution if api is null
-    }
-
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
+  const onSelect = React.useCallback((currentApi: CarouselApi) => {
+    if (!currentApi) return;
+    setCanScrollPrev(currentApi.canScrollPrev());
+    setCanScrollNext(currentApi.canScrollNext());
   }, []);
 
   const scrollPrev = React.useCallback(() => {
@@ -85,34 +72,44 @@ const Carousel = React.forwardRef<
   );
 
   React.useEffect(() => {
-    if (!api || !setApi) {
-      return; // Added return to prevent further execution if api or setApi is null
-    }
-
+    if (!api || !setApi) return;
     setApi(api);
   }, [api, setApi]);
 
   React.useEffect(() => {
-    if (!api) {
-      return; // Added return to prevent further execution if api is null
-    }
-
+    if (!api) return;
     onSelect(api);
     api.on('reInit', onSelect);
     api.on('select', onSelect);
-
     return () => {
       api?.off('select', onSelect);
     };
   }, [api, onSelect]);
 
+  return { scrollPrev, scrollNext, canScrollPrev, canScrollNext, handleKeyDown };
+};
+
+const Carousel = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & CarouselProps
+>(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
+  const [carouselRef, api] = useEmblaCarousel(
+    {
+      ...opts,
+      axis: orientation === 'horizontal' ? 'x' : 'y',
+    },
+    plugins,
+  );
+
+  const { scrollPrev, scrollNext, canScrollPrev, canScrollNext, handleKeyDown } = useCarouselHandlers(api, setApi);
+
   return (
     <CarouselContext.Provider
       value={{
         carouselRef,
-        api: api,
+        api: api!, // Asserting as non-null as per original logic, but should be handled carefully
         opts,
-        orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'), // Removed ts-expect-error
+        orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
         scrollPrev,
         scrollNext,
         canScrollPrev,

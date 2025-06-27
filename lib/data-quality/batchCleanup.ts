@@ -27,6 +27,18 @@ export interface BatchCleanupResult {
   duration: number;
 }
 
+interface MergeOperationContext {
+  operation: CleanupOperation;
+  processedIds: Set<string>;
+}
+
+interface CoordinateProcessContext {
+  defaultLat: number;
+  defaultLng: number;
+  dryRun: boolean;
+  operation: CleanupOperation;
+}
+
 /**
  * Automated Data Quality Cleanup Service
  */
@@ -50,8 +62,34 @@ export class BatchCleanupService {
     ] } = options;
 
     console.info(`Starting batch cleanup (${dryRun ? 'DRY RUN' : 'LIVE'})...`);
+    const result = this.initializeCleanupResult();
+    try {
+      await this.executeCleanup(batchSize, operations, dryRun, result);
+      return this.finalizeCleanupResult(result, startTime);
+    } catch (error) {
+      console.error('Batch cleanup failed:', error);
+      throw error;
+    }
+  }
 
-    const result: BatchCleanupResult = {
+  private static async executeCleanup(
+    batchSize: number,
+    operations: CleanupOperation['type'][],
+    dryRun: boolean,
+    result: BatchCleanupResult
+  ): Promise<void> {
+    const allTrucks = await FoodTruckService.getAllTrucks();
+    result.totalProcessed = allTrucks.total;
+    await this.processTrucksInBatches(allTrucks.trucks, {
+      batchSize,
+      operations,
+      dryRun,
+      result
+    });
+  }
+
+  private static initializeCleanupResult(): BatchCleanupResult {
+    return {
       totalProcessed: 0,
       operations: [],
       summary: {
@@ -62,24 +100,6 @@ export class BatchCleanupService {
       },
       duration: 0
     };
-
-    try {
-      const allTrucks = await FoodTruckService.getAllTrucks();
-      result.totalProcessed = allTrucks.total;
-
-      await this.processTrucksInBatches(allTrucks.trucks, {
-        batchSize,
-        operations,
-        dryRun,
-        result
-      });
-
-      return this.finalizeCleanupResult(result, startTime);
-
-    } catch (error) {
-      console.error('Batch cleanup failed:', error);
-      throw error;
-    }
   }
 
   private static finalizeCleanupResult(result: BatchCleanupResult, startTime: number): BatchCleanupResult {
@@ -101,8 +121,8 @@ export class BatchCleanupService {
   ): Promise<void> {
     for (let i = 0; i < trucks.length; i += batchSize) {
       const batch = trucks.slice(i, i + batchSize);
-      for (const operation of operations) {
-        const opResult = await this.runOperation(operation, batch, dryRun);
+      for (const op of operations) {
+        const opResult = await this.runOperation(op, batch, dryRun);
         result.operations.push(opResult);
       }
     }
@@ -173,29 +193,19 @@ export class BatchCleanupService {
   /**
    * Check if truck data needs placeholder cleanup
    */
-  private static checkForPlaceholders(truck: FoodTruck, patterns: RegExp[]): { updates: Partial<FoodTruck>; needsUpdate: boolean } {
+  private static checkForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck> {
     const updates: Partial<FoodTruck> = {};
-    let needsUpdate = false;
 
-    // Check name
     if (truck.name && patterns.some(pattern => pattern.test(truck.name ?? ''))) {
       updates.name = undefined;
-      needsUpdate = true;
     }
-
-    // Check description
-    if (truck.description !== undefined && typeof truck.description === 'string' && patterns.some(pattern => pattern.test(truck.description ?? ''))) {
+    if (truck.description !== undefined && patterns.some(pattern => pattern.test(truck.description ?? ''))) {
       updates.description = undefined;
-      needsUpdate = true;
     }
-
-    // Check price range
-    if (truck.price_range !== undefined && typeof truck.price_range === 'string' && patterns.some(pattern => pattern.test(truck.price_range ?? ''))) {
+    if (truck.price_range !== undefined && patterns.some(pattern => pattern.test(truck.price_range ?? ''))) {
       updates.price_range = undefined;
-      needsUpdate = true;
     }
-
-    return { updates, needsUpdate };
+    return updates;
   }
 
   /**
@@ -207,77 +217,74 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
     const placeholderPatterns = this.getPlaceholderPatterns();
-
     for (const truck of trucks) {
-      const { updates, needsUpdate } = this.processTruckForPlaceholders(truck, placeholderPatterns);
-
-      if (needsUpdate) {
-        await this.performUpdateOperation(truck.id, updates, dryRun, operation);
-      }
+      await this.processSingleTruckForPlaceholders(truck, placeholderPatterns, dryRun, operation);
     }
-
     return operation;
   }
 
-  private static processTruckForPlaceholders(truck: FoodTruck, patterns: RegExp[]): { updates: Partial<FoodTruck>; needsUpdate: boolean } {
-    let updates: Partial<FoodTruck> = {};
-    let needsUpdate = false;
-
-    // Process basic info
-    const basicInfoResult = this.checkForPlaceholders(truck, patterns);
-    if (basicInfoResult.needsUpdate) {
-      updates = { ...updates, ...basicInfoResult.updates };
-      needsUpdate = true;
+  private static async processSingleTruckForPlaceholders(
+    truck: FoodTruck,
+    patterns: RegExp[],
+    dryRun: boolean,
+    operation: CleanupOperation
+  ): Promise<void> {
+    const updates = this.processTruckForPlaceholders(truck, patterns);
+    if (Object.keys(updates).length > 0) {
+      await this.performUpdateOperation(truck.id, updates, dryRun, operation);
     }
-
-    // Process contact info
-    const contactInfoResult = this.processContactInfoForPlaceholders(truck, patterns);
-    if (contactInfoResult.contactUpdated) {
-      updates.contact_info = contactInfoResult.cleanContact;
-      needsUpdate = true;
-    }
-
-    // Process address info
-    const addressResult = this.processAddressForPlaceholders(truck, patterns);
-    if (addressResult.addressUpdated) {
-      updates.current_location = {
-        ...truck.current_location,
-        ...addressResult.updatedLocation
-      };
-      needsUpdate = true;
-    }
-
-    return { updates, needsUpdate };
   }
 
-  private static processContactInfoForPlaceholders(truck: FoodTruck, patterns: RegExp[]): { cleanContact: Partial<FoodTruck['contact_info']>; contactUpdated: boolean } {
-    const cleanContact: Partial<FoodTruck['contact_info']> = { ...truck.contact_info };
-    let contactUpdated = false;
+  private static processTruckForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck> {
+    const basicInfoUpdates = this.checkForPlaceholders(truck, patterns);
+    const contactInfoUpdates = this.processContactInfoForPlaceholders(truck, patterns);
+    const addressUpdates = this.processAddressForPlaceholders(truck, patterns);
 
-    if (cleanContact.phone !== undefined && typeof cleanContact.phone === 'string' && patterns.some(pattern => pattern.test(cleanContact.phone ?? ''))) {
+    const updates: Partial<FoodTruck> = {
+      ...basicInfoUpdates,
+      ...this.getContactInfoUpdates(truck, contactInfoUpdates),
+      ...this.getLocationUpdates(truck, addressUpdates),
+    };
+
+    return updates;
+  }
+
+  private static getContactInfoUpdates(truck: FoodTruck, contactInfoUpdates: Partial<FoodTruck['contact_info']>): Partial<FoodTruck> | object {
+    if (Object.keys(contactInfoUpdates).length > 0) {
+      return { contact_info: { ...truck.contact_info, ...contactInfoUpdates } };
+    }
+    return {};
+  }
+
+  private static getLocationUpdates(truck: FoodTruck, addressUpdates: Partial<FoodTruck['current_location']>): Partial<FoodTruck> | object {
+    if (Object.keys(addressUpdates).length > 0) {
+      return { current_location: { ...truck.current_location, ...addressUpdates } };
+    }
+    return {};
+  }
+
+  private static processContactInfoForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck['contact_info']> {
+    const cleanContact: Partial<FoodTruck['contact_info']> = {};
+
+    if (truck.contact_info?.phone !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.phone ?? ''))) {
       cleanContact.phone = undefined;
-      contactUpdated = true;
     }
-    if (cleanContact.website !== undefined && typeof cleanContact.website === 'string' && patterns.some(pattern => pattern.test(cleanContact.website ?? ''))) {
+    if (truck.contact_info?.website !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.website ?? ''))) {
       cleanContact.website = undefined;
-      contactUpdated = true;
     }
-    if (cleanContact.email !== undefined && typeof cleanContact.email === 'string' && patterns.some(pattern => pattern.test(cleanContact.email ?? ''))) {
+    if (truck.contact_info?.email !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.email ?? ''))) {
       cleanContact.email = undefined;
-      contactUpdated = true;
     }
-    return { cleanContact, contactUpdated };
+    return cleanContact;
   }
 
-  private static processAddressForPlaceholders(truck: FoodTruck, patterns: RegExp[]): { updatedLocation: Partial<FoodTruck['current_location']>; addressUpdated: boolean } {
-    let addressUpdated = false;
-    const updatedLocation: Partial<FoodTruck['current_location']> = { ...truck.current_location };
+  private static processAddressForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck['current_location']> {
+    const updatedLocation: Partial<FoodTruck['current_location']> = {};
 
-    if (truck.current_location?.address !== undefined && typeof truck.current_location.address === 'string' && patterns.some(pattern => pattern.test(truck.current_location.address ?? ''))) {
+    if (truck.current_location?.address !== undefined && patterns.some(pattern => pattern.test(truck.current_location.address ?? ''))) {
       updatedLocation.address = undefined;
-      addressUpdated = true;
     }
-    return { updatedLocation, addressUpdated };
+    return updatedLocation;
   }
 
   private static async performUpdateOperation(
@@ -314,29 +321,37 @@ export class BatchCleanupService {
         const normalizedPhone = this.normalizePhone(originalPhone);
 
         if (normalizedPhone !== undefined && normalizedPhone !== originalPhone) {
-          operation.affectedCount++;
-          
-          if (dryRun) {
-            operation.successCount++;
-          } else {
-            try {
-              await FoodTruckService.updateTruck(truck.id, {
-                contact_info: {
-                  ...truck.contact_info,
-                  phone: normalizedPhone
-                }
-              });
-              operation.successCount++;
-            } catch (error) {
-              operation.errorCount++;
-              operation.errors.push(`Failed to normalize phone for truck ${truck.id}: ${error instanceof Error ? error.message : String(error)}`);
-            }
-          }
+          await this.applyPhoneNormalizationUpdate(truck, normalizedPhone, dryRun, operation);
         }
       }
     }
     
     return operation;
+  }
+
+  private static async applyPhoneNormalizationUpdate(
+    truck: FoodTruck,
+    normalizedPhone: string,
+    dryRun: boolean,
+    operation: CleanupOperation
+  ): Promise<void> {
+    operation.affectedCount++;
+    if (dryRun) {
+      operation.successCount++;
+    } else {
+      try {
+        await FoodTruckService.updateTruck(truck.id, {
+          contact_info: {
+            ...truck.contact_info,
+            phone: normalizedPhone
+          }
+        });
+        operation.successCount++;
+      } catch (error) {
+        operation.errorCount++;
+        operation.errors.push(`Failed to normalize phone for truck ${truck.id}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
   }
   
   /**
@@ -347,16 +362,16 @@ export class BatchCleanupService {
     lng: number | undefined,
     defaultLat: number,
     defaultLng: number
-  ): Partial<FoodTruck['current_location']> | null {
+  ): Partial<FoodTruck['current_location']> | undefined {
     // Fix invalid coordinates (0,0 or undefined)
-    if (lat === undefined || lat === 0 || lng === undefined || lng === 0) {
+    if (lat === undefined || lng === undefined || lat === 0 || lng === 0) {
       return { lat: defaultLat, lng: defaultLng };
     }
     // Fix coordinates outside reasonable bounds for Charleston area
     if (lat < 32 || lat > 34 || lng > -79 || lng < -81) {
       return { lat: defaultLat, lng: defaultLng };
     }
-    return null;
+    return undefined;
   }
 
   /**
@@ -367,20 +382,29 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
-    // Charleston, SC default coordinates
-    const defaultLat = 32.7767;
-    const defaultLng = -79.9311;
+    const context: Omit<CoordinateProcessContext, 'operation'> = {
+      defaultLat: 32.7767,
+      defaultLng: -79.9311,
+      dryRun,
+    };
 
     for (const truck of trucks) {
-      if (truck.current_location !== undefined) {
-        const { lat, lng } = truck.current_location;
-        const updates = this.getFixedCoordinates(lat, lng, defaultLat, defaultLng);
-        if (updates) {
-          await this.applyCoordinateFixUpdate(truck, updates, dryRun, operation);
-        }
-      }
+      await this.processSingleTruckCoordinates(truck, { ...context, operation });
     }
     return operation;
+  }
+
+  private static async processSingleTruckCoordinates(
+    truck: FoodTruck,
+    context: CoordinateProcessContext
+  ): Promise<void> {
+    if (!truck.current_location) return;
+    const { defaultLat, defaultLng, dryRun, operation } = context;
+    const { lat, lng } = truck.current_location;
+    const updates = this.getFixedCoordinates(lat, lng, defaultLat, defaultLng);
+    if (updates) {
+      await this.applyCoordinateFixUpdate(truck, updates, dryRun, operation);
+    }
   }
 
   private static async applyCoordinateFixUpdate(
@@ -397,8 +421,7 @@ export class BatchCleanupService {
         await FoodTruckService.updateTruck(truck.id, {
           current_location: {
             ...truck.current_location,
-            lat: updates.lat as number,
-            lng: updates.lng as number,
+            ...updates,
           }
         });
         operation.successCount++;
@@ -418,15 +441,23 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
     for (const truck of trucks) {
-      const qualityAssessment: { score: number } = DataQualityService.calculateQualityScore(truck);
-      const newScore: number = qualityAssessment.score;
-      const currentScore = truck.data_quality_score ?? 0;
-      // Only update if score changed significantly (>5% difference)
-      if (Math.abs(newScore - currentScore) > 0.05) {
-        await this.applyQualityScoreUpdate(truck, dryRun, operation);
-      }
+      await this.processSingleTruckForQualityScore(truck, dryRun, operation);
     }
     return operation;
+  }
+
+  private static async processSingleTruckForQualityScore(
+    truck: FoodTruck,
+    dryRun: boolean,
+    operation: CleanupOperation
+  ): Promise<void> {
+    const qualityAssessment = DataQualityService.calculateQualityScore(truck);
+    const newScore = qualityAssessment.score;
+    const currentScore = truck.data_quality_score ?? 0;
+    // Only update if score changed significantly (>5% difference)
+    if (typeof qualityAssessment.score === 'number' && Math.abs(newScore - currentScore) > 0.05) {
+      await this.applyQualityScoreUpdate(truck, dryRun, operation);
+    }
   }
 
   private static async applyQualityScoreUpdate(
@@ -461,26 +492,33 @@ export class BatchCleanupService {
   ): Promise<CleanupOperation> {
     const processedIds = new Set<string>();
     for (const truck of trucks) {
-      if (processedIds.has(truck.id)) continue;
-      const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truck);
-      if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
-        const { bestMatch } = duplicateCheck;
-        if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
-          await this.applyMergeOperation(truck, bestMatch.existingTruck, dryRun, operation, processedIds);
-        }
-      }
-      processedIds.add(truck.id);
+      await this.processSingleTruckForDuplicates(truck, dryRun, { operation, processedIds });
     }
     return operation;
+  }
+
+  private static async processSingleTruckForDuplicates(
+    truck: FoodTruck,
+    dryRun: boolean,
+    context: MergeOperationContext
+  ): Promise<void> {
+    const { processedIds } = context;
+    if (processedIds.has(truck.id)) return;
+
+    const duplicateCheck = await DuplicatePreventionService.checkForDuplicates(truck);
+    if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch?.confidence === 'high' && duplicateCheck.bestMatch.recommendation === 'merge') {
+      await this.applyMergeOperation(truck, duplicateCheck.bestMatch.existingTruck, dryRun, context);
+    }
+    processedIds.add(truck.id);
   }
 
   private static async applyMergeOperation(
     truck: FoodTruck,
     existingTruck: FoodTruck,
     dryRun: boolean,
-    operation: CleanupOperation,
-    processedIds: Set<string>
+    context: MergeOperationContext
   ): Promise<void> {
+    const { operation, processedIds } = context;
     operation.affectedCount++;
     if (dryRun) {
       operation.successCount++;
@@ -511,7 +549,8 @@ export class BatchCleanupService {
     // Handle US phone numbers
     if (digits.length === 10) {
       return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-    } else if (digits.length === 11 && digits[0] === '1') {
+    }
+    if (digits.length === 11 && digits.startsWith('1')) {
       return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
     }
     

@@ -61,3 +61,34 @@ This rule set documents key operational learnings and best practices derived fro
 - **Rule 1.15: Removing `@ts-expect-error` Directives**: Systematically remove `@ts-expect-error` directives. If errors reappear, investigate the underlying cause (missing package types, incorrect `tsconfig.json` configuration, or actual type mismatches) rather than suppressing them.
   - *Trigger Case*: Presence of `@ts-expect-error` comments in the codebase.
   - *Example*: Remove `// @ts-expect-error` and resolve the underlying TypeScript error by installing missing types, adjusting `tsconfig.json`, or correcting code.
+
+- **Rule 1.16: Consolidate Action Plans**: To prevent document proliferation, all new, detailed, multi-step action plans for linting or refactoring should be added directly to the `docs/LINTING_AND_CODE_QUALITY_GUIDE.md` instead of being created in new, separate files.
+  - *Trigger Case*: When a new, complex remediation effort is initiated.
+  - *Example*: Instead of creating `LINTING_FIX_PLAN.md`, embed the plan within `LINTING_AND_CODE_QUALITY_GUIDE.md`.
+
+- **Rule 1.17 (Refinement): Isolate and Conquer for Complex Files**: When refactoring a file with a high error count or significant complexity, adopt an "isolate and conquer" strategy. Fix only one type of error at a time, then immediately run a targeted lint check on that file to verify the fix and ensure no new errors were introduced before proceeding. Prioritize the easiest and highest-confidence errors (e.g., `sonarjs/different-types-comparison`, unused variables) before tackling structural refactoring (`max-lines-per-function`, `cognitive-complexity`).
+  - *Trigger Case*: When a refactoring attempt on a complex file results in a neutral or negative change to the error count, or when facing multiple different error types in a single file.
+  - *Example*: `npx eslint lib/data-quality/batchCleanup.ts` after fixing only the `sonarjs/different-types-comparison` errors in that file.
+
+- **Rule 1.18: Handling Stubborn Lint Rules & False Positives**: When a lint rule proves difficult to fix or is identified as a potential false positive (e.g., `sonarjs/no-invariant-returns`, `@typescript-eslint/strict-boolean-expressions`, `@typescript-eslint/no-misused-promises` in `setInterval`/`setTimeout` contexts), follow this protocol:
+  1. Attempt standard inline suppression (`// eslint-disable-next-line` or `/* eslint-disable */`).
+  2. If suppression fails or is inappropriate, document the rule and the reason for its difficulty/false positive nature in `docs/LINTING_AND_CODE_QUALITY_GUIDE.md` under "Known Linter False Positives."
+  3. Proceed with other remediation tasks, revisiting the stubborn rule only after significant progress has been made on other errors, or if a new understanding emerges.
+  - *Trigger Case*: Persistent lint errors after multiple targeted fix attempts, or when a rule seems to misinterpret intentional code patterns.
+  - *Example*: Documenting `sonarjs/no-invariant-returns` as a false positive in `lib/api/test-integration/pipelineRunner.ts` after multiple suppression attempts failed.
+
+- **Rule 1.20: Explicit Callbacks for Array Methods**: When using array methods like `filter`, `map`, or `forEach` with a type guard or predicate function, prefer an explicit arrow function callback (e.g., `.filter((item): item is MyType => isMyType(item))` or `.filter((item) => isMyType(item))`) over a direct function reference (`.filter(isMyType)`). This improves readability, provides better type inference, and resolves `unicorn/no-array-callback-reference` warnings.
+  - *Trigger Case*: `unicorn/no-array-callback-reference` warnings when passing a function reference directly to an array method.
+  - *Example*: Change `recentJobs.filter(isScrapingJob)` to `recentJobs.filter((job) => isScrapingJob(job))`.
+
+- **Rule 1.19: Prioritizing TypeScript Errors**: Any TypeScript errors (`ts Error`) introduced during refactoring or development must be addressed immediately and are considered critical linting issues, even if they do not appear in the ESLint `error-analysis.json` report.
+  - *Trigger Case*: New TypeScript errors appear in the IDE or during `tsc --noEmit` checks.
+  - *Example*: If removing `?? ''` causes a `TS2345` error, re-add the nullish coalescing or provide an explicit type guard to resolve the TypeScript error first.
+
+- **Rule 1.21: Resolve Type Mismatches Caused by Lint Fixes**: When a linting fix (e.g., replacing `null` with `undefined` for `unicorn/no-null`) introduces a TypeScript error in a consuming component (e.g., a prop type mismatch), the TypeScript error must be resolved immediately. This may involve updating the type definitions in the consuming component or related files to align with the new value type.
+    - *Trigger Case*: A TypeScript error appears immediately after a linting rule is fixed.
+    - *Example*: After changing a prop value from `user ?? null` to `user ?? undefined` in a parent component, a `ts Error` appears. The child component's prop type must be updated from `User | null` to `User | undefined` to resolve the mismatch.
+
+- **Rule 1.22: Handle Supabase Type Mismatches in Complex Structures**: When Supabase query results (`.select('*').overrideTypes<T>()`) lead to type errors (e.g., `TS2345`) due to nested type mismatches (e.g., `any[]` being returned for an expected `string[]` in array fields like `MenuItem.dietary_tags` or `FoodTruckSchema.cuisine_type`), temporarily relax the interface type to `any[]` for the problematic field in `lib/types.ts`. This allows immediate progress, but requires a subsequent, robust data transformation (e.g., explicit type guarding and mapping) in the consuming code (e.g., `lib/supabase.ts:groupMenuItems` or `lib/utils/QualityScorer.ts`) to ensure type safety before final use.
+  - *Trigger Case*: `TS2345` errors when assigning Supabase query results to interfaces containing nested array types that Supabase returns as generic `any[]` or `Record<string, any>[]`.
+  - *Example*: Change `dietary_tags: string[]` to `dietary_tags: any[]` in `MenuItem` interface, or `cuisine_type: string[]` to `cuisine_type: any[]` in `FoodTruckSchema`, followed by explicit array transformation in data processing functions.

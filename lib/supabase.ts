@@ -2,7 +2,10 @@ import {
   createClient,
   type PostgrestSingleResponse,
   type PostgrestResponse,
+  
 } from '@supabase/supabase-js';
+
+
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -121,7 +124,7 @@ export const FoodTruckService = {
         .order('updated_at', { ascending: false })
         .range(offset, offset + limit - 1);
       if (error) throw error;
-      const trucks: FoodTruck[] = (data ?? []).map((t: FoodTruck) => normalizeTruckLocation(t));
+      const trucks: FoodTruck[] = (data ?? []).map((t) => normalizeTruckLocation(t));
       if (trucks.length === 0) return { trucks: [], total: count ?? 0 };
       const truckIds = trucks.map((t) => t.id);
       let menuItems: RawMenuItemFromDB[] = [];
@@ -137,7 +140,7 @@ export const FoodTruckService = {
       }
       const menuByTruck = buildMenuByTruck(menuItems);
       for (const truck of trucks) {
-        truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []);
+      truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []) as MenuCategory[] | unknown[];
       }
       return { trucks, total: count ?? 0 };
     } catch (error) {
@@ -159,7 +162,7 @@ export const FoodTruckService = {
         .select('*')
         .eq('food_truck_id', id);
       if (menuError) throw menuError;
-      truck.menu = groupMenuItems(Array.isArray(items) ? items : []);
+      truck.menu = groupMenuItems(Array.isArray(items) ? items : []) as MenuCategory[] | unknown[];
       return truck;
     } catch (error) {
       handleSupabaseError(error, 'getTruckById');
@@ -303,7 +306,7 @@ async function updateTruckData(
   return truck;
 }
 
-async function updateTruckMenu(id: string, menuData: MenuCategory[]): Promise<void> {
+async function updateTruckMenu(id: string, menuData: MenuCategory[] | unknown[]): Promise<void> {
   if (!supabaseAdmin) {
     throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
   }
@@ -320,16 +323,44 @@ async function updateTruckMenu(id: string, menuData: MenuCategory[]): Promise<vo
 
   // Insert new menu items if they exist
   if (menuData != undefined && menuData.length > 0) {
-    const menuItems = menuData.flatMap((category) =>
-      (category.items ?? []).map((item) => ({
-        food_truck_id: id,
-        category: category.name ?? 'Uncategorized',
-        name: item.name ?? 'Unknown Item',
-        description: item.description ?? undefined,
-        price: typeof item.price === 'number' ? item.price : undefined,
-        dietary_tags: item.dietary_tags ?? [],
-      })),
-    );
+    const menuItems = menuData.flatMap((category: unknown) => {
+      // Type guard for MenuCategory
+      const isMenuCategory = (obj: unknown): obj is MenuCategory =>
+        typeof obj === 'object' && obj !== null && 'name' in obj && 'items' in obj && Array.isArray(obj.items);
+
+      if (!isMenuCategory(category)) {
+        console.warn('Skipping invalid category in updateTruckMenu:', category);
+        return [];
+      }
+
+      return (category.items ?? []).map((item: unknown) => {
+        // Type guard for MenuItem
+        const isMenuItem = (obj: unknown): obj is MenuItem =>
+          typeof obj === 'object' && obj !== null && 'name' in obj;
+
+        if (!isMenuItem(item)) {
+          console.warn('Skipping invalid menu item in updateTruckMenu:', item);
+          // Return a default valid MenuItem or skip based on requirements
+          return {
+            food_truck_id: id,
+            category: category.name ?? 'Uncategorized',
+            name: 'Unknown Item',
+            description: undefined,
+            price: undefined,
+            dietary_tags: [],
+          };
+        }
+
+        return {
+          food_truck_id: id,
+          category: category.name ?? 'Uncategorized',
+          name: item.name ?? 'Unknown Item',
+          description: item.description ?? undefined,
+          price: typeof item.price === 'number' ? item.price : undefined,
+          dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
+        };
+      });
+    });
 
     if (menuItems.length > 0) {
       const { error: menuError } = await supabaseAdmin.from('menu_items').insert(menuItems);
@@ -508,16 +539,19 @@ export const ScrapingJobService = {
   },
   async getAllJobs(limit = 50, offset = 0): Promise<ScrapingJob[]> {
     try {
-      const { data, error }: PostgrestResponse<ScrapingJob> = await supabase
-        .from('scraping_jobs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1);
+      const query =
+        status === 'all'
+          ? supabase.from('scraping_jobs').select('*')
+          : supabase.from('scraping_jobs').select('*').eq('status', status);
+
+      const { data, error }: PostgrestResponse<ScrapingJob> = await query
+        .order('priority', { ascending: false })
+        .order('scheduled_at', { ascending: true });
 
       if (error) throw error;
       return data ?? [];
     } catch (error: unknown) {
-      console.warn('Error fetching all jobs:', error);
+      console.warn('Error fetching jobs:', error);
       return [];
     }
   },
@@ -764,21 +798,37 @@ export const APIUsageService = {
 export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange } from './types';
 
 // Helper to prepare menu items for DB insertion
-function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | undefined) {
+function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | unknown[] | undefined) {
   if (!Array.isArray(menuData) || menuData.length === 0) return [];
-  return menuData.flatMap((category) =>
-    (Array.isArray(category.items) ? category.items : []).map((item) => ({
-      food_truck_id: truckId,
-      category: typeof category.name === 'string' && category.name !== '' ? category.name : 'Uncategorized',
-      name: typeof item.name === 'string' && item.name !== '' ? item.name : 'Unknown Item',
-      description: typeof item.description === 'string' && item.description !== '' ? item.description : undefined,
-      price: typeof item.price === 'number' && !Number.isNaN(item.price) ? item.price : undefined,
-      dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
-    }))
+  // Explicitly filter for MenuCategory to ensure type safety
+  const categories: MenuCategory[] = menuData.filter((category): category is MenuCategory =>
+    typeof category === 'object' && category !== null && 'name' in category && 'items' in category && Array.isArray(category.items)
+  );
+
+  return categories.flatMap((category) =>
+    (Array.isArray(category.items) ? category.items : []).map((item: unknown) => {
+      // Type guard for MenuItem
+      const isMenuItem = (obj: unknown): obj is MenuItem =>
+        typeof obj === 'object' && obj !== null && 'name' in obj;
+
+      if (!isMenuItem(item)) {
+        console.warn('Skipping invalid menu item:', item);
+        return null; // Return null for invalid items to be filtered out later
+      }
+
+      return {
+        food_truck_id: truckId,
+        category: typeof category.name === 'string' && category.name !== '' ? category.name : 'Uncategorized',
+        name: typeof item.name === 'string' && item.name !== '' ? item.name : 'Unknown Item',
+        description: typeof item.description === 'string' && item.description !== '' ? item.description : undefined,
+        price: typeof item.price === 'number' && !Number.isNaN(item.price) ? item.price : undefined,
+        dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
+      };
+    }).filter(Boolean) as MenuItem[] // Filter out nulls and assert type
   );
 }
 
-async function insertMenuItems(truckId: string, menuData: MenuCategory[] | undefined) {
+async function insertMenuItems(truckId: string, menuData: MenuCategory[] | unknown[] | undefined) {
   const menuItems = prepareMenuItemsForInsert(truckId, menuData);
   if (menuItems.length === 0) return;
   const { error: menuError } = await supabaseAdmin!.from('menu_items').insert(menuItems);
@@ -790,6 +840,8 @@ async function insertMenuItems(truckId: string, menuData: MenuCategory[] | undef
 // Fix all strict-boolean-expressions and always-true/false comparisons below
 // Example: if (someString) => if (typeof someString === 'string' && someString.trim() !== '')
 // Example: if (someNumber) => if (typeof someNumber === 'number' && !Number.isNaN(someNumber) && someNumber !== 0)
-// Example: if (someObject) => if (someObject != null && someObject != null)
+// Example: if (someObject) => if (someObject != null && someObject != undefined)
 
 // For all other conditionals, ensure explicit nullish/empty/NaN checks as above
+
+export {type PostgrestError, type PostgrestResponse} from '@supabase/supabase-js';

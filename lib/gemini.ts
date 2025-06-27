@@ -203,5 +203,35 @@ export class GeminiService {
   };
 }
 
+export async function dispatchGeminiOperation(
+  type: 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance' | 'foodTruckExtraction',
+  data: unknown,
+): Promise<GeminiResponse<unknown>> {
+  switch (type) {
+    case 'menu': {
+      return gemini.processMenuData(data as string);
+    }
+    case 'location': {
+      return gemini.extractLocationFromText(data as string);
+    }
+    case 'hours': {
+      return gemini.standardizeOperatingHours(data as string);
+    }
+    case 'sentiment': {
+      return gemini.analyzeSentiment(data as string);
+    }
+    case 'enhance': {
+      return gemini.enhanceFoodTruckData(data);
+    }
+    case 'foodTruckExtraction': {
+      const { markdownContent, sourceUrl } = data as { markdownContent: string; sourceUrl?: string };
+      return gemini.extractFoodTruckDetailsFromMarkdown(markdownContent, sourceUrl);
+    }
+    default: {
+      return { success: false, error: `Unknown Gemini operation type: ${String(type)}` };
+    }
+  }
+}
+
 // Export singleton instance
 export const gemini = new GeminiService();

@@ -62,61 +62,65 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout);
 };
 
-export const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'ADD_TOAST': {
-      return {
-        ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
-      };
-    }
+const handleAddToast = (state: State, toast: ToasterToast): State => ({
+  ...state,
+  toasts: [toast, ...state.toasts].slice(0, TOAST_LIMIT),
+});
 
-    case 'UPDATE_TOAST': {
-      return {
-        ...state,
-        toasts: state.toasts.map((t) => (t.id === action.toast.id ? { ...t, ...action.toast } : t)),
-      };
-    }
+const handleUpdateToast = (state: State, toast: Partial<ToasterToast>): State => ({
+  ...state,
+  toasts: state.toasts.map((t) => (t.id === toast.id ? { ...t, ...toast } : t)),
+});
 
-    case 'DISMISS_TOAST': {
-      const { toastId } = action;
-
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
-      if (toastId != undefined && toastId !== '') {
-        addToRemoveQueue(toastId);
-      } else {
-        for (const toast of state.toasts) {
-          addToRemoveQueue(toast.id);
-        }
-      }
-
-      return {
-        ...state,
-        toasts: state.toasts.map((t) =>
-          t.id === toastId || toastId === undefined
-            ? {
-                ...t,
-                open: false,
-              }
-            : t,
-        ),
-      };
-    }
-    case 'REMOVE_TOAST': {
-      if (action.toastId === undefined) {
-        return {
-          ...state,
-          toasts: [],
-        };
-      }
-      return {
-        ...state,
-        toasts: state.toasts.filter((t) => t.id !== action.toastId),
-      };
+const handleDismissToast = (state: State, toastId?: string): State => {
+  if (toastId != undefined && toastId !== '') {
+    addToRemoveQueue(toastId);
+  } else {
+    for (const toast of state.toasts) {
+      addToRemoveQueue(toast.id);
     }
   }
+
+  return {
+    ...state,
+    toasts: state.toasts.map((t) =>
+      t.id === toastId || toastId === undefined
+        ? {
+            ...t,
+            open: false,
+          }
+        : t,
+    ),
+  };
 };
+
+const handleRemoveToast = (state: State, toastId?: string): State => {
+  if (toastId === undefined) {
+    return {
+      ...state,
+      toasts: [],
+    };
+  }
+  return {
+    ...state,
+    toasts: state.toasts.filter((t) => t.id !== toastId),
+  };
+};
+
+export function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'ADD_TOAST':
+      return handleAddToast(state, action.toast);
+    case 'UPDATE_TOAST':
+      return handleUpdateToast(state, action.toast);
+    case 'DISMISS_TOAST':
+      return handleDismissToast(state, action.toastId);
+    case 'REMOVE_TOAST':
+      return handleRemoveToast(state, action.toastId);
+    default:
+      return state;
+  }
+}
 
 const listeners: Array<(state: State) => void> = [];
 
