@@ -195,3 +195,11 @@ export interface TestPipelineResults {
   logs?: string[];
   error?: string;
 }
+
+export interface PipelineRunResult {
+  firecrawl?: StageResult;
+  gemini?: StageResult;
+  supabase?: StageResult;
+  logs: string[];
+  overallStatus: 'Success' | 'Error';
+}

@@ -160,23 +160,23 @@ export class BatchCleanupService {
     }
   }
 
-  private static async runRemovePlaceholders(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+  private static runRemovePlaceholders = async (trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> => {
     return await this.removePlaceholders(trucks, dryRun, operation);
   }
 
-  private static async runNormalizePhoneNumbers(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+  private static runNormalizePhoneNumbers = async (trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> => {
     return await this.normalizePhoneNumbers(trucks, dryRun, operation);
   }
 
-  private static async runFixCoordinates(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+  private static runFixCoordinates = async (trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> => {
     return await this.fixCoordinates(trucks, dryRun, operation);
   }
 
-  private static async runUpdateQualityScores(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+  private static runUpdateQualityScores = async (trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> => {
     return await this.updateQualityScores(trucks, dryRun, operation);
   }
 
-  private static async runMergeDuplicates(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+  private static runMergeDuplicates = async (trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> => {
     return await this.mergeDuplicates(trucks, dryRun, operation);
   }
   
@@ -204,7 +204,7 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<void> {
     const updates = processTruckForPlaceholders(truck, patterns);
-    if (Object.keys(updates).length > 0) {
+    if (updates && Object.keys(updates).length > 0) {
       await this.performUpdateOperation(truck.id, updates, dryRun, operation);
     }
   }
@@ -377,11 +377,13 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<void> {
     const qualityAssessment = DataQualityService.calculateQualityScore(truck);
-    const newScore = qualityAssessment.score;
-    const currentScore = truck.data_quality_score ?? 0;
-    // Only update if score changed significantly (>5% difference)
-    if (typeof qualityAssessment.score === 'number' && Math.abs(newScore - currentScore) > 0.05) {
-      await this.applyQualityScoreUpdate(truck, dryRun, operation);
+    if (qualityAssessment) {
+      const newScore = qualityAssessment.score;
+      const currentScore = truck.data_quality_score ?? 0;
+      // Only update if score changed significantly (>5% difference)
+      if (typeof newScore === 'number' && Math.abs(newScore - currentScore) > 0.05) {
+        await this.applyQualityScoreUpdate(truck, dryRun, operation);
+      }
     }
   }
 
