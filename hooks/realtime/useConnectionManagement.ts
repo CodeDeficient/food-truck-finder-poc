@@ -16,23 +16,28 @@ interface UseConnectionManagementOptions {
   isConnecting: boolean;
 }
 
+function buildConnectionConfig(options: UseConnectionManagementOptions, connect: () => void) {
+  return {
+    eventSourceRef: options.eventSourceRef,
+    isConnecting: options.isConnecting,
+    isManuallyDisconnectedRef: options.isManuallyDisconnectedRef,
+    connectionAttempts: options.connectionAttempts,
+    maxReconnectAttempts: options.maxReconnectAttempts,
+    reconnectInterval: options.reconnectInterval,
+    reconnectTimeoutRef: options.reconnectTimeoutRef,
+    handleEvent: options.handleEvent,
+    connectionState: options.connectionState,
+    connect,
+  };
+}
+
 export function useConnectionManagement(options: UseConnectionManagementOptions) {
   const { connectionState } = options;
   const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents } = connectionState;
 
   const connect = useCallback(() => {
-    createEventSourceConnection({
-      eventSourceRef: options.eventSourceRef,
-      isConnecting: options.isConnecting,
-      isManuallyDisconnectedRef: options.isManuallyDisconnectedRef,
-      connectionAttempts: options.connectionAttempts,
-      maxReconnectAttempts: options.maxReconnectAttempts,
-      reconnectInterval: options.reconnectInterval,
-      reconnectTimeoutRef: options.reconnectTimeoutRef,
-      handleEvent: options.handleEvent,
-      connectionState: options.connectionState,
-      connect: () => connect()
-    });
+    const config = buildConnectionConfig(options, () => connect());
+    createEventSourceConnection(config);
   }, [options]);
 
   const disconnect = useCallback(() => {
