@@ -3,7 +3,7 @@ import {
   handleGeminiStage,
   handleSupabaseStage,
 } from './stageHandlers';
-import { StageResult, ExtractedFoodTruckDetails } from '@/lib/types';
+import { ExtractedFoodTruckDetails, StageResult } from '@/lib/types';
 
 interface PipelineRunResult {
   firecrawl?: StageResult;
@@ -96,6 +96,7 @@ async function processSupabaseStage(
 }
 
 // Helper function to handle the result of the Gemini stage
+ 
 function handleGeminiStageResult(
   geminiStage: { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails | undefined } | undefined,
   firecrawlResult: StageResult,
@@ -106,7 +107,7 @@ function handleGeminiStageResult(
       status: 'Error',
       result: handleStageErrorAndReturn(
         firecrawlResult,
-        { status: 'Error', error: 'Gemini stage failed' },
+        { status: 'Error', error: 'Gemini stage failed' } as StageResult,
         undefined,
         logs,
       ),
@@ -121,7 +122,7 @@ function handleGeminiStageResult(
       result: handleStageErrorAndReturn(
         firecrawlResult,
         geminiResult,
-        { status: 'Error', error: 'Extracted data is undefined after Gemini stage' },
+        { status: 'Error', error: 'Extracted data is undefined after Gemini stage' } as StageResult,
         logs,
       ),
     };
@@ -131,7 +132,12 @@ function handleGeminiStageResult(
 
 // Type guard for PipelineRunResult
 function isPipelineRunResult(obj: unknown): obj is PipelineRunResult {
-  return typeof obj === 'object' && obj !== null && 'overallStatus' in obj;
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'overallStatus' in obj &&
+    (obj as { overallStatus: unknown }).overallStatus === 'Error'
+  );
 }
 
 // Define Gemini and Supabase stage helpers before runTestPipeline and ensure they are async if needed
@@ -139,10 +145,21 @@ async function handleGeminiStagePipeline(
   contentToProcess: string | undefined,
   sourceUrlForProcessing: string,
   logs: string[],
-  firecrawlResult: StageResult
-): Promise<{ geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails } | PipelineRunResult> {
-  const geminiStage = await processGeminiStage(contentToProcess, sourceUrlForProcessing, logs);
-  const geminiStageHandled = handleGeminiStageResult(geminiStage, firecrawlResult, logs);
+  firecrawlResult: StageResult,
+): Promise<
+  | { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails }
+  | PipelineRunResult
+> {
+  const geminiStage = await processGeminiStage(
+    contentToProcess,
+    sourceUrlForProcessing,
+    logs,
+  );
+  const geminiStageHandled = handleGeminiStageResult(
+    geminiStage,
+    firecrawlResult,
+    logs,
+  );
   if (geminiStageHandled.status === 'Error') {
     return geminiStageHandled.result;
   }
@@ -171,7 +188,7 @@ async function handleSupabaseStagePipeline(config: SupabaseStageConfig): Promise
     return handleStageErrorAndReturn(
       firecrawlResult,
       geminiResult,
-      { status: 'Error', error: 'Supabase stage failed' },
+      { status: 'Error', error: 'Supabase stage failed' } as StageResult,
       logs,
     );
   }
@@ -187,7 +204,7 @@ async function executeFirecrawlStage(
   const firecrawlStageOutput = await processFirecrawlStage(url ?? '', rawText, logs);
   if (!firecrawlStageOutput) {
     return handleStageErrorAndReturn(
-      { status: 'Error', error: 'Firecrawl stage failed' },
+      { status: 'Error', error: 'Firecrawl stage failed' } as StageResult,
       undefined,
       undefined,
       logs,
@@ -212,14 +229,64 @@ async function executeGeminiStage(
 
 // Helper function to handle the Supabase stage within the pipeline
 async function executeSupabaseStage(
-  extractedData: ExtractedFoodTruckDetails,
-  sourceUrlForProcessing: string,
+  config: SupabaseStageConfig,
+): Promise<StageResult | PipelineRunResult> {
+  const supabaseStage = await handleSupabaseStagePipeline(config);
+  return supabaseStage;
+}
+
+// Generic helper to execute a pipeline stage and handle its result
+async function executePipelineStage<
+  T extends
+    | {
+        firecrawlResult: StageResult;
+        contentToProcess: string | undefined;
+        sourceUrlForProcessing: string;
+      }
+    | {
+        geminiResult: StageResult;
+        extractedData: ExtractedFoodTruckDetails;
+      }
+    | StageResult,
+  Args extends unknown[],
+>(
+  stageFunction: (...args: Args) => Promise<T | PipelineRunResult>,
+  args: Args,
+): Promise<T | PipelineRunResult> {
+  const output = await stageFunction(...args);
+  return output;
+}
+
+// Extracted helper function for pipeline execution
+async function executePipeline(
+  url: string | undefined,
+  rawText: string | undefined,
   isDryRun: boolean,
   logs: string[],
-  firecrawlResult: StageResult,
-  geminiResult: StageResult,
-): Promise<StageResult | PipelineRunResult> {
-  const supabaseStage = await handleSupabaseStagePipeline(
+): Promise<PipelineRunResult> {
+  const firecrawlOutput = await executePipelineStage(executeFirecrawlStage, [
+    url ?? '',
+    rawText,
+    logs,
+  ]);
+  if (isPipelineRunResult(firecrawlOutput)) {
+    return firecrawlOutput;
+  }
+  const { firecrawlResult, contentToProcess, sourceUrlForProcessing } =
+    firecrawlOutput;
+
+  const geminiResultObject = await executeGeminiStage(
+    contentToProcess,
+    sourceUrlForProcessing,
+    logs,
+    firecrawlResult,
+  );
+  if (isPipelineRunResult(geminiResultObject)) {
+    return geminiResultObject;
+  }
+  const { geminiResult, extractedData } = geminiResultObject;
+
+  const supabaseOutput = await executePipelineStage(executeSupabaseStage, [
     {
       extractedData,
       sourceUrlForProcessing,
@@ -227,41 +294,27 @@ async function executeSupabaseStage(
       logs,
       firecrawlResult,
       geminiResult,
-    }
-  );
-  return supabaseStage;
+    },
+  ]);
+  if (isPipelineRunResult(supabaseOutput)) {
+    return supabaseOutput;
+  }
+
+  return {
+    firecrawl: firecrawlResult,
+    gemini: geminiResult,
+    supabase: supabaseOutput,
+    logs: [...logs, 'Test pipeline run completed successfully.'],
+    overallStatus: 'Success',
+  };
 }
 
+// Extracted helper function for pipeline execution
 export async function runTestPipeline(
   body: { url?: string; rawText?: string; isDryRun?: boolean },
   logs: string[],
 ): Promise<PipelineRunResult> {
   const { url, rawText, isDryRun = true } = body;
-  logs.push(`Request body: ${JSON.stringify(body)}`);
 
-  const firecrawlOutput = await executeFirecrawlStage(url ?? '', rawText, logs);
-  if (isPipelineRunResult(firecrawlOutput)) {
-    return firecrawlOutput;
-  }
-  const { firecrawlResult, contentToProcess, sourceUrlForProcessing } = firecrawlOutput;
-
-  const geminiOutput = await executeGeminiStage(contentToProcess, sourceUrlForProcessing, logs, firecrawlResult);
-  if (isPipelineRunResult(geminiOutput)) {
-    return geminiOutput;
-  }
-  const { geminiResult, extractedData } = geminiOutput;
-
-  const supabaseOutput = await executeSupabaseStage(extractedData, sourceUrlForProcessing, isDryRun, logs, firecrawlResult, geminiResult);
-  if (isPipelineRunResult(supabaseOutput)) {
-    return supabaseOutput;
-  }
-
-  logs.push('Test pipeline run completed successfully.');
-  return {
-    firecrawl: firecrawlResult,
-    gemini: geminiResult,
-    supabase: supabaseOutput,
-    logs,
-    overallStatus: 'Success',
-  };
+  return executePipeline(url, rawText, isDryRun, logs);
 }

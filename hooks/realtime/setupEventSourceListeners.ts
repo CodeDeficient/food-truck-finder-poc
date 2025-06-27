@@ -33,7 +33,7 @@ const handleOpen = (connectionState: ConnectionStateActions) => () => {
 
 const handleMessage = (handleEvent: (event: RealtimeEvent) => void, setConnectionError: (error: string | undefined) => void) => (event: MessageEvent) => {
   try {
-    const adminEvent: RealtimeEvent = JSON.parse(event.data) as RealtimeEvent;
+    const adminEvent: RealtimeEvent = JSON.parse(event.data as string) as RealtimeEvent;
     handleEvent(adminEvent);
   } catch (error) {
     console.error('Error parsing event data:', error);
@@ -41,13 +41,7 @@ const handleMessage = (handleEvent: (event: RealtimeEvent) => void, setConnectio
   }
 };
 
-const handleError = (connectionState: ConnectionStateActions, refs: EventSourceRefs, reconnectParams: ReconnectLogicParams) => (error: Event) => {
-  console.error('Real-time admin events error:', error);
-  connectionState.setIsConnected(false);
-  connectionState.setIsConnecting(false);
-  connectionState.setConnectionError('Connection error occurred');
-
-  // Explicitly check for undefined on ref.current
+const handleReconnectLogic = (refs: EventSourceRefs, reconnectParams: ReconnectLogicParams) => {
   if (refs.isManuallyDisconnectedRef.current !== true && reconnectParams.connectionAttempts < reconnectParams.maxReconnectAttempts) {
     reconnectParams.setConnectionAttempts((prev) => prev + 1);
 
@@ -59,6 +53,15 @@ const handleError = (connectionState: ConnectionStateActions, refs: EventSourceR
   } else if (reconnectParams.connectionAttempts >= reconnectParams.maxReconnectAttempts) {
     reconnectParams.setConnectionError('Max reconnection attempts reached');
   }
+};
+
+const handleError = (connectionState: ConnectionStateActions, refs: EventSourceRefs, reconnectParams: ReconnectLogicParams) => (error: Event) => {
+  console.error('Real-time admin events error:', error);
+  connectionState.setIsConnected(false);
+  connectionState.setIsConnecting(false);
+  connectionState.setConnectionError('Connection error occurred');
+
+  handleReconnectLogic(refs, reconnectParams);
 };
 
 interface SetupEventSourceListenersParams {

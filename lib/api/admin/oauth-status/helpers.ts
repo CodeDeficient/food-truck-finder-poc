@@ -27,7 +27,7 @@ export async function handleGetRequest(_request: NextRequest) {
 function generateOAuthTestUrl(baseUrl: string): string {
   const redirectPath = `${baseUrl}/auth/callback`;
   const encodedRedirect = encodeURIComponent(redirectPath);
-  return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodedRedirect}`;
+  return process.env.NEXT_PUBLIC_SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodedRedirect;
 }
 
 export function handlePostRequest() { // Removed _request parameter
@@ -68,7 +68,7 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
     environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     supabase: {
       connected: false,
-      projectId: 'zkwliyjjkdnigizidlln'
+      projectId: 'zkwliyjjkdnigizidlln' as string
     },
     environment_variables: {
       supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL !== undefined,
@@ -102,25 +102,30 @@ async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseCl
     } else {
       status.supabase.error = error.message;
     }
-  } catch (error: unknown) { // Explicitly type error as unknown
-    status.supabase.error = error instanceof Error ? error.message : 'Unknown connection error';
+  } catch (error: unknown) {
+    status.supabase.error =
+      error instanceof Error ? error.message : 'Unknown connection error';
   }
 }
 
 async function checkSupabaseAuthSettings(status: OAuthStatus) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (supabaseUrl !== undefined && supabaseUrl !== '') { // Explicit check for undefined and empty string
+    if (typeof supabaseUrl === 'string' && supabaseUrl.length > 0) { // Explicit check for undefined and empty string
       const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
       if (settingsResponse.ok === true) {
-        const settings = await settingsResponse.json() as {
+        const settings: {
+          external?: { google?: boolean };
+          disable_signup?: boolean;
+          autoconfirm?: boolean;
+        } = (await settingsResponse.json()) as {
           external?: { google?: boolean };
           disable_signup?: boolean;
           autoconfirm?: boolean;
         };
         status.supabase.authSettings = {
           googleEnabled: settings.external?.google ?? false,
-          signupEnabled: settings.disable_signup !== true,
+          signupEnabled: settings.disable_signup === false,
           autoconfirm: settings.autoconfirm ?? false
         };
         if (settings.external?.google !== undefined) { // Explicit check for undefined
@@ -142,10 +147,10 @@ async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) 
         skipBrowserRedirect: true
       }
     });
-    if (oauthError && oauthError.message !== 'Provider not found') { // Explicitly check for oauthError existence
+    if (oauthError !== null && oauthError.message !== 'Provider not found') { // Explicitly check for oauthError existence
       status.oauth_flow.authProviderConfigured = true;
     }
-  } catch (error: unknown) { // Explicitly type error as unknown
+  } catch (error: unknown) {
     console.info('OAuth provider test failed (may be normal):', error);
   }
 }
@@ -165,19 +170,15 @@ function generateRecommendations(status: OAuthStatus): string[] {
 
   if (!status.supabase.connected) {
     recommendations.push('❌ Fix Supabase connection issue');
-  if (status.supabase.error) { // Simplified check for truthy string
+  if (typeof status.supabase.error === 'string' && status.supabase.error.length > 0) {
     recommendations.push(`   Error: ${status.supabase.error}`);
   }
   }
 
-  if (status.supabase.authSettings) {
-    if (status.supabase.authSettings.googleEnabled) { // Simplified check for boolean true
-      recommendations.push('✅ Google OAuth provider is enabled');
-    } else {
-      recommendations.push('🔧 Enable Google OAuth provider in Supabase Dashboard', '   Go to: Authentication > Providers > Google');
-    }
-  } else { // Simplified check for undefined
-    recommendations.push('🔧 Configure Google OAuth in Supabase Dashboard', '   1. Create Google Cloud Console OAuth credentials', '   2. Add credentials to Supabase Auth settings');
+  if (status.supabase.authSettings?.googleEnabled === true) {
+    recommendations.push('✅ Google OAuth provider is enabled');
+  } else {
+    recommendations.push('🔧 Enable Google OAuth provider in Supabase Dashboard', '   Go to: Authentication > Providers > Google');
   }
 
   if (status.overall_status === 'ready') {
@@ -192,7 +193,8 @@ function generateRecommendations(status: OAuthStatus): string[] {
 }
 
 function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not_configured' | 'error' {
-  if (!status.supabase.connected || status.supabase.error) { // Simplified check for boolean false or truthy string
+  // eslint-disable-next-line sonarjs/different-types-comparison
+  if (!status.supabase.connected || status.supabase.error !== null) {
     return 'error';
   }
 
@@ -201,11 +203,11 @@ function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not
     return 'not_configured';
   }
 
-  if (status.supabase.authSettings?.googleEnabled === true && status.oauth_flow.authProviderConfigured === true) {
+  if (status.supabase.authSettings?.googleEnabled && status.oauth_flow.authProviderConfigured) {
     return 'ready';
   }
 
-  if (status.supabase.connected === true && envVarsComplete) {
+  if (status.supabase.connected && envVarsComplete) {
     return 'partial';
   }
 

@@ -74,6 +74,11 @@ function determineFirecrawlStageOutput(
   }
 }
 
+function handleEmptyContent(logs: string[]): never {
+  logs.push('Content to process is empty after Firecrawl/raw text stage.');
+  throw new Error('Content to process is empty.');
+}
+
 export async function handleFirecrawlStage(
   url: string,
   rawText: string | undefined,
@@ -86,8 +91,7 @@ export async function handleFirecrawlStage(
   const stageOutput = await determineFirecrawlStageOutput(url, rawText, logs);
 
   if (stageOutput.contentToProcess === undefined) {
-    logs.push('Content to process is empty after Firecrawl/raw text stage.');
-    throw new Error('Content to process is empty.');
+    handleEmptyContent(logs);
   }
 
   return stageOutput;

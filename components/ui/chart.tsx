@@ -100,7 +100,7 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
-function isNonEmptyArray<T>(arr: T[] | undefined | null): arr is T[] {
+function isNonEmptyArray<T>(arr: T[] | undefined): arr is T[] {
   return Array.isArray(arr) && arr.length > 0;
 }
 
@@ -178,7 +178,7 @@ function ChartTooltipItem(props: Readonly<ChartTooltipItemProps>) {
   const itemData: TooltipItemData = {
     name: item.name === undefined ? undefined : String(item.name),
     dataKey,
-    payload: typeof item.payload === 'object' && item.payload !== null ? (item.payload as Record<string, unknown>) : undefined,
+    payload: typeof item.payload === 'object' && item.payload ? (item.payload as Record<string, unknown>) : undefined,
     color: typeof item.color === 'string' ? item.color : undefined,
     value: typeof item.value === 'number' ? item.value : undefined,
   };
@@ -285,7 +285,7 @@ const ChartTooltipContent = React.forwardRef<
       labelKey
     });
     if (active !== true || !isNonEmptyArray(safePayload)) {
-      return null; // Explicitly return null instead of undefined
+      return;
     }
     const nestLabel = safePayload.length === 1 && indicator !== 'dot';
     return (
@@ -296,7 +296,7 @@ const ChartTooltipContent = React.forwardRef<
           className,
         )}
       >
-        {nestLabel ? null : tooltipLabel} {/* Explicitly return null instead of undefined */}
+        {nestLabel ? undefined : tooltipLabel}
         <ChartTooltipItems
           safePayload={safePayload}
           indicatorProps={{
@@ -370,7 +370,7 @@ const ChartLegendContent = React.forwardRef<
   const { config } = useChart();
   const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload as Payload<ValueType, NameType>[] : [];
   if (!isNonEmptyArray(safePayload)) {
-    return null; // Explicitly return null instead of undefined
+    return;
   }
 
   return (

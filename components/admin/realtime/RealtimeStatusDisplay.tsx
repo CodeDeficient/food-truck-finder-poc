@@ -5,9 +5,61 @@ import { SystemMetricsGrid } from './SystemMetricsGrid';
 import { ScrapingJobsStatus } from './ScrapingJobsStatus';
 import { SystemAlerts } from './SystemAlerts';
 import { EventControls } from './EventControls';
-import { type SystemAlert } from './status-helpers';
+import { type SystemAlert } from '@/hooks/useSystemAlerts';
 import { type StatusMetric } from './useSystemMetrics';
-import { type RealtimeEvent } from '@/hooks/useRealtimeAdminEvents.types';
+
+interface RealtimeStatusDisplayContentProps {
+  readonly connectionError: string | undefined;
+  readonly systemMetrics: StatusMetric[];
+  readonly scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  } | undefined;
+  readonly alerts: SystemAlert[];
+  readonly showDetails: boolean;
+  readonly onToggleDetails: () => void;
+  readonly onAcknowledgeAlert: (alertId: string) => void;
+  readonly recentEventsCount: number;
+  readonly onClearEvents: () => void;
+}
+
+function RealtimeStatusDisplayContent({
+  connectionError,
+  systemMetrics,
+  scrapingJobs,
+  alerts,
+  showDetails,
+  onToggleDetails,
+  onAcknowledgeAlert,
+  recentEventsCount,
+  onClearEvents,
+}: RealtimeStatusDisplayContentProps) {
+  return (
+    <CardContent>
+      {connectionError !== undefined && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-600">{connectionError}</p>
+        </div>
+      )}
+      <SystemMetricsGrid
+        metrics={systemMetrics}
+      />
+      <ScrapingJobsStatus scrapingJobs={scrapingJobs} />
+      <SystemAlerts
+        alerts={alerts}
+        showDetails={showDetails}
+        onToggleDetails={onToggleDetails}
+        onAcknowledgeAlert={onAcknowledgeAlert}
+      />
+      <EventControls
+        recentEventsCount={recentEventsCount}
+        onClearEvents={onClearEvents}
+      />
+    </CardContent>
+  );
+}
 
 interface RealtimeStatusDisplayProps {
   readonly isConnected: boolean;
@@ -57,27 +109,17 @@ export function RealtimeStatusDisplay({
           connect={connect}
           disconnect={disconnect}
         />
-        <CardContent>
-          {connectionError !== undefined && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{connectionError}</p>
-            </div>
-          )}
-          <SystemMetricsGrid
-            metrics={systemMetrics}
-          />
-          <ScrapingJobsStatus scrapingJobs={scrapingJobs} />
-          <SystemAlerts
-            alerts={alerts}
-            showDetails={showDetails}
-            onToggleDetails={onToggleDetails}
-            onAcknowledgeAlert={onAcknowledgeAlert}
-          />
-          <EventControls
-            recentEventsCount={recentEventsCount}
-            onClearEvents={onClearEvents}
-          />
-        </CardContent>
+        <RealtimeStatusDisplayContent
+          connectionError={connectionError}
+          systemMetrics={systemMetrics}
+          scrapingJobs={scrapingJobs}
+          alerts={alerts}
+          showDetails={showDetails}
+          onToggleDetails={onToggleDetails}
+          onAcknowledgeAlert={onAcknowledgeAlert}
+          recentEventsCount={recentEventsCount}
+          onClearEvents={onClearEvents}
+        />
       </Card>
     </div>
   );
