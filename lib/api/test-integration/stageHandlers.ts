@@ -23,7 +23,7 @@ async function handleUrlScrape(
   try {
     const fcOutput: GeminiResponse<FirecrawlOutputData> =
       await firecrawl.scrapeFoodTruckWebsite(url);
-    if (fcOutput.success && fcOutput.data?.markdown !== undefined && fcOutput.data?.markdown !== '') {
+    if (fcOutput.success === true && fcOutput.data?.markdown !== undefined && fcOutput.data?.markdown !== '') {
       return {
         contentToProcess: fcOutput.data.markdown,
         sourceUrlForProcessing: fcOutput.data.source_url ?? url,
@@ -64,7 +64,7 @@ function determineFirecrawlStageOutput(
   rawText: string | undefined,
   logs: string[],
 ): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string }> {
-  if (url && rawText === undefined) {
+  if (url !== undefined && url !== '' && rawText === undefined) {
     return handleUrlScrape(url, logs);
   } else if (rawText === undefined) {
     logs.push('No URL or raw text provided.');
@@ -109,7 +109,7 @@ export async function handleGeminiStage(
   try {
     const geminiOutput: GeminiResponse<ExtractedFoodTruckDetails> =
       await gemini.extractFoodTruckDetailsFromMarkdown(contentToProcess, sourceUrlForProcessing);
-    if (geminiOutput.success && geminiOutput.data) {
+    if (geminiOutput.success === true && geminiOutput.data !== undefined) {
       extractedData = geminiOutput.data;
       geminiResult = {
         status: 'Success',
