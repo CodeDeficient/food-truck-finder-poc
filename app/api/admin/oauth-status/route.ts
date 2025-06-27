@@ -17,9 +17,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export function POST(_request: NextRequest) {
   try {
-    return await handlePostRequest(request);
+    return handlePostRequest();
   } catch (error) {
     return NextResponse.json({
       success: false,

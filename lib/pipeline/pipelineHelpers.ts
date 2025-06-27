@@ -31,7 +31,7 @@ export async function validateInputAndPrepare(
 
 // New helper function for operating hours
 function buildOperatingHours(extractedOperatingHours: ExtractedFoodTruckDetails['operating_hours']) {
-  if (extractedOperatingHours === undefined) {
+  if (extractedOperatingHours == undefined) {
     return {
       monday: { closed: true as const },
       tuesday: { closed: true as const },
@@ -263,15 +263,15 @@ interface RawMenuCategory {
 
 // Type guard for RawMenuCategory
 function isRawMenuCategory(obj: unknown): obj is RawMenuCategory {
-  return typeof obj === 'object' && obj !== null && (
-    'category' in obj || 'name' in obj || 'items' in obj
+  return typeof obj === 'object' && obj != undefined && (
+    ('category' in obj) || ('name' in obj) || ('items' in obj)
   );
 }
 
 // Type guard for RawMenuItem
 function isRawMenuItem(obj: unknown): obj is RawMenuItem {
-  return typeof obj === 'object' && obj !== null && (
-    'name' in obj || 'description' in obj || 'price' in obj || 'dietary_tags' in obj
+  return typeof obj === 'object' && obj != undefined && (
+    ('name' in obj) || ('description' in obj) || ('price' in obj) || ('dietary_tags' in obj)
   );
 }
 

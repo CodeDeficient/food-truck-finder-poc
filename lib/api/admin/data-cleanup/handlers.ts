@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
+import { BatchCleanupService, CleanupOperation } from '@/lib/data-quality/batchCleanup';
 import { DuplicatePreventionService } from '@/lib/data-quality/duplicatePrevention';
 
 export interface DataCleanupRequestBody {
@@ -60,7 +60,7 @@ export async function handleFullCleanup(options: DataCleanupRequestBody['options
   const result = await BatchCleanupService.runFullCleanup({
     batchSize: options?.batchSize ?? 50,
     dryRun: options?.dryRun ?? false,
-    operations: options?.operations as any
+    operations: options?.operations as CleanupOperation['type'][]
   });
   
   return NextResponse.json({
@@ -123,7 +123,7 @@ export async function handleDryRun(options: DataCleanupRequestBody['options']): 
   });
 }
 
-export  function handleGetStatus(): Promise<NextResponse> {
+export async function handleGetStatus(): Promise<NextResponse> {
   return NextResponse.json({
     success: true,
     status: {
@@ -160,7 +160,7 @@ export async function handleGetPreview(): Promise<NextResponse> {
   });
 }
 
-export  function handleGetDefault(): Promise<NextResponse> {
+export async function handleGetDefault(): Promise<NextResponse> {
   return NextResponse.json({
     success: true,
     endpoints: [

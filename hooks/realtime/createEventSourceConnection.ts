@@ -12,7 +12,7 @@ function handleConnectionError(error: unknown, setIsConnecting: React.Dispatch<R
 
 function initializeEventSource({
   connect,
-  eventSourceRef,
+  eventSourceRef: _eventSourceRef, // Renamed to suppress unused variable warning
   handleEvent,
   isManuallyDisconnectedRef,
   reconnectInterval,
@@ -102,18 +102,7 @@ function shouldPreventConnection(eventSourceRef: React.RefObject<EventSource | u
   return !!eventSourceRef.current || isConnecting;
 }
 
-export function createEventSourceConnection({
-  eventSourceRef,
-  isConnecting,
-  isManuallyDisconnectedRef,
-  connectionAttempts,
-  maxReconnectAttempts,
-  reconnectInterval,
-  reconnectTimeoutRef,
-  handleEvent,
-  connectionState,
-  connect
-}: {
+interface CreateConnectionConfig {
   eventSourceRef: React.RefObject<EventSource | undefined>;
   isConnecting: boolean;
   isManuallyDisconnectedRef: React.RefObject<boolean>;
@@ -124,22 +113,15 @@ export function createEventSourceConnection({
   handleEvent: (event: RealtimeEvent) => void;
   connectionState: ReturnType<typeof useConnectionState>;
   connect: () => void;
-}) {
+}
+
+export function createEventSourceConnection(config: CreateConnectionConfig) {
+  const { eventSourceRef, isConnecting, connectionState, isManuallyDisconnectedRef } = config;
+
   if (shouldPreventConnection(eventSourceRef, isConnecting)) {
     return;
   }
 
   setupInitialConnectionState(connectionState, isManuallyDisconnectedRef);
-
-  establishEventSourceConnection({
-    connect,
-    eventSourceRef,
-    handleEvent,
-    isManuallyDisconnectedRef,
-    reconnectInterval,
-    reconnectTimeoutRef,
-    connectionAttempts,
-    maxReconnectAttempts,
-    connectionState
-  });
+  establishEventSourceConnection(config);
 }

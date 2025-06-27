@@ -22,16 +22,21 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
   }
 }
 
+interface PostRequestBody {
+  action: string;
+  truckId?: string;
+}
+
 export async function handlePostRequest(request: NextRequest): Promise<NextResponse> {
-  const body = await request.json();
+  const body: PostRequestBody = await request.json();
   const { action, truckId } = body;
 
   switch (action) {
     case 'update-single': {
-      if (!truckId) {
+      if (truckId === undefined || truckId === '') {
         return NextResponse.json({ success: false, error: 'Missing truckId for update-single action' }, { status: 400 });
       }
-      return await handleUpdateSingle(truckId);
+      return handleUpdateSingle(truckId);
     }
     case 'batch-update': {
       return await handleBatchUpdate();
@@ -117,12 +122,12 @@ function handleBatchUpdate() {
   });
 }
 
-async function updateSingleTruckQualityScore(truck: { id: string }): Promise<boolean> {
+function updateSingleTruckQualityScore(truck: { id: string }): boolean {
   try {
     // Placeholder for actual update logic if needed
-    // await DataQualityService.updateTruckQualityScore(truck.id);
+    // DataQualityService.updateTruckQualityScore(truck.id);
     return true;
-  } catch (error: unknown) { // Explicitly type error as unknown
+  } catch (error: unknown) {
     console.error(`Failed to update truck ${truck.id}:`, error);
     return false;
   }
@@ -130,7 +135,7 @@ async function updateSingleTruckQualityScore(truck: { id: string }): Promise<boo
 
 async function handleRecalculateAll() {
   const allTrucksResult = await FoodTruckService.getAllTrucks(1000, 0);
-  if (allTrucksResult.error) { // Simplified check
+  if (allTrucksResult.error !== undefined) {
     console.error('Error fetching all trucks for recalculation:', allTrucksResult.error);
     return NextResponse.json({ success: false, error: 'Failed to fetch trucks for recalculation' }, { status: 500 });
   }
@@ -139,7 +144,7 @@ async function handleRecalculateAll() {
   let errors = 0;
 
   for (const truck of trucks) {
-    const success = await updateSingleTruckQualityScore(truck);
+    const success = updateSingleTruckQualityScore(truck);
     if (success) {
       updated++;
     } else {
@@ -162,13 +167,13 @@ async function handleRecalculateAll() {
 export async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (!authHeader) return false; // Simplified check for null/undefined/empty string
+    if (!authHeader) return false;
 
     const token = authHeader.replace('Bearer ', '');
     const { data, error } = await supabase.auth.getUser(token);
     const user = data?.user;
     
-    if (error || !user) return false; // Simplified check for error or null/undefined user
+    if (error || !user) return false;
 
     const { data: profile } = await supabase
       .from('profiles')

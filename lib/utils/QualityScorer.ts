@@ -13,27 +13,27 @@ export type QualityCategory = {
 
 function assessBasicInfo(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
-  if (!truck.name || truck.name.length === 0) {
+  if (typeof truck.name !== 'string' || truck.name.trim().length === 0) {
     score -= 0.2;
     issues.push('Missing name');
   }
-  if (!truck.description || truck.description.length === 0) {
+  if (typeof truck.description !== 'string' || truck.description.trim().length === 0) {
     score -= 0.1;
     issues.push('Missing description');
   }
-  if (!truck.cuisine_type || truck.cuisine_type.length === 0) {
+  if (!Array.isArray(truck.cuisine_type) || truck.cuisine_type.length === 0 || !truck.cuisine_type.every(item => typeof item === 'string')) {
     score -= 0.1;
-    issues.push('Missing cuisine type');
+    issues.push('Missing or invalid cuisine type');
   }
-  if (!truck.price_range || truck.price_range.length === 0) {
+  if (typeof truck.price_range !== 'string' || truck.price_range.trim().length === 0) {
     score -= 0.05;
     issues.push('Missing price range');
   }
-  if (!truck.average_rating) {
+  if (typeof truck.average_rating !== 'number' || Number.isNaN(truck.average_rating)) {
     score -= 0.05;
     issues.push('Missing average rating');
   }
-  if (!truck.review_count) {
+  if (typeof truck.review_count !== 'number' || Number.isNaN(truck.review_count)) {
     score -= 0.05;
     issues.push('Missing review count');
   }
@@ -42,27 +42,27 @@ function assessBasicInfo(truck: FoodTruck, issues: string[], currentScore: numbe
 
 function assessContactInfo(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
-  if (!truck.website || truck.website.length === 0) {
+  if (typeof truck.website !== 'string' || truck.website.trim().length === 0) {
     score -= 0.05;
     issues.push('Missing website');
   }
-  if (!truck.phone_number || truck.phone_number.length === 0) {
+  if (typeof truck.phone_number !== 'string' || truck.phone_number.trim().length === 0) {
     score -= 0.05;
     issues.push('Missing phone number');
   }
-  if (!truck.email || truck.email.length === 0) {
+  if (typeof truck.email !== 'string' || truck.email.trim().length === 0) {
     score -= 0.05;
     issues.push('Missing email');
   }
-  if (!truck.instagram_handle || truck.instagram_handle.length === 0) {
+  if (typeof truck.instagram_handle !== 'string' || truck.instagram_handle.trim().length === 0) {
     score -= 0.02;
     issues.push('Missing Instagram handle');
   }
-  if (!truck.facebook_handle || truck.facebook_handle.length === 0) {
+  if (typeof truck.facebook_handle !== 'string' || truck.facebook_handle.trim().length === 0) {
     score -= 0.02;
     issues.push('Missing Facebook handle');
   }
-  if (!truck.twitter_handle || truck.twitter_handle.length === 0) {
+  if (typeof truck.twitter_handle !== 'string' || truck.twitter_handle.trim().length === 0) {
     score -= 0.02;
     issues.push('Missing Twitter handle');
   }
@@ -71,11 +71,11 @@ function assessContactInfo(truck: FoodTruck, issues: string[], currentScore: num
 
 function assessLocationData(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
-  if (!truck.current_location?.lat || !truck.current_location.lng) {
+  if (typeof truck.current_location?.lat !== 'number' || Number.isNaN(truck.current_location.lat) || typeof truck.current_location?.lng !== 'number' || Number.isNaN(truck.current_location.lng)) {
     score -= 0.15;
     issues.push('Missing current location data');
   } else {
-    if (truck.current_location.timestamp) {
+    if (typeof truck.current_location.timestamp === 'string' && truck.current_location.timestamp.length > 0) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
       if (daysSinceUpdate > 7) {
@@ -92,7 +92,7 @@ function assessLocationData(truck: FoodTruck, issues: string[], currentScore: nu
 
 function assessScheduleData(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
-  if (!truck.schedule || truck.schedule.length === 0) {
+  if (!Array.isArray(truck.schedule) || truck.schedule.length === 0) {
     score -= 0.1;
     issues.push('Missing schedule data');
   }
@@ -156,17 +156,20 @@ export const DataQualityService = {
   getQualityScoreAriaLabel,
 
   async batchUpdateQualityScores(limit: number = 100): Promise<{ updatedCount: number; errors: string[] }> {
-    const { data: trucks, error } = await supabase
+    const { data, error } = await supabase
       .from('food_trucks')
       .select('*')
-      .limit(limit);
+      .limit(limit)
+      .overrideTypes<FoodTruck[]>();
 
     if (error) {
       console.error('Error fetching trucks for batch update:', error);
       return { updatedCount: 0, errors: [error.message] };
     }
 
-    const updates = trucks.map(truck => {
+    const trucks: FoodTruck[] = data ?? [];
+
+    const updates = trucks.map((truck: FoodTruck) => {
       const { score } = calculateQualityScore(truck);
       return {
         id: truck.id,
@@ -192,14 +195,15 @@ export const DataQualityService = {
       .from('food_trucks')
       .select('*')
       .eq('id', truckId)
-      .single();
+      .single()
+      .overrideTypes<FoodTruck>();
 
-    if (fetchError || !truck) {
+    if (fetchError || truck === null) {
       console.error(`Error fetching truck ${truckId} for quality update:`, fetchError);
       return { success: false };
     }
 
-    const { score } = calculateQualityScore(truck);
+    const { score } = calculateQualityScore(truck as FoodTruck);
 
     const { error: updateError } = await supabase
       .from('food_trucks')

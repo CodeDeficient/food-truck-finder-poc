@@ -3,7 +3,7 @@
 import React from 'react';
 import { SystemAlertItem } from './SystemAlertItem';
 import { AlertToggleButton } from './AlertToggleButton';
-import { type SystemAlert } from './status-helpers';
+import { type SystemAlert } from '@/hooks/useSystemAlerts';
 
 interface AlertListDisplayProps {
   readonly alerts: readonly SystemAlert[];

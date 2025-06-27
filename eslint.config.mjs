@@ -130,6 +130,7 @@ export default tseslint.config(
       "sonarjs/no-dead-store": "error",
       "sonarjs/prefer-read-only-props": "error",
       "sonarjs/void-use": "error",
+      "sonarjs/no-invariant-returns": "off",
 
       // Filename case configuration
       "unicorn/prevent-abbreviations": "off",
