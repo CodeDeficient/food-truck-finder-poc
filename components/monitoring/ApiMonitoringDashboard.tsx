@@ -7,14 +7,14 @@ interface APIUsageData {
 }
 
 export function ApiMonitoringDashboard() {
-  const [usage, setUsage] = useState<APIUsageData | undefined>(); // Changed null to undefined
+  const [usage, setUsage] = useState<APIUsageData | undefined>();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | undefined>(); // Changed null to undefined
+  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     async function fetchUsage() {
       setLoading(true);
-      setError(undefined); // Changed null to undefined
+      setError(undefined);
       try {
         const res = await fetch('/api/monitoring/api-usage');
         if (!res.ok) throw new Error('Failed to fetch API usage');
@@ -38,7 +38,7 @@ export function ApiMonitoringDashboard() {
     <div className="mt-4 p-4 border rounded bg-muted">
       <h2 className="text-lg font-semibold mb-2">API Usage Monitoring</h2>
       <pre className="text-xs bg-background p-2 rounded overflow-x-auto">
-        {JSON.stringify(usage.data, null, 2)}
+        {JSON.stringify(usage.data, undefined, 2)}
       </pre>
       <div className="text-xs text-muted-foreground mt-2">Last updated: {usage.timestamp}</div>
     </div>

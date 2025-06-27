@@ -15,66 +15,75 @@ This comprehensive guide consolidates all linting, code quality, and related gov
 
 The project has systematically addressed significant linting and complexity issues, reducing the overall error count. The focus is now on maintaining these improvements and preventing regressions through robust quality gates.
 
-### Current Error Overview (as of 2025-06-24)
+### Current Error Overview (as of 2025-06-26)
 
-Based on the latest `lint-results.json` and `error-analysis.json`:
+Based on the latest analysis from `scripts/count-errors.cjs` and `scripts/analyze-error-patterns.cjs`:
 
--   **Total Problems**: 249 problems
--   **Unique Error Types**: 33
--   **Files with Errors**: 65
--   **Key High-Frequency Errors**:
-    -   `@typescript-eslint/no-unsafe-assignment`: 38 occurrences
-    -   `@typescript-eslint/strict-boolean-expressions`: 37 occurrences
-    -   `max-lines-per-function`: 37 occurrences
-    -   `sonarjs/unused-import`: 17 occurrences
-    -   `@typescript-eslint/no-unsafe-member-access`: 14 occurrences
-    -   `@typescript-eslint/no-unsafe-call`: 12 occurrences
-    -   `@typescript-eslint/no-unsafe-argument`: 11 occurrences
-    -   `@typescript-eslint/no-explicit-any`: 11 occurrences
-    -   `max-params`: 10 occurrences
-    -   `sonarjs/deprecation`: 8 occurrences
-    -   `unicorn/no-null`: 5 occurrences
-    -   `sonarjs/no-unused-vars`: 5 occurrences
-    -   `sonarjs/no-dead-store`: 5 occurrences
-    -   `sonarjs/cognitive-complexity`: 5 occurrences
-    -   `sonarjs/prefer-read-only-props`: 4 occurrences
-
-### Prioritized Files for Manual Remediation
-
-**✅ = Remediated (2025-06-24)**
-
-Based on `scripts/get-high-impact-files.cjs` (sorted by error count):
-
-#### HIGH-IMPACT FILES (20+ errors):
--   ✅ 24 errors: `/lib/api/test-integration/pipelineRunner.ts`
-
-#### MEDIUM-IMPACT FILES (10-19 errors):
--   ✅ 17 errors: `/lib/api/admin/oauth-status/helpers.ts`
--   ✅ 13 errors: `/lib/api/admin/data-quality/handlers.ts`
--   ✅ 11 errors: `/hooks/realtime/createEventSourceConnection.ts`
--   ✅ 11 errors: `/lib/api/test-integration/stageHandlers.ts`
--   ✅ 11 errors: `/lib/data-quality/batchCleanup.ts`
-
-#### LOWER-IMPACT FILES (5-9 errors):
--   ✅ 9 errors: `/lib/middleware/middlewareHelpers.ts`
--   ✅ 8 errors: `/hooks/realtime/setupEventSourceListeners.ts`
--   ✅ 8 errors: `/lib/ScraperEngine.ts`
--   ✅ 8 errors: `/lib/api/admin/realtime-events/handlers.ts`
--   ✅ 8 errors: `/lib/supabase.ts`
--   ✅ 7 errors: `/hooks/realtime/useConnectionManagement.ts`
--   ✅ 7 errors: `/lib/api/trucks/handlers.ts`
--   ✅ 6 errors: `/components/ui/chart.tsx`
--   ✅ 6 errors: `/lib/pipeline/pipelineHelpers.ts`
--   ✅ 5 errors: `/components/trucks/TruckContactInfo.tsx`
--   ✅ 5 errors: `/lib/gemini.ts`
+*   **Total Problems**: 205 (Note: `lib/api/admin/realtime-events/handlers.ts` is now clean.)
+*   **Unique Error Types**: 29
+*   **Files with Errors**: 70 (reduced by 1)
+*   **Key High-Frequency Errors**:
+    *   `@typescript-eslint/strict-boolean-expressions`: 43 occurrences
+    *   `max-lines-per-function`: 28 occurrences
+    *   `sonarjs/different-types-comparison`: 27 occurrences
+    *   `@typescript-eslint/no-unsafe-assignment`: 16 occurrences
+    *   `sonarjs/unused-import`: 10 occurrences
 
 ---
 
-## NEXT SET TO REMEDIATE
+## Phase 2 Remediation Plan (2025-06-26)
 
-**All prioritized high/medium/low-impact files have been remediated as of 2025-06-24.**
+This plan outlines the systematic approach to resolving the remaining 205 linting errors, adhering to the project's established rules.
 
-**Continue with the next highest-impact files (<5 errors) or those flagged for complexity.**
+### Sub-phase 2.1: High-Impact Manual Refactoring
+
+**Priority:** Highest. As per Rule 1.1, `max-lines-per-function` and `sonarjs/cognitive-complexity` must be addressed first.
+
+**Files to Target:**
+
+1.  **`/lib/data-quality/batchCleanup.ts`** (5 `cognitive-complexity`, 4 `max-lines-per-function`, 3 `max-depth`)
+    *   **Action:** Systematically refactor the static methods (`runFullCleanup`, `removePlaceholders`, etc.) by extracting logic into smaller, single-purpose helper functions. This will resolve the complexity, line count, and nesting depth issues simultaneously.
+2.  **`/lib/api/test-integration/pipelineRunner.ts`** (1 `max-lines-per-function`)
+    *   **Action:** Extract the core pipeline execution logic from the `runTestPipeline` function into a separate helper.
+3.  **Other files with `max-lines-per-function`:**
+    *   `/hooks/realtime/createEventSourceConnection.ts`
+    *   `/lib/api/test-integration/stageHandlers.ts`
+    *   `/hooks/realtime/setupEventSourceListeners.ts`
+    *   `/lib/api/admin/realtime-events/handlers.ts`
+    *   `/hooks/realtime/useConnectionManagement.ts`
+    *   `/components/ui/chart.tsx`
+    *   `/lib/pipeline/pipelineHelpers.ts`
+
+### Sub-phase 2.2: Careful Manual Intervention for `strict-boolean-expressions`
+
+**Priority:** High. As per Rule 2.1, this cannot be automated.
+
+**Action:** Manually review and fix the 43 instances of `@typescript-eslint/strict-boolean-expressions`. Each fix will require careful consideration of the context to avoid introducing logical errors.
+
+**Key Files:**
+*   `/lib/api/test-integration/stageHandlers.ts` (5 occurrences)
+*   `/lib/supabase.ts` (4 occurrences)
+*   `/components/trucks/TruckContactInfo.tsx` (3 occurrences)
+
+### Sub-phase 2.3: High-Confidence Automation
+
+**Priority:** Medium. These are quick wins that can be addressed after the critical manual refactoring.
+
+**Action:** Utilize safe, automated scripts to resolve the following:
+
+1.  **`sonarjs/unused-import`** (10 errors)
+2.  **`unicorn/no-null`** (7 errors)
+3.  **`sonarjs/different-types-comparison`** (27 errors) - *This can often be fixed with automated scripts that replace `===` with `==` for null/undefined checks, as noted in the guide.*
+
+### Sub-phase 2.4: Type Safety and General Cleanup
+
+**Priority:** Medium to Low. This involves a mix of manual and semi-automated fixes for the remaining errors.
+
+**Action:**
+
+1.  **Address `no-unsafe-*` errors:** Systematically add explicit type annotations and perform safe member access for the 40+ `no-unsafe-*` errors (`assignment`, `argument`, `member-access`, `call`, `return`).
+2.  **Fix `max-params`:** Refactor functions with too many parameters by grouping them into objects.
+3.  **Resolve remaining issues:** Clean up the long tail of miscellaneous errors.
 
 ---
 
@@ -182,6 +191,7 @@ These errors are critical for maintaining type safety and code robustness, requi
     -   **Rule Reference**: `.clinerules/type-safety.md` (Rule 1.3)
 -   **`@typescript-eslint/no-misused-promises`**: Ensure Promises are correctly `await`ed or explicitly marked as `void` if their return value is intentionally ignored.
 -   **`@typescript-eslint/no-redundant-type-constituents`**: Simplify union types where one type (e.g., `any` or `unknown`) makes other types redundant.
+-   **Handling Supabase `any[]` Return Types**: When `supabase.select('*').overrideTypes<T>()` results in `TS2345` errors for nested arrays (e.g., `dietary_tags`, `cuisine_type`) because Supabase returns `any[]` or `Record<string, any>[]` instead of the expected `string[]`, temporarily update the interface in `lib/types.ts` to `any[]` for that specific field. Subsequently, implement explicit type guarding and transformation (e.g., `.filter(item => typeof item === 'string') as string[]`) within data processing functions (like `groupMenuItems` in `lib/supabase.ts` or `QualityScorer.ts`) to convert the data to the desired type before use.
 
 ### Phase 4: Minor & Specific Issues
 
@@ -212,6 +222,7 @@ These are less frequent or more specific issues that can be addressed after the 
 -   **Simplify `unicorn/no-useless-undefined`**: Use `if (!handle)` instead of `if (handle === undefined || handle.length === 0)`.
 -   **Be Aware of Stale Linter Errors**: Verify errors against current code.
 -   **Use `.tsx` for Files with JSX**: Ensure correct file extensions.
+-   **Supabase Type Mismatches**: Be aware that `overrideTypes` may not fully resolve type errors for complex nested structures from Supabase queries (e.g., `any[]` for `string[]`). Temporary relaxation to `any[]` in interfaces may be necessary, followed by explicit data transformation.
 
 ## 4. Comprehensive Linting Prevention Framework
 
@@ -393,4 +404,46 @@ Instead, use the provided scripts (see `scripts/automated-nullish-coalescing-con
 - **Action**: Do not attempt to manually replace or suppress these warnings in individual files. We will address all such deprecation errors in a single batch update or linter config change in the future.
 - **Reference**: See [DefinitelyTyped Issue #66808](https://github.com/DefinitelyTyped/DefinitelyTyped/issues/66808) for details.
 
+### `sonarjs/no-invariant-returns` for `executePipeline`
+
+- **Context**: The linter flags `executePipeline` in `lib/api/test-integration/pipelineRunner.ts` with `sonarjs/no-invariant-returns`.
+- **Reality**: This function intentionally has multiple return paths (early exits for errors and a final success return). The rule is likely misinterpreting this as an invariant return due to the complex return types.
+- **Action**: This is considered a false positive and standard ESLint disable comments do not seem to suppress it. We will leave this as is and not attempt further manual suppression.
+
+### `@typescript-eslint/no-misused-promises` (in `setInterval`/`setTimeout` callbacks)
+
+- **Context**: This rule flags Promises returned in contexts expecting `void`, even when `async` anonymous functions are used with `await` inside `setInterval`/`setTimeout` callbacks.
+- **Reality**: This is often a false positive due to the linter's strict interpretation of `void` contexts, despite the code being functionally correct and safe.
+- **Action**: Targeted inline or block-level suppression is recommended if further code modification introduces undue complexity or is semantically equivalent to a suppressed pattern.
+
+### `sonarjs/different-types-comparison` (in `hooks/useSystemAlerts.ts`)
+
+- **Context**: In `hooks/useSystemAlerts.ts`, the expression `(event.severity ?? 'info') !== 'info'` is flagged by `sonarjs/different-types-comparison`.
+- **Reality**: This is a false positive. The expression `(event.severity ?? 'info')` evaluates to a string, and comparing two strings with `!==` is a valid and type-safe operation. The linter incorrectly suggests using `!=` which would change the strict equality check.
+- **Action**: This specific instance of the rule should be suppressed with an `// eslint-disable-next-line sonarjs/different-types-comparison` comment directly above the line. Repeated attempts to satisfy the linter without suppression have proven unproductive.
+
 ---
+
+## 9. Advanced Remediation Strategies
+
+### The "Isolate and Conquer" Protocol for Complex Files
+
+When a file proves resistant to broad refactoring attempts (i.e., the error count remains stagnant or increases), a more granular, methodical approach is required. This protocol, "Isolate and Conquer," ensures steady, verifiable progress on even the most complex files.
+
+**Core Principles:**
+
+1.  **One Error Type at a Time:** Do not attempt to fix multiple types of linting errors simultaneously in a complex file.
+2.  **Immediate Verification:** After each targeted fix, run a lint check *only on the file you are editing*. This provides immediate feedback and prevents the introduction of new, unforeseen errors.
+3.  **Prioritize High-Confidence Fixes:** Begin with the errors that are easiest to fix and have the lowest risk of introducing side effects (e.g., `sonarjs/different-types-comparison`, unused variables).
+4.  **Defer Complex Refactoring:** Save architectural changes (e.g., `max-lines-per-function`, `cognitive-complexity`) for last, after the file has been stabilized and the "easy" errors have been cleared.
+
+**Workflow:**
+
+1.  **Identify the Target File:** e.g., `lib/data-quality/batchCleanup.ts`
+2.  **Identify the First Error Type to Fix:** e.g., `sonarjs/different-types-comparison`
+3.  **Apply the Fix:** Use `replace_in_file` to fix *only* the `different-types-comparison` errors.
+4.  **Verify the Fix:** Run `npx eslint lib/data-quality/batchCleanup.ts`.
+5.  **Assess the Result:**
+    *   If the target error is gone and no new errors have appeared, proceed to the next error type.
+    *   If new errors have appeared, revert the change and re-evaluate the fix.
+6.  **Repeat:** Continue this process for each error type until the file is clean.

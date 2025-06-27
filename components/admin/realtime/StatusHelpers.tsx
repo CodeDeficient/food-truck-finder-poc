@@ -48,11 +48,3 @@ export const getTrendIcon = (trend?: string) => {
     
   }
 };
-
-export interface SystemAlert {
-  id: string;
-  type: 'warning' | 'error' | 'critical';
-  message: string;
-  timestamp: string;
-  acknowledged: boolean;
-}

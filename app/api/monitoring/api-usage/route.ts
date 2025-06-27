@@ -38,10 +38,10 @@ async function handlePostAction(
 
   switch (action) {
     case 'clear-alerts': {
-      return handleClearAlerts();
+      return await handleClearAlerts();
     }
     case 'get-alerts': {
-      return handleGetAlerts();
+      return await handleGetAlerts();
     }
     case 'test-alert': {
       if (service === undefined || level === undefined) {
@@ -50,7 +50,7 @@ async function handlePostAction(
           { status: 400 },
         );
       }
-      return handleTestAlert({ service, level });
+      return await handleTestAlert({ service, level });
     }
     default: {
       return NextResponse.json(
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
   try {
     const rawBody: unknown = await request.json();
 
-    if (typeof rawBody !== 'object' || rawBody === null) {
+    if (typeof rawBody !== 'object' || rawBody === null) { // Changed to check for null instead of undefined as typeof null is 'object'
       return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
 

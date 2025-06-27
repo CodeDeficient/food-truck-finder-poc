@@ -229,7 +229,7 @@ export class DuplicatePreventionService {
     let factors = 0;
     
     // Address similarity
-    if (loc1.address !== undefined && loc1.address !== null && loc2.address !== undefined && loc2.address !== null) {
+    if (loc1.address !== undefined && loc1.address !== null && loc2.address !== undefined && loc2.address !== undefined) {
       similarity += this.calculateStringSimilarity(loc1.address, loc2.address);
       factors++;
     }
@@ -239,7 +239,7 @@ export class DuplicatePreventionService {
       loc1.lat !== undefined && loc1.lat !== null &&
       loc1.lng !== undefined && loc1.lng !== null &&
       loc2.lat !== undefined && loc2.lat !== null &&
-      loc2.lng !== undefined && loc2.lng !== null
+      loc2.lng !== undefined && loc2.lng !== undefined
     ) {
       const distance = this.calculateGPSDistance(
         loc1.lat, loc1.lng,
