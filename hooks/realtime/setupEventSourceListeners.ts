@@ -76,33 +76,36 @@ interface SetupEventSourceListenersParams {
   connect: () => void;
 }
 
-export function setupEventSourceListeners({
-  eventSource,
-  handleEvent,
-  connectionState,
-  isManuallyDisconnectedRef,
-  connectionAttempts,
-  maxReconnectAttempts,
-  reconnectInterval,
-  reconnectTimeoutRef,
-  connect,
-}: SetupEventSourceListenersParams) {
-  const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } = connectionState;
-
-  const refs: EventSourceRefs = { isManuallyDisconnectedRef, reconnectTimeoutRef };
-  const connectionActions: ConnectionStateActions = { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts };
-  const reconnectLogicParams: ReconnectLogicParams = {
-    connectionAttempts,
-    maxReconnectAttempts,
-    reconnectInterval,
-    connect,
-    setConnectionAttempts,
-    setConnectionError,
-    isManuallyDisconnectedRef,
-    reconnectTimeoutRef,
+function createReconnectLogicParams(
+  params: Omit<SetupEventSourceListenersParams, 'eventSource' | 'handleEvent' | 'connectionState'>,
+  connectionState: ReturnType<typeof useConnectionState>
+): ReconnectLogicParams {
+  return {
+    ...params,
+    setConnectionAttempts: connectionState.setConnectionAttempts,
+    setConnectionError: connectionState.setConnectionError,
   };
+}
+
+function addEventListeners(
+  eventSource: EventSource,
+  params: SetupEventSourceListenersParams,
+  connectionActions: ConnectionStateActions,
+  reconnectLogicParams: ReconnectLogicParams
+) {
+  const { handleEvent, isManuallyDisconnectedRef, reconnectTimeoutRef } = params;
+  const refs: EventSourceRefs = { isManuallyDisconnectedRef, reconnectTimeoutRef };
 
   eventSource.addEventListener('open', handleOpen(connectionActions));
-  eventSource.addEventListener('message', handleMessage(handleEvent, setConnectionError));
+  eventSource.addEventListener('message', handleMessage(handleEvent, connectionActions.setConnectionError));
   eventSource.addEventListener('error', handleError(connectionActions, refs, reconnectLogicParams));
+}
+
+export function setupEventSourceListeners(params: SetupEventSourceListenersParams) {
+  const { eventSource, connectionState } = params;
+  const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } = connectionState;
+  const connectionActions: ConnectionStateActions = { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts };
+  const reconnectLogicParams = createReconnectLogicParams(params, connectionState);
+
+  addEventListeners(eventSource, params, connectionActions, reconnectLogicParams);
 }
