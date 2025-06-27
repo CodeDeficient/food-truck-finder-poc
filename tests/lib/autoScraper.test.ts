@@ -1,7 +1,7 @@
 // lib/autoScraper.test.ts
 
 // Mock dependencies
-jest.mock('./config', () => ({
+jest.mock('@/lib/config', () => ({ // Adjusted path to use alias
   DEFAULT_SCRAPE_URLS: ['https://example.com/default1'],
   DEFAULT_STALENESS_THRESHOLD_DAYS: 7,
 }));
@@ -19,13 +19,13 @@ const mockScrapingJobService = {
   getJobsByStatus: jest.fn(),
 };
 
-jest.mock('./supabase', () => ({
+jest.mock('@/lib/supabase', () => ({ // Adjusted path
   supabaseAdmin: mockSupabaseAdmin,
   ScrapingJobService: mockScrapingJobService,
 }));
 
 const mockProcessScrapingJob = jest.fn();
-jest.mock('./pipelineProcessor', () => ({
+jest.mock('@/lib/pipelineProcessor', () => ({ // Adjusted path
   processScrapingJob: mockProcessScrapingJob,
 }));
 

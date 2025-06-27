@@ -24,18 +24,18 @@ interface RealtimeMetrics {
 export async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ') !== true) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return false;
     }
 
     const token = authHeader.slice(7);
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    if (error || !user) {
+    if (error != undefined || user == undefined) {
       return false;
     }
 
-    if (!supabaseAdmin) {
+    if (supabaseAdmin == undefined) {
       return false;
     }
 
@@ -55,63 +55,14 @@ export async function handleGetRequest(request: NextRequest): Promise<Response> 
   const stream = new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
+      sendInitialConnectionEvent(controller, encoder);
 
-      const connectionEvent: AdminEvent = {
-        id: generateEventId(),
-        type: 'heartbeat',
-        timestamp: new Date().toISOString(),
-        data: {
-          message: 'Real-time admin dashboard connected',
-          connectionId: generateEventId()
-        }
-      };
-      
-      controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
-
-      const handleHeartbeatEvent = async () => {
-        try {
-          const metrics = await fetchRealtimeMetrics();
-          const event: AdminEvent = {
-            id: generateEventId(),
-            type: 'heartbeat',
-            timestamp: new Date().toISOString(),
-            data: { ...metrics }
-          };
-
-          controller.enqueue(encoder.encode(formatSSEMessage(event)));
-        } catch (error) {
-          console.error('Error fetching realtime metrics:', error);
-
-          const errorEvent: AdminEvent = {
-            id: generateEventId(),
-            type: 'system_alert',
-            timestamp: new Date().toISOString(),
-            data: {
-              error: 'Failed to fetch metrics',
-              details: error instanceof Error ? error.message : 'Unknown error'
-            },
-            severity: 'error'
-          };
-
-          controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
-        }
-      };
-
-      const intervalId = setInterval(() => {
-        void handleHeartbeatEvent();
-      }, 5000);
-
-      const changeMonitorId = setInterval(async () => {
-        try {
-          await monitorDataChanges(controller, encoder);
-        } catch (error) {
-          console.error('Error monitoring data changes:', error);
-        }
-      }, 10_000);
+      const heartbeatIntervalId = startHeartbeatInterval(controller, encoder);
+      const changeMonitorIntervalId = startChangeMonitoringInterval(controller, encoder);
 
       request.signal.addEventListener('abort', () => {
-        clearInterval(intervalId);
-        clearInterval(changeMonitorId);
+        clearInterval(heartbeatIntervalId);
+        clearInterval(changeMonitorIntervalId);
         controller.close();
       });
     }
@@ -126,6 +77,60 @@ export async function handleGetRequest(request: NextRequest): Promise<Response> 
       'Access-Control-Allow-Headers': 'Cache-Control'
     }
   });
+}
+
+function sendInitialConnectionEvent(controller: ReadableStreamDefaultController<Uint8Array>, encoder: TextEncoder) {
+  const connectionEvent: AdminEvent = {
+    id: generateEventId(),
+    type: 'heartbeat',
+    timestamp: new Date().toISOString(),
+    data: {
+      message: 'Real-time admin dashboard connected',
+      connectionId: generateEventId()
+    }
+  };
+  controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
+}
+
+function startHeartbeatInterval(controller: ReadableStreamDefaultController<Uint8Array>, encoder: TextEncoder): NodeJS.Timeout {
+  const handleHeartbeatEvent = async () => {
+    try {
+      const metrics = await fetchRealtimeMetrics();
+      const event: AdminEvent = {
+        id: generateEventId(),
+        type: 'heartbeat',
+        timestamp: new Date().toISOString(),
+        data: { ...metrics }
+      };
+      controller.enqueue(encoder.encode(formatSSEMessage(event)));
+    } catch (error) {
+      console.error('Error fetching realtime metrics:', error);
+      const errorEvent: AdminEvent = {
+        id: generateEventId(),
+        type: 'system_alert',
+        timestamp: new Date().toISOString(),
+        data: {
+          error: 'Failed to fetch metrics',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        },
+        severity: 'error'
+      };
+      controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
+    }
+  };
+  return setInterval(() => {
+    void handleHeartbeatEvent();
+  }, 5000);
+}
+
+function startChangeMonitoringInterval(controller: ReadableStreamDefaultController<Uint8Array>, encoder: TextEncoder): NodeJS.Timeout {
+  return setInterval(async () => {
+    try {
+      await monitorDataChanges(controller, encoder);
+    } catch (error) {
+      console.error('Error monitoring data changes:', error);
+    }
+  }, 10_000);
 }
 
 export async function handlePostRequest(request: NextRequest): Promise<Response> {
@@ -221,13 +226,12 @@ async function sendScrapingUpdateEvent(
       type: 'scraping_update',
       timestamp: new Date().toISOString(),
       data: {
-        recentJobs: recentJobs.map((job: unknown) => {
-          const jobData = job as { id?: string; status?: string; started_at?: string; completed_at?: string };
+        recentJobs: recentJobs.map((job: ScrapingJob) => { // Use ScrapingJob type
           return {
-            id: jobData.id,
-            status: jobData.status,
-            started_at: jobData.started_at,
-            completed_at: jobData.completed_at
+            id: job.id,
+            status: job.status,
+            started_at: job.started_at,
+            completed_at: job.completed_at
           };
         }),
         count: recentJobs.length

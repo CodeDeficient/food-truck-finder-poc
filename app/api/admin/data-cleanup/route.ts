@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const rawBody: unknown = await request.json();
 
     // Validate rawBody against DataCleanupRequestBody type
-    if (typeof rawBody !== 'object' || rawBody === null) {
+    if (typeof rawBody !== 'object' || rawBody === undefined) {
       return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
 

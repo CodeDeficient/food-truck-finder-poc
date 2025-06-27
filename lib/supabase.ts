@@ -8,18 +8,18 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (supabaseUrl == null || supabaseUrl === '') {
+if (supabaseUrl == undefined || supabaseUrl === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
-if (supabaseAnonKey == null || supabaseAnonKey === '') {
+if (supabaseAnonKey == undefined || supabaseAnonKey === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Only create admin client on server side where service key is available
-export const supabaseAdmin = (supabaseServiceKey != null && supabaseServiceKey !== '')
+export const supabaseAdmin = (supabaseServiceKey != undefined && supabaseServiceKey !== '')
   ? createClient(supabaseUrl, supabaseServiceKey)
   : undefined;
 
@@ -221,7 +221,7 @@ export const FoodTruckService = {
     const updatesWithoutMenu = { ...updates };
     delete updatesWithoutMenu.menu;
     const truck = await updateTruckData(id, updatesWithoutMenu);
-    if (menuData != null) {
+    if (menuData != undefined) {
       await updateTruckMenu(id, menuData);
     }
     return truck;
@@ -399,7 +399,7 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
   const timestamp = loc.timestamp;
 
   truck.current_location =
-    lat == null || lng == null || (lat === 0 && lng === 0)
+    lat == undefined || lng == undefined || (lat === 0 && lng === 0)
       ? { ...fallback, address: address ?? fallback.address }
       : {
           lat,
@@ -631,12 +631,12 @@ export const DataQualityService = {
          (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
     ) score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours != null && truck.operating_hours != null) score += 10;
+    if (truck.operating_hours != undefined && Object.keys(truck.operating_hours).length > 0) score += 10; // Fixed identical expression and check for empty object
     return { score: Math.min(100, score) };
   },
 
   async updateTruckQualityScore(truckId: string): Promise<FoodTruck> {
-    if (!supabaseAdmin) {
+    if (supabaseAdmin == undefined) { // Added explicit null check
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
     const { data: truck, error: fetchError } = await supabaseAdmin
@@ -777,6 +777,6 @@ async function insertMenuItems(truckId: string, menuData: MenuCategory[] | undef
 // Fix all strict-boolean-expressions and always-true/false comparisons below
 // Example: if (someString) => if (typeof someString === 'string' && someString.trim() !== '')
 // Example: if (someNumber) => if (typeof someNumber === 'number' && !Number.isNaN(someNumber) && someNumber !== 0)
-// Example: if (someObject) => if (someObject != null && someObject != null)
+// Example: if (someObject) => if (someObject != null && someObject != undefined)
 
 // For all other conditionals, ensure explicit nullish/empty/NaN checks as above

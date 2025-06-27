@@ -1,9 +1,9 @@
 // lib/scraperEngine.test.ts
-import { ScraperEngine, GeminiDataProcessor } from './ScraperEngine';
-import { firecrawl } from './firecrawl';
+import { ScraperEngine, GeminiDataProcessor } from '@/lib/ScraperEngine'; // Adjusted path
+import { firecrawl } from '@/lib/firecrawl'; // Adjusted path
 
 // Mock firecrawl
-jest.mock('./firecrawl', () => ({
+jest.mock('@/lib/firecrawl', () => ({ // Adjusted path
   firecrawl: {
     scrapeUrl: jest.fn(),
   },
@@ -21,10 +21,12 @@ describe('ScraperEngine', () => {
   beforeEach(() => {
     scraperEngine = new ScraperEngine();
     jest.clearAllMocks();
+    // Mock randomDelay to resolve immediately for all ScraperEngine tests
+    jest.spyOn(ScraperEngine.prototype as any, 'randomDelay').mockResolvedValue(undefined);
   });
 
   describe('scrapeWebsite', () => {
-    it('should scrape website using Firecrawl successfully', () => {
+    it('should scrape website using Firecrawl successfully', async () => { // Made async
       const mockFirecrawlResponse = {
         success: true,
         data: {
@@ -51,7 +53,7 @@ describe('ScraperEngine', () => {
       });
     });
 
-    it('should fallback to fetch when Firecrawl fails', () => {
+    it('should fallback to fetch when Firecrawl fails', async () => { // Made async
       const mockHtmlContent = '<html><body><h1>Food Truck</h1></body></html>';
 
       mockedFirecrawl.scrapeUrl.mockResolvedValue({

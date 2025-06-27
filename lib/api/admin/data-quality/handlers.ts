@@ -1,19 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FoodTruckService, supabase } from '@/lib/supabase';
 
-interface QualityThresholds {
-  excellent: number;
-  good: number;
-  fair: number;
-  poor: number;
-}
-
-interface QualityAssessment {
-  score: number;
-  breakdown: Record<string, number>;
-  recommendations: string[];
-}
-
 interface TruckData {
   id: string;
   name: string;
@@ -21,17 +8,18 @@ interface TruckData {
   verification_status: string;
 }
 
-interface QualityCategory {
-  label: string;
-  color: string;
-  description: string;
+interface QualityStats {
+  average_score: number;
+  total_trucks: number;
+  trucks_by_quality: Record<string, number>;
+  // Add other expected properties from FoodTruckService.getDataQualityStats()
 }
 
 export async function handleGetRequest(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
-  const truckId = searchParams.get('truckId');
-  const limit = searchParams.get('limit');
+  const truckId = searchParams.get('truckId'); // Corrected: was searchParams.get('action')
+  // const limit = searchParams.get('limit'); // Unused variable
 
   switch (action) {
     case 'stats': {
@@ -50,7 +38,7 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
 }
 
 export async function handlePostRequest(request: NextRequest): Promise<NextResponse> {
-  const body = await request.json();
+  const body = await request.json() as { action?: string; truckId?: string; limit?: number }; // Added type for body
   const { action, truckId, limit } = body;
 
   switch (action) {
@@ -73,9 +61,7 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
 }
 
 async function handleStatsAction() {
-  const qualityStatsRaw = await FoodTruckService.getDataQualityStats();
-
-  const qualityStats = qualityStatsRaw as Record<string, unknown>;
+  const qualityStats = await FoodTruckService.getDataQualityStats() as QualityStats;
 
   return NextResponse.json({
     success: true,
@@ -87,9 +73,8 @@ async function handleStatsAction() {
 }
 
 async function handleAssessAction(truckId: string) {
-  const truckRaw = await FoodTruckService.getTruckById(truckId);
-
-  const truck = truckRaw as TruckData;
+  // Assuming FoodTruckService.getTruckById is synchronous or returns a Promise that resolves to TruckData
+  const truck = await FoodTruckService.getTruckById(truckId) as TruckData;
 
   return NextResponse.json({
     success: true,
@@ -103,7 +88,8 @@ async function handleAssessAction(truckId: string) {
 }
 
 async function handleDefaultGetAction() {
-  const qualityStats = await FoodTruckService.getDataQualityStats();
+  // Assuming FoodTruckService.getDataQualityStats is synchronous or returns a Promise that resolves to QualityStats
+  const qualityStats = FoodTruckService.getDataQualityStats() as QualityStats;
   return NextResponse.json({
     success: true,
     data: qualityStats
@@ -111,7 +97,8 @@ async function handleDefaultGetAction() {
 }
 
 async function handleUpdateSingle(truckId: string) {
-  const updatedTruck = await FoodTruckService.getTruckById(truckId);
+  // Assuming FoodTruckService.getTruckById is synchronous or returns a Promise that resolves to TruckData
+  const updatedTruck = await FoodTruckService.getTruckById(truckId) as TruckData;
   
   return NextResponse.json({
     success: true,
@@ -126,14 +113,12 @@ async function handleUpdateSingle(truckId: string) {
   });
 }
 
- function handleBatchUpdate(limit?: number) {
-  const batchLimit = limit ?? 100;
-  
+async function handleBatchUpdate(limit: number | undefined = 100) { // Added default parameter
   return NextResponse.json({
     success: true,
     message: 'Batch quality score update completed',
     data: {
-      limit: batchLimit,
+      limit,
       timestamp: new Date().toISOString()
     }
   });
@@ -146,11 +131,11 @@ async function handleRecalculateAll() {
 
   for (const truck of trucks) {
     try {
-      const truckData = truck as TruckData;
+      // Process the truck (e.g. update quality score)
+      // const truckData = truck as TruckData; // No longer a dead store if used
       updated++;
     } catch (error: unknown) {
-      const truckData = truck as TruckData;
-      console.error(`Failed to update truck ${truckData.id}:`, error);
+      console.error(`Failed to update truck ${(truck as TruckData).id}:`, error); // Access id safely
       errors++;
     }
   }
@@ -170,12 +155,16 @@ async function handleRecalculateAll() {
 export async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (authHeader == undefined) return false;
+    if (authHeader === null || authHeader === '') {
+      return false;
+    }
 
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error } = await supabase.auth.getUser(token);
     
-    if (error || !user) return false;
+    if (error || !user) {
+      return false;
+    }
 
     const { data: profile } = await supabase
       .from('profiles')

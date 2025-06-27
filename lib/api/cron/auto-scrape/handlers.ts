@@ -17,7 +17,7 @@ function verifyCronSecret(request: NextRequest): NextResponse | null {
     console.error('Unauthorized cron attempt:', authHeader);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  return null;
+  return undefined;
 }
 
 function logAutoScrapeStart() {

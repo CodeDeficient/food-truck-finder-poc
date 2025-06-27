@@ -5,7 +5,7 @@ import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTo
 
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
-  if (typeof payload !== 'object' || payload === null) {
+  if (typeof payload !== 'object' || payload === undefined) {
     
   }
 

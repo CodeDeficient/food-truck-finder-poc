@@ -1,5 +1,5 @@
 import { APIUsageService } from './supabase';
-import { APIMonitor } from './monitoring/apiMonitor';
+// APIMonitor removed
 import { GeminiApiClient } from './gemini/geminiApiClient';
 import { GeminiUsageLimits } from './gemini/usageLimits';
 import { PromptTemplates } from './gemini/promptTemplates';
@@ -24,22 +24,22 @@ export class GeminiService {
     this.apiClient = new GeminiApiClient();
   }
 
-   checkUsageLimits() {
+  checkUsageLimits = async () => { // Converted to arrow function
     return GeminiUsageLimits.checkUsageLimits({
       dailyRequestLimit: this.dailyRequestLimit,
       dailyTokenLimit: this.dailyTokenLimit,
     });
-  }
+  };
 
-  private  makeGeminiRequest<T>(
+  private makeGeminiRequest = async <T>( // Converted to arrow function
     prompt: string,
-    parser: (text: string) => T,
-    errorContext: string
-  ): Promise<GeminiResponse<T>> {
+    parser: (text: string) => T
+    // errorContext parameter removed
+  ): Promise<GeminiResponse<T>> => {
     return this.apiClient.makeRequestWithParsing(prompt, parser);
-  }
+  };
 
-  async processMenuData(rawMenuText: string): Promise<GeminiResponse<MenuCategory[]>> {
+  processMenuData = async (rawMenuText: string): Promise<GeminiResponse<MenuCategory[]>> => { // Converted to arrow function
     const estimatedTokens = Math.ceil(rawMenuText.length / 4) + 500;
     const usageCheck = await GeminiUsageLimits.checkWithMonitoring(estimatedTokens);
 
@@ -56,12 +56,11 @@ export class GeminiService {
       (text: string) => {
         const parsedData = JSON.parse(text) as { categories: MenuCategory[] };
         return parsedData.categories;
-      },
-      'menu processing'
+      }
     );
-  }
+  };
 
-  async extractLocationFromText(textInput: string): Promise<GeminiResponse<LocationData>> {
+  extractLocationFromText = async (textInput: string): Promise<GeminiResponse<LocationData>> => { // Converted to arrow function
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
@@ -73,12 +72,11 @@ export class GeminiService {
     const prompt = PromptTemplates.locationExtraction(textInput);
     return this.makeGeminiRequest(
       prompt,
-      GeminiResponseParser.parseLocationData,
-      'location extraction'
+      GeminiResponseParser.parseLocationData
     );
-  }
+  };
 
-  async standardizeOperatingHours(hoursText: string): Promise<GeminiResponse<OperatingHours>> {
+  standardizeOperatingHours = async (hoursText: string): Promise<GeminiResponse<OperatingHours>> => { // Converted to arrow function
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
@@ -90,12 +88,11 @@ export class GeminiService {
     const prompt = PromptTemplates.operatingHours(hoursText);
     return this.makeGeminiRequest(
       prompt,
-      GeminiResponseParser.parseOperatingHours,
-      'hours standardization'
+      GeminiResponseParser.parseOperatingHours
     );
-  }
+  };
 
-  async analyzeSentiment(reviewText: string): Promise<GeminiResponse<SentimentAnalysisResult>> {
+  analyzeSentiment = async (reviewText: string): Promise<GeminiResponse<SentimentAnalysisResult>> => { // Converted to arrow function
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
@@ -107,12 +104,11 @@ export class GeminiService {
     const prompt = PromptTemplates.sentimentAnalysis(reviewText);
     return this.makeGeminiRequest(
       prompt,
-      GeminiResponseParser.parseSentimentAnalysis,
-      'sentiment analysis'
+      GeminiResponseParser.parseSentimentAnalysis
     );
-  }
+  };
 
-  async enhanceFoodTruckData(rawData: unknown): Promise<GeminiResponse<EnhancedFoodTruckData>> {
+  enhanceFoodTruckData = async (rawData: unknown): Promise<GeminiResponse<EnhancedFoodTruckData>> => { // Converted to arrow function
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
@@ -124,14 +120,13 @@ export class GeminiService {
     const prompt = PromptTemplates.dataEnhancement(rawData);
     return this.makeGeminiRequest(
       prompt,
-      GeminiResponseParser.parseEnhancedFoodTruckData,
-      'data enhancement'
+      GeminiResponseParser.parseEnhancedFoodTruckData
     );
-  }
+  };
 
-  async batchProcess(
+  batchProcess = async ( // Converted to arrow function
     items: Array<{ type: string; data: unknown }>,
-  ): Promise<Array<GeminiResponse<unknown>>> {
+  ): Promise<Array<GeminiResponse<unknown>>> => {
     const results: Array<GeminiResponse<unknown>> = [];
 
     for (const item of items) {
@@ -171,12 +166,12 @@ export class GeminiService {
   async getUsageStats(): Promise<{ requests_count: number; tokens_used: number } | undefined> {
     const usage = await APIUsageService.getTodayUsage('gemini');
     return usage ?? undefined;
-  }
+  };
 
-  async extractFoodTruckDetailsFromMarkdown(
+  extractFoodTruckDetailsFromMarkdown = async ( // Converted to arrow function
     markdownContent: string,
     sourceUrl?: string,
-  ): Promise<GeminiResponse<ExtractedFoodTruckDetails>> {
+  ): Promise<GeminiResponse<ExtractedFoodTruckDetails>> => {
     const usageCheck = await this.checkUsageLimits();
     if (!usageCheck.canMakeRequest) {
       return {
@@ -187,14 +182,12 @@ export class GeminiService {
 
     const prompt = PromptTemplates.foodTruckExtraction(markdownContent, sourceUrl);
 
-
     const response = await this.makeGeminiRequest(
       prompt,
       (text: string) => {
         const cleanedText = GeminiResponseParser.cleanMarkdownResponse(text);
         return GeminiResponseParser.parseExtractedFoodTruckDetails(cleanedText);
-      },
-      'food truck extraction'
+      }
     );
 
     // Add promptSent to response for this specific method

@@ -17,11 +17,7 @@ export async function runTestPipeline(
   const { firecrawlResult, contentToProcess, sourceUrlForProcessing } = firecrawlStageOutput;
 
   if (firecrawlResult.status === 'Error') {
-    return {
-      firecrawl: firecrawlResult,
-      logs,
-      overallStatus: 'Error',
-    };
+    return handlePipelineError(logs, firecrawlResult);
   }
 
   const geminiStageOutput = await handleGeminiStage(
@@ -32,12 +28,7 @@ export async function runTestPipeline(
   const { geminiResult, extractedData } = geminiStageOutput;
 
   if (geminiResult.status === 'Error' || !extractedData) {
-    return {
-      firecrawl: firecrawlResult,
-      gemini: geminiResult,
-      logs,
-      overallStatus: 'Error',
-    };
+    return handlePipelineError(logs, firecrawlResult, geminiResult);
   }
 
   const supabaseResult = await handleSupabaseStage(
@@ -48,13 +39,7 @@ export async function runTestPipeline(
   );
 
   if (supabaseResult.status === 'Error') {
-    return {
-      firecrawl: firecrawlResult,
-      gemini: geminiResult,
-      supabase: supabaseResult,
-      logs,
-      overallStatus: 'Error',
-    };
+    return handlePipelineError(logs, firecrawlResult, geminiResult, supabaseResult);
   }
 
   logs.push('Test pipeline run completed successfully.');
@@ -64,5 +49,21 @@ export async function runTestPipeline(
     supabase: supabaseResult,
     logs,
     overallStatus: 'Success',
+  };
+}
+
+function handlePipelineError(
+  logs: string[],
+  firecrawlResult: StageResult,
+  geminiResult?: StageResult,
+  supabaseResult?: StageResult,
+) {
+  logs.push('Pipeline error occurred.');
+  return {
+    firecrawl: firecrawlResult,
+    gemini: geminiResult,
+    supabase: supabaseResult,
+    logs,
+    overallStatus: 'Error',
   };
 }

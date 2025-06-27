@@ -1,5 +1,5 @@
 // lib/dataValidator.test.ts
-import { DataQualityAssessor } from './ScraperEngine';
+import { DataQualityAssessor } from '@/lib/ScraperEngine';
 
 describe('DataQualityAssessor', () => {
   let assessor: DataQualityAssessor;
@@ -66,8 +66,8 @@ describe('DataQualityAssessor', () => {
 
       expect(result.score).toBeLessThan(0.5);
       expect(result.issues.length).toBeGreaterThan(0);
-      expect(result.issues).toContain('Missing location information');
-      expect(result.issues).toContain('No menu data available');
+      expect(result.issues).toContain('Missing current location data'); // Corrected string
+      expect(result.issues).toContain('Missing menu information'); // Corrected string (was 'No menu data available')
     });
 
     it('should identify invalid phone numbers', () => {
@@ -130,8 +130,8 @@ describe('DataQualityAssessor', () => {
 
       const result = assessor.assessTruckData(truckData);
 
-      expect(result.issues).toContain('Menu item with negative or zero price');
-      expect(result.issues).toContain('Menu item with empty name');
+      expect(result.issues).toContain('Menu item "Item with negative price" has invalid price'); // Corrected string
+      expect(result.issues).toContain('Menu item 2 in "Invalid Menu" missing name'); // Corrected string
     });
 
     it('should handle missing name gracefully', () => {
@@ -144,7 +144,7 @@ describe('DataQualityAssessor', () => {
 
       const result = assessor.assessTruckData(truckData);
 
-      expect(result.issues).toContain('Missing truck name');
+      expect(result.issues).toContain('Missing or empty truck name'); // Corrected string
     });
   });
 });

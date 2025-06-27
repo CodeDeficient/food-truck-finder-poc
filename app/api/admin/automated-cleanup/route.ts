@@ -67,7 +67,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const rawBody: unknown = await request.json();
 
     // Validate rawBody against RequestBody type
-    if (typeof rawBody !== 'object' || rawBody === null) {
+    if (typeof rawBody !== 'object' || rawBody === undefined) {
       return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
     }
 

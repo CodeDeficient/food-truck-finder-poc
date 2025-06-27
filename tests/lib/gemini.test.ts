@@ -1,6 +1,6 @@
 // lib/gemini.test.ts
 
-import { APIUsageService, type ApiUsage } from './supabase'; // Import ApiUsage type
+import { APIUsageService, type ApiUsage } from '@/lib/supabase'; // Import ApiUsage type, Adjusted path
 
 // Mock @google/genai
 const mockGenerateContent = jest.fn();
@@ -13,7 +13,7 @@ jest.mock('@google/genai', () => ({
 }));
 
 // Mock APIUsageService
-jest.mock('./supabase', () => ({
+jest.mock('@/lib/supabase', () => ({ // Adjusted path to use alias
   APIUsageService: {
     trackUsage: jest.fn<Promise<ApiUsage>, [string, number, number]>(),
     getTodayUsage: jest.fn<Promise<ApiUsage | undefined>, [string]>().mockResolvedValue({
@@ -27,13 +27,13 @@ jest.mock('./supabase', () => ({
 }));
 
 // Import after mocks are set up
-import { GeminiService } from './gemini';
+import { GeminiService } from '@/lib/gemini'; // Adjusted path
 
 describe('GeminiService', () => {
   const mockApiKey = 'test-gemini-api-key';
 
   beforeEach(() => {
-    process.env.GEMINI_API_KEY = mockApiKey;
+    process.env.GEMINI_API_KEY = mockApiKey; // This was already here, ensuring it's the intended test key
     mockGenerateContent.mockClear();
     (APIUsageService.trackUsage as jest.Mock).mockClear();
     (APIUsageService.getTodayUsage as jest.Mock).mockClear();

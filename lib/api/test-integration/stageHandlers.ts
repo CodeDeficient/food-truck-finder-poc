@@ -22,33 +22,12 @@ export async function handleFirecrawlStage(
   let contentToProcess: string | undefined;
   let sourceUrlForProcessing: string = url ?? 'raw_text_input';
 
-  if (url && !rawText) {
-    logs.push(`Starting Firecrawl scrape for URL: ${url}`);
-    try {
-      const fcOutput: GeminiResponse<FirecrawlOutputData> =
-        await firecrawl.scrapeFoodTruckWebsite(url);
-      if (fcOutput.success && fcOutput.data?.markdown) {
-        contentToProcess = fcOutput.data.markdown;
-        sourceUrlForProcessing = fcOutput.data.source_url ?? url;
-        firecrawlResult = {
-          status: 'Success',
-          rawContent: fcOutput.data.markdown,
-          metadata: { name: fcOutput.data.name, source_url: fcOutput.data.source_url },
-          details: `Markdown length: ${fcOutput.data.markdown.length}`,
-        };
-        logs.push('Firecrawl scrape successful.');
-      } else {
-        throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
-      }
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during Firecrawl scrape.';
-      logs.push(`Firecrawl error: ${errorMessage}`);
-      firecrawlResult = { status: 'Error', error: errorMessage };
-    }
-  } else if (rawText) {
+  if (typeof url === 'string' && url !== '' && (rawText === undefined || rawText === '')) {
+    const { result, content, sourceUrl } = await performFirecrawlScrape(url, logs);
+    firecrawlResult = result;
+    contentToProcess = content;
+    if (sourceUrl) sourceUrlForProcessing = sourceUrl;
+  } else if (typeof rawText === 'string' && rawText !== '') {
     logs.push('Using raw text input for processing.');
     contentToProcess = rawText;
     firecrawlResult = {
@@ -68,6 +47,42 @@ export async function handleFirecrawlStage(
   return { firecrawlResult, contentToProcess, sourceUrlForProcessing };
 }
 
+async function performFirecrawlScrape(
+  url: string,
+  logs: string[],
+): Promise<{
+  result: StageResult;
+  content?: string;
+  sourceUrl?: string;
+}> {
+  logs.push(`Starting Firecrawl scrape for URL: ${url}`);
+  try {
+    const fcOutput: GeminiResponse<FirecrawlOutputData> =
+      await firecrawl.scrapeFoodTruckWebsite(url);
+    if (fcOutput.success === true && typeof fcOutput.data?.markdown === 'string' && fcOutput.data.markdown !== '') {
+      return {
+        result: {
+          status: 'Success',
+          rawContent: fcOutput.data.markdown,
+          metadata: { name: fcOutput.data.name, source_url: fcOutput.data.source_url },
+          details: `Markdown length: ${fcOutput.data.markdown.length}`,
+        },
+        content: fcOutput.data.markdown,
+        sourceUrl: fcOutput.data.source_url ?? url,
+      };
+    } else {
+      throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
+    }
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : 'An unknown error occurred during Firecrawl scrape.';
+    logs.push(`Firecrawl error: ${errorMessage}`);
+    return { result: { status: 'Error', error: errorMessage } };
+  }
+}
+
 export async function handleGeminiStage(
   contentToProcess: string,
   sourceUrlForProcessing: string,
@@ -80,7 +95,7 @@ export async function handleGeminiStage(
   try {
     const geminiOutput: GeminiResponse<ExtractedFoodTruckDetails> =
       await gemini.extractFoodTruckDetailsFromMarkdown(contentToProcess, sourceUrlForProcessing);
-    if (geminiOutput.success && geminiOutput.data) {
+    if (geminiOutput.success === true && geminiOutput.data != undefined) {
       extractedData = geminiOutput.data;
       geminiResult = {
         status: 'Success',
@@ -128,7 +143,7 @@ export async function handleSupabaseStage(
     } else {
       logs.push('Attempting to save to Supabase (Dry Run is FALSE).');
       const createdTruck = await FoodTruckService.createTruck(truckDataToSave);
-      if (!createdTruck) {
+      if (createdTruck == undefined) {
         throw new Error('Failed to create truck in Supabase.');
       }
       supabaseResult = {

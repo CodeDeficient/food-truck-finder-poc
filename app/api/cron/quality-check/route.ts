@@ -33,12 +33,12 @@ function verifyCronSecret(request: NextRequest): NextResponse | undefined {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
-  if (cronSecret == null) {
+  if (cronSecret == undefined) {
     console.error('CRON_SECRET not configured');
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
-  if (authHeader == null || authHeader !== `Bearer ${cronSecret}`) {
+  if (authHeader == undefined || authHeader !== `Bearer ${cronSecret}`) {
     console.error('Unauthorized cron attempt:', authHeader);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -138,7 +138,7 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
       lowQualityTrucks++;
     }
 
-    if (truck.current_location?.timestamp != null) {
+    if (truck.current_location?.timestamp != undefined) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
       if (daysSinceUpdate > 7) {
