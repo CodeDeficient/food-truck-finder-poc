@@ -10,27 +10,17 @@ function handleConnectionError(error: unknown, setIsConnecting: React.Dispatch<R
   setConnectionError((error instanceof Error ? error.message : 'Connection failed'));
 }
 
-function initializeEventSource({
-  connect,
-  eventSourceRef: _eventSourceRef, // Renamed to suppress unused variable warning
-  handleEvent,
-  isManuallyDisconnectedRef,
-  reconnectInterval,
-  reconnectTimeoutRef,
-  connectionAttempts,
-  maxReconnectAttempts,
-  connectionState
-}: {
-  connect: () => void;
-  eventSourceRef: React.RefObject<EventSource | undefined>;
-  handleEvent: (event: RealtimeEvent) => void;
-  isManuallyDisconnectedRef: React.RefObject<boolean>;
-  reconnectInterval: number;
-  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
-  connectionAttempts: number;
-  maxReconnectAttempts: number;
-  connectionState: ReturnType<typeof useConnectionState>;
-}) {
+function initializeEventSource(config: CreateConnectionConfig) {
+  const {
+    handleEvent,
+    connectionState,
+    isManuallyDisconnectedRef,
+    connectionAttempts,
+    maxReconnectAttempts,
+    reconnectInterval,
+    reconnectTimeoutRef,
+    connect,
+  } = config;
   const eventSource = new EventSource('/api/admin/realtime-events');
 
   // Setup all event listeners
@@ -59,40 +49,11 @@ function setupInitialConnectionState(
   isManuallyDisconnectedRef.current = false;
 }
 
-function establishEventSourceConnection({
-  connect,
-  eventSourceRef,
-  handleEvent,
-  isManuallyDisconnectedRef,
-  reconnectInterval,
-  reconnectTimeoutRef,
-  connectionAttempts,
-  maxReconnectAttempts,
-  connectionState
-}: {
-  connect: () => void;
-  eventSourceRef: React.RefObject<EventSource | undefined>;
-  handleEvent: (event: RealtimeEvent) => void;
-  isManuallyDisconnectedRef: React.RefObject<boolean>;
-  reconnectInterval: number;
-  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
-  connectionAttempts: number;
-  maxReconnectAttempts: number;
-  connectionState: ReturnType<typeof useConnectionState>;
-}) {
+function establishEventSourceConnection(config: CreateConnectionConfig) {
+  const { eventSourceRef, connectionState } = config;
   try {
     setupEventSourceAuth();
-    eventSourceRef.current = initializeEventSource({
-      connect,
-      eventSourceRef,
-      handleEvent,
-      isManuallyDisconnectedRef,
-      reconnectInterval,
-      reconnectTimeoutRef,
-      connectionAttempts,
-      maxReconnectAttempts,
-      connectionState
-    });
+    eventSourceRef.current = initializeEventSource(config);
   } catch (error) {
     handleConnectionError(error, connectionState.setIsConnecting, connectionState.setConnectionError);
   }
