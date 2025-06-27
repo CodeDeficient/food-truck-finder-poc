@@ -5,6 +5,7 @@
 
 import { FoodTruckService, type FoodTruck, DataQualityService } from '@/lib/supabase';
 import { DuplicatePreventionService } from './duplicatePrevention';
+import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils';
 
 export interface CleanupOperation {
   type: 'normalize_phone' | 'fix_coordinates' | 'remove_placeholders' | 'update_quality_scores' | 'merge_duplicates';
@@ -64,7 +65,14 @@ export class BatchCleanupService {
     console.info(`Starting batch cleanup (${dryRun ? 'DRY RUN' : 'LIVE'})...`);
     const result = this.initializeCleanupResult();
     try {
-      await this.executeCleanup(batchSize, operations, dryRun, result);
+      const allTrucks = await FoodTruckService.getAllTrucks();
+      result.totalProcessed = allTrucks.total;
+      await this.processTrucksInBatches(allTrucks.trucks, {
+        batchSize,
+        operations,
+        dryRun,
+        result
+      });
       return this.finalizeCleanupResult(result, startTime);
     } catch (error) {
       console.error('Batch cleanup failed:', error);
@@ -72,21 +80,6 @@ export class BatchCleanupService {
     }
   }
 
-  private static async executeCleanup(
-    batchSize: number,
-    operations: CleanupOperation['type'][],
-    dryRun: boolean,
-    result: BatchCleanupResult
-  ): Promise<void> {
-    const allTrucks = await FoodTruckService.getAllTrucks();
-    result.totalProcessed = allTrucks.total;
-    await this.processTrucksInBatches(allTrucks.trucks, {
-      batchSize,
-      operations,
-      dryRun,
-      result
-    });
-  }
 
   private static initializeCleanupResult(): BatchCleanupResult {
     return {
@@ -145,68 +138,48 @@ export class BatchCleanupService {
       errors: []
     };
     
+    const operationRunners = {
+      remove_placeholders: this.runRemovePlaceholders,
+      normalize_phone: this.runNormalizePhoneNumbers,
+      fix_coordinates: this.runFixCoordinates,
+      update_quality_scores: this.runUpdateQualityScores,
+      merge_duplicates: this.runMergeDuplicates,
+    };
+
     try {
-      switch (type) {
-        case 'remove_placeholders': {
-          return await this.removePlaceholders(trucks, dryRun, operation);
-        }
-        case 'normalize_phone': {
-          return await this.normalizePhoneNumbers(trucks, dryRun, operation);
-        }
-        case 'fix_coordinates': {
-          return await this.fixCoordinates(trucks, dryRun, operation);
-        }
-        case 'update_quality_scores': {
-          return await this.updateQualityScores(trucks, dryRun, operation);
-        }
-        case 'merge_duplicates': {
-          return await this.mergeDuplicates(trucks, dryRun, operation);
-        }
-        default: {
-          operation.errors.push(`Unknown operation type: ${String(type)}`);
-          return operation;
-        }
+      const runner = operationRunners[type];
+      if (runner) {
+        return await runner.call(this, trucks, dryRun, operation);
+      } else {
+        operation.errors.push(`Unknown operation type: ${String(type)}`);
+        return operation;
       }
     } catch (error) {
       operation.errors.push(`Operation failed: ${error instanceof Error ? error.message : String(error)}`);
       return operation;
     }
   }
+
+  private static async runRemovePlaceholders(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+    return await this.removePlaceholders(trucks, dryRun, operation);
+  }
+
+  private static async runNormalizePhoneNumbers(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+    return await this.normalizePhoneNumbers(trucks, dryRun, operation);
+  }
+
+  private static async runFixCoordinates(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+    return await this.fixCoordinates(trucks, dryRun, operation);
+  }
+
+  private static async runUpdateQualityScores(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+    return await this.updateQualityScores(trucks, dryRun, operation);
+  }
+
+  private static async runMergeDuplicates(trucks: FoodTruck[], dryRun: boolean, operation: CleanupOperation): Promise<CleanupOperation> {
+    return await this.mergeDuplicates(trucks, dryRun, operation);
+  }
   
-  /**
-   * Get placeholder detection patterns
-   */
-  private static getPlaceholderPatterns(): RegExp[] {
-    return [
-      /undefined/i,
-      /placeholder/i,
-      /example\.com/i,
-      /test\s*truck/i,
-      /lorem\s*ipsum/i,
-      /\bna\b/i,
-      /\bn\/a\b/i,
-      /^0+$/,
-      /^null$/i
-    ];
-  }
-
-  /**
-   * Check if truck data needs placeholder cleanup
-   */
-  private static checkForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck> {
-    const updates: Partial<FoodTruck> = {};
-
-    if (truck.name && patterns.some(pattern => pattern.test(truck.name ?? ''))) {
-      updates.name = undefined;
-    }
-    if (truck.description !== undefined && patterns.some(pattern => pattern.test(truck.description ?? ''))) {
-      updates.description = undefined;
-    }
-    if (truck.price_range !== undefined && patterns.some(pattern => pattern.test(truck.price_range ?? ''))) {
-      updates.price_range = undefined;
-    }
-    return updates;
-  }
 
   /**
    * Remove placeholder and mock data
@@ -216,10 +189,11 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
-    const placeholderPatterns = this.getPlaceholderPatterns();
-    for (const truck of trucks) {
-      await this.processSingleTruckForPlaceholders(truck, placeholderPatterns, dryRun, operation);
-    }
+    const placeholderPatterns = getPlaceholderPatterns();
+    const promises = trucks.map(truck => 
+      this.processSingleTruckForPlaceholders(truck, placeholderPatterns, dryRun, operation)
+    );
+    await Promise.all(promises);
     return operation;
   }
 
@@ -229,62 +203,10 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<void> {
-    const updates = this.processTruckForPlaceholders(truck, patterns);
+    const updates = processTruckForPlaceholders(truck, patterns);
     if (Object.keys(updates).length > 0) {
       await this.performUpdateOperation(truck.id, updates, dryRun, operation);
     }
-  }
-
-  private static processTruckForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck> {
-    const basicInfoUpdates = this.checkForPlaceholders(truck, patterns);
-    const contactInfoUpdates = this.processContactInfoForPlaceholders(truck, patterns);
-    const addressUpdates = this.processAddressForPlaceholders(truck, patterns);
-
-    const updates: Partial<FoodTruck> = {
-      ...basicInfoUpdates,
-      ...this.getContactInfoUpdates(truck, contactInfoUpdates),
-      ...this.getLocationUpdates(truck, addressUpdates),
-    };
-
-    return updates;
-  }
-
-  private static getContactInfoUpdates(truck: FoodTruck, contactInfoUpdates: Partial<FoodTruck['contact_info']>): Partial<FoodTruck> | object {
-    if (Object.keys(contactInfoUpdates).length > 0) {
-      return { contact_info: { ...truck.contact_info, ...contactInfoUpdates } };
-    }
-    return {};
-  }
-
-  private static getLocationUpdates(truck: FoodTruck, addressUpdates: Partial<FoodTruck['current_location']>): Partial<FoodTruck> | object {
-    if (Object.keys(addressUpdates).length > 0) {
-      return { current_location: { ...truck.current_location, ...addressUpdates } };
-    }
-    return {};
-  }
-
-  private static processContactInfoForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck['contact_info']> {
-    const cleanContact: Partial<FoodTruck['contact_info']> = {};
-
-    if (truck.contact_info?.phone !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.phone ?? ''))) {
-      cleanContact.phone = undefined;
-    }
-    if (truck.contact_info?.website !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.website ?? ''))) {
-      cleanContact.website = undefined;
-    }
-    if (truck.contact_info?.email !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.email ?? ''))) {
-      cleanContact.email = undefined;
-    }
-    return cleanContact;
-  }
-
-  private static processAddressForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck['current_location']> {
-    const updatedLocation: Partial<FoodTruck['current_location']> = {};
-
-    if (truck.current_location?.address !== undefined && patterns.some(pattern => pattern.test(truck.current_location.address ?? ''))) {
-      updatedLocation.address = undefined;
-    }
-    return updatedLocation;
   }
 
   private static async performUpdateOperation(
@@ -315,17 +237,18 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
-    for (const truck of trucks) {
+    const promises = trucks.map(truck => {
       if (truck.contact_info?.phone !== undefined) {
         const originalPhone = truck.contact_info.phone;
         const normalizedPhone = this.normalizePhone(originalPhone);
 
         if (normalizedPhone !== undefined && normalizedPhone !== originalPhone) {
-          await this.applyPhoneNormalizationUpdate(truck, normalizedPhone, dryRun, operation);
+          return this.applyPhoneNormalizationUpdate(truck, normalizedPhone, dryRun, operation);
         }
       }
-    }
-    
+      return Promise.resolve();
+    });
+    await Promise.all(promises);
     return operation;
   }
 
@@ -388,9 +311,10 @@ export class BatchCleanupService {
       dryRun,
     };
 
-    for (const truck of trucks) {
-      await this.processSingleTruckCoordinates(truck, { ...context, operation });
-    }
+    const promises = trucks.map(truck => 
+      this.processSingleTruckCoordinates(truck, { ...context, operation })
+    );
+    await Promise.all(promises);
     return operation;
   }
 
@@ -440,9 +364,10 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
-    for (const truck of trucks) {
-      await this.processSingleTruckForQualityScore(truck, dryRun, operation);
-    }
+    const promises = trucks.map(truck => 
+      this.processSingleTruckForQualityScore(truck, dryRun, operation)
+    );
+    await Promise.all(promises);
     return operation;
   }
 
