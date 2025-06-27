@@ -130,14 +130,31 @@ export async function handleGeminiStage(
   return { geminiResult, extractedData };
 }
 
+async function saveToSupabase(
+  truckDataToSave: any,
+  logs: string[],
+): Promise<StageResult> {
+  logs.push('Attempting to save to Supabase (Dry Run is FALSE).');
+  const createdTruckResult = await FoodTruckService.createTruck(truckDataToSave);
+  if ('error' in createdTruckResult) {
+    throw new Error(`Failed to create truck in Supabase: ${createdTruckResult.error}`);
+  }
+  const createdTruck = createdTruckResult;
+  logs.push(`Data saved to Supabase. Record ID: ${createdTruck.id}`);
+  return {
+    status: 'Success (Saved)',
+    preparedData: truckDataToSave,
+    recordId: createdTruck.id,
+    details: `Truck data saved with ID: ${createdTruck.id}`,
+  };
+}
+
 export async function handleSupabaseStage(
   extractedData: ExtractedFoodTruckDetails,
   sourceUrlForProcessing: string,
   isDryRun: boolean,
   logs: string[],
 ): Promise<StageResult> {
-  let supabaseResult: StageResult = { status: 'Skipped' };
-
   logs.push('Preparing for Supabase interaction.');
   try {
     const truckDataToSave = mapExtractedDataToTruckSchema(
@@ -145,31 +162,20 @@ export async function handleSupabaseStage(
       sourceUrlForProcessing,
       isDryRun,
     );
-    supabaseResult = { status: 'Prepared', preparedData: truckDataToSave };
 
     if (isDryRun) {
-      supabaseResult.status = 'Success (Dry Run)';
-      supabaseResult.details = 'Dry Run: Data was prepared but not saved.';
       logs.push('Supabase interaction skipped (Dry Run).');
-    } else {
-      logs.push('Attempting to save to Supabase (Dry Run is FALSE).');
-      const createdTruckResult = await FoodTruckService.createTruck(truckDataToSave);
-      if ('error' in createdTruckResult) {
-        throw new Error(`Failed to create truck in Supabase: ${createdTruckResult.error}`);
-      }
-      const createdTruck = createdTruckResult;
-      supabaseResult = {
-        status: 'Success (Saved)',
+      return {
+        status: 'Success (Dry Run)',
         preparedData: truckDataToSave,
-        recordId: createdTruck.id,
-        details: `Truck data saved with ID: ${createdTruck.id}`,
+        details: 'Dry Run: Data was prepared but not saved.',
       };
-      logs.push(`Data saved to Supabase. Record ID: ${createdTruck.id}`);
     }
+
+    return await saveToSupabase(truckDataToSave, logs);
   } catch (error) {
     const errorMessage = getErrorMessage(error, 'An unknown error occurred during Supabase interaction.');
     logs.push(`Supabase interaction error: ${errorMessage}`);
-    supabaseResult = { ...supabaseResult, status: 'Error', error: errorMessage };
+    return { status: 'Error', error: errorMessage };
   }
-  return supabaseResult;
 }
