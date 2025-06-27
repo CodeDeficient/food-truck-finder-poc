@@ -284,10 +284,13 @@ const ChartTooltipContent = React.forwardRef<
       config,
       labelKey
     });
-    if (active !== true || !isNonEmptyArray(safePayload)) {
-      return;
+
+    if (!active || !isNonEmptyArray(safePayload)) {
+      return null;
     }
+
     const nestLabel = safePayload.length === 1 && indicator !== 'dot';
+
     return (
       <div
         ref={ref}
@@ -296,7 +299,7 @@ const ChartTooltipContent = React.forwardRef<
           className,
         )}
       >
-        {nestLabel ? undefined : tooltipLabel}
+        {!nestLabel && tooltipLabel}
         <ChartTooltipItems
           safePayload={safePayload}
           indicatorProps={{
@@ -327,14 +330,13 @@ interface ChartLegendItemProps {
 }
 
 function ChartLegendItem({ item, idx, hideIcon, nameKey, config }: Readonly<ChartLegendItemProps>) {
-  const dataKey = typeof item.dataKey === 'string' ? item.dataKey : undefined;
-  const itemData: { dataKey?: string; value?: string; color?: string } = {
+  const dataKey = item.dataKey?.toString();
+  const itemData = {
     dataKey,
-    value: typeof item.value === 'string' ? item.value : undefined,
-    color: typeof item.color === 'string' ? item.color : undefined,
+    value: item.value?.toString(),
+    color: item.color?.toString(),
   };
-  const keyValue = nameKey ?? (itemData.dataKey !== undefined && itemData.dataKey !== '' ? String(itemData.dataKey) : 'value');
-  const key = keyValue;
+  const key = nameKey ?? dataKey ?? 'value';
   const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
   return (
@@ -350,7 +352,7 @@ function ChartLegendItem({ item, idx, hideIcon, nameKey, config }: Readonly<Char
         <div
           className="h-2 w-2 shrink-0 rounded-[2px]"
           style={{
-            backgroundColor: itemData.color !== undefined && itemData.color !== '' ? String(itemData.color) : undefined,
+            backgroundColor: itemData.color,
           }}
         />
       )}
