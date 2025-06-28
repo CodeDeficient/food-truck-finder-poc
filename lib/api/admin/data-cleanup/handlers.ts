@@ -111,7 +111,7 @@ export async function handleMergeDuplicates(options: DataCleanupRequestBody['opt
 export async function handleDryRun(options: DataCleanupRequestBody['options']): Promise<NextResponse> {
   const result = await BatchCleanupService.runFullCleanup({
     ...options,
-    operations: options?.operations as any,
+    operations: options?.operations as CleanupOperation['type'][],
     dryRun: true
   });
   
