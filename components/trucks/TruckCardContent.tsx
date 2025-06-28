@@ -6,7 +6,7 @@ import { MenuSection } from './MenuSection';
 import { ContactSection } from './ContactSection';
 import { SocialMediaSection } from './SocialMediaSection';
 import { OperatingHoursSection } from './OperatingHoursSection';
-import { formatHours, formatPrice } from '@/lib/utils/foodTruckHelpers';
+import { formatHours } from '@/lib/utils/foodTruckHelpers';
 
 interface TruckCardContentProps {
   readonly truck: FoodTruck;

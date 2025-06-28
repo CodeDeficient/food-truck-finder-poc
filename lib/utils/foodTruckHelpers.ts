@@ -1,4 +1,4 @@
-import { FoodTruck, DailyOperatingHours, PriceRange, MenuItem } from '@/lib/types'; // Added DailyOperatingHours, PriceRange, MenuItem
+import { FoodTruck, DailyOperatingHours, MenuItem } from '@/lib/types'; // Added DailyOperatingHours, PriceRange, MenuItem
 
 export const getCurrentDay = () => {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];

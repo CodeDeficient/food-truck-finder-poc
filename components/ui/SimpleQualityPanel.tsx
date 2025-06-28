@@ -33,20 +33,16 @@ const recalculateAllScores = async (): Promise<RecalculateAllResult> => {
   const result: unknown = await response.json();
 
   if (typeof result === 'object' && result !== null && 'success' in result) {
-    if (result.success === true) {
-      return {
+    return result.success === true ? {
         success: true,
         data: {
           updated: (result as { data?: { updated?: number } }).data?.updated ?? 0,
           errors: (result as { data?: { errors?: number } }).data?.errors ?? 0,
         },
-      };
-    } else {
-      return {
+      } : {
         success: false,
         error: (result as { error?: string }).error ?? 'Failed to recalculate quality scores',
       };
-    }
   }
   return { success: false, error: 'Invalid response format' };
 };
@@ -65,7 +61,7 @@ const QualityScoreThresholds: React.FC = () => (
       </div>
       <div className="flex justify-between">
         <span>Low Quality:</span>
-        <Badge className="bg-red-100 text-red-800">< 60%</Badge>
+        <Badge className="bg-red-100 text-red-800">{`< 60%`}</Badge>
       </div>
     </div>
   </div>

@@ -50,7 +50,7 @@ async function handlePostAction(
           { status: 400 },
         );
       }
-      return await handleTestAlert({ service, level });
+      return handleTestAlert({ service, level });
     }
     default: {
       return NextResponse.json(

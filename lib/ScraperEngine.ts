@@ -635,7 +635,7 @@ export class GeminiDataProcessor {
       this.updateUsageCounters(1, prompt.length + response.length);
 
       // Ensure type safety for parsed response
-      const parsed: unknown = JSON.parse(response);
+      const parsed: any = JSON.parse(response);
       if (typeof parsed !== 'object' || parsed == undefined || !('categories' in parsed) || !Array.isArray((parsed as { categories: unknown }).categories)) {
         throw new Error('Invalid Gemini menu response: missing or malformed categories array');
       }
@@ -673,7 +673,7 @@ export class GeminiDataProcessor {
       `;
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
-      const parsedResponse: unknown = JSON.parse(response);
+      const parsedResponse: any = JSON.parse(response);
       const validatedResponse = this.validateGeminiLocationResponse(parsedResponse);
       return validatedResponse;
     } catch (error) {
