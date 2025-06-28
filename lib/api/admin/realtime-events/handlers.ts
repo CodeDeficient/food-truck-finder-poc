@@ -319,7 +319,7 @@ function formatSSEMessage(event: AdminEvent): string {
 }
 
 function generateEventId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`; // eslint-disable-line sonarjs/pseudo-random
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
 async function handleHealthCheck(): Promise<Response> {

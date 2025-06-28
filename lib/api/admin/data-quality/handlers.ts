@@ -28,8 +28,13 @@ interface PostRequestBody {
 }
 
 export async function handlePostRequest(request: NextRequest): Promise<NextResponse> {
-  const body: PostRequestBody = await request.json();
-  const { action, truckId } = body;
+  const body: unknown = await request.json();
+
+  if (typeof body !== 'object' || body === null) {
+    return NextResponse.json({ success: false, error: 'Invalid request body' }, { status: 400 });
+  }
+
+  const { action, truckId } = body as PostRequestBody;
 
   switch (action) {
     case 'update-single': {

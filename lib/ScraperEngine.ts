@@ -315,6 +315,7 @@ export class ScraperEngine {
     } else {
       // Fallback to Math.random for environments where crypto is not available.
       // This is acceptable for non-security-critical random number generation like user agent selection.
+      // eslint-disable-next-line sonarjs/pseudo-random -- Math.random is acceptable for non-security-critical user agent selection.
       idx = Math.floor(Math.random() * this.userAgents.length);
     }
     return this.userAgents[idx];
@@ -330,6 +331,7 @@ export class ScraperEngine {
     } else {
       // Fallback to Math.random for environments where crypto is not available.
       // This is acceptable for non-security-critical random delays.
+      // eslint-disable-next-line sonarjs/pseudo-random -- Math.random is acceptable for non-security-critical random delays.
       randomMs = Math.floor(Math.random() * 1000);
     }
     const delay = this.requestDelay + randomMs;
@@ -368,8 +370,8 @@ export class ScraperEngine {
 
 interface LocationData {
   current?: {
-    lat?: number;
-    lng?: number;
+    lat: number | undefined;
+    lng: number | undefined;
     address?: string;
   };
 }
@@ -635,11 +637,11 @@ export class GeminiDataProcessor {
       this.updateUsageCounters(1, prompt.length + response.length);
 
       // Ensure type safety for parsed response
-      const parsed: any = JSON.parse(response);
-      if (typeof parsed !== 'object' || parsed == undefined || !('categories' in parsed) || !Array.isArray((parsed as { categories: unknown }).categories)) {
+      const parsed: { categories: MenuCategory[] } = JSON.parse(response); // Explicitly type the parsed object
+      if (typeof parsed !== 'object' || parsed == undefined || !('categories' in parsed) || !Array.isArray(parsed.categories)) {
         throw new Error('Invalid Gemini menu response: missing or malformed categories array');
       }
-      return parsed as { categories: MenuCategory[] };
+      return parsed;
     } catch (error) {
       console.error('Error processing menu data with Gemini:', error);
       throw error;
@@ -673,7 +675,7 @@ export class GeminiDataProcessor {
       `;
       const response = await this.makeGeminiRequest(prompt);
       this.updateUsageCounters(1, prompt.length + response.length);
-      const parsedResponse: any = JSON.parse(response);
+      const parsedResponse: GeminiLocationData = JSON.parse(response); // Explicitly type the parsed object
       const validatedResponse = this.validateGeminiLocationResponse(parsedResponse);
       return validatedResponse;
     } catch (error) {

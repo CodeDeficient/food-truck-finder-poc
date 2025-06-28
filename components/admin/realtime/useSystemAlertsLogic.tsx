@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type SystemAlert } from './status-helpers';
+import { type SystemAlert } from '@/hooks/useSystemAlerts';
 import { type RealtimeEvent as RealtimeAdminEvent } from '@/hooks/useRealtimeAdminEvents.types';
 
 interface UseSystemAlertsLogicProps {
@@ -16,8 +16,8 @@ export function useSystemAlertsLogic({ recentEvents }: UseSystemAlertsLogicProps
 
   useEffect(() => {
     const newAlerts = recentEvents
-      .filter((event) => event.severity !== undefined && event.severity !== 'info')
-      .map((event) => ({
+      .filter((event: RealtimeAdminEvent) => event.severity !== undefined && event.severity !== 'info')
+      .map((event: RealtimeAdminEvent) => ({
         id: event.id,
         type: event.severity as 'warning' | 'error' | 'critical',
         message:

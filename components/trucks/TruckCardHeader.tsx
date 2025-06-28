@@ -7,7 +7,7 @@ import { FoodTruck } from '@/lib/types';
 interface TruckCardHeaderProps {
   readonly truck: FoodTruck;
   readonly isOpen: boolean;
-  readonly popularItems: Array<{ name: string; price?: number | string | undefined }>;
+  readonly popularItems: Array<{ name: string; price: number | string | undefined }>;
   readonly priceRange: string | undefined;
 }
 

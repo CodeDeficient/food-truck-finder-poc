@@ -22,7 +22,7 @@ function ContactField({
   href, 
   unavailableText 
 }: Readonly<ContactFieldProps>) {
-  if (value == undefined || value == undefined || value.length === 0) { // Handles null, undefined, and empty string
+  if (value == undefined || value.length === 0) { // Handles null, undefined, and empty string
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />
@@ -54,7 +54,7 @@ function ContactField({
 }
 
 function SocialMediaLinks({ socialMedia }: Readonly<{ readonly socialMedia?: Record<string, string> }>) {
-  if (socialMedia == undefined || socialMedia == undefined || Object.keys(socialMedia).length === 0) {
+  if (socialMedia == undefined || Object.keys(socialMedia).length === 0) {
     return;
   }
 
@@ -70,7 +70,7 @@ function SocialMediaLinks({ socialMedia }: Readonly<{ readonly socialMedia?: Rec
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
           const handle = socialMedia[key];
-          if (handle == undefined || handle == undefined || handle.length === 0) return; // Handles null, undefined, and empty string
+          if (handle == undefined || handle.length === 0) return; // Handles null, undefined, and empty string
 
           return (
             <a
