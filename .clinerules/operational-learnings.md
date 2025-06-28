@@ -118,3 +118,7 @@ This rule set documents key operational learnings and best practices derived fro
     }
     return result.trucks;
     ```
+
+- **Rule 1.27: Verify File Paths and Use Search as a Fallback**: Before attempting to read or write a file, verify its existence. If a `read_file` operation fails with a "File not found" error, do not assume the file is missing. Instead, use `search_files` to locate the file or confirm its absence. This prevents errors caused by incorrect path assumptions.
+  - *Trigger Case*: A `read_file` operation fails, or when the exact path of a file is uncertain.
+  - *Example*: If `read_file('app/api/auth/callback/route.ts')` fails, use `search_files(regex='handleSuccessfulAuth')` to find the correct file where the function is being called.

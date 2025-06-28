@@ -389,125 +389,106 @@ Instead, use the provided scripts (see `scripts/automated-nullish-coalescing-con
 
 **Documented June 24, 2025.**
 
-## 10. WBS Checklist for Top 5 Linter Errors (as of 2025-06-28)
+## 10. WBS Checklist for Final 41 Linter Errors (as of 2025-06-28)
 
-This Work Breakdown Structure (WBS) provides a detailed plan for researching, remediating, and verifying fixes for the top 5 most frequent linting errors in the codebase. This plan has been cross-verified with external documentation and best practices to ensure its robustness.
+This Work Breakdown Structure (WBS) provides a detailed, research-driven plan for remediating the final 41 linting errors. It integrates SOTA best practices and establishes new governance rules to prevent future regressions.
 
-#### **WBS Item 1: `sonarjs/different-types-comparison` (11 Errors)**
+### **Overall Strategy: Research, Remediate, Reinforce**
+
+Our workflow for each error category will follow a strict three-step process:
+
+1.  **Research:** Use Tavily for SOTA practices and Context7 for library-specific documentation to ensure our solutions are robust and modern.
+2.  **Remediate:** Apply the chosen solution using the "Isolate and Conquer" protocol for manual fixes, or safe automation where applicable.
+3.  **Reinforce:** Update `.clinerules` and `LINTING_AND_CODE_QUALITY_GUIDE.md` with the learnings from the remediation to codify best practices and prevent recurrence.
+
+---
+
+### **WBS Item 1: `max-params` (7 Errors)**
 
 *   **[ ] 1.1 Research & Analysis (Completed)**
-    *   **Description:** This rule flags comparisons (`===` or `!==`) between variables of different types, which almost always indicates a logical error. For example, comparing a `number` to a `string`.
-    *   **Goal:** Identify and correct the flawed logic in all 11 instances.
-    *   **Verification:** Research with Tavily confirmed that the best practice is to correct the underlying logic, not to use type coercion or suppression. This validates our primary solution.
+    *   **Description:** Functions with too many parameters are a code smell, indicating they are hard to use and may have too many responsibilities.
+    *   **Goal:** Refactor the 7 functions violating this rule to have cleaner, more maintainable signatures.
+    *   **Research Findings:** Tavily and Context7 results confirm that the "options object" pattern is the SOTA solution, especially in React components and custom hooks. It improves readability and makes adding new optional parameters a non-breaking change.
 
 *   **[ ] 1.2 Solution Options**
-    *   **Option A (Recommended): Correct the Underlying Logic.** Investigate why the types are different and fix the root cause. This is the most robust solution as it addresses the source of the logical flaw.
-        *   *Pro:* Improves code correctness and reliability.
-        *   *Con:* May require slightly more investigation than a surface-level fix.
-    *   **Option B: Use Explicit Type Coercion.** Manually convert one of the types to match the other (e.g., `String(myNumber) === myString`).
-        *   *Pro:* Quick fix if the type mismatch is intentional.
-        *   *Con:* Can hide deeper data model issues and is generally considered a code smell.
-    *   **Option C: Suppress the Rule.** Use an `eslint-disable-next-line` comment.
-        *   *Pro:* Immediately removes the error.
-        *   *Con:* Should only be used for confirmed false positives, which is extremely rare for this rule. It masks a potential bug.
+    *   **Option A (Highly Recommended): Introduce a Parameter Object.** Group related parameters into a single "options" object with a dedicated `interface` or `type`.
+    *   **Option B: Decompose the Function.** If a high parameter count signals that a function is doing too much, break it into smaller, more focused functions.
 
 *   **[ ] 1.3 Verification Plan**
-    *   **Step 1:** Apply the recommended fix (Option A) to one of the identified errors.
-    *   **Step 2:** Run a targeted lint check on the modified file (`npx eslint <file-path>`) to confirm the error is gone.
-    *   **Step 3:** Manually review the code change to ensure the new logic is correct and makes sense in the context of the application.
-    *   **Step 4:** Once verified, apply the same pattern to the remaining 10 errors.
+    *   **Step 1:** Select one function with a `max-params` error.
+    *   **Step 2:** Define a new `type` or `interface` for its parameters in `lib/types.ts` or locally.
+    *   **Step 3:** Refactor the function signature to accept the single options object.
+    *   **Step 4:** Systematically find and update all call sites for that function.
+    *   **Step 5:** Run `npx eslint <file-path>` and `npx tsc --noEmit` to confirm the fix and type safety.
+
+*   **[ ] 1.4 Governance Update Plan**
+    *   **Action:** Propose a new, more specific rule in `.clinerules/clinerules-overview.md` under `Rule Set: Code Style`.
+    *   **New Rule Proposal (Rule 1.3):** "Any function, hook, or method requiring more than three arguments MUST be refactored to use a single parameter object, with a corresponding `type` or `interface` defined for that object."
 
 ---
 
-#### **WBS Item 2: `@typescript-eslint/no-unsafe-assignment` (10 Errors)**
+### **WBS Item 2: The `no-unsafe-*` Family (13 Errors Total)**
+
+This covers `@typescript-eslint/no-unsafe-assignment` (7), `@typescript-eslint/no-unsafe-call` (3), and `@typescript-eslint/no-unsafe-argument` (3).
 
 *   **[ ] 2.1 Research & Analysis (Completed)**
-    *   **Description:** This critical type-safety rule prevents a value of type `any` from being assigned to a variable with a more specific type, as this would bypass TypeScript's safety checks.
-    *   **Goal:** Properly type the data at the point of assignment to ensure end-to-end type safety.
-    *   **Verification:** Research confirmed that the best practice is to use explicit type annotations. The plan is updated to include a step to read the relevant type definition files before applying a fix.
+    *   **Description:** This family of rules is the cornerstone of TypeScript's safety, preventing `any` typed values from causing runtime errors. These are our highest-risk manual fixes.
+    *   **Goal:** Eliminate all `any` leakage by providing strong, explicit types at the source of the data.
+    *   **Research Findings:** The best practice is to avoid `any` and prefer `unknown` for uncertain types, forcing type-checking. For Supabase, `QueryData` should be used to infer types from queries, and `overrideTypes` should be used when inference is not enough. This reinforces our existing `operational-learnings.md` rules.
 
 *   **[ ] 2.2 Solution Options**
-    *   **Option A (Highly Recommended): Add Explicit Type Annotations.** Define a specific `interface` or `type` for the data and apply it to the variable. This is the gold standard for TypeScript development.
-        *   *Pro:* Provides full type safety, enables autocompletion, and makes the code self-documenting.
-        *   *Con:* Requires defining the type structure if it doesn't already exist.
-    *   **Option B: Use Type Guards.** If the data structure is dynamic, use conditional checks (e.g., `typeof`, `instanceof`, `in`) to prove the type to the compiler before assignment.
-        *   *Pro:* Provides runtime safety for unknown data structures.
-        *   *Con:* Can be more verbose than a simple type annotation.
-    *   **Option C: Use an `as` Type Assertion.** Force the type using `const myVar = someValue as MyType;`.
-        *   *Pro:* A quick way to resolve the error.
-        *   *Con:* Bypasses type checking and can lead to runtime errors if the assertion is wrong. Use sparingly.
+    *   **Option A (Highly Recommended): Explicit Type Annotation & Guarding.** Define a specific `interface` and use type guards (`typeof`, `instanceof`, `in`) to validate the data's shape.
+    *   **Option B: Runtime Validation (e.g., Zod).** Define a schema and parse the unsafe data through it, providing both static types and runtime guarantees.
+    *   **Option C: `as` Type Assertion (Use with Extreme Caution).** Only to be used when the type is 100% guaranteed by other means.
 
 *   **[ ] 2.3 Verification Plan**
-    *   **Step 1:** Apply Option A to one instance, defining a new `interface` in `lib/types.ts` if necessary.
-    *   **Step 2:** Run `npx tsc --noEmit` to ensure the new type is correct and doesn't introduce any new compilation errors. The original lint error should be resolved.
-    *   **Step 3:** Once the pattern is verified, apply it to the remaining errors.
+    *   **Step 1:** For one `no-unsafe-assignment` error, identify the source of the `any` value.
+    *   **Step 2:** Apply Option A. If the type is from a Supabase query, use `QueryData` to infer it.
+    *   **Step 3:** Add a type guard to validate the object's structure before it's used.
+    *   **Step 4:** Run `npx tsc --noEmit` to ensure the fix is type-safe.
+
+*   **[ ] 2.4 Governance Update Plan**
+    *   **Action:** Enhance `.clinerules/type-safety.md`.
+    *   **New Rule Proposal (Rule 1.4):** "For any data sourced from an external API or database query, the data MUST be typed as `unknown` first, then validated with a type guard or a runtime validation library (e.g., Zod) before being used. Direct casting with `as` is forbidden for external data sources."
 
 ---
 
-#### **WBS Item 3: `sonarjs/unused-import` (8 Errors)**
+### **WBS Item 3: Invalid `await` (`@typescript-eslint/await-thenable` & `sonarjs/no-invalid-await`, 6 Errors Total)**
 
-*   **[ ] 3.1 Research & Analysis (Completed)**
-    *   **Description:** An imported module is not used within the file, adding unnecessary code and increasing bundle size.
-    *   **Goal:** Clean up all unused imports.
-    *   **Verification:** Research confirmed that using `eslint --fix` is the standard and reliable approach for this rule.
+*   **[ ] 3.1 Research & Analysis**
+    *   **Description:** These rules flag the use of `await` on a value that is not a Promise, indicating a misunderstanding of asynchronous code.
+    *   **Goal:** Correct all 6 instances of invalid `await` usage.
+    *   **Research Plan:**
+        *   **Tavily Query:** `"common causes for await-thenable eslint error"`, `"debugging invalid await in javascript async functions"`
+    *   **Expected Outcome:** A checklist of common causes, such as forgetting to call a function that returns a promise.
 
 *   **[ ] 3.2 Solution Options**
-    *   **Option A (Recommended): Use ESLint Autofix.** Run `npx eslint . --fix`. This command is highly reliable and designed to fix this type of error automatically.
-        *   *Pro:* Fastest and most efficient solution.
-        *   *Con:* None for this rule.
+    *   **Option A (Most Common): Remove the `await` Keyword.** If the value is synchronous, simply remove `await`.
+    *   **Option B: Correct the Awaited Expression.** If a function call was intended, add the missing parentheses (e.g., `await myFunc()` instead of `await myFunc`).
 
 *   **[ ] 3.3 Verification Plan**
-    *   **Step 1:** Run `npx eslint . --fix`.
-    *   **Step 2:** Run `npx eslint .` again to confirm that all `unused-import` errors have been resolved.
-    *   **Step 3:** Run `npm run build` (or similar) to ensure the removal of imports did not break the application build.
+    *   **Step 1:** For one of the errors, inspect the value being awaited.
+    *   **Step 2:** Determine if it's a Promise. If not, apply Option A or B.
+    *   **Step 3:** Run a targeted lint check to confirm the error is resolved.
+
+*   **[ ] 3.4 Governance Update Plan**
+    *   **Action:** Add a new learning to `.clinerules/operational-learnings.md`.
+    *   **New Rule Proposal (Rule 1.27):** "Before using `await`, ensure the expression to the right is a function call that returns a Promise or a variable that holds a Promise. An `await` on a non-Promise value is a critical logic error and must be fixed, not suppressed."
 
 ---
 
-#### **WBS Item 4: `@typescript-eslint/no-unsafe-return` (7 Errors)**
+### **Retrospective on Failed `max-params` Refactoring Attempt (2025-06-28)**
 
-*   **[ ] 4.1 Research & Analysis (Completed)**
-    *   **Description:** A function returns a value of type `any` and does not have an explicit return type annotation, breaking type-safety for any code that calls it.
-    *   **Goal:** Ensure all functions have a clearly defined and type-safe return contract.
-    *   **Verification:** Research confirmed that adding an explicit return type is the correct and necessary solution.
+A recent attempt to refactor a `max-params` error in `lib/auth/authHelpers.ts` resulted in a regression because the full impact of the change was not assessed beforehand.
 
-*   **[ ] 4.2 Solution Options**
-    *   **Option A (Highly Recommended): Add Explicit Function Return Type.** Add the correct return type to the function signature (e.g., `function myFunc(): MyReturnType { ... }`).
-        *   *Pro:* Enforces the function's contract, improves API clarity, and enables type-checking on the calling side.
-        *   *Con:* None; this is a fundamental best practice.
-    *   **Option B: Refine the Returned Value's Type.** Instead of returning `any`, process the value inside the function to ensure it has a specific type before being returned.
-        *   *Pro:* Good for encapsulation if the type refinement logic belongs inside the function.
-        *   *Con:* Can be overkill if a simple return type annotation suffices.
-
-*   **[ ] 4.3 Verification Plan**
-    *   **Step 1:** Apply Option A to one of the functions, adding an explicit return type.
-    *   **Step 2:** Run `npx tsc --noEmit` to verify that the return type is correct and that no new type errors are introduced in the files that consume the function.
-    *   **Step 3:** Repeat for the remaining functions.
+*   **What Happened:** The `handleSuccessfulAuth` function was refactored to use a parameter object. However, the developer failed to locate the calling function in `app/api/auth/callback/route.ts` because the file path was incorrect. The subsequent `read_file` operation failed, halting progress.
+*   **Root Cause:** A violation of the "Verify File System Paths" rule. The developer assumed a file path without verifying its existence first.
+*   **Lesson Learned:** Before refactoring any function, especially one shared across different parts of the application, all call sites **must** be identified. The `search_files` tool should be used to find all references to a function before modifying its signature.
+*   **Action Item:** This incident has led to the creation of **Rule 1.27** in `.clinerules/operational-learnings.md` to prevent this from happening again.
 
 ---
 
-#### **WBS Item 5: `max-params` (7 Errors)**
-
-*   **[ ] 5.1 Research & Analysis (Completed)**
-    *   **Description:** A function has too many parameters, which is a sign of poor design. This makes the function hard to read, use, and test.
-    *   **Goal:** Refactor the function to have a cleaner, more manageable signature.
-    *   **Verification:** Research confirmed that the best practice is to group related parameters into a single "options" object.
-
-*   **[ ] 5.2 Solution Options**
-    *   **Option A (Highly Recommended): Introduce a Parameter Object.** Group related parameters into a single "options" object. This is a very common and clean refactoring pattern.
-        *   *Pro:* Makes the function signature stable (adding new optional params is not a breaking change) and improves readability.
-        *   *Con:* Requires updating all the places where the function is called.
-    *   **Option B: Decompose the Function.** The high number of parameters might indicate the function is doing too much. Break it into smaller, more focused functions.
-        *   *Pro:* Improves code by adhering to the Single Responsibility Principle.
-        *   *Con:* A more involved refactoring effort.
-    *   **Option C: Increase the Rule Limit.** Change the `max-params` value in `eslint.config.mjs`.
-        *   *Pro:* Easiest way to remove the error.
-        *   *Con:* Does not fix the underlying code quality issue; it only hides it. Not recommended.
-
-*   **[ ] 5.3 Verification Plan**
-    *   **Step 1:** Apply Option A to one of the functions. Create a new `type` or `interface` for the parameter object.
-    *   **Step 2:** Update all call sites for that function to use the new object-based parameter.
-    *   **Step 3:** Run the application and related tests to ensure the refactored function still works as expected. The lint error will be gone.
-    *   **Step 4:** Repeat for the other 6 instances.
+*This WBS will be expanded with the remaining 12 error types as we proceed.*
 
 ---
 
