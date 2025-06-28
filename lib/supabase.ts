@@ -2,7 +2,7 @@ import {
   createClient,
   type PostgrestSingleResponse,
   type PostgrestResponse,
-  
+  type PostgrestError,
 } from '@supabase/supabase-js';
 
 
@@ -469,12 +469,11 @@ export const ScrapingJobService = {
 
   async getJobsByStatus(status: string): Promise<ScrapingJob[]> {
     try {
-      const query =
-        status === 'all'
-          ? supabase.from('scraping_jobs').select('*')
-          : supabase.from('scraping_jobs').select('*').eq('status', status);
+      const query = supabase.from('scraping_jobs').select('*');
 
-      const { data, error }: PostgrestResponse<ScrapingJob> = await query
+      const { data, error }: PostgrestResponse<ScrapingJob> = await (status === 'all'
+        ? query
+        : query.eq('status', status))
         .order('priority', { ascending: false })
         .order('scheduled_at', { ascending: true });
 
@@ -536,14 +535,12 @@ export const ScrapingJobService = {
   },
   async getAllJobs(limit = 50, offset = 0): Promise<ScrapingJob[]> {
     try {
-      const query =
-        status === 'all'
-          ? supabase.from('scraping_jobs').select('*')
-          : supabase.from('scraping_jobs').select('*').eq('status', status);
-
-      const { data, error }: PostgrestResponse<ScrapingJob> = await query
+      const { data, error }: PostgrestResponse<ScrapingJob> = await supabase
+        .from('scraping_jobs')
+        .select('*')
         .order('priority', { ascending: false })
-        .order('scheduled_at', { ascending: true });
+        .order('scheduled_at', { ascending: true })
+        .range(offset, offset + limit - 1);
 
       if (error) throw error;
       return data ?? [];
@@ -667,7 +664,7 @@ export const DataQualityService = {
          (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
     ) score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours != undefined && truck.operating_hours != undefined) score += 10;
+    if (truck.operating_hours != undefined) score += 10;
     return { score: Math.min(100, score) };
   },
 
@@ -715,7 +712,7 @@ export const APIUsageService = {
     try {
       const today = new Date().toISOString().split('T')[0];
 
-      const { data: existing }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
+      const { data: existing }: { data: ApiUsage | null; error: PostgrestError | null } = await supabaseAdmin
         .from('api_usage')
         .select('*')
         .eq('service_name', serviceName)
@@ -798,9 +795,9 @@ export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange 
 function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | unknown[] | undefined) {
   if (!Array.isArray(menuData) || menuData.length === 0) return [];
   // Explicitly filter for MenuCategory to ensure type safety
-  const categories: MenuCategory[] = menuData.filter((category): category is MenuCategory =>
+  const categories = menuData.filter((category): category is MenuCategory =>
     typeof category === 'object' && category !== null && 'name' in category && 'items' in category && Array.isArray(category.items)
-  );
+  ) as MenuCategory[];
 
   return categories.flatMap((category) =>
     (Array.isArray(category.items) ? category.items : []).map((item: unknown) => {

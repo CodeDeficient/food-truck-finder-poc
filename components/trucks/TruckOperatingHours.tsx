@@ -13,7 +13,7 @@ interface DayData {
   close?: string;
 }
 
-function DaySchedule({ day, dayData }: { day: string; dayData?: DayData }) {
+function DaySchedule({ day, dayData }: Readonly<{ day: string; dayData?: DayData }>) {
   const dayName = day.charAt(0).toUpperCase() + day.slice(1);
   
   return (

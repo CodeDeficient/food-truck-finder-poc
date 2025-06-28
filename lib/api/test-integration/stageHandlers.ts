@@ -6,6 +6,7 @@ import {
   FirecrawlOutputData,
   GeminiResponse,
   StageResult,
+  FoodTruckSchema,
 } from '@/lib/types';
 import { mapExtractedDataToTruckSchema } from './schemaMapper';
 
@@ -131,7 +132,7 @@ export async function handleGeminiStage(
 }
 
 async function saveToSupabase(
-  truckDataToSave: any,
+  truckDataToSave: FoodTruckSchema,
   logs: string[],
 ): Promise<StageResult> {
   logs.push('Attempting to save to Supabase (Dry Run is FALSE).');

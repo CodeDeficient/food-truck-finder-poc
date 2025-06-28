@@ -8,7 +8,7 @@ interface FirecrawlTestResult {
   success: boolean;
   result?: FirecrawlResponse;
   error?: string;
-  details?: any;
+  details?: unknown;
 }
 
 // Helper function to test Firecrawl scraping
@@ -85,8 +85,8 @@ interface FormattedTestResults {
   };
 }
 
- function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): Promise<FoodTruck> {
-  return FoodTruckService.createTruck({
+async function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): Promise<FoodTruck> {
+  const result = await FoodTruckService.createTruck({
     name: 'Test Food Truck',
     description: 'Integration test truck',
     current_location: {
@@ -118,6 +118,10 @@ interface FormattedTestResults {
     data_quality_score: 0.8,
     verification_status: 'pending',
   });
+  if ('error' in result) {
+    throw new Error(`Failed to create test food truck: ${result.error}`);
+  }
+  return result;
 }
 
  function createTestScrapingJob(testUrl: string): Promise<ScrapingJob> {
@@ -153,7 +157,11 @@ export async function testSupabaseOperations(
   const queueItem = await addTestToProcessingQueue(testTruck.id);
 
   // Test geospatial query
-  const nearbyTrucks = await FoodTruckService.getTrucksByLocation(37.7749, -122.4194, 10);
+  const nearbyTrucksResult = await FoodTruckService.getTrucksByLocation(37.7749, -122.4194, 10);
+  if ('error' in nearbyTrucksResult) {
+    throw new Error(`Failed to get nearby trucks: ${nearbyTrucksResult.error}`);
+  }
+  const nearbyTrucks = nearbyTrucksResult;
 
   return {
     testTruck,

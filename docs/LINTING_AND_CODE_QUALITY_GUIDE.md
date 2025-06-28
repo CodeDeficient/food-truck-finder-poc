@@ -44,13 +44,31 @@ These are low-hanging fruit that we can address quickly to reduce the error coun
 1.  **`sonarjs/different-types-comparison` (16 errors):**
     *   **Certainty:** 100%.
     *   **Action:** Correct simple logical errors where variables of different types are compared.
-2.  **`sonarjs/unused-import` (8 errors):**
+2.  **`@typescript-eslint/no-unused-vars` & `sonarjs/unused-import` (0 errors remaining):**
     *   **Certainty:** 100%.
-    *   **Action:** Safely remove these via ESLint's autofix capabilities.
-3.  **`sonarjs/no-identical-expressions` (5 errors):**
+    *   **Action:** Safely remove these via ESLint's autofix capabilities. **(All instances fixed)**
+3.  **`sonarjs/no-identical-expressions` (0 errors remaining):**
     *   **Certainty:** 100%.
-    *   **Action:** Fix copy-paste errors in logical expressions.
-4.  **`unicorn/switch-case-braces` (5 errors):**
+    *   **Action:** Fixed copy-paste errors in logical expressions. **(All instances fixed)**
+4.  **`sonarjs/prefer-read-only-props` (0 errors remaining):**
+    *   **Certainty:** 100%.
+    *   **Action:** Added `readonly` modifier to properties within component props interfaces. **(All instances fixed)**
+5.  **`sonarjs/pseudo-random` (0 errors remaining):**
+    *   **Certainty:** 100%.
+    *   **Action:** Reviewed usage of `Math.random()` and added suppressions where appropriate for non-security-critical purposes. **(All instances fixed)**
+6.  **`@typescript-eslint/no-unsafe-assignment` (0 errors remaining):**
+    *   **Certainty:** High.
+    *   **Action:** Introduced proper type annotations and type guards. **(All instances fixed)**
+7.  **`@typescript-eslint/no-unsafe-return` (0 errors remaining):**
+    *   **Certainty:** High.
+    *   **Action:** Added explicit and correct return types to functions. **(All instances fixed)**
+8.  **`@typescript-eslint/await-thenable` & `sonarjs/no-invalid-await` (0 errors remaining):**
+    *   **Certainty:** 100%.
+    *   **Action:** Removed unnecessary `await` keywords. **(All instances fixed)**
+9.  **`@typescript-eslint/require-await` (2 errors):**
+    *   **Certainty:** 100%.
+    *   **Action:** Remove the `async` keyword from functions that do not contain any `await` expressions.
+10. **`unicorn/switch-case-braces` (5 errors):**
     *   **Certainty:** 100%.
     *   **Action:** Apply simple, stylistic fixes.
 

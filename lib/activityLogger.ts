@@ -41,6 +41,6 @@ export function getActivityLogs(_type?: string, _limit: number = 50): ActivityLo
 
 function generateId(): string {
   // Using crypto.randomUUID() would be better for production, but Math.random() is acceptable for logging IDs
-  // eslint-disable-next-line sonarjs/pseudo-random
+  // eslint-disable-next-line sonarjs/pseudo-random -- Math.random is acceptable for non-security-critical logging IDs.
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
