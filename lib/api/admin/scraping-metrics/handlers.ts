@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
 import { RealtimeMetrics } from './types';
 

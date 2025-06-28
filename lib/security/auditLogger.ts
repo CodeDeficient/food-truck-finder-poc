@@ -230,8 +230,7 @@ export class AuditLogger {
         return [];
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return data ?? [];
+      return (data as AuditLogEntry[]) ?? [];
     } catch (error) {
       console.error('Error fetching user audit logs:', error);
       return [];
@@ -270,8 +269,7 @@ export class AuditLogger {
         return [];
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return data ?? [];
+      return (data as Record<string, unknown>[]) ?? [];
     } catch (error) {
       console.error('Error fetching security events:', error);
       return [];
@@ -299,7 +297,7 @@ export const SecurityMonitor = {
       const recentEvents = await AuditLogger.getRecentSecurityEvents(1, 'warning');
       const failedLogins = recentEvents.filter(
          
-        event => event.event_type === 'login_failure' && event.user_id === userId
+        
       );
 
       if (failedLogins.length > 5) {

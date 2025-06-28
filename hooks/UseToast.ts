@@ -109,16 +109,21 @@ const handleRemoveToast = (state: State, toastId?: string): State => {
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'ADD_TOAST':
+    case 'ADD_TOAST': {
       return handleAddToast(state, action.toast);
-    case 'UPDATE_TOAST':
+    }
+    case 'UPDATE_TOAST': {
       return handleUpdateToast(state, action.toast);
-    case 'DISMISS_TOAST':
+    }
+    case 'DISMISS_TOAST': {
       return handleDismissToast(state, action.toastId);
-    case 'REMOVE_TOAST':
+    }
+    case 'REMOVE_TOAST': {
       return handleRemoveToast(state, action.toastId);
-    default:
+    }
+    default: {
       return state;
+    }
   }
 }
 

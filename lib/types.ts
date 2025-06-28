@@ -11,7 +11,7 @@ export interface MenuItem {
   name: string;
   description: string | undefined;
   price: number | string | undefined;
-  dietary_tags: unknown[];
+  dietary_tags: string[];
   is_popular?: boolean;
 }
 
@@ -136,7 +136,7 @@ export interface FoodTruckSchema {
   };
   scheduled_locations: ExtractedFoodTruckDetails['scheduled_locations'];
   operating_hours: OperatingHours;
-  menu: MenuCategory[] | unknown[];
+  menu: MenuCategory[];
   contact_info: ExtractedFoodTruckDetails['contact_info'];
   social_media: ExtractedFoodTruckDetails['social_media'];
   cuisine_type: any[];
