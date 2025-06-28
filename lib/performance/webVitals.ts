@@ -3,7 +3,6 @@
  * Tracks LCP, FID, CLS, FCP, and TTFB metrics for performance optimization
  */
 
-// @ts-expect-error TS(2792): Cannot find module 'web-vitals'. Did you mean to s... Remove this comment to see the full error message
 import { getCLS, getFCP, getFID, getLCP, getTTFB, Metric } from 'web-vitals';
 
 // Performance thresholds based on Google's Core Web Vitals standards
@@ -101,15 +100,10 @@ export function initWebVitalsMonitoring(): void {
     // Type-safe metric handlers with explicit casting
     const safeHandleMetric = (metric: Metric) => handleMetric(metric);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     getCLS(safeHandleMetric);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     getFCP(safeHandleMetric);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     getFID(safeHandleMetric);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     getLCP(safeHandleMetric);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     getTTFB(safeHandleMetric);
   } catch (error) {
     console.warn('Failed to initialize web vitals monitoring:', error);
@@ -218,104 +212,121 @@ export function checkPerformanceBudget(): {
 /**
  * Performance optimization suggestions based on metrics
  */
-export function getPerformanceOptimizationSuggestions(): Array<{
+type PerformanceSuggestion = {
   metric: MetricName;
   issue: string;
   suggestions: string[];
   priority: 'high' | 'medium' | 'low';
-}> {
+};
+
+function getLCPSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
+  return [{
+    metric: 'LCP',
+    issue: `Largest Contentful Paint is ${data.latest}ms (target: <2500ms)`,
+    suggestions: [
+      'Optimize images with Next.js Image component',
+      'Implement lazy loading for non-critical content',
+      'Use CDN for static assets',
+      'Optimize server response times',
+      'Preload critical resources'
+    ],
+    priority: 'high'
+  }];
+}
+
+function getFIDSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
+  return [{
+    metric: 'FID',
+    issue: `First Input Delay is ${data.latest}ms (target: <100ms)`,
+    suggestions: [
+      'Reduce JavaScript bundle size',
+      'Implement code splitting',
+      'Use web workers for heavy computations',
+      'Optimize third-party scripts',
+      'Defer non-critical JavaScript'
+    ],
+    priority: 'high'
+  }];
+}
+
+function getCLSSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
+  return [{
+    metric: 'CLS',
+    issue: `Cumulative Layout Shift is ${data.latest} (target: <0.1)`,
+    suggestions: [
+      'Set explicit dimensions for images and videos',
+      'Reserve space for dynamic content',
+      'Use CSS aspect-ratio for responsive images',
+      'Avoid inserting content above existing content',
+      'Use transform animations instead of layout changes'
+    ],
+    priority: 'medium'
+  }];
+}
+
+function getFCPSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
+  return [{
+    metric: 'FCP',
+    issue: `First Contentful Paint is ${data.latest}ms (target: <1800ms)`,
+    suggestions: [
+      'Optimize critical rendering path',
+      'Inline critical CSS',
+      'Minimize render-blocking resources',
+      'Use resource hints (preload, prefetch)',
+      'Optimize web fonts loading'
+    ],
+    priority: 'medium'
+  }];
+}
+
+function getTTFBSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
+  return [{
+    metric: 'TTFB',
+    issue: `Time to First Byte is ${data.latest}ms (target: <800ms)`,
+    suggestions: [
+      'Optimize server response times',
+      'Use CDN for global distribution',
+      'Implement server-side caching',
+      'Optimize database queries',
+      'Use edge computing for dynamic content'
+    ],
+    priority: 'high'
+  }];
+}
+
+export function getPerformanceOptimizationSuggestions(): PerformanceSuggestion[] {
   const { summary } = getPerformanceMetrics();
-  const suggestions: Array<{
-    metric: MetricName;
-    issue: string;
-    suggestions: string[];
-    priority: 'high' | 'medium' | 'low';
-  }> = [];
+  let allSuggestions: PerformanceSuggestion[] = [];
 
   for (const [metricName, data] of Object.entries(summary)) {
     const name = metricName as MetricName;
     if (data.rating === 'poor' || data.rating === 'needs-improvement') {
       switch (name) {
         case 'LCP': {
-          suggestions.push({
-            metric: name,
-            issue: `Largest Contentful Paint is ${data.latest}ms (target: <2500ms)`,
-            suggestions: [
-              'Optimize images with Next.js Image component',
-              'Implement lazy loading for non-critical content',
-              'Use CDN for static assets',
-              'Optimize server response times',
-              'Preload critical resources'
-            ],
-            priority: 'high'
-          });
+          allSuggestions = [...allSuggestions, ...getLCPSuggestions(data)];
           break;
         }
         case 'FID': {
-          suggestions.push({
-            metric: name,
-            issue: `First Input Delay is ${data.latest}ms (target: <100ms)`,
-            suggestions: [
-              'Reduce JavaScript bundle size',
-              'Implement code splitting',
-              'Use web workers for heavy computations',
-              'Optimize third-party scripts',
-              'Defer non-critical JavaScript'
-            ],
-            priority: 'high'
-          });
+          allSuggestions = [...allSuggestions, ...getFIDSuggestions(data)];
           break;
         }
         case 'CLS': {
-          suggestions.push({
-            metric: name,
-            issue: `Cumulative Layout Shift is ${data.latest} (target: <0.1)`,
-            suggestions: [
-              'Set explicit dimensions for images and videos',
-              'Reserve space for dynamic content',
-              'Use CSS aspect-ratio for responsive images',
-              'Avoid inserting content above existing content',
-              'Use transform animations instead of layout changes'
-            ],
-            priority: 'medium'
-          });
+          allSuggestions = [...allSuggestions, ...getCLSSuggestions(data)];
           break;
         }
         case 'FCP': {
-          suggestions.push({
-            metric: name,
-            issue: `First Contentful Paint is ${data.latest}ms (target: <1800ms)`,
-            suggestions: [
-              'Optimize critical rendering path',
-              'Inline critical CSS',
-              'Minimize render-blocking resources',
-              'Use resource hints (preload, prefetch)',
-              'Optimize web fonts loading'
-            ],
-            priority: 'medium'
-          });
+          allSuggestions = [...allSuggestions, ...getFCPSuggestions(data)];
           break;
         }
         case 'TTFB': {
-          suggestions.push({
-            metric: name,
-            issue: `Time to First Byte is ${data.latest}ms (target: <800ms)`,
-            suggestions: [
-              'Optimize server response times',
-              'Use CDN for global distribution',
-              'Implement server-side caching',
-              'Optimize database queries',
-              'Use edge computing for dynamic content'
-            ],
-            priority: 'high'
-          });
+          allSuggestions = [...allSuggestions, ...getTTFBSuggestions(data)];
           break;
         }
       }
     }
   }
 
-  return suggestions.sort((a, b) => {
+  return allSuggestions.sort((a, b) => {
     const priorityOrder = { high: 3, medium: 2, low: 1 };
     return priorityOrder[b.priority] - priorityOrder[a.priority];
   });

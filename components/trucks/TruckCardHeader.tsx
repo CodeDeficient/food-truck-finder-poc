@@ -2,7 +2,7 @@ import React from 'react';
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin } from 'lucide-react';
-import { FoodTruck, MenuItem } from '@/lib/types';
+import { FoodTruck } from '@/lib/types';
 
 interface TruckCardHeaderProps {
   readonly truck: FoodTruck;

@@ -30,9 +30,6 @@ export const supabaseAdmin = (supabaseServiceKey != undefined && supabaseService
 import {
   MenuCategory,
   MenuItem,
-  OperatingHours,
-  PriceRange,
-  ExtractedFoodTruckDetails,
 } from './types';
 
 export interface FoodTruckLocation {
@@ -140,7 +137,7 @@ export const FoodTruckService = {
       }
       const menuByTruck = buildMenuByTruck(menuItems);
       for (const truck of trucks) {
-      truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []) as MenuCategory[] | unknown[];
+      truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []);
       }
       return { trucks, total: count ?? 0 };
     } catch (error) {
@@ -162,7 +159,7 @@ export const FoodTruckService = {
         .select('*')
         .eq('food_truck_id', id);
       if (menuError) throw menuError;
-      truck.menu = groupMenuItems(Array.isArray(items) ? items : []) as MenuCategory[] | unknown[];
+      truck.menu = groupMenuItems(Array.isArray(items) ? items : []);
       return truck;
     } catch (error) {
       handleSupabaseError(error, 'getTruckById');
@@ -409,7 +406,7 @@ function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
       // Use nullish coalescing to convert null from DB to undefined for the MenuItem type
       description: rawItem.description ?? undefined,
       price: rawItem.price ?? undefined,
-      dietary_tags: rawItem.dietary_tags ?? [], // Default to empty array if null/undefined
+      dietary_tags: rawItem.dietary_tags as string[] ?? [], // Explicitly cast to string[]
     };
     byCategory[categoryName].push(menuItem);
   }

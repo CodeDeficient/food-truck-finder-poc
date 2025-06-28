@@ -11,83 +11,58 @@ This will further reduce the risk of leaking technical details and improve maint
 
 This comprehensive guide consolidates all linting, code quality, and related governance documentation for the Food Truck Finder project. It aims to provide a single source of truth for maintaining high code standards, preventing errors, and ensuring efficient multi-agent development.
 
-## 1. Executive Summary & Current Status
+## 1. Current Status & Remediation Plan (as of 2025-06-27)
 
-The project has systematically addressed significant linting and complexity issues, reducing the overall error count. The focus is now on maintaining these improvements and preventing regressions through robust quality gates.
+Based on the latest analysis, we have **169 remaining errors** across **54 files**. This section provides a full breakdown and a clear path forward.
 
-### Current Error Overview (as of 2025-06-26)
+### Error Categorization & Certainty
 
-Based on the latest analysis from `scripts/count-errors.cjs` and `scripts/analyze-error-patterns.cjs`:
+| Category | Error Count | Certainty | Difficulty | Key Rules |
+| :--- | :--- | :--- | :--- | :--- |
+| **Easiest & Certain** | ~34 | 100% | Low | `sonarjs/unused-import`, `sonarjs/different-types-comparison` |
+| **Hardest & Uncertain** | ~54 | Low | High | `strict-boolean-expressions`, `max-lines-per-function` |
+| **Moderate** | ~81 | Medium | Medium | `no-unsafe-*`, `max-params` |
 
-*   **Total Problems**: 205 (Note: `lib/api/admin/realtime-events/handlers.ts` is now clean.)
-*   **Unique Error Types**: 29
-*   **Files with Errors**: 70 (reduced by 1)
-*   **Key High-Frequency Errors**:
-    *   `@typescript-eslint/strict-boolean-expressions`: 43 occurrences
-    *   `max-lines-per-function`: 28 occurrences
-    *   `sonarjs/different-types-comparison`: 27 occurrences
-    *   `@typescript-eslint/no-unsafe-assignment`: 16 occurrences
-    *   `sonarjs/unused-import`: 10 occurrences
+### High-Priority Hardest Errors (Manual Refactoring Required)
 
----
+These require careful, manual intervention as per our established rules.
 
-## Phase 2 Remediation Plan (2025-06-26)
+1.  **`@typescript-eslint/strict-boolean-expressions` (33 errors):**
+    *   **Challenge:** Our most frequent and riskiest error. Automation is forbidden (Rule 2.1) due to the high risk of creating logic bugs.
+    *   **Action:** Meticulously review each of the 33 instances, applying explicit checks for `null` and `undefined` based on the specific code context.
+2.  **`max-lines-per-function` (21 errors):**
+    *   **Challenge:** Requires architectural changes, not simple fixes.
+    *   **Action:** Apply refactoring patterns (Component/Hook/Service extraction) as defined in Rule 3.1. We will use `scripts/get-high-impact-files.cjs` to prioritize the most problematic files.
+3.  **The `no-unsafe-*` family (24+ errors):**
+    *   **Challenge:** These type-safety errors (`-assignment`, `-return`, `-argument`, `-call`) require careful analysis to determine the correct types without introducing new issues.
+    *   **Action:** Manually add explicit type annotations and guards.
 
-This plan outlines the systematic approach to resolving the remaining 205 linting errors, adhering to the project's established rules.
+### Easiest Errors (High-Confidence Fixes)
 
-### Sub-phase 2.1: High-Impact Manual Refactoring
+These are low-hanging fruit that we can address quickly to reduce the error count.
 
-**Priority:** Highest. As per Rule 1.1, `max-lines-per-function` and `sonarjs/cognitive-complexity` must be addressed first.
+1.  **`sonarjs/different-types-comparison` (16 errors):**
+    *   **Certainty:** 100%.
+    *   **Action:** Correct simple logical errors where variables of different types are compared.
+2.  **`sonarjs/unused-import` (8 errors):**
+    *   **Certainty:** 100%.
+    *   **Action:** Safely remove these via ESLint's autofix capabilities.
+3.  **`sonarjs/no-identical-expressions` (5 errors):**
+    *   **Certainty:** 100%.
+    *   **Action:** Fix copy-paste errors in logical expressions.
+4.  **`unicorn/switch-case-braces` (5 errors):**
+    *   **Certainty:** 100%.
+    *   **Action:** Apply simple, stylistic fixes.
 
-**Files to Target:**
+### Proposed Action Plan
 
-1.  **`/lib/data-quality/batchCleanup.ts`** (5 `cognitive-complexity`, 4 `max-lines-per-function`, 3 `max-depth`)
-    *   **Action:** Systematically refactor the static methods (`runFullCleanup`, `removePlaceholders`, etc.) by extracting logic into smaller, single-purpose helper functions. This will resolve the complexity, line count, and nesting depth issues simultaneously.
-2.  **`/lib/api/test-integration/pipelineRunner.ts`** (1 `max-lines-per-function`)
-    *   **Action:** Extract the core pipeline execution logic from the `runTestPipeline` function into a separate helper.
-3.  **Other files with `max-lines-per-function`:**
-    *   `/hooks/realtime/createEventSourceConnection.ts`
-    *   `/lib/api/test-integration/stageHandlers.ts`
-    *   `/hooks/realtime/setupEventSourceListeners.ts`
-    *   `/lib/api/admin/realtime-events/handlers.ts`
-    *   `/hooks/realtime/useConnectionManagement.ts`
-    *   `/components/ui/chart.tsx`
-    *   `/lib/pipeline/pipelineHelpers.ts`
+1.  **Immediate Action:** Tackle the "Easiest Errors" to quickly reduce the count from 169 to ~135.
+2.  **Systematic Refactoring:** Begin the methodical, manual process of fixing the "Hardest Errors," starting with `max-lines-per-function` in the highest-impact files.
+3.  **Ongoing Cleanup:** Address the "Moderate" errors concurrently.
 
-### Sub-phase 2.2: Careful Manual Intervention for `strict-boolean-expressions`
-
-**Priority:** High. As per Rule 2.1, this cannot be automated.
-
-**Action:** Manually review and fix the 43 instances of `@typescript-eslint/strict-boolean-expressions`. Each fix will require careful consideration of the context to avoid introducing logical errors.
-
-**Key Files:**
-*   `/lib/api/test-integration/stageHandlers.ts` (5 occurrences)
-*   `/lib/supabase.ts` (4 occurrences)
-*   `/components/trucks/TruckContactInfo.tsx` (3 occurrences)
-
-### Sub-phase 2.3: High-Confidence Automation
-
-**Priority:** Medium. These are quick wins that can be addressed after the critical manual refactoring.
-
-**Action:** Utilize safe, automated scripts to resolve the following:
-
-1.  **`sonarjs/unused-import`** (10 errors)
-2.  **`unicorn/no-null`** (7 errors)
-3.  **`sonarjs/different-types-comparison`** (27 errors) - *This can often be fixed with automated scripts that replace `===` with `==` for null/undefined checks, as noted in the guide.*
-
-### Sub-phase 2.4: Type Safety and General Cleanup
-
-**Priority:** Medium to Low. This involves a mix of manual and semi-automated fixes for the remaining errors.
-
-**Action:**
-
-1.  **Address `no-unsafe-*` errors:** Systematically add explicit type annotations and perform safe member access for the 40+ `no-unsafe-*` errors (`assignment`, `argument`, `member-access`, `call`, `return`).
-2.  **Fix `max-params`:** Refactor functions with too many parameters by grouping them into objects.
-3.  **Resolve remaining issues:** Clean up the long tail of miscellaneous errors.
+This structured approach ensures we make measurable progress while safely handling the most complex issues.
 
 ---
-
-(After these, proceed to any remaining files with 5–9 errors not yet remediated, then files with <5 errors or flagged for complexity.)
 
 ### Phase 1 Completion - Systematic Complexity Refactoring Success
 
@@ -191,7 +166,8 @@ These errors are critical for maintaining type safety and code robustness, requi
     -   **Rule Reference**: `.clinerules/type-safety.md` (Rule 1.3)
 -   **`@typescript-eslint/no-misused-promises`**: Ensure Promises are correctly `await`ed or explicitly marked as `void` if their return value is intentionally ignored.
 -   **`@typescript-eslint/no-redundant-type-constituents`**: Simplify union types where one type (e.g., `any` or `unknown`) makes other types redundant.
--   **Handling Supabase `any[]` Return Types**: When `supabase.select('*').overrideTypes<T>()` results in `TS2345` errors for nested arrays (e.g., `dietary_tags`, `cuisine_type`) because Supabase returns `any[]` or `Record<string, any>[]` instead of the expected `string[]`, temporarily update the interface in `lib/types.ts` to `any[]` for that specific field. Subsequently, implement explicit type guarding and transformation (e.g., `.filter(item => typeof item === 'string') as string[]`) within data processing functions (like `groupMenuItems` in `lib/supabase.ts` or `QualityScorer.ts`) to convert the data to the desired type before use.
+-   **Handling Supabase `any[]` Return Types**: When Supabase query results (`.select('*').overrideTypes<T>()`) lead to type errors (e.g., `TS2345`) due to nested type mismatches (e.g., `any[]` being returned for an expected `string[]` in array fields like `MenuItem.dietary_tags` or `FoodTruckSchema.cuisine_type`), temporarily relax the interface type to `any[]` for the problematic field in `lib/types.ts`. This allows immediate progress, but requires a subsequent, robust data transformation (e.g., explicit type guarding and mapping) in the consuming code (e.g., `lib/supabase.ts:groupMenuItems` or `lib/utils/QualityScorer.ts`) to ensure type safety before final use.
+    -   **New Rule Reference**: `.clinerules/operational-learnings.md` (Rule 1.25)
 
 ### Phase 4: Minor & Specific Issues
 
@@ -394,6 +370,128 @@ Instead, use the provided scripts (see `scripts/automated-nullish-coalescing-con
 - Only address these manually if the script cannot safely handle a specific case.
 
 **Documented June 24, 2025.**
+
+## 10. WBS Checklist for Top 5 Linter Errors (as of 2025-06-28)
+
+This Work Breakdown Structure (WBS) provides a detailed plan for researching, remediating, and verifying fixes for the top 5 most frequent linting errors in the codebase. This plan has been cross-verified with external documentation and best practices to ensure its robustness.
+
+#### **WBS Item 1: `sonarjs/different-types-comparison` (11 Errors)**
+
+*   **[ ] 1.1 Research & Analysis (Completed)**
+    *   **Description:** This rule flags comparisons (`===` or `!==`) between variables of different types, which almost always indicates a logical error. For example, comparing a `number` to a `string`.
+    *   **Goal:** Identify and correct the flawed logic in all 11 instances.
+    *   **Verification:** Research with Tavily confirmed that the best practice is to correct the underlying logic, not to use type coercion or suppression. This validates our primary solution.
+
+*   **[ ] 1.2 Solution Options**
+    *   **Option A (Recommended): Correct the Underlying Logic.** Investigate why the types are different and fix the root cause. This is the most robust solution as it addresses the source of the logical flaw.
+        *   *Pro:* Improves code correctness and reliability.
+        *   *Con:* May require slightly more investigation than a surface-level fix.
+    *   **Option B: Use Explicit Type Coercion.** Manually convert one of the types to match the other (e.g., `String(myNumber) === myString`).
+        *   *Pro:* Quick fix if the type mismatch is intentional.
+        *   *Con:* Can hide deeper data model issues and is generally considered a code smell.
+    *   **Option C: Suppress the Rule.** Use an `eslint-disable-next-line` comment.
+        *   *Pro:* Immediately removes the error.
+        *   *Con:* Should only be used for confirmed false positives, which is extremely rare for this rule. It masks a potential bug.
+
+*   **[ ] 1.3 Verification Plan**
+    *   **Step 1:** Apply the recommended fix (Option A) to one of the identified errors.
+    *   **Step 2:** Run a targeted lint check on the modified file (`npx eslint <file-path>`) to confirm the error is gone.
+    *   **Step 3:** Manually review the code change to ensure the new logic is correct and makes sense in the context of the application.
+    *   **Step 4:** Once verified, apply the same pattern to the remaining 10 errors.
+
+---
+
+#### **WBS Item 2: `@typescript-eslint/no-unsafe-assignment` (10 Errors)**
+
+*   **[ ] 2.1 Research & Analysis (Completed)**
+    *   **Description:** This critical type-safety rule prevents a value of type `any` from being assigned to a variable with a more specific type, as this would bypass TypeScript's safety checks.
+    *   **Goal:** Properly type the data at the point of assignment to ensure end-to-end type safety.
+    *   **Verification:** Research confirmed that the best practice is to use explicit type annotations. The plan is updated to include a step to read the relevant type definition files before applying a fix.
+
+*   **[ ] 2.2 Solution Options**
+    *   **Option A (Highly Recommended): Add Explicit Type Annotations.** Define a specific `interface` or `type` for the data and apply it to the variable. This is the gold standard for TypeScript development.
+        *   *Pro:* Provides full type safety, enables autocompletion, and makes the code self-documenting.
+        *   *Con:* Requires defining the type structure if it doesn't already exist.
+    *   **Option B: Use Type Guards.** If the data structure is dynamic, use conditional checks (e.g., `typeof`, `instanceof`, `in`) to prove the type to the compiler before assignment.
+        *   *Pro:* Provides runtime safety for unknown data structures.
+        *   *Con:* Can be more verbose than a simple type annotation.
+    *   **Option C: Use an `as` Type Assertion.** Force the type using `const myVar = someValue as MyType;`.
+        *   *Pro:* A quick way to resolve the error.
+        *   *Con:* Bypasses type checking and can lead to runtime errors if the assertion is wrong. Use sparingly.
+
+*   **[ ] 2.3 Verification Plan**
+    *   **Step 1:** Apply Option A to one instance, defining a new `interface` in `lib/types.ts` if necessary.
+    *   **Step 2:** Run `npx tsc --noEmit` to ensure the new type is correct and doesn't introduce any new compilation errors. The original lint error should be resolved.
+    *   **Step 3:** Once the pattern is verified, apply it to the remaining errors.
+
+---
+
+#### **WBS Item 3: `sonarjs/unused-import` (8 Errors)**
+
+*   **[ ] 3.1 Research & Analysis (Completed)**
+    *   **Description:** An imported module is not used within the file, adding unnecessary code and increasing bundle size.
+    *   **Goal:** Clean up all unused imports.
+    *   **Verification:** Research confirmed that using `eslint --fix` is the standard and reliable approach for this rule.
+
+*   **[ ] 3.2 Solution Options**
+    *   **Option A (Recommended): Use ESLint Autofix.** Run `npx eslint . --fix`. This command is highly reliable and designed to fix this type of error automatically.
+        *   *Pro:* Fastest and most efficient solution.
+        *   *Con:* None for this rule.
+
+*   **[ ] 3.3 Verification Plan**
+    *   **Step 1:** Run `npx eslint . --fix`.
+    *   **Step 2:** Run `npx eslint .` again to confirm that all `unused-import` errors have been resolved.
+    *   **Step 3:** Run `npm run build` (or similar) to ensure the removal of imports did not break the application build.
+
+---
+
+#### **WBS Item 4: `@typescript-eslint/no-unsafe-return` (7 Errors)**
+
+*   **[ ] 4.1 Research & Analysis (Completed)**
+    *   **Description:** A function returns a value of type `any` and does not have an explicit return type annotation, breaking type-safety for any code that calls it.
+    *   **Goal:** Ensure all functions have a clearly defined and type-safe return contract.
+    *   **Verification:** Research confirmed that adding an explicit return type is the correct and necessary solution.
+
+*   **[ ] 4.2 Solution Options**
+    *   **Option A (Highly Recommended): Add Explicit Function Return Type.** Add the correct return type to the function signature (e.g., `function myFunc(): MyReturnType { ... }`).
+        *   *Pro:* Enforces the function's contract, improves API clarity, and enables type-checking on the calling side.
+        *   *Con:* None; this is a fundamental best practice.
+    *   **Option B: Refine the Returned Value's Type.** Instead of returning `any`, process the value inside the function to ensure it has a specific type before being returned.
+        *   *Pro:* Good for encapsulation if the type refinement logic belongs inside the function.
+        *   *Con:* Can be overkill if a simple return type annotation suffices.
+
+*   **[ ] 4.3 Verification Plan**
+    *   **Step 1:** Apply Option A to one of the functions, adding an explicit return type.
+    *   **Step 2:** Run `npx tsc --noEmit` to verify that the return type is correct and that no new type errors are introduced in the files that consume the function.
+    *   **Step 3:** Repeat for the remaining functions.
+
+---
+
+#### **WBS Item 5: `max-params` (7 Errors)**
+
+*   **[ ] 5.1 Research & Analysis (Completed)**
+    *   **Description:** A function has too many parameters, which is a sign of poor design. This makes the function hard to read, use, and test.
+    *   **Goal:** Refactor the function to have a cleaner, more manageable signature.
+    *   **Verification:** Research confirmed that the best practice is to group related parameters into a single "options" object.
+
+*   **[ ] 5.2 Solution Options**
+    *   **Option A (Highly Recommended): Introduce a Parameter Object.** Group related parameters into a single "options" object. This is a very common and clean refactoring pattern.
+        *   *Pro:* Makes the function signature stable (adding new optional params is not a breaking change) and improves readability.
+        *   *Con:* Requires updating all the places where the function is called.
+    *   **Option B: Decompose the Function.** The high number of parameters might indicate the function is doing too much. Break it into smaller, more focused functions.
+        *   *Pro:* Improves code by adhering to the Single Responsibility Principle.
+        *   *Con:* A more involved refactoring effort.
+    *   **Option C: Increase the Rule Limit.** Change the `max-params` value in `eslint.config.mjs`.
+        *   *Pro:* Easiest way to remove the error.
+        *   *Con:* Does not fix the underlying code quality issue; it only hides it. Not recommended.
+
+*   **[ ] 5.3 Verification Plan**
+    *   **Step 1:** Apply Option A to one of the functions. Create a new `type` or `interface` for the parameter object.
+    *   **Step 2:** Update all call sites for that function to use the new object-based parameter.
+    *   **Step 3:** Run the application and related tests to ensure the refactored function still works as expected. The lint error will be gone.
+    *   **Step 4:** Repeat for the other 6 instances.
+
+---
 
 ## 8. Known Linter False Positives and Temporary Suppressions
 
