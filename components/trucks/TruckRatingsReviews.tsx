@@ -7,7 +7,7 @@ interface TruckRatingsReviewsProps {
   readonly truck: FoodTruckWithRatings;
 }
 
-function StarRating({ rating }: { rating: number }) {
+function StarRating({ rating }: Readonly<{ rating: number }>) {
   return (
     <div className="flex">
       {[1, 2, 3, 4, 5].map((star) => (

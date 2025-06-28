@@ -99,7 +99,7 @@ export function handleExecuteTask(taskId: string) {
   task.lastRun = new Date().toISOString();
 
   // Simulate success/failure
-  // eslint-disable-next-line sonarjs/pseudo-random
+  // eslint-disable-next-line sonarjs/pseudo-random -- Math.random is acceptable for simulating task execution.
   if (Math.random() > 0.1) {
     // 90% success rate
     task.lastSuccess = task.lastRun;

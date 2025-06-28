@@ -104,3 +104,17 @@ This rule set documents key operational learnings and best practices derived fro
 - **Rule 1.25: Handle Supabase Type Mismatches in Complex Structures**: When Supabase query results (`.select('*').overrideTypes<T>()`) lead to type errors (e.g., `TS2345`) due to nested type mismatches (e.g., `any[]` being returned for an expected `string[]` in array fields like `MenuItem.dietary_tags` or `FoodTruckSchema.cuisine_type`), temporarily relax the interface type to `any[]` for the problematic field in `lib/types.ts`. This allows immediate progress, but requires a subsequent, robust data transformation (e.g., explicit type guarding and mapping) in the consuming code (e.g., `lib/supabase.ts:groupMenuItems` or `lib/utils/QualityScorer.ts`) to ensure type safety before final use.
   - *Trigger Case*: `TS2345` errors when assigning Supabase query results to interfaces containing nested array types that Supabase returns as generic `any[]` or `Record<string, any>[]`.
   - *Example*: Change `dietary_tags: string[]` to `dietary_tags: any[]` in `MenuItem` interface, or `cuisine_type: string[]` to `cuisine_type: any[]` in `FoodTruckSchema`, followed by explicit array transformation in data processing functions.
+- **Rule 1.26: Handle Supabase Service Return Types**: When calling Supabase service methods (e.g., `FoodTruckService.getAllTrucks()`, `FoodTruckService.getTruckById()`), explicitly check for the `error` property in the returned object. If an error exists, throw a new error with a descriptive message to ensure proper error propagation and type integrity for subsequent operations.
+  - *Trigger Case*: Type errors when consuming results from Supabase service methods that can return an `{ error: string }` object.
+  - *Example*:
+    ```typescript
+    // Before
+    const result = await FoodTruckService.getAllTrucks();
+    return result.trucks; // Type error if result is { error: string }
+    // After
+    const result = await FoodTruckService.getAllTrucks();
+    if ('error' in result) {
+      throw new Error(`Failed to fetch trucks: ${result.error}`);
+    }
+    return result.trucks;
+    ```

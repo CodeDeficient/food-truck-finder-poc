@@ -20,16 +20,16 @@ export function disconnectEventSource({
   setIsConnecting,
   setConnectionError
 }: DisconnectEventSourceParams) {
-  (isManuallyDisconnectedRef.current as any) = true;
+  (isManuallyDisconnectedRef.current as boolean) = true;
 
   if (reconnectTimeoutRef.current) {
     clearTimeout(reconnectTimeoutRef.current);
-    (reconnectTimeoutRef.current as any) = undefined;
+    (reconnectTimeoutRef.current as NodeJS.Timeout | undefined) = undefined;
   }
 
   if (eventSourceRef.current) {
     eventSourceRef.current.close();
-    (eventSourceRef.current as any) = undefined;
+    (eventSourceRef.current as EventSource | undefined) = undefined;
   }
 
   setIsConnected(false);

@@ -29,6 +29,9 @@ export const CachedFoodTruckService = {
     async (): Promise<{ trucks: FoodTruck[]; count: number }> => {
       console.info('CachedFoodTruckService: Cache miss - fetching all trucks from database');
       const result = await FoodTruckService.getAllTrucks();
+      if ('error' in result) {
+        throw new Error(`Failed to fetch all trucks: ${result.error}`);
+      }
       return { trucks: result.trucks, count: result.total };
     },
     ['all-trucks'],
@@ -45,7 +48,11 @@ export const CachedFoodTruckService = {
   getTrucksByLocationCached : unstable_cache(
     async (lat: number, lng: number, radiusKm: number): Promise<FoodTruck[]> => {
       console.info(`CachedFoodTruckService: Cache miss - fetching trucks near ${lat},${lng} (${radiusKm}km)`);
-      return await FoodTruckService.getTrucksByLocation(lat, lng, radiusKm);
+      const result = await FoodTruckService.getTrucksByLocation(lat, lng, radiusKm);
+      if ('error' in result) {
+        throw new Error(`Failed to fetch trucks by location: ${result.error}`);
+      }
+      return result;
     },
     ['trucks-by-location'],
     {
@@ -61,7 +68,11 @@ export const CachedFoodTruckService = {
   getTruckByIdCached : unstable_cache(
     async (id: string): Promise<FoodTruck | null> => {
       console.info(`CachedFoodTruckService: Cache miss - fetching truck ${id} from database`);
-      return await FoodTruckService.getTruckById(id);
+      const result = await FoodTruckService.getTruckById(id);
+      if ('error' in result) {
+        throw new Error(`Failed to fetch truck by ID: ${result.error}`);
+      }
+      return result;
     },
     ['truck-by-id'],
     {
@@ -104,17 +115,17 @@ export const CachedFoodTruckService = {
         throw new Error(`Search query failed: ${error.message}`);
       }
 
-      let results = trucks ?? [];
+      let results: FoodTruck[] = trucks ?? [];
 
       // Apply location filter if provided
       if (filters?.lat != undefined && filters?.lng != undefined && filters?.radius != undefined) {
-        results = results.filter((truck: FoodTruck) => {
+        results = results.filter((truck: FoodTruck): truck is FoodTruck => {
           if (truck.current_location?.lat == undefined || truck.current_location?.lng == undefined) {
             return false;
           }
           const distance = calculateDistance(
-            filters.lat,
-            filters.lng,
+            filters.lat!, // Assert as number, as it's checked by the outer if condition
+            filters.lng!, // Assert as number, as it's checked by the outer if condition
             truck.current_location.lat,
             truck.current_location.lng
           );
@@ -128,7 +139,7 @@ export const CachedFoodTruckService = {
         const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(); // 'mon', 'tue', etc.
         const currentTime = now.getHours() * 100 + now.getMinutes(); // HHMM format
 
-        results = results.filter((truck: FoodTruck) => {
+        results = results.filter((truck: FoodTruck): truck is FoodTruck => {
           const hours = truck.operating_hours?.[currentDay as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined;
           if (hours == undefined || hours.closed === true) return false;
 
