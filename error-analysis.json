@@ -1,33 +1,25 @@
 {
-  "timestamp": "2025-06-27T20:02:46.884Z",
-  "totalErrors": 157,
+  "timestamp": "2025-06-28T19:25:02.333Z",
+  "totalErrors": 73,
   "errorCounts": {
-    "@typescript-eslint/await-thenable": 4,
+    "@typescript-eslint/await-thenable": 3,
     "sonarjs/no-invalid-await": 3,
     "sonarjs/no-identical-expressions": 5,
-    "@typescript-eslint/strict-boolean-expressions": 29,
     "@typescript-eslint/no-unsafe-call": 3,
     "@typescript-eslint/no-unsafe-return": 7,
     "@typescript-eslint/no-unsafe-member-access": 3,
-    "sonarjs/different-types-comparison": 15,
     "sonarjs/unused-import": 8,
     "sonarjs/no-redundant-optional": 3,
     "sonarjs/prefer-read-only-props": 2,
-    "unknown": 1,
+    "@typescript-eslint/no-misused-promises": 1,
     "max-params": 7,
-    "max-lines-per-function": 20,
-    "@typescript-eslint/no-unsafe-argument": 3,
+    "@typescript-eslint/no-unsafe-argument": 4,
     "sonarjs/deprecation": 4,
-    "unicorn/switch-case-braces": 5,
-    "@typescript-eslint/no-explicit-any": 12,
-    "@typescript-eslint/no-redundant-type-constituents": 1,
-    "@typescript-eslint/no-unsafe-assignment": 10,
     "sonarjs/pseudo-random": 2,
+    "@typescript-eslint/no-unsafe-assignment": 11,
     "@typescript-eslint/require-await": 2,
     "sonarjs/no-unused-vars": 1,
     "sonarjs/no-dead-store": 1,
-    "unicorn/no-null": 2,
-    "sonarjs/cognitive-complexity": 1,
     "unicorn/consistent-function-scoping": 3
   },
   "automationCandidates": [
@@ -41,40 +33,13 @@
       "priority": 21
     },
     {
-      "ruleId": "@typescript-eslint/no-explicit-any",
-      "count": 12,
-      "confidence": "MEDIUM",
-      "method": "pattern-replacement",
-      "description": "Replace any with unknown in safe contexts",
-      "estimatedFixes": 4,
-      "priority": 8
-    },
-    {
       "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 10,
+      "count": 11,
       "confidence": "MEDIUM",
       "method": "type-annotation",
       "description": "Add type annotations for unsafe assignments",
       "estimatedFixes": 3,
       "priority": 6
-    },
-    {
-      "ruleId": "@typescript-eslint/strict-boolean-expressions",
-      "count": 29,
-      "confidence": "LOW",
-      "method": "manual-review",
-      "description": "Complex boolean expression fixes",
-      "estimatedFixes": 2,
-      "priority": 2
-    },
-    {
-      "ruleId": "max-lines-per-function",
-      "count": 20,
-      "confidence": "MANUAL_ONLY",
-      "method": "manual-ide-refactor",
-      "description": "RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.",
-      "estimatedFixes": 0,
-      "priority": null
     }
   ],
   "recommendations": {
@@ -98,17 +63,8 @@
     "mediumConfidence": {
       "candidates": [
         {
-          "ruleId": "@typescript-eslint/no-explicit-any",
-          "count": 12,
-          "confidence": "MEDIUM",
-          "method": "pattern-replacement",
-          "description": "Replace any with unknown in safe contexts",
-          "estimatedFixes": 4,
-          "priority": 8
-        },
-        {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 10,
+          "count": 11,
           "confidence": "MEDIUM",
           "method": "type-annotation",
           "description": "Add type annotations for unsafe assignments",
@@ -116,9 +72,8 @@
           "priority": 6
         }
       ],
-      "totalFixes": 7,
+      "totalFixes": 3,
       "methods": [
-        "pattern-replacement",
         "type-annotation"
       ]
     }

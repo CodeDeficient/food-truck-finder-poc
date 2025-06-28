@@ -25,7 +25,7 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
-  if (truck.average_rating === null || truck.average_rating === undefined) {
+  if (truck.average_rating === undefined) {
     return;
   }
 

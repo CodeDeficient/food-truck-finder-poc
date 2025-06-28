@@ -15,7 +15,7 @@ export function MenuSection({ popularItems }: Readonly<MenuSectionProps>) {
           <div key={idx} className="flex justify-between text-sm dark:text-gray-300">
             <span className="truncate dark:text-gray-200">{item.name}</span>
             {/* Handle price as string or number */}
-            {item.price !== undefined && item.price !== null && (
+            {item.price !== undefined && (
               <span className="text-green-600 dark:text-green-400 ml-2">
                 {formatPrice(item.price)}
               </span>

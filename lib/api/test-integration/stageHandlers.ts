@@ -64,7 +64,7 @@ function determineFirecrawlStageOutput(
   rawText: string | undefined,
   logs: string[],
 ): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string }> {
-  if (url !== undefined && url !== '' && rawText === undefined) {
+  if (url && rawText === undefined) {
     return handleUrlScrape(url, logs);
   } else if (rawText === undefined) {
     logs.push('No URL or raw text provided.');
