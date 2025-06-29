@@ -11,7 +11,7 @@ export interface MenuItem {
   name: string;
   description: string | undefined;
   price: number | string | undefined;
-  dietary_tags: string[];
+dietary_tags: any[];
   is_popular?: boolean;
 }
 
@@ -58,9 +58,9 @@ export interface SentimentAnalysisResult {
 export interface EnhancedFoodTruckData {
   name: string | undefined;
   description: string | undefined;
-  cuisine_type: any[];
+  cuisine_type: string[];
   price_range: PriceRange;
-  specialties: any[];
+  specialties: string[];
   dietary_options: string[];
   enhanced_menu: {
     categories: MenuCategory[];
@@ -78,9 +78,9 @@ export interface EnhancedFoodTruckData {
 export interface ExtractedFoodTruckDetails {
   name: string | undefined;
   description: string | undefined;
-  cuisine_type: unknown[];
+  cuisine_type: string[];
   price_range: PriceRange | undefined;
-  specialties: any[];
+  specialties: string[];
   current_location: {
     address: string | undefined;
     city: string | undefined;
@@ -139,12 +139,12 @@ export interface FoodTruckSchema {
   menu: MenuCategory[];
   contact_info: ExtractedFoodTruckDetails['contact_info'];
   social_media: ExtractedFoodTruckDetails['social_media'];
-  cuisine_type: any[];
+  cuisine_type: string[];
   price_range: PriceRange | undefined;
-  specialties: any[];
+  specialties: string[];
   data_quality_score: number;
   verification_status: 'pending' | 'verified' | 'flagged';
-  source_urls: any[];
+  source_urls: string[];
   last_scraped_at: string;
   test_run_flag?: boolean;
   website?: string;
