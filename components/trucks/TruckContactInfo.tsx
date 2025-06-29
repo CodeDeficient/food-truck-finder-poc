@@ -10,7 +10,7 @@ interface TruckContactInfoProps {
 interface ContactFieldProps {
   readonly icon: React.ComponentType<{ className?: string }>;
   readonly label: string;
-  readonly value?: string | null;
+  readonly value?: string | undefined;
   readonly href?: string;
   readonly unavailableText: string;
 }
@@ -36,7 +36,7 @@ function ContactField({
       <Icon className="h-4 w-4 text-gray-500" />
       <div>
         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</label>
-        {href ? (
+        {(href != undefined && href !== '') ? (
           <a 
             href={href}
             target={href.startsWith('http') ? '_blank' : undefined}
@@ -105,7 +105,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
           icon={Phone}
           label="Phone"
           value={truck.contact_info?.phone}
-          href={truck.contact_info?.phone ? `tel:${truck.contact_info.phone}` : undefined}
+          href={(truck.contact_info?.phone != undefined && truck.contact_info.phone !== '') ? `tel:${truck.contact_info.phone}` : undefined}
           unavailableText="No phone number available"
         />
 
@@ -113,7 +113,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
           icon={Mail}
           label="Email"
           value={truck.contact_info?.email}
-          href={truck.contact_info?.email ? `mailto:${truck.contact_info.email}` : undefined}
+          href={(truck.contact_info?.email != undefined && truck.contact_info.email !== '') ? `mailto:${truck.contact_info.email}` : undefined}
           unavailableText="No email available"
         />
 
@@ -121,7 +121,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
           icon={Globe}
           label="Website"
           value={truck.contact_info?.website}
-          href={truck.contact_info?.website}
+          href={(truck.contact_info?.website != undefined && truck.contact_info.website !== '') ? truck.contact_info.website : undefined}
           unavailableText="No website available"
         />
 

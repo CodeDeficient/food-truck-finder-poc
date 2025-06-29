@@ -30,7 +30,7 @@ export function ContactField({
       <Icon className="h-4 w-4 text-gray-500" />
       <div>
         <label className="text-sm font-medium text-gray-500">{label}</label>
-        {href ? (
+        {(href != undefined && href !== '') ? (
           <a
             href={href}
             target="_blank"

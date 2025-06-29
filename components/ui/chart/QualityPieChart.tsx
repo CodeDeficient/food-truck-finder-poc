@@ -31,12 +31,16 @@ export function QualityPieChart({ data }: QualityPieChartProps) {
           fill="#8884d8"
           dataKey="value"
         >
-          {data.map((entry, index) => (
-            <Cell 
-              key={`cell-${index}`} 
-              fill={Object.values(QUALITY_COLORS)[index]} 
-            />
-          ))}
+          {data.map((entry, index) => {
+            const colors = Object.values(QUALITY_COLORS);
+            const fillColor = colors[index % colors.length];
+            return (
+              <Cell
+                key={`cell-${index}`}
+                fill={fillColor}
+              />
+            );
+          })}
         </Pie>
         <Tooltip content={<CustomTooltip />} />
       </PieChart>

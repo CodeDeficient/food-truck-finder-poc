@@ -69,7 +69,7 @@ export async function handlePostRequest(request: NextRequest) {
     const result: AutoScrapeResult = {
       trucksProcessed: rawResult.trucksProcessed,
       newTrucksFound: rawResult.newTrucksFound,
-      errors: rawResult.errors?.map(e => e.url + (e.details ? `: ${e.details}` : '')),
+      errors: rawResult.errors?.map(e => e.url + ((e.details != undefined && e.details !== '') ? `: ${e.details}` : '')),
     };
     scheduler.scheduleFollowUpTasks(result);
     logAutoScrapeCompletion(result);

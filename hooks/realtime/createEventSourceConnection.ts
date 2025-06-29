@@ -41,36 +41,45 @@ function initializeEventSource(config: CreateConnectionConfig) {
 
 function setupInitialConnectionState(
   connectionState: ReturnType<typeof useConnectionState>,
-  isManuallyDisconnectedRef: React.RefObject<boolean>
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean | null>
 ) {
-  const { setIsConnecting, setConnectionError } = connectionState;
+  const { setIsConnecting, setConnectionError } = connectionState; // Removed unused setIsConnected, setConnectionAttempts
   setIsConnecting(true);
   setConnectionError(undefined);
-  isManuallyDisconnectedRef.current = false;
+  if (isManuallyDisconnectedRef.current !== undefined) { // Ensure current is not undefined before assigning
+    isManuallyDisconnectedRef.current = false;
+  }
 }
 
 function establishEventSourceConnection(config: CreateConnectionConfig) {
   const { eventSourceRef, connectionState } = config;
   try {
     setupEventSourceAuth();
-    eventSourceRef.current = initializeEventSource(config);
+    if (eventSourceRef.current !== undefined) { // Ensure current is not undefined before assigning
+      eventSourceRef.current = initializeEventSource(config);
+    }
   } catch (error) {
     handleConnectionError(error, connectionState.setIsConnecting, connectionState.setConnectionError);
   }
 }
 
-function shouldPreventConnection(eventSourceRef: React.RefObject<EventSource | undefined>, isConnecting: boolean): boolean {
+// eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+function shouldPreventConnection(eventSourceRef: React.MutableRefObject<EventSource | undefined | null>, isConnecting: boolean): boolean {
   return !!eventSourceRef.current || isConnecting;
 }
 
 interface CreateConnectionConfig {
-  eventSourceRef: React.RefObject<EventSource | undefined>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  eventSourceRef: React.MutableRefObject<EventSource | undefined | null>;
   isConnecting: boolean;
-  isManuallyDisconnectedRef: React.RefObject<boolean>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean | null>;
   connectionAttempts: number;
   maxReconnectAttempts: number;
   reconnectInterval: number;
-  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined | null>;
   handleEvent: (event: RealtimeEvent) => void;
   connectionState: ReturnType<typeof useConnectionState>;
   connect: () => void;

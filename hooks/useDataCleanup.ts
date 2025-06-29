@@ -34,24 +34,26 @@ export function useDataCleanup() {
     'update_quality_scores'
   ]);
 
+  const performCleanupApiCall = async (dryRun: boolean, operations: string[]): Promise<{ success: boolean; result?: CleanupResult; error?: string }> => {
+    const response = await fetch('/api/admin/data-cleanup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: dryRun ? 'dry-run' : 'full-cleanup',
+        options: {
+          operations: operations,
+          batchSize: 50,
+          dryRun
+        }
+      })
+    });
+    return response.json() as Promise<{ success: boolean; result?: CleanupResult; error?: string }>;
+  };
+
   const runCleanup = async (dryRun: boolean = false) => {
     setIsRunning(true);
     try {
-      const response = await fetch('/api/admin/data-cleanup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: dryRun ? 'dry-run' : 'full-cleanup',
-          options: {
-            operations: selectedOperations,
-            batchSize: 50,
-            dryRun
-          }
-        })
-      });
-
-      const data = await response.json() as { success: boolean; result?: CleanupResult; error?: string };
-
+      const data = await performCleanupApiCall(dryRun, selectedOperations);
       if (data.success === true) {
         setLastResult(data.result);
       } else {
@@ -64,13 +66,19 @@ export function useDataCleanup() {
     }
   };
 
+  const performLoadPreviewApiCall = async (): Promise<{ success: boolean; preview?: unknown }> => {
+    const response = await fetch('/api/admin/data-cleanup?action=preview');
+    return response.json() as Promise<{ success: boolean; preview?: unknown }>;
+  };
+
   const loadPreview = async () => {
     try {
-      const response = await fetch('/api/admin/data-cleanup?action=preview');
-      const data = await response.json() as { success: boolean; preview?: unknown };
-
+      const data = await performLoadPreviewApiCall();
       if (data.success === true) {
         setPreviewData(data.preview);
+      } else {
+        // It's good practice to also handle the case where data.success is false from the API
+        console.error('Failed to load preview data:', (data as { error?: string }).error);
       }
     } catch (error) {
       console.error('Error loading preview:', error);

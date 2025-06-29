@@ -95,38 +95,46 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={({
-                name,
-                percentage
-              }: {
-                name?: string;
-                percentage?: string;
-              }) => `${name ?? 'Unknown'}: ${percentage ?? '0'}%`}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill={Object.values(QUALITY_COLORS)[index]} 
-                />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
+        <QualityPieChartDisplay data={data} />
       </CardContent>
     </Card>
   );
 };
+
+interface QualityPieChartDisplayProps {
+  readonly data: Array<{ name: string; value: number; percentage: string }>;
+}
+
+const QualityPieChartDisplay: React.FC<QualityPieChartDisplayProps> = ({ data }) => (
+  <ResponsiveContainer width="100%" height={300}>
+    <PieChart>
+      <Pie
+        data={data}
+        cx="50%"
+        cy="50%"
+        labelLine={false}
+        label={({
+          name,
+          percentage,
+        }: {
+          name?: string;
+          percentage?: string;
+        }) => `${name ?? 'Unknown'}: ${percentage ?? '0'}%`}
+        outerRadius={80}
+        fill="#8884d8"
+        dataKey="value"
+      >
+        {data.map((_entry, index) => (
+          <Cell
+            key={`cell-${index}`}
+            fill={Object.values(QUALITY_COLORS)[index % Object.values(QUALITY_COLORS).length]}
+          />
+        ))}
+      </Pie>
+      <Tooltip content={<CustomTooltip />} />
+    </PieChart>
+  </ResponsiveContainer>
+);
 
 // Verification Status Bar Chart Component
 const VerificationStatusChart: React.FC<{ qualityStats: DataQualityStats }> = ({ qualityStats }) => {

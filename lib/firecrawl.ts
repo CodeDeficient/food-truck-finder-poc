@@ -108,20 +108,21 @@ export class FirecrawlService {
     }
 
     try {
+      const body = {
+        url,
+        formats: options.formats ?? ['markdown'],
+        includeTags: options.includeTags,
+        excludeTags: options.excludeTags,
+        onlyMainContent: options.onlyMainContent ?? true,
+        waitFor: options.waitFor ?? 0,
+      };
       const response = await fetch(`${this.baseUrl}/scrape`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          url,
-          formats: options.formats ?? ['markdown'],
-          includeTags: options.includeTags,
-          excludeTags: options.excludeTags,
-          onlyMainContent: options.onlyMainContent ?? true,
-          waitFor: options.waitFor ?? 0,
-        }),
+        body: JSON.stringify(body),
       });
 
       const data: unknown = await response.json();
@@ -140,6 +141,36 @@ export class FirecrawlService {
         error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
+  }
+
+  private _buildCrawlRequestBody(
+    url: string,
+    options: {
+      crawlerOptions?: {
+        includes?: string[];
+        excludes?: string[];
+        maxDepth?: number;
+        limit?: number;
+      };
+      pageOptions?: {
+        formats?: ('markdown' | 'html')[];
+        onlyMainContent?: boolean;
+      };
+    } = {},
+  ) {
+    return {
+      url,
+      crawlerOptions: {
+        maxDepth: 2,
+        limit: 10,
+        ...options.crawlerOptions,
+      },
+      pageOptions: {
+        formats: ['markdown'],
+        onlyMainContent: true,
+        ...options.pageOptions,
+      },
+    };
   }
 
   async crawlWebsite(
@@ -164,25 +195,14 @@ export class FirecrawlService {
     }
 
     try {
+      const body = this._buildCrawlRequestBody(url, options);
       const response = await fetch(`${this.baseUrl}/crawl`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          url,
-          crawlerOptions: {
-            maxDepth: 2,
-            limit: 10,
-            ...options.crawlerOptions,
-          },
-          pageOptions: {
-            formats: ['markdown'],
-            onlyMainContent: true,
-            ...options.pageOptions,
-          },
-        }),
+        body: JSON.stringify(body),
       });
 
       const data: unknown = await response.json();

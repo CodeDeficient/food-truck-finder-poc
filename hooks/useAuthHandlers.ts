@@ -20,74 +20,70 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
+  const performEmailLogin = async (currentEmail: string, currentPassword: string) => {
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: currentEmail,
+      password: currentPassword,
+    });
+    if (signInError) throw signInError;
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+
+    if (user) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      if (profileError) throw profileError;
+
+      if (profile?.role === 'admin') {
+        router.push(redirectTo);
+      } else {
+        router.push('/access-denied');
+      }
+    }
+  };
+
   const handleEmailLogin = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(undefined);
     try {
-      setLoading(true);
-      setError(undefined);
-
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (signInError) {
-        throw signInError;
-      }
-
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-      if (userError) {
-        throw userError;
-      }
-
-      if (user) {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          throw profileError;
-        }
-
-        if (profile?.role === 'admin') {
-          router.push(redirectTo);
-        } else {
-          router.push('/access-denied');
-        }
-      }
+      await performEmailLogin(email, password);
     } catch (error_: unknown) {
-      console.error('Login error:', error_);
-      setError(error_ instanceof Error ? error_.message : 'An error occurred during login');
+      console.error('Email login error:', error_);
+      setError(error_ instanceof Error ? error_.message : 'An error occurred during email login');
     } finally {
       setLoading(false);
     }
-  }, [email, password, router, redirectTo]);
+  }, [email, password, router, redirectTo]); // eslint-disable-line react-hooks/exhaustive-deps
+  // router, redirectTo are stable, email/password are dependencies for performEmailLogin call.
+
+  const performGoogleLogin = async () => {
+    const { error: signInError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${globalThis.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
+      },
+    });
+    if (signInError) throw signInError;
+  };
 
   const handleGoogleLogin = useCallback(async () => {
+    setLoading(true);
+    setError(undefined);
     try {
-      setLoading(true);
-      setError(undefined);
-
-      const { error: signInError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${globalThis.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
-        },
-      });
-
-      if (signInError) {
-        throw signInError;
-      }
+      await performGoogleLogin();
     } catch (error_: unknown) {
-      console.error('Login error:', error_);
-      setError(error_ instanceof Error ? error_.message : 'An error occurred during login');
+      console.error('Google login error:', error_);
+      setError(error_ instanceof Error ? error_.message : 'An error occurred during Google login');
     } finally {
       setLoading(false);
     }
-  }, [router, redirectTo]);
+  }, [router, redirectTo]); // eslint-disable-line react-hooks/exhaustive-deps
+  // router, redirectTo are stable.
 
   return {
     handleEmailLogin,

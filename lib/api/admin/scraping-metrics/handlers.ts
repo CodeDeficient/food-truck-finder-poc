@@ -33,20 +33,12 @@ export async function handleGetRequest(): Promise<NextResponse> {
   });
 }
 
-async function getScrapingMetrics(): Promise<RealtimeMetrics> {
-  // Fetch real scraping metrics from database
-  const [allJobs, , recentTrucks] = await Promise.all([
-    ScrapingJobService.getAllJobs(100, 0), // Get last 100 jobs for metrics
-    ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24 hours (unused but kept for potential future use)
-    FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
-  ]);
-
-  const totalRuns = allJobs.length;
-  const typedJobs = allJobs as Array<{ status?: string; started_at?: string; completed_at?: string }>;
+function calculateJobStats(typedJobs: Array<{ status?: string; started_at?: string; completed_at?: string }>) {
   const successfulRuns = typedJobs.filter(job => job.status === 'completed').length;
   const failedRuns = typedJobs.filter(job => job.status === 'failed').length;
+  const activeJobs = typedJobs.filter(job => job.status === 'running').length;
+  const pendingJobs = typedJobs.filter(job => job.status === 'pending').length;
 
-  // Calculate average run time from completed jobs
   const completedJobs = typedJobs.filter(job =>
     job.status === 'completed' && job.started_at !== undefined && job.completed_at !== undefined
   );
@@ -62,35 +54,41 @@ async function getScrapingMetrics(): Promise<RealtimeMetrics> {
     ? Math.round(totalRunTime / completedJobs.length)
     : 0;
 
-  // Count trucks processed today and new trucks
+  return { successfulRuns, failedRuns, averageRunTime, activeJobs, pendingJobs };
+}
+
+function calculateNewTrucksToday(trucks: Array<{ created_at: string }>) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
-  const typedTrucks = recentTrucks.trucks as Array<{ created_at: string }>;
-  const newTrucksToday = typedTrucks.filter(truck => {
+  return trucks.filter(truck => {
     const createdAt = new Date(truck.created_at);
     return createdAt >= today;
   }).length;
+}
 
-  const metrics = {
-    totalRuns,
-    successfulRuns,
-    failedRuns,
-    averageRunTime,
-    totalTrucksProcessed: recentTrucks.total,
-    newTrucksToday,
-  };
+async function getScrapingMetrics(): Promise<RealtimeMetrics> {
+  // Fetch real scraping metrics from database
+  const [allJobs, recentTrucks] = await Promise.all([
+    ScrapingJobService.getAllJobs(100, 0), // Get last 100 jobs for metrics
+    FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
+  ]);
+
+  // const totalRuns = allJobs.length; // Unused variable
+  const typedJobs = allJobs as Array<{ status?: string; started_at?: string; completed_at?: string }>;
+
+  const { successfulRuns, failedRuns, /* averageRunTime, */ activeJobs, pendingJobs } = calculateJobStats(typedJobs); // averageRunTime is unused by the return object
+  // const newTrucksToday = calculateNewTrucksToday(recentTrucks.trucks as Array<{ created_at: string }>); // Unused variable
 
   return {
     scrapingJobs: {
-      active: typedJobs.filter(job => job.status === 'running').length,
+      active: activeJobs,
       completed: successfulRuns,
       failed: failedRuns,
-      pending: typedJobs.filter(job => job.status === 'pending').length,
+      pending: pendingJobs,
     },
     dataQuality: {
       averageScore: 0, // Placeholder, actual calculation might be complex
-      totalTrucks: recentTrucks.total,
+      totalTrucks: recentTrucks.total, // This remains from the direct fetch
       recentChanges: 0, // Placeholder
     },
     systemHealth: {

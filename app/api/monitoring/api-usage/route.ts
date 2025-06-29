@@ -27,21 +27,21 @@ export function GET(request: NextRequest) {
   }
 }
 
-async function handlePostAction(
+function handlePostAction(
   action: string | undefined,
   service: string | undefined,
   level: string | undefined,
-): Promise<NextResponse> {
+): NextResponse {
   if (action === undefined) {
     return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
   }
 
   switch (action) {
     case 'clear-alerts': {
-      return await handleClearAlerts();
+      return handleClearAlerts(); // Removed await
     }
     case 'get-alerts': {
-      return await handleGetAlerts();
+      return handleGetAlerts(); // Removed await
     }
     case 'test-alert': {
       if (service === undefined || level === undefined) {

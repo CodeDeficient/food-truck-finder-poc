@@ -20,7 +20,7 @@ export function disconnectEventSource({
   setIsConnecting,
   setConnectionError
 }: DisconnectEventSourceParams) {
-  (isManuallyDisconnectedRef.current as boolean) = true;
+  isManuallyDisconnectedRef.current = true;
 
   if (reconnectTimeoutRef.current) {
     clearTimeout(reconnectTimeoutRef.current);
