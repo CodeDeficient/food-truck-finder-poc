@@ -121,17 +121,17 @@ export async function protectAdminRoutes(req: NextRequest, res: NextResponse, re
     return logAndRedirectDenied({ req, res, requestMetadata, user, profile: profile ?? null, profileQueryError: profileQueryError ?? undefined });
   }
   if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
-    await AuditLogger.logDataAccess(
-      user.id,
-      user.email ?? 'unknown',
-      'admin_panel',
-      req.nextUrl.pathname,
-      req.method === 'GET' ? 'read' : 'admin_access',
-      {
+    await AuditLogger.logDataAccess({
+      userId: user.id,
+      userEmail: user.email ?? 'unknown',
+      resourceType: 'admin_panel',
+      resourceId: req.nextUrl.pathname,
+      action: req.method === 'GET' ? 'read' : 'admin_access',
+      request: {
         ip: requestMetadata.ip,
         userAgent: requestMetadata.userAgent,
       },
-    );
+    });
   }
   return res;
 }

@@ -3,7 +3,7 @@ import { AlertTriangle, CheckCircle, Clock, TrendingUp, TrendingDown } from 'luc
 
 type Status = 'healthy' | 'warning' | 'error' | 'unknown';
 
-export const getStatusColor = (status: Status) => {
+export const getStatusColor = (status: Status): string => {
   switch (status) {
     case 'healthy': {
       return 'text-green-600 bg-green-50 border-green-200';
@@ -20,7 +20,8 @@ export const getStatusColor = (status: Status) => {
   }
 };
 
-export const getStatusIcon = (status: Status) => {
+// eslint-disable-next-line sonarjs/function-return-type
+export const getStatusIcon = (status: Status): React.ReactNode => {
   switch (status) {
     case 'healthy': {
       return <CheckCircle className="h-4 w-4 text-green-600" />;
@@ -37,14 +38,15 @@ export const getStatusIcon = (status: Status) => {
   }
 };
 
-export const getTrendIcon = (trend?: string) => {
+// eslint-disable-next-line sonarjs/function-return-type
+export const getTrendIcon = (trend?: string): React.ReactNode => {
   switch (trend) {
     case 'up': { return <TrendingUp className="h-3 w-3 text-green-600" />;
     }
     case 'down': { return <TrendingDown className="h-3 w-3 text-red-600" />;
     }
-    default:
-      // No icon for default case
-    
+    default: {
+      return undefined; // Explicitly return undefined when no icon is needed
+    }
   }
 };

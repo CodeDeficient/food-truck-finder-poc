@@ -86,7 +86,7 @@ export function buildTruckDataSchema(
     contact_info: buildContactInfo(extractedTruckData.contact_info),
     social_media: buildSocialMedia(extractedTruckData.social_media),
     cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
-      ? extractedTruckData.cuisine_type
+      ? (extractedTruckData.cuisine_type.filter(c => typeof c === 'string'))
       : [],
     price_range: extractedTruckData.price_range ?? undefined, // Ensure it's one of the allowed enum values or undefined
     specialties: Array.isArray(extractedTruckData.specialties)
@@ -128,58 +128,73 @@ export async function handleDuplicateCheck(
   console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
   const duplicateCheck: DuplicateCheckResult = await DuplicatePreventionService.checkForDuplicates(truckData);
 
-  let truck: FoodTruck | { error: string };
   if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
-    const { bestMatch } = duplicateCheck;
-    console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
-
-    if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
-      // Merge with existing truck
-      truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
-      if ('error' in truck) {
-        console.error(`Job ${jobId}: Error merging duplicates: ${truck.error}`);
-        // Fallback to creating a new truck if merge fails
-        truck = await FoodTruckService.createTruck(truckData);
-        if ('error' in truck) {
-          console.error(`Job ${jobId}: Error creating truck after merge failure: ${truck.error}`);
-          throw new Error(`Failed to merge or create truck: ${truck.error}`);
-        }
-      } else {
-        console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
-      }
-    } else if (bestMatch.recommendation === 'update') {
-      // Update existing truck with new data
-      truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
-      if ('error' in truck) {
-        console.error(`Job ${jobId}: Error updating existing truck: ${truck.error}`);
-        // Fallback to creating a new truck if update fails
-        truck = await FoodTruckService.createTruck(truckData);
-        if ('error' in truck) {
-          console.error(`Job ${jobId}: Error creating truck after update failure: ${truck.error}`);
-          throw new Error(`Failed to update or create truck: ${truck.error}`);
-        }
-      } else {
-        console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
-      }
-    } else {
-      // Create new truck but log the potential duplicate
-      truck = await FoodTruckService.createTruck(truckData);
-      if ('error' in truck) {
-        console.error(`Job ${jobId}: Error creating truck despite potential duplicate: ${truck.error}`);
-        throw new Error(`Failed to create truck: ${truck.error}`);
-      }
-      console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason ?? 'unknown reason'})`);
-    }
+    return await handleDuplicate(jobId, truckData, duplicateCheck);
   } else {
     // No duplicates found, create new truck
-    truck = await FoodTruckService.createTruck(truckData);
+    const truck = await FoodTruckService.createTruck(truckData);
     if ('error' in truck) {
       console.error(`Job ${jobId}: Error creating new truck: ${truck.error}`);
       throw new Error(`Failed to create truck: ${truck.error}`);
     }
+    return truck;
+  }
+}
+
+async function handleDuplicate(
+  jobId: string,
+  truckData: FoodTruckSchema,
+  duplicateCheck: DuplicateCheckResult
+): Promise<FoodTruck> {
+  const { bestMatch } = duplicateCheck;
+  if (!bestMatch) {
+    // This should not happen if isDuplicate is true, but as a safeguard:
+    const truck = await FoodTruckService.createTruck(truckData);
+    if ('error' in truck) {
+      throw new Error(`Failed to create truck: ${truck.error}`);
+    }
+    return truck;
   }
 
-  return truck;
+  console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
+
+  if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
+    const truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
+    if ('error' in truck) {
+      console.error(`Job ${jobId}: Error merging duplicates: ${truck.error}`);
+      const newTruck = await FoodTruckService.createTruck(truckData);
+      if ('error' in newTruck) {
+        console.error(`Job ${jobId}: Error creating truck after merge failure: ${newTruck.error}`);
+        throw new Error(`Failed to merge or create truck: ${newTruck.error}`);
+      }
+      return newTruck;
+    } else {
+      console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
+      return truck;
+    }
+  } else if (bestMatch.recommendation === 'update') {
+    const truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
+    if ('error' in truck) {
+      console.error(`Job ${jobId}: Error updating existing truck: ${truck.error}`);
+      const newTruck = await FoodTruckService.createTruck(truckData);
+      if ('error' in newTruck) {
+        console.error(`Job ${jobId}: Error creating truck after update failure: ${newTruck.error}`);
+        throw new Error(`Failed to update or create truck: ${newTruck.error}`);
+      }
+      return newTruck;
+    } else {
+      console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
+      return truck;
+    }
+  } else {
+    const truck = await FoodTruckService.createTruck(truckData);
+    if ('error' in truck) {
+      console.error(`Job ${jobId}: Error creating truck despite potential duplicate: ${truck.error}`);
+      throw new Error(`Failed to create truck: ${truck.error}`);
+    }
+    console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason ?? 'unknown reason'})`);
+    return truck;
+  }
 }
 
 // Helper function to finalize job status

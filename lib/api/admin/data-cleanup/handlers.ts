@@ -45,13 +45,13 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
 
   switch (action) {
     case 'status': {
-      return await handleGetStatus();
+      return handleGetStatus();
     }
     case 'preview': {
       return await handleGetPreview();
     }
     default: {
-      return await handleGetDefault();
+      return handleGetDefault();
     }
   }
 }
@@ -123,7 +123,7 @@ export async function handleDryRun(options: DataCleanupRequestBody['options']): 
   });
 }
 
-export async function handleGetStatus(): Promise<NextResponse> {
+export function handleGetStatus(): NextResponse {
   return NextResponse.json({
     success: true,
     status: {
@@ -160,7 +160,7 @@ export async function handleGetPreview(): Promise<NextResponse> {
   });
 }
 
-export async function handleGetDefault(): Promise<NextResponse> {
+export function handleGetDefault(): NextResponse {
   return NextResponse.json({
     success: true,
     endpoints: [

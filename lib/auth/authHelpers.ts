@@ -9,26 +9,27 @@ interface RequestMetadata {
   userAgent: string;
 }
 
-export async function handleSuccessfulAuth(
-  user: User,
-  redirectTo: string,
-  origin: string,
-  identifier: string,
-  requestMetadata: RequestMetadata,
-) {
+export async function handleSuccessfulAuth(options: {
+  user: User;
+  redirectTo: string;
+  origin: string;
+  identifier: string;
+  requestMetadata: RequestMetadata;
+}) {
+  const { user, redirectTo, origin, identifier, requestMetadata } = options;
   const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single();
 
-  await AuditLogger.logAuthEvent(
-    'login_success',
-    user.email,
-    user.id,
-    requestMetadata,
-    { provider: 'google', role: profile?.role },
-  );
+  await AuditLogger.logAuthEvent({
+    eventType: 'login_success',
+    userEmail: user.email,
+    userId: user.id,
+    request: requestMetadata,
+    details: { provider: 'google', role: profile?.role },
+  });
 
   RateLimiter.recordSuccess(identifier, 'auth');
 
@@ -56,11 +57,9 @@ export async function handleAuthFailure(
   identifier: string,
   requestMetadata: RequestMetadata,
 ) {
-  await AuditLogger.logAuthEvent(
-    'login_failure',
-    undefined,
-    undefined,
-    requestMetadata,
-    { provider: 'google', error: error.message },
-  );
+  await AuditLogger.logAuthEvent({
+    eventType: 'login_failure',
+    request: requestMetadata,
+    details: { provider: 'google', error: error.message },
+  });
 }
