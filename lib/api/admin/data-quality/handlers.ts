@@ -44,7 +44,7 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
       return await handleUpdateSingle(truckId);
     }
     case 'batch-update': {
-      return await handleBatchUpdate();
+      return handleBatchUpdate();
     }
     case 'recalculate-all': {
       return await handleRecalculateAll();
