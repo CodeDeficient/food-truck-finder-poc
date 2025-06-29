@@ -26,7 +26,7 @@ export function useTooltipLabel({
 }: UseTooltipLabelProps) {
   return React.useMemo(() => {
     if (hideLabel || !payload || payload.length === 0) {
-      return null; // Return null or an empty div if no label or payload
+      return; // Return undefined or an empty div if no label or payload
     }
 
     const [item] = payload;

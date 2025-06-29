@@ -46,7 +46,7 @@ interface LogSecurityEventAndRedirectParams {
 
 async function logSecurityEventAndRedirect({
   req,
-  res,
+  res: _res,
   logParams,
   redirectPath,
   redirectFromPath,
@@ -126,7 +126,7 @@ export async function protectAdminRoutes(req: NextRequest, res: NextResponse, re
     .eq('id', user.id)
     .single() as { data: SupabaseProfile | null; error: { message?: string } | null };
   if (profileQueryError || (profile && profile.role !== 'admin')) {
-    return logAndRedirectDenied({ req, res, requestMetadata, user, profile: profile ?? null, profileQueryError: profileQueryError ?? undefined });
+    return logAndRedirectDenied({ req, res, requestMetadata, user, profile: profile ?? undefined, profileQueryError: profileQueryError ?? undefined });
   }
   if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
     await AuditLogger.logDataAccess({

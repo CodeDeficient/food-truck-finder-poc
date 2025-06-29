@@ -18,7 +18,7 @@ interface TruckAccordionItemProps {
 
 export function TruckAccordionItem({
   truck,
-  selectedTruckId,
+  selectedTruckId: _selectedTruckId,
   setSelectedTruckId,
   isOpen,
   userLocation,
