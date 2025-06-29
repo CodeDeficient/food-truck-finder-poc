@@ -12,6 +12,7 @@ This file documents the rules, best practices, and key learnings I develop while
 ### **2. Automation Governance**
    - **Rule 2.1:** Do not automate fixes for `@typescript-eslint/strict-boolean-expressions`. The risk of introducing logical errors by misinterpreting developer intent with nullable values is too high. This was learned from the `revert-boolean-fixer-damage.cjs` script, which was created to undo previous failed automation attempts.
    - **Rule 2.2:** Automation for type-safety rules (`no-explicit-any`, `no-unsafe-assignment`) must be treated as medium-confidence. While some patterns can be fixed, a full solution requires manual type annotation and contextual understanding.
+   - **Rule 2.3:** For error object stringification, use `JSON.stringify()` instead of `String()` when the error type is `unknown` or `any`. The `@typescript-eslint/no-base-to-string` rule prevents unsafe stringification of objects that could result in `[object Object]` output.
 
 ### **3. Refactoring & Code Modification**
    - **Rule 3.1:** When a function exceeds the `max-lines-per-function` limit, apply the following refactoring patterns in order of preference:
