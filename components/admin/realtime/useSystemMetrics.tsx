@@ -6,7 +6,7 @@ export interface StatusMetric {
   value: number | string;
   unit?: string;
   trend?: 'up' | 'down' | 'stable';
-  status: 'healthy' | 'warning' | 'error';
+  status: 'healthy' | 'warning' | 'error' | 'unknown';
   icon: React.ReactNode;
 }
 

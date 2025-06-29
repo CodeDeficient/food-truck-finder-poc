@@ -122,3 +122,11 @@ This rule set documents key operational learnings and best practices derived fro
 - **Rule 1.27: Verify File Paths and Use Search as a Fallback**: Before attempting to read or write a file, verify its existence. If a `read_file` operation fails with a "File not found" error, do not assume the file is missing. Instead, use `search_files` to locate the file or confirm its absence. This prevents errors caused by incorrect path assumptions.
   - *Trigger Case*: A `read_file` operation fails, or when the exact path of a file is uncertain.
   - *Example*: If `read_file('app/api/auth/callback/route.ts')` fails, use `search_files(regex='handleSuccessfulAuth')` to find the correct file where the function is being called.
+
+- **Rule 1.28: Immediate Re-Read After `replace_in_file` Failure**: If a `replace_in_file` operation fails for any reason (e.g., non-matching `SEARCH` block, merge conflict), *immediately* re-read the file using `read_file` before attempting another modification. Do not assume the file's state is known. This prevents cascading failures due to stale context.
+  - *Trigger Case*: Any `replace_in_file` operation that fails.
+  - *Example*: If a `replace_in_file` operation on `lib/supabase.ts` fails, immediately call `read_file('lib/supabase.ts')` before constructing a new `replace_in_file` request.
+
+- **Rule 1.29: Validate `await` Usage Against Function Return Types**: Before using `await` on a function call, verify that the function is `async` and returns a `Promise`. Redundant `await` keywords on non-Promise-returning functions can lead to linting errors and unnecessary complexity.
+  - *Trigger Case*: Encountering `@typescript-eslint/await-thenable` or `sonarjs/no-invalid-await` errors.
+  - *Example*: If `myFunction()` returns `void` or a non-Promise value, avoid `await myFunction();`. If `myAsyncFunction()` returns `Promise<T>`, then `await myAsyncFunction();` is appropriate.

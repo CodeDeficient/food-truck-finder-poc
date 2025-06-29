@@ -1,0 +1,33 @@
+🔍 High-Impact Files for Linting Remediation Report
+
+===================================================
+
+
+🎯 HIGH-IMPACT FILES (20+ errors):
+==================================================
+No files with 20+ errors found.
+
+📊 MEDIUM-IMPACT FILES (10-19 errors):
+==================================================
+No files with 10-19 errors found.
+
+📈 LOWER-IMPACT FILES (5-9 errors):
+==================================================
+6 errors: /lib/api/admin/scraping-metrics/handlers.ts
+  - [warning] @typescript-eslint/no-unused-vars (Line 43, Col 9): 'totalRuns' is assigned a value but never used.
+  - [error] sonarjs/no-unused-vars (Line 43, Col 9): Remove the declaration of the unused 'totalRuns' variable.
+  - [error] sonarjs/no-dead-store (Line 43, Col 9): Remove this useless assignment to variable "totalRuns".
+  - [warning] @typescript-eslint/no-unused-vars (Line 60, Col 9): 'averageRunTime' is assigned a value but never used.
+  - [error] sonarjs/no-unused-vars (Line 60, Col 9): Remove the declaration of the unused 'averageRunTime' variable.
+  - [error] sonarjs/no-dead-store (Line 60, Col 9): Remove this useless assignment to variable "averageRunTime".
+  - [warning] @typescript-eslint/no-unused-vars (Line 69, Col 9): 'newTrucksToday' is assigned a value but never used.
+  - [error] sonarjs/no-unused-vars (Line 69, Col 9): Remove the declaration of the unused 'newTrucksToday' variable.
+  - [error] sonarjs/no-dead-store (Line 69, Col 9): Remove this useless assignment to variable "newTrucksToday".
+
+📋 SUMMARY:
+==================================================
+Total files with errors: 14
+High-impact files (20+): 0
+Medium-impact files (10-19): 0
+Lower-impact files (5-9): 1
+Files with <5 errors: 13
