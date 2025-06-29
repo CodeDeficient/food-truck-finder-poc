@@ -70,7 +70,7 @@ export const CachedFoodTruckService = {
       console.info(`CachedFoodTruckService: Cache miss - fetching truck ${id} from database`);
       const result = await FoodTruckService.getTruckById(id);
       if ('error' in result) {
-        return null;
+        return undefined;
       }
       return result as FoodTruck;
     },
@@ -109,11 +109,12 @@ export const CachedFoodTruckService = {
         dbQuery = dbQuery.contains('cuisine_type', [filters.cuisine]);
       }
 
-      const { data, error }: { data: FoodTruck[] | null; error: any } = await dbQuery.limit(50);
+      const { data, error }: { data: FoodTruck[] | null; error: unknown } = await dbQuery.limit(50);
       const trucks: FoodTruck[] = data ?? [];
 
       if (error != undefined) {
-        throw new Error(`Search query failed: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
+        throw new Error(`Search query failed: ${errorMessage}`);
       }
 
       let results: FoodTruck[] = trucks ?? [];
