@@ -15,41 +15,50 @@ export function mapExtractedDataToTruckSchema(
   }
 
   const name = extractedData.name ?? 'Unknown Test Truck';
-  const locationData = extractedData.current_location ?? {};
-  const fullAddress = [
-    locationData.address,
-    locationData.city,
-    locationData.state,
-    locationData.zip_code,
-  ]
-    .filter(Boolean)
-    .join(', ');
+  // const locationData = extractedData.current_location ?? {}; // locationData was part of unused fullAddress
+  // const fullAddress = [ // Unused variable
+  //   locationData.address,
+  //   locationData.city,
+  //   locationData.state,
+  //   locationData.zip_code,
+  // ]
+  //   .filter(Boolean)
+  //   .join(', ');
 
-  return {
-    name: name,
-    description: extractedData.description ?? undefined,
-    current_location: {
-      lat: locationData.lat ?? 0,
-      lng: locationData.lng ?? 0,
-      address: fullAddress ?? (locationData.raw_text ?? undefined),
+  const _mapCurrentLocation = (
+    currentLocationData?: ExtractedFoodTruckDetails['current_location']
+  ): FoodTruckSchema['current_location']=> {
+    const locData = currentLocationData ?? {};
+    const addr = [locData.address, locData.city, locData.state, locData.zip_code].filter(Boolean).join(', ');
+    return {
+      lat: locData.lat ?? 0,
+      lng: locData.lng ?? 0,
+      address: addr ?? (locData.raw_text ?? undefined),
       timestamp: new Date().toISOString(),
-    },
-    scheduled_locations: extractedData.scheduled_locations ?? undefined,
-    operating_hours: extractedData.operating_hours ?? undefined,
-    menu: (extractedData.menu ?? []).map((category: MenuCategory) => ({
+    };
+  };
+
+  const _mapMenu = (menu?: MenuCategory[]): FoodTruckSchema['menu'] => {
+    return (menu ?? []).map((category: MenuCategory) => ({
       name: category.name ?? 'Uncategorized',
       items: (category.items ?? []).map((item: MenuItem) => ({
         name: item.name ?? 'Unknown Item',
         description: item.description ?? undefined,
-        price:
-          typeof item.price === 'number' || typeof item.price === 'string'
-            ? item.price
-            : undefined,
+        price: typeof item.price === 'number' || typeof item.price === 'string' ? item.price : undefined,
         dietary_tags: item.dietary_tags ?? [],
       })),
-    })),
-    contact_info: extractedData.contact_info ?? undefined,
-    social_media: extractedData.social_media ?? undefined,
+    }));
+  };
+
+  return {
+    name: name,
+    description: extractedData.description ?? undefined,
+    current_location: _mapCurrentLocation(extractedData.current_location),
+    scheduled_locations: extractedData.scheduled_locations ?? undefined, // Assuming direct mapping or further helper if complex
+    operating_hours: extractedData.operating_hours ?? undefined, // Assuming direct mapping
+    menu: _mapMenu(extractedData.menu),
+    contact_info: extractedData.contact_info ?? undefined, // Assuming direct mapping
+    social_media: extractedData.social_media ?? undefined, // Assuming direct mapping
     cuisine_type: extractedData.cuisine_type ?? [],
     price_range: extractedData.price_range ?? undefined,
     specialties: extractedData.specialties ?? [],

@@ -28,12 +28,12 @@ export const formatHours = (hours: DailyOperatingHours) => { // Updated to accep
 export const getPopularItems = (truck: FoodTruck): MenuItem[] => { // Explicitly define return type
     // Explicitly check for nullish and boolean
     return (truck.menu?.flatMap(category => category.items)
-        .filter((item): item is MenuItem => Boolean(item && item.is_popular === true)) ?? []);
+        .filter((item): item is MenuItem => item != undefined && item.is_popular === true) ?? []);
 }
 
 export const getPriceRange = (truck: FoodTruck) => {
     const allItems = truck.menu?.flatMap(category => category.items);
-    if (!allItems || allItems.length === 0) {
+    if (allItems == undefined || allItems.length === 0) { // Explicitly check for null/undefined
         return 'N/A';
     }
     const numericPrices = allItems

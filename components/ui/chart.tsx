@@ -100,6 +100,17 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
 
+interface ChartTooltipContentProps {
+  readonly hideLabel?: boolean;
+  readonly hideIndicator?: boolean;
+  readonly indicator?: 'line' | 'dot' | 'dashed';
+  readonly nameKey?: string;
+  readonly labelKey?: string;
+  // We can add any other specific props for ChartTooltipContent here
+  // and ensure they are distinct from RechartsPrimitive.Tooltip props
+  // and standard div props to avoid conflicts.
+}
+
 function isNonEmptyArray<T>(arr: T[] | undefined): arr is T[] {
   return Array.isArray(arr) && arr.length > 0;
 }
@@ -247,32 +258,28 @@ function ChartTooltipItems(props: Readonly<ChartTooltipItemsProps>) {
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<'div'> & {
-      readonly hideLabel?: boolean;
-      readonly hideIndicator?: boolean;
-      readonly indicator?: 'line' | 'dot' | 'dashed';
-      readonly nameKey?: string;
-      readonly labelKey?: string;
-    }
->(
-  (
-    {
-      active,
-      payload,
-      className,
-      indicator = 'dot',
-      hideLabel = false,
-      hideIndicator = false,
-      label,
-      labelFormatter,
-      labelClassName,
-      formatter,
-      color,
-      nameKey,
-      labelKey,
-    },
-    ref,
-  ) => {
+    React.ComponentProps<'div'> &
+    ChartTooltipContentProps
+>(({
+  active,
+  payload,
+  className,
+  indicator = 'dot',
+  hideLabel = false,
+  hideIndicator = false,
+  label,
+  labelFormatter,
+  labelClassName,
+  formatter,
+  color,
+  nameKey,
+  labelKey
+  // ...props // Removed unused rest props
+}, ref) => {
+  // Destructure from props if necessary, or use directly if already destructured
+  // For example, if ChartTooltipContentProps was defined as:
+  // interface ChartTooltipContentProps { tooltipSpecificProp?: string; ... }
+  // Then you might access props.tooltipSpecificProp
     const { config } = useChart();
     const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload : [];
     const tooltipLabel = useTooltipLabel({
@@ -321,6 +328,14 @@ ChartTooltipContent.displayName = 'ChartTooltip';
 
 const ChartLegend = RechartsPrimitive.Legend;
 
+interface ChartLegendContentProps {
+  hideIcon?: boolean;
+  nameKey?: string;
+  // Allow other RechartsPrimitive.LegendProps and div attributes
+  // by intersection or by explicitly including them if needed.
+  // For now, focusing on the direct props causing max-params.
+}
+
 interface ChartLegendItemProps {
   item: Payload<ValueType, NameType>;
   idx: number;
@@ -364,11 +379,9 @@ function ChartLegendItem({ item, idx, hideIcon, nameKey, config }: Readonly<Char
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof RechartsPrimitive.Legend> &
-    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
-      hideIcon?: boolean;
-      nameKey?: string;
-    }
->(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
+    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> &
+    ChartLegendContentProps
+>(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey /* ...props removed */ }, ref) => {
   const { config } = useChart();
   const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload as Payload<ValueType, NameType>[] : [];
   if (!isNonEmptyArray(safePayload)) {

@@ -360,89 +360,62 @@ export class FoodTruckDiscoveryEngine {
     return urls;
   }
 
+  private _foodTruckKeywords = [
+    'food-truck', 'foodtruck', 'mobile-food', 'street-food', 'truck',
+    'kitchen', 'eats', 'bbq', 'burger', 'taco', 'catering', 'mobile',
+    'chef', 'bistro', 'cafe',
+  ];
+
+  private _blacklistKeywords = [
+    'facebook.com', 'instagram.com', 'twitter.com', 'linkedin.com',
+    'youtube.com', 'yelp.com', 'google.com', 'maps.google.com',
+    'foursquare.com', 'tripadvisor.com', 'zomato.com', 'eventbrite.com',
+    'meetup.com',
+  ];
+
+  private _hasFoodTruckKeywords(urlLower: string): boolean {
+    return this._foodTruckKeywords.some((keyword) => urlLower.includes(keyword));
+  }
+
+  private _isOnBlacklist(urlLower: string): boolean {
+    return this._blacklistKeywords.some((keyword) => urlLower.includes(keyword));
+  }
+
+  private async _isNewUrlInDiscoveredUrls(url: string): Promise<boolean> {
+    if (!supabaseAdmin) return false; // Already not a food truck URL if supabaseAdmin is undefined
+    const { data: existingDiscovered } = await supabaseAdmin
+      .from('discovered_urls')
+      .select('id', { count: 'exact', head: true })
+      .eq('url', url);
+    return (existingDiscovered?.length ?? 0) > 0;
+  }
+
+  private async _isNewUrlInFoodTrucks(url: string): Promise<boolean> {
+    if (!supabaseAdmin) return false;
+    const { data: existingTrucks } = await supabaseAdmin
+      .from('food_trucks')
+      .select('id', { count: 'exact', head: true })
+      .contains('source_urls', [url]);
+    return (existingTrucks?.length ?? 0) > 0;
+  }
+
   private async isFoodTruckUrl(url: string): Promise<boolean> {
     try {
-      // Basic URL validation
-      new URL(url);
-
-      // Food truck indicators in URL
-      const foodTruckKeywords = [
-        'food-truck',
-        'foodtruck',
-        'mobile-food',
-        'street-food',
-        'truck',
-        'kitchen',
-        'eats',
-        'bbq',
-        'burger',
-        'taco',
-        'catering',
-        'mobile',
-        'chef',
-        'bistro',
-        'cafe',
-      ];
-
-      // Blacklist - skip these domains
-      const blacklistKeywords = [
-        'facebook.com',
-        'instagram.com',
-        'twitter.com',
-        'linkedin.com',
-        'youtube.com',
-        'yelp.com',
-        'google.com',
-        'maps.google.com',
-        'foursquare.com',
-        'tripadvisor.com',
-        'zomato.com',
-        'eventbrite.com',
-        'meetup.com',
-      ];
-
+      new URL(url); // Basic URL validation
       const urlLower = url.toLowerCase();
 
-      // Skip social media and review sites
-      if (blacklistKeywords.some((keyword) => urlLower.includes(keyword))) {
-        return false;
-      }
+      if (this._isOnBlacklist(urlLower)) return false;
+      if (await this._isNewUrlInDiscoveredUrls(url)) return false;
+      if (await this._isNewUrlInFoodTrucks(url)) return false;
 
-      // Check if we already have this URL in discovered_urls
-      if (supabaseAdmin == undefined) {
-        return false;
-      }
+      const hasKeywords = this._hasFoodTruckKeywords(urlLower);
+      const isBusinessDomain = /\.(com|net|org|biz|info)/.test(urlLower) &&
+                              !urlLower.includes('blog') &&
+                              !urlLower.includes('news');
 
-      const { data: existingDiscovered } = await supabaseAdmin
-        .from('discovered_urls')
-        .select('id')
-        .eq('url', url)
-        .limit(1);
-
-      if (existingDiscovered != undefined && existingDiscovered.length > 0) {
-        return false; // Already discovered
-      }
-
-      // Check if we already have this URL in food_trucks
-      const { data: existingTrucks } = await supabaseAdmin
-        .from('food_trucks')
-        .select('id')
-        .contains('source_urls', [url])
-        .limit(1);
-
-      if (existingTrucks != undefined && existingTrucks.length > 0) {
-        return false; // Already have this URL
-      }
-
-      // Accept if has food truck keywords or if it's a business domain
-      return (
-        foodTruckKeywords.some((keyword) => urlLower.includes(keyword)) ||
-        (/\.(com|net|org|biz|info)/.test(urlLower) &&
-          !urlLower.includes('blog') &&
-          !urlLower.includes('news'))
-      );
+      return hasKeywords || isBusinessDomain;
     } catch (error) {
-      console.error('Error validating food truck URL:', error);
+      console.error(`Error validating food truck URL ${url}:`, error);
       return false;
     }
   }
@@ -599,6 +572,39 @@ export class FoodTruckDiscoveryEngine {
     return result;
   }
 
+  private async _prepareInsertData(
+    baseData: { url: string; status: string; notes: string },
+    discoveryMethod: string,
+    metadata: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const insertData: Record<string, unknown> = { ...baseData };
+    // Add optional columns only if they exist in the table
+    // This check might be optimistic or could be replaced by a schema check if available
+    try {
+      // Attempt a lightweight query to see if a known optional column exists.
+      // This is not foolproof but can help avoid errors if schema varies.
+      // A more robust solution would involve actual schema introspection if possible.
+      if (supabaseAdmin) { // Ensure supabaseAdmin is defined before using it
+        const { error: testError } = await supabaseAdmin
+          .from('discovered_urls')
+          .select('discovery_method', { count: 'exact', head: true })
+          .limit(0); // No need to fetch data, just check column existence via query success
+
+        if (!testError) {
+          insertData.discovery_method = discoveryMethod;
+          insertData.region = 'SC'; // Assuming SC if not otherwise specified
+          insertData.metadata = metadata;
+        } else {
+          console.info('Optional columns (discovery_method, region, metadata) might be missing in discovered_urls table. Storing basic data.');
+        }
+      }
+    } catch (e) {
+      // Catch errors during the test query itself
+      console.info('Error checking for optional columns, storing basic data:', e);
+    }
+    return insertData;
+  }
+
   /**
    * Enhanced store method with discovery method and metadata
    */
@@ -607,57 +613,47 @@ export class FoodTruckDiscoveryEngine {
     discoveryMethod: string = 'manual',
     metadata: Record<string, unknown> = {},
   ): Promise<{ isNew: boolean }> {
-    try {
-      if (!supabaseAdmin) {
-        throw new Error('Supabase admin client not available');
-      }
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin client not available for storing URL.');
+    }
 
+    try {
       // Check if URL already exists
-      const { data: existing } = await supabaseAdmin
+      const { data: existing, error: selectError } = await supabaseAdmin
         .from('discovered_urls')
-        .select('id')
-        .eq('url', url)
-        .limit(1);
+        .select('id', { count: 'exact', head: true })
+        .eq('url', url);
+
+      if (selectError) {
+        console.error(`Error checking if URL ${url} exists:`, selectError);
+        throw selectError;
+      }
 
       if (existing && existing.length > 0) {
         return { isNew: false };
       }
 
-      // Store new URL - handle missing columns gracefully
-      const insertData: Record<string, unknown> = {
+      const baseInsertData = {
         url,
-        status: 'new',
+        status: 'new' as const, // Ensure status type is literal
         notes: `Discovered via ${discoveryMethod}`,
       };
 
-      // Add optional columns only if they exist in the table
-      try {
-        // Check if discovery_method column exists
-        const { error: testError } = await supabaseAdmin
-          .from('discovered_urls')
-          .select('discovery_method')
-          .limit(1);
+      const finalInsertData = await this._prepareInsertData(baseInsertData, discoveryMethod, metadata);
 
-        if (!testError) {
-          insertData.discovery_method = discoveryMethod;
-          insertData.region = 'SC';
-          insertData.metadata = metadata;
-        }
-      } catch {
-        // Column doesn't exist, continue without it
-        console.info('Some columns missing in discovered_urls table, using basic structure');
-      }
+      const { error: insertError } = await supabaseAdmin.from('discovered_urls').insert(finalInsertData);
 
-      const { error } = await supabaseAdmin.from('discovered_urls').insert(insertData);
-
-      if (error) {
-        throw error;
+      if (insertError) {
+        console.error(`Error inserting URL ${url}:`, insertError);
+        throw insertError;
       }
 
       return { isNew: true };
     } catch (error) {
-      console.error('Error storing discovered URL:', error);
-      throw error;
+      // Catch errors from _prepareInsertData or other unexpected issues
+      console.error(`Overall error storing discovered URL ${url}:`, error);
+      // Depending on policy, you might want to re-throw or return a specific error object
+      throw error; // Re-throw to be handled by the caller
     }
   }
 

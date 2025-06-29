@@ -5,6 +5,44 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 
+// Interface definitions moved to the top level
+interface LogAdminActionParams {
+  userId: string;
+  userEmail: string;
+  action: string;
+  resourceType: string;
+  resourceId?: string;
+  details?: Record<string, unknown>;
+  request?: {
+    ip?: string;
+    userAgent?: string;
+    sessionId?: string;
+  };
+}
+
+interface LogAuthEventParams {
+  eventType: 'login_attempt' | 'login_success' | 'login_failure' | 'logout';
+  userEmail?: string;
+  userId?: string;
+  request?: {
+    ip?: string;
+    userAgent?: string;
+  };
+  details?: Record<string, unknown>;
+}
+
+interface LogDataAccessParams {
+  userId: string;
+  userEmail: string;
+  resourceType: string;
+  resourceId?: string;
+  action?: 'read' | 'search' | 'export' | 'admin_access';
+  request?: {
+    ip?: string;
+    userAgent?: string;
+  };
+}
+
 // Type alias for severity levels to comply with sonarjs/use-type-alias
 type SeverityLevel = 'info' | 'warning' | 'error' | 'critical';
 
@@ -39,40 +77,28 @@ export class AuditLogger {
   /**
    * Log admin action with full audit trail
    */
-  static async logAdminAction(
-    userId: string,
-    userEmail: string,
-    action: string,
-    resourceType: string,
-    resourceId?: string,
-    details?: Record<string, unknown>,
-    request?: {
-      ip?: string;
-      userAgent?: string;
-      sessionId?: string;
-    }
-  ): Promise<void> {
+  static async logAdminAction(params: LogAdminActionParams): Promise<void> {
     const auditEntry: AuditLogEntry = {
-      user_id: userId,
-      user_email: userEmail,
-      action,
-      resource_type: resourceType,
-      resource_id: resourceId,
-      details,
-      ip_address: request?.ip,
-      user_agent: request?.userAgent,
-      session_id: request?.sessionId,
+      user_id: params.userId,
+      user_email: params.userEmail,
+      action: params.action,
+      resource_type: params.resourceType,
+      resource_id: params.resourceId,
+      details: params.details,
+      ip_address: params.request?.ip,
+      user_agent: params.request?.userAgent,
+      session_id: params.request?.sessionId,
       timestamp: new Date().toISOString(),
-      severity: this.determineSeverity(action, resourceType)
+      severity: this.determineSeverity(params.action, params.resourceType)
     };
 
     await this.writeAuditLog(auditEntry);
     
     // Log to console for immediate monitoring
     console.info('Admin Action Audit:', {
-      user: userEmail,
-      action,
-      resource: (resourceId === undefined) ? resourceType : `${resourceType}:${resourceId}`,
+      user: params.userEmail,
+      action: params.action,
+      resource: (params.resourceId === undefined) ? params.resourceType : `${params.resourceType}:${params.resourceId}`,
       timestamp: auditEntry.timestamp
     });
   }
@@ -114,25 +140,16 @@ export class AuditLogger {
   /**
    * Log authentication events
    */
-  static async logAuthEvent(
-    eventType: 'login_attempt' | 'login_success' | 'login_failure' | 'logout',
-    userEmail?: string,
-    userId?: string,
-    request?: {
-      ip?: string;
-      userAgent?: string;
-    },
-    details?: Record<string, unknown>
-  ): Promise<void> {
-    const severity = eventType === 'login_failure' ? 'warning' : 'info';
+  static async logAuthEvent(params: LogAuthEventParams): Promise<void> {
+    const severity = params.eventType === 'login_failure' ? 'warning' : 'info';
     
     await this.logSecurityEvent({
-      event_type: eventType,
-      user_id: userId,
-      user_email: userEmail,
-      ip_address: request?.ip,
-      user_agent: request?.userAgent,
-      details,
+      event_type: params.eventType,
+      user_id: params.userId,
+      user_email: params.userEmail,
+      ip_address: params.request?.ip,
+      user_agent: params.request?.userAgent,
+      details: params.details,
       severity
     });
   }
@@ -140,27 +157,28 @@ export class AuditLogger {
   /**
    * Log data access events
    */
-  static async logDataAccess(
-    userId: string,
-    userEmail: string,
-    resourceType: string,
-    resourceId?: string,
-    action: 'read' | 'search' | 'export' | 'admin_access' = 'read',
-    request?: {
-      ip?: string;
-      userAgent?: string;
-    }
-  ): Promise<void> {
+interface LogDataAccessParams {
+  userId: string;
+  userEmail: string;
+  resourceType: string;
+  resourceId?: string;
+  action?: 'read' | 'search' | 'export' | 'admin_access';
+  request?: {
+    ip?: string;
+    userAgent?: string;
+  };
+}
+  static async logDataAccess(params: LogDataAccessParams): Promise<void> {
     await this.logSecurityEvent({
       event_type: 'data_access',
-      user_id: userId,
-      user_email: userEmail,
-      ip_address: request?.ip,
-      user_agent: request?.userAgent,
+      user_id: params.userId,
+      user_email: params.userEmail,
+      ip_address: params.request?.ip,
+      user_agent: params.request?.userAgent,
       details: {
-        resource_type: resourceType,
-        resource_id: resourceId,
-        action
+        resource_type: params.resourceType,
+        resource_id: params.resourceId,
+        action: params.action ?? 'read'
       },
       severity: 'info'
     });
@@ -296,8 +314,7 @@ export const SecurityMonitor = {
       // Check recent failed login attempts
       const recentEvents = await AuditLogger.getRecentSecurityEvents(1, 'warning');
       const failedLogins = recentEvents.filter(
-         
-        
+        event => event.event_type === 'login_failure' && event.user_id === userId
       );
 
       if (failedLogins.length > 5) {

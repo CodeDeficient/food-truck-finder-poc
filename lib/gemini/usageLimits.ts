@@ -56,8 +56,8 @@ export class GeminiUsageLimits {
   }
 
   static async checkWithMonitoring(
-    estimatedTokens: number,
-    limits: UsageLimits = this.DEFAULT_LIMITS
+    estimatedTokens: number
+    // limits: UsageLimits = this.DEFAULT_LIMITS // Removed unused parameter
   ): Promise<{ allowed: boolean; reason?: string; waitTime?: number }> {
     const canMakeRequest = await APIMonitor.canMakeRequest('gemini', 1, estimatedTokens);
 

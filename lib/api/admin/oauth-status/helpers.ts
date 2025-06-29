@@ -114,44 +114,57 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
     if (typeof supabaseUrl === 'string' && supabaseUrl.length > 0) { // Explicit check for undefined and empty string
       const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
       if (settingsResponse.ok === true) {
-        const settings: {
-          external?: { google?: boolean };
-          disable_signup?: boolean;
-          autoconfirm?: boolean;
-        } = (await settingsResponse.json()) as {
-          external?: { google?: boolean };
-          disable_signup?: boolean;
-          autoconfirm?: boolean;
-        };
-        status.supabase.authSettings = {
-          googleEnabled: settings.external?.google ?? false,
-          signupEnabled: settings.disable_signup === false,
-          autoconfirm: settings.autoconfirm ?? false
-        };
-        if (settings.external?.google !== undefined) { // Explicit check for undefined
-          status.oauth_flow.authProviderConfigured = true;
+        const settingsData: unknown = await settingsResponse.json();
+        if (typeof settingsData === 'object' && settingsData !== null) {
+          const settings = settingsData as {
+            external?: { google?: boolean };
+            disable_signup?: boolean;
+            autoconfirm?: boolean;
+          };
+          status.supabase.authSettings = {
+            googleEnabled: settings.external?.google ?? false,
+            signupEnabled: settings.disable_signup === false, // Note: Supabase typically uses true to disable, so false means enabled
+            autoconfirm: settings.autoconfirm ?? false
+          };
+          if (settings.external?.google !== undefined) {
+            status.oauth_flow.authProviderConfigured = true;
+          }
+        } else {
+          console.warn('Auth settings response was not a valid object:', settingsData);
         }
       }
     }
-  } catch {
-    console.info('Auth settings endpoint requires authentication (normal)');
+  } catch (error: unknown) {
+    console.warn('Error fetching or parsing Supabase auth settings:', error);
+    // Keep authProviderConfigured as its current state (likely false)
   }
 }
 
 async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) {
   try {
+    // This call is expected to "fail" by not redirecting, but not throw if provider is configured.
+    // The error object might contain information, or lack of error indicates success.
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/auth/callback',
-        skipBrowserRedirect: true
-      }
+        // Using a non-existent callback for testing purposes, as skipBrowserRedirect might not always prevent navigation attempts.
+        redirectTo: 'http://localhost:9999/auth/test-callback',
+        skipBrowserRedirect: true, // Attempt to prevent actual redirect
+      },
     });
-    if (oauthError !== null && oauthError.message !== 'Provider not found') { // Explicitly check for oauthError existence
+
+    // If no error, or if error is not "Provider not found", assume it's configured.
+    // Specific error messages can be brittle, so checking for NOT "Provider not found" is safer.
+    if (!oauthError || (oauthError && oauthError.message !== 'Provider not found' && oauthError.message !== 'No browser detected.')) {
       status.oauth_flow.authProviderConfigured = true;
+    } else if (oauthError) {
+      console.info(`OAuth provider test info (may indicate not configured): ${oauthError.message}`);
+      status.oauth_flow.authProviderConfigured = false; // Explicitly set if specific error indicates not configured
     }
   } catch (error: unknown) {
-    console.info('OAuth provider test failed (may be normal):', error);
+    // Catch any unexpected errors during the test call
+    console.warn('Unexpected error during OAuth provider test:', error);
+    // status.oauth_flow.authProviderConfigured remains as is or false
   }
 }
 

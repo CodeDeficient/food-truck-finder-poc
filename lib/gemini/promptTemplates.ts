@@ -148,8 +148,7 @@ Rules:
 - Return only the json, no additional text
   `,
 
-  foodTruckExtraction: (markdownContent: string, sourceUrl?: string) => {
-    const schema = `
+  _foodTruckExtractionSchema: `
 Expected JSON schema:
 {
   "name": "string (food truck name)",
@@ -200,9 +199,9 @@ Expected JSON schema:
   "dietary_options": ["string (dietary accommodations like vegan, gluten-free)"],
   "price_range": "string ($ for under $10, $$ for $10-20, $$$ for $20-30, $$$$ for over $30)"
 }
-`;
+`,
 
-    const instructions = `
+  _foodTruckExtractionInstructions: `
 Instructions:
 - Extract as much information as possible from the provided content
 - If information is not available, use null for the field
@@ -212,8 +211,9 @@ Instructions:
 - Be thorough in extracting menu items and their details
 - Look for social media links and contact information carefully
 - Return only the JSON object, no additional text or formatting
-`;
+`,
 
+  foodTruckExtraction(markdownContent: string, sourceUrl?: string) {
     return `
 You are an ai assistant tasked with extracting structured information about food trucks from their website content (provided in Markdown format). Your goal is to populate a json object with the following schema. Only return the json object, nothing else.
 
@@ -222,9 +222,9 @@ ${markdownContent}
 
 ${sourceUrl ? `Source URL: ${sourceUrl}` : ''}
 
-${schema}
+${this._foodTruckExtractionSchema}
 
-${instructions}
+${this._foodTruckExtractionInstructions}
 `;
   }
 };

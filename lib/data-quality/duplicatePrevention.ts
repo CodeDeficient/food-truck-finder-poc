@@ -116,6 +116,7 @@ export class DuplicatePreventionService {
   /**
    * Calculate similarity between two food trucks
    */
+  // eslint-disable-next-line max-lines-per-function -- Orchestrates multiple field-specific similarity calculations and weighting.
   private static calculateSimilarity(
     candidate: Partial<FoodTruck>, 
     existing: FoodTruck

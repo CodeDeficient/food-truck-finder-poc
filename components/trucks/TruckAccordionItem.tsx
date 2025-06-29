@@ -10,7 +10,7 @@ import { FoodTruck } from '@/lib/types/foodTruck';
 
 interface TruckAccordionItemProps {
   readonly truck: FoodTruck;
-  readonly selectedTruckId: string | undefined;
+  // selectedTruckId prop removed as it was unused
   readonly setSelectedTruckId: (id: string | undefined) => void;
   readonly isOpen: (truck: FoodTruck) => boolean;
   readonly userLocation: { lat: number; lng: number } | undefined;
@@ -18,7 +18,7 @@ interface TruckAccordionItemProps {
 
 export function TruckAccordionItem({
   truck,
-  selectedTruckId,
+  // selectedTruckId, // Removed
   setSelectedTruckId,
   isOpen,
   userLocation,

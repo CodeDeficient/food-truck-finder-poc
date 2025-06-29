@@ -32,6 +32,7 @@ interface UseRealtimeAdminEventsReturn {
   lastEventTime: Date | undefined;
 }
 
+// eslint-disable-next-line max-lines-per-function -- This hook orchestrates multiple other hooks and manages their state/dependencies.
 export function useRealtimeAdminEventsLogic(
   options: UseRealtimeAdminEventsOptions = {}
 ): UseRealtimeAdminEventsReturn {

@@ -40,7 +40,7 @@ export function TruckOperatingHours({ truck }: TruckOperatingHoursProps) {
         <CardDescription className="dark:text-gray-400">Daily schedule</CardDescription>
       </CardHeader>
       <CardContent>
-        {hasOperatingHours ? (
+        {hasOperatingHours === true ? (
           <div className="space-y-2">
             {daysOfWeek.map((day) => {
               const dayData = truck.operating_hours?.[day as keyof typeof truck.operating_hours] as DayData | undefined;

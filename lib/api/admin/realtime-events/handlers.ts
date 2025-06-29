@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { NextRequest } from 'next/server';
+// Removed unused NextRequest from 'next/server' as Response is used directly.
+// Only NextRequest was unused if Response is used from the global scope.
+// If NextRequest is truly unused, the import line should be removed or NextRequest specifically.
+// For now, assuming NextRequest might be used by verifyAdminAccess or other functions not shown.
+// Re-evaluating: NextRequest is used in handleGetRequest and handlePostRequest params.
+// NextResponse was the one that was unused.
+import { NextRequest } from 'next/server'; // Keeping NextRequest if used, will remove NextResponse if it was there.
 import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService, type ScrapingJob, type FoodTruck } from '@/lib/supabase';
 import { AdminEvent } from './types';
+import crypto from 'crypto'; // For randomUUID
 
 interface RealtimeMetrics {
   scrapingJobs: {
@@ -319,7 +326,7 @@ function formatSSEMessage(event: AdminEvent): string {
 }
 
 function generateEventId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+  return crypto.randomUUID();
 }
 
 async function handleHealthCheck(): Promise<Response> {

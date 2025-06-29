@@ -1,4 +1,4 @@
-import type { FoodTruck } from '@/lib/supabase';
+import { type FoodTruck } from '@/lib/supabase';
 
 export function getPlaceholderPatterns(): RegExp[] {
   return [
@@ -10,73 +10,84 @@ export function getPlaceholderPatterns(): RegExp[] {
     /\bna\b/i,
     /\bn\/a\b/i,
     /^0+$/,
-    /^null$/i
+    /^null$/i,
   ];
 }
 
-export function checkForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck> {
+export function processTruckForPlaceholders(
+  truck: FoodTruck,
+  patterns: RegExp[],
+): Partial<FoodTruck> | null {
   const updates: Partial<FoodTruck> = {};
+  let needsUpdate = false;
 
+  // Check name
   if (truck.name && patterns.some(pattern => pattern.test(truck.name ?? ''))) {
     updates.name = undefined;
+    needsUpdate = true;
   }
-  if (truck.description !== undefined && patterns.some(pattern => pattern.test(truck.description ?? ''))) {
+
+  // Check description
+  if (truck.description !== undefined && typeof truck.description === 'string' && patterns.some(pattern => pattern.test(truck.description ?? ''))) {
     updates.description = undefined;
+    needsUpdate = true;
   }
-  if (truck.price_range !== undefined && patterns.some(pattern => pattern.test(truck.price_range ?? ''))) {
+
+  // Check price range
+  if (truck.price_range !== undefined && typeof truck.price_range === 'string' && patterns.some(pattern => pattern.test(truck.price_range ?? ''))) {
     updates.price_range = undefined;
+    needsUpdate = true;
   }
-  return updates;
-}
 
-export function processTruckForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck> {
-  const basicInfoUpdates = checkForPlaceholders(truck, patterns);
-  const contactInfoUpdates = processContactInfoForPlaceholders(truck, patterns);
-  const addressUpdates = processAddressForPlaceholders(truck, patterns);
+  // Check contact info
+  if (truck.contact_info) {
+    const cleanContact: Partial<FoodTruck['contact_info']> = {}; // Initialize as potentially empty
+    let contactUpdated = false;
 
-  const updates: Partial<FoodTruck> = {
-    ...basicInfoUpdates,
-    ...getContactInfoUpdates(truck, contactInfoUpdates),
-    ...getLocationUpdates(truck, addressUpdates),
-  };
+    if (truck.contact_info.phone && patterns.some(pattern => pattern.test(truck.contact_info.phone ?? ''))) {
+      cleanContact.phone = undefined;
+      contactUpdated = true;
+    } else if (truck.contact_info.phone) {
+      cleanContact.phone = truck.contact_info.phone;
+    }
 
-  return updates;
-}
+    if (truck.contact_info.website && patterns.some(pattern => pattern.test(truck.contact_info.website ?? ''))) {
+      cleanContact.website = undefined;
+      contactUpdated = true;
+    } else if (truck.contact_info.website) {
+      cleanContact.website = truck.contact_info.website;
+    }
 
-function getContactInfoUpdates(truck: FoodTruck, contactInfoUpdates: Partial<FoodTruck['contact_info']>): Partial<FoodTruck> | object {
-  if (Object.keys(contactInfoUpdates).length > 0) {
-    return { contact_info: { ...truck.contact_info, ...contactInfoUpdates } };
+    if (truck.contact_info.email && patterns.some(pattern => pattern.test(truck.contact_info.email ?? ''))) {
+      cleanContact.email = undefined;
+      contactUpdated = true;
+    } else if (truck.contact_info.email) {
+      cleanContact.email = truck.contact_info.email;
+    }
+
+    // Only assign cleanContact to updates.contact_info if any part of it was actually modified or if it's intended to overwrite.
+    // If contactUpdated is true, it means at least one field was cleared.
+    // If contactUpdated is false, but we still want to ensure updates.contact_info reflects the (potentially partial) cleanContact,
+    // we need to decide if an empty cleanContact (if all fields were null/undefined originally) should result in updates.contact_info = {}.
+    // For now, only assign if something was actually changed to undefined OR if we want to ensure a "cleaned" object structure.
+    // Let's assume we only update if a field was actively cleared.
+    if (contactUpdated) {
+      updates.contact_info = {
+        ...truck.contact_info, // spread original first
+        ...cleanContact       // then overwrite with cleaned/undefined fields
+      };
+      needsUpdate = true;
+    }
   }
-  return {};
-}
 
-function getLocationUpdates(truck: FoodTruck, addressUpdates: Partial<FoodTruck['current_location']>): Partial<FoodTruck> | object {
-  if (Object.keys(addressUpdates).length > 0) {
-    return { current_location: { ...truck.current_location, ...addressUpdates } };
+  // Check address
+  if (truck.current_location?.address && patterns.some(pattern => pattern.test(truck.current_location.address ?? ''))) {
+    updates.current_location = {
+      ...(truck.current_location as FoodTruck['current_location']), // Cast to ensure all props are there if spreading
+      address: undefined,
+    };
+    needsUpdate = true;
   }
-  return {};
-}
 
-function processContactInfoForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck['contact_info']> {
-  const cleanContact: Partial<FoodTruck['contact_info']> = {};
-
-  if (truck.contact_info?.phone !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.phone ?? ''))) {
-    cleanContact.phone = undefined;
-  }
-  if (truck.contact_info?.website !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.website ?? ''))) {
-    cleanContact.website = undefined;
-  }
-  if (truck.contact_info?.email !== undefined && patterns.some(pattern => pattern.test(truck.contact_info.email ?? ''))) {
-    cleanContact.email = undefined;
-  }
-  return cleanContact;
-}
-
-function processAddressForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Partial<FoodTruck['current_location']> {
-  const updatedLocation: Partial<FoodTruck['current_location']> = {};
-
-  if (truck.current_location?.address !== undefined && patterns.some(pattern => pattern.test(truck.current_location.address ?? ''))) {
-    updatedLocation.address = undefined;
-  }
-  return updatedLocation;
+  return needsUpdate ? updates : null;
 }

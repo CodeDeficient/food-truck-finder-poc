@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { type StatusMetric } from './useSystemMetrics'; // Import StatusMetric type
-import { getStatusColor, getStatusIcon, getTrendIcon } from './status-helpers'; // Import helper functions
+import { getStatusColor, getStatusIcon, getTrendIcon } from './StatusHelpers'; // Import helper functions
 
 interface SystemMetricsGridProps {
   readonly metrics: StatusMetric[];

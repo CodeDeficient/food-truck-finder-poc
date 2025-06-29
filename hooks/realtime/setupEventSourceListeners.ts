@@ -10,8 +10,10 @@ interface ConnectionStateActions {
 }
 
 interface EventSourceRefs {
-  isManuallyDisconnectedRef: React.RefObject<boolean>;
-  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean | null>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined | null>;
 }
 
 interface ReconnectLogicParams extends EventSourceRefs {
@@ -33,8 +35,15 @@ const handleOpen = (connectionState: ConnectionStateActions) => () => {
 
 const handleMessage = (handleEvent: (event: RealtimeEvent) => void, setConnectionError: (error: string | undefined) => void) => (event: MessageEvent) => {
   try {
-    const adminEvent: RealtimeEvent = JSON.parse(event.data as string) as RealtimeEvent;
-    handleEvent(adminEvent);
+    const parsedData: unknown = JSON.parse(event.data as string);
+    // Add a basic check for type property, assuming it's a key indicator of RealtimeEvent
+    if (typeof parsedData === 'object' && parsedData !== null && 'type' in parsedData) {
+      const adminEvent: RealtimeEvent = parsedData as RealtimeEvent;
+      handleEvent(adminEvent);
+    } else {
+      console.error('Parsed event data does not match RealtimeEvent structure:', parsedData);
+      setConnectionError('Received malformed event data');
+    }
   } catch (error) {
     console.error('Error parsing event data:', error);
     setConnectionError('Error parsing event data');
@@ -45,11 +54,13 @@ const handleReconnectLogic = (refs: EventSourceRefs, reconnectParams: ReconnectL
   if (refs.isManuallyDisconnectedRef.current !== true && reconnectParams.connectionAttempts < reconnectParams.maxReconnectAttempts) {
     reconnectParams.setConnectionAttempts((prev) => prev + 1);
 
-    refs.reconnectTimeoutRef.current = setTimeout(() => {
-      if (refs.isManuallyDisconnectedRef.current !== true) {
-        reconnectParams.connect();
-      }
-    }, reconnectParams.reconnectInterval);
+    if (refs.reconnectTimeoutRef.current !== undefined) { // Check if undefined before assigning
+      refs.reconnectTimeoutRef.current = setTimeout(() => {
+        if (refs.isManuallyDisconnectedRef.current !== true) {
+          reconnectParams.connect();
+        }
+      }, reconnectParams.reconnectInterval);
+    }
   } else if (reconnectParams.connectionAttempts >= reconnectParams.maxReconnectAttempts) {
     reconnectParams.setConnectionError('Max reconnection attempts reached');
   }
@@ -68,11 +79,13 @@ interface SetupEventSourceListenersParams {
   eventSource: EventSource;
   handleEvent: (event: RealtimeEvent) => void;
   connectionState: ReturnType<typeof useConnectionState>;
-  isManuallyDisconnectedRef: React.RefObject<boolean>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  isManuallyDisconnectedRef: React.MutableRefObject<boolean | null>;
   connectionAttempts: number;
   maxReconnectAttempts: number;
   reconnectInterval: number;
-  reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
+  // eslint-disable-next-line sonarjs/deprecation -- MutableRefObject is used intentionally here for mutable ref values.
+  reconnectTimeoutRef: React.MutableRefObject<NodeJS.Timeout | undefined | null>;
   connect: () => void;
 }
 

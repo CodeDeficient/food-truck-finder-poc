@@ -38,7 +38,8 @@ export function ApiMonitoringDashboard() {
     <div className="mt-4 p-4 border rounded bg-muted">
       <h2 className="text-lg font-semibold mb-2">API Usage Monitoring</h2>
       <pre className="text-xs bg-background p-2 rounded overflow-x-auto">
-        {JSON.stringify(usage.data, undefined, 2)}
+        {/* eslint-disable-next-line unicorn/no-null -- null is standard for JSON.stringify replacer */}
+        {JSON.stringify(usage.data, null, 2)}
       </pre>
       <div className="text-xs text-muted-foreground mt-2">Last updated: {usage.timestamp}</div>
     </div>

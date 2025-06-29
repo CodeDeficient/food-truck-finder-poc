@@ -110,48 +110,59 @@ export function getPercentile(sortedValues: number[], percentile: number): numbe
   return Math.round(sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight);
 }
 
+function validateWebVitalMetric(metric: WebVitalMetric): boolean {
+  return !(!metric.name || typeof metric.value !== 'number' || !metric.url);
+}
+
+async function storeWebVitalMetric(metric: WebVitalMetric): Promise<void> {
+  if (!supabaseAdmin) {
+    console.warn('Supabase admin client not available. Skipping metric storage.');
+    return;
+  }
+  try {
+    const { error } = await supabaseAdmin
+      .from('web_vitals_metrics')
+      .insert({
+        metric_name: metric.name,
+        metric_value: metric.value,
+        rating: metric.rating,
+        page_url: metric.url,
+        user_agent: metric.userAgent,
+        recorded_at: new Date(metric.timestamp).toISOString()
+      });
+
+    if (error) {
+      console.warn('Failed to store web vital metric:', error);
+      // Don't fail the request - metrics collection should be non-blocking
+    }
+  } catch (dbError) {
+    console.warn('Database error storing web vital:', dbError);
+  }
+}
+
+function logPoorPerformance(metric: WebVitalMetric): void {
+  if (metric.rating === 'poor') {
+    console.warn(`Poor ${metric.name} performance detected:`, {
+      value: metric.value,
+      url: metric.url,
+      timestamp: new Date(metric.timestamp).toISOString()
+    });
+  }
+}
+
 export async function handlePostRequest(request: NextRequest) {
   try {
     const metric = await request.json() as WebVitalMetric;
 
-    // Validate metric data
-    if (!metric.name || typeof metric.value !== 'number' || !metric.url) {
+    if (!validateWebVitalMetric(metric)) {
       return NextResponse.json(
         { success: false, error: 'Invalid metric data' },
         { status: 400 }
       );
     }
 
-    if (supabaseAdmin) {
-      try {
-        const { error } = await supabaseAdmin
-          .from('web_vitals_metrics')
-          .insert({
-            metric_name: metric.name,
-            metric_value: metric.value,
-            rating: metric.rating,
-            page_url: metric.url,
-            user_agent: metric.userAgent,
-            recorded_at: new Date(metric.timestamp).toISOString()
-          });
-
-        if (error) {
-          console.warn('Failed to store web vital metric:', error);
-          // Don't fail the request - metrics collection should be non-blocking
-        }
-      } catch (dbError) {
-        console.warn('Database error storing web vital:', dbError);
-      }
-    }
-
-    // Log performance issues for monitoring
-    if (metric.rating === 'poor') {
-      console.warn(`Poor ${metric.name} performance detected:`, {
-        value: metric.value,
-        url: metric.url,
-        timestamp: new Date(metric.timestamp).toISOString()
-      });
-    }
+    await storeWebVitalMetric(metric);
+    logPoorPerformance(metric);
 
     return NextResponse.json({ success: true });
   } catch (error) {
