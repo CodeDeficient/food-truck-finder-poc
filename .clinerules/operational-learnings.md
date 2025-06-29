@@ -130,3 +130,19 @@ This rule set documents key operational learnings and best practices derived fro
 - **Rule 1.29: Validate `await` Usage Against Function Return Types**: Before using `await` on a function call, verify that the function is `async` and returns a `Promise`. Redundant `await` keywords on non-Promise-returning functions can lead to linting errors and unnecessary complexity.
   - *Trigger Case*: Encountering `@typescript-eslint/await-thenable` or `sonarjs/no-invalid-await` errors.
   - *Example*: If `myFunction()` returns `void` or a non-Promise value, avoid `await myFunction();`. If `myAsyncFunction()` returns `Promise<T>`, then `await myAsyncFunction();` is appropriate.
+
+- **Rule 1.30: Avoid Redundant Optional Type Declarations**: When declaring TypeScript properties, avoid using both optional property syntax (`?:`) and union with `undefined` (`| undefined`) simultaneously, as this creates redundant type information.
+  - *Trigger Case*: `sonarjs/no-redundant-optional` errors when a property is declared as `prop?: T | undefined`.
+  - *Example*: Change `lat?: number | undefined` to either `lat?: number` or `lat: number | undefined`, but not both.
+
+- **Rule 1.31: Safe Error Object Stringification**: When converting error objects to strings for logging or error messages, avoid using `String(error)` on `unknown` or `any` typed errors. Use proper type guards and `JSON.stringify()` for complex objects.
+  - *Trigger Case*: `@typescript-eslint/no-base-to-string` errors when stringifying error objects.
+  - *Example*: Instead of `String(error)`, use `error instanceof Error ? error.message : JSON.stringify(error)`.
+
+- **Rule 1.32: Optimize Return Statements for Undefined**: For functions that return `undefined`, use `return;` instead of `return undefined;` to avoid unnecessary explicit undefined usage.
+  - *Trigger Case*: `unicorn/no-useless-undefined` errors in return statements.
+  - *Example*: Change `return undefined;` to `return;` when the function implicitly returns `undefined`.
+
+- **Rule 1.33: ESLint Auto-fix Requires Multiple Passes**: ESLint's `--fix` option may not catch all auto-fixable issues in a single pass. When dealing with complex interdependent issues, run auto-fix multiple times or target specific files for more thorough correction.
+  - *Trigger Case*: When auto-fix appears to miss obvious fixable issues.
+  - *Example*: Run `npx eslint . --fix` multiple times, or use `npx eslint specific-file.ts --fix` for targeted fixes.
