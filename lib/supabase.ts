@@ -284,11 +284,11 @@ export const FoodTruckService = {
 };
 
 // Helper functions to reduce cognitive complexity
-  const isMenuCategory = (obj: unknown): obj is MenuCategory =>
-  typeof obj === 'object' && obj !== undefined && 'name' in obj && 'items' in obj && Array.isArray(obj.items);
+const isMenuCategory = (obj: unknown): obj is MenuCategory =>
+  typeof obj === 'object' && obj != null && 'name' in obj && 'items' in obj && Array.isArray(obj.items);
 
 const isMenuItem = (obj: unknown): obj is MenuItem => {
-  if (typeof obj !== 'object' || obj === undefined) return false;
+  if (typeof obj !== 'object' || obj == null) return false;
   const item = obj as Record<string, unknown>;
   return (
     typeof item.name === 'string' &&
@@ -673,7 +673,7 @@ export const DataQualityService = {
          (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
     ) score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours !== undefined) score += 10;
+    if (truck.operating_hours != null) score += 10;
     return { score: Math.min(100, score) };
   },
 
@@ -685,7 +685,7 @@ export const DataQualityService = {
       .from('food_trucks')
       .select('*')
       .eq('id', truckId)
-      .single();
+      .single() as { data: FoodTruck | null; error: PostgrestError | null };
 
     if (fetchError) {
       handleSupabaseError(fetchError, 'updateTruckQualityScore:fetch');
@@ -793,7 +793,7 @@ export const APIUsageService = {
         .limit(30);
 
       if (error) throw error;
-      return data as ApiUsage[] ?? [];
+      return data ?? [];
     } catch (error: unknown) {
       console.warn('Error getting usage stats:', error);
       throw error;

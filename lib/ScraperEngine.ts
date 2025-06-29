@@ -696,10 +696,10 @@ export class GeminiDataProcessor {
     const coordinates = (parsedResponse as { coordinates?: { lat?: unknown; lng?: unknown } }).coordinates;
     if (coordinates && typeof coordinates === 'object') {
       if (typeof coordinates.lat !== 'number') {
-        (coordinates as { lat?: number | undefined }).lat = undefined;
+        (coordinates as { lat?: number }).lat = undefined;
       }
       if (typeof coordinates.lng !== 'number') {
-        (coordinates as { lng?: number | undefined }).lng = undefined;
+        (coordinates as { lng?: number }).lng = undefined;
       }
     }
     return parsedResponse as GeminiLocationData;
