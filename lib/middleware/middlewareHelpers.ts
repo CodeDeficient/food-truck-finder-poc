@@ -36,13 +36,21 @@ interface LogSecurityEventParams {
   user_email?: string;
 }
 
-async function logSecurityEventAndRedirect(
-  req: NextRequest,
-  res: NextResponse,
-  logParams: LogSecurityEventParams,
-  redirectPath: string,
-  redirectFromPath?: string
-) {
+interface LogSecurityEventAndRedirectParams {
+  req: NextRequest;
+  res: NextResponse;
+  logParams: LogSecurityEventParams;
+  redirectPath: string;
+  redirectFromPath?: string;
+}
+
+async function logSecurityEventAndRedirect({
+  req,
+  res,
+  logParams,
+  redirectPath,
+  redirectFromPath,
+}: LogSecurityEventAndRedirectParams) {
   await AuditLogger.logSecurityEvent(logParams);
   const redirectUrl = req.nextUrl.clone();
   redirectUrl.pathname = redirectPath;
@@ -53,10 +61,10 @@ async function logSecurityEventAndRedirect(
 }
 
 async function logAndRedirect({ req, res, requestMetadata, reason, userError }: LogAndRedirectParams) {
-  return logSecurityEventAndRedirect(
+  return logSecurityEventAndRedirect({
     req,
     res,
-    {
+    logParams: {
       event_type: 'permission_denied',
       ip_address: requestMetadata.ip,
       user_agent: requestMetadata.userAgent,
@@ -67,9 +75,9 @@ async function logAndRedirect({ req, res, requestMetadata, reason, userError }: 
       },
       severity: 'warning',
     },
-    '/login',
-    req.nextUrl.pathname
-  );
+    redirectPath: '/login',
+    redirectFromPath: req.nextUrl.pathname
+  });
 }
 
 interface LogAndRedirectDeniedParams {
@@ -82,10 +90,10 @@ interface LogAndRedirectDeniedParams {
 }
 
 async function logAndRedirectDenied({ req, res, requestMetadata, user, profile, profileQueryError }: LogAndRedirectDeniedParams) {
-  return logSecurityEventAndRedirect(
+  return logSecurityEventAndRedirect({
     req,
     res,
-    {
+    logParams: {
       event_type: 'permission_denied',
       user_id: user.id,
       user_email: user.email ?? undefined,
@@ -99,8 +107,8 @@ async function logAndRedirectDenied({ req, res, requestMetadata, user, profile, 
       },
       severity: 'error',
     },
-    '/access-denied'
-  );
+    redirectPath: '/access-denied'
+  });
 }
 
 export async function protectAdminRoutes(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata) {

@@ -16,6 +16,7 @@ const SheetClose = SheetPrimitive.Close;
 const SheetPortal = SheetPrimitive.Portal;
 
 const SheetOverlay = React.forwardRef<
+  // eslint-disable-next-line sonarjs/deprecation -- False positive, ElementRef is not deprecated.
   React.ElementRef<typeof SheetPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
@@ -54,6 +55,7 @@ interface SheetContentProps
     VariantProps<typeof sheetVariants> {}
 
 const SheetContent = React.forwardRef<
+  // eslint-disable-next-line sonarjs/deprecation -- False positive, ElementRef is not deprecated.
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
 >(({ side = 'right', className, children, ...props }, ref) => (

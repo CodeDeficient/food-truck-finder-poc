@@ -109,7 +109,7 @@ export const CachedFoodTruckService = {
         dbQuery = dbQuery.contains('cuisine_type', [filters.cuisine]);
       }
 
-      const { data, error } = await dbQuery.limit(50);
+      const { data, error }: { data: FoodTruck[] | null; error: any } = await dbQuery.limit(50);
       const trucks: FoodTruck[] = data ?? [];
 
       if (error != undefined) {

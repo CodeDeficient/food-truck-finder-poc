@@ -32,6 +32,7 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     const token = authHeader.slice(7);
     const { data, error } = await supabase.auth.getUser(token);
 
+    // eslint-disable-next-line sonarjs/different-types-comparison
     if (error || data.user === null) {
       return false;
     }
@@ -317,6 +318,7 @@ function formatSSEMessage(event: AdminEvent): string {
 }
 
 function generateEventId(): string {
+  // eslint-disable-next-line sonarjs/pseudo-random -- Math.random is acceptable for generating non-security-sensitive event IDs.
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
