@@ -34,7 +34,7 @@ export function QualityPieChart({ data }: QualityPieChartProps) {
           {data.map((entry, index) => (
             <Cell 
               key={`cell-${index}`} 
-              fill={Object.values(QUALITY_COLORS)[index]} 
+              fill={(QUALITY_COLORS as string[])[index]} 
             />
           ))}
         </Pie>

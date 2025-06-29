@@ -1,4 +1,4 @@
-/* eslint-disable max-params, unicorn/no-null */
+/* eslint-disable max-params */
 'use client';
 
 import * as React from 'react';
@@ -179,15 +179,6 @@ function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltip
   const itemData: TooltipItemData = {
     name: item.name === undefined ? undefined : String(item.name),
     dataKey,
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
-    // eslint-disable-next-line unicorn/no-null
     payload: typeof item.payload === 'object' && item.payload ? (item.payload as Record<string, unknown>) : undefined,
     color: typeof item.color === 'string' ? item.color : undefined,
     value: typeof item.value === 'number' ? item.value : undefined,
@@ -196,7 +187,7 @@ function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltip
   const itemConfig = getPayloadConfigFromPayload(config, item, key) as Record<string, unknown>;
   const indicatorColor =
     color ??
-    (itemData.payload != null && typeof itemData.payload === 'object' && 'fill' in itemData.payload
+    (itemData.payload !== undefined && typeof itemData.payload === 'object' && 'fill' in itemData.payload
       ? String(itemData.payload.fill)
       : undefined) ??
     itemData.color;
