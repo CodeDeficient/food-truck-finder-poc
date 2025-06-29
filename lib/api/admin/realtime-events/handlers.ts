@@ -22,7 +22,6 @@ interface RealtimeMetrics {
   };
 }
 
-/* eslint-disable @typescript-eslint/strict-boolean-expressions, sonarjs/different-types-comparison */
 export async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
@@ -53,7 +52,6 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     return false;
   }
 }
-/* eslint-enable @typescript-eslint/strict-boolean-expressions, sonarjs/different-types-comparison */
 
 export function handleGetRequest(request: NextRequest): Response {
   const stream = new ReadableStream({

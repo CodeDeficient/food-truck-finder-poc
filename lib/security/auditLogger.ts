@@ -39,19 +39,20 @@ export class AuditLogger {
   /**
    * Log admin action with full audit trail
    */
-  static async logAdminAction(
-    userId: string,
-    userEmail: string,
-    action: string,
-    resourceType: string,
-    resourceId?: string,
-    details?: Record<string, unknown>,
+  static async logAdminAction(options: {
+    userId: string;
+    userEmail: string;
+    action: string;
+    resourceType: string;
+    resourceId?: string;
+    details?: Record<string, unknown>;
     request?: {
       ip?: string;
       userAgent?: string;
       sessionId?: string;
-    }
-  ): Promise<void> {
+    };
+  }): Promise<void> {
+    const { userId, userEmail, action, resourceType, resourceId, details, request } = options;
     const auditEntry: AuditLogEntry = {
       user_id: userId,
       user_email: userEmail,
@@ -114,16 +115,17 @@ export class AuditLogger {
   /**
    * Log authentication events
    */
-  static async logAuthEvent(
-    eventType: 'login_attempt' | 'login_success' | 'login_failure' | 'logout',
-    userEmail?: string,
-    userId?: string,
+  static async logAuthEvent(options: {
+    eventType: 'login_attempt' | 'login_success' | 'login_failure' | 'logout';
+    userEmail?: string;
+    userId?: string;
     request?: {
       ip?: string;
       userAgent?: string;
-    },
-    details?: Record<string, unknown>
-  ): Promise<void> {
+    };
+    details?: Record<string, unknown>;
+  }): Promise<void> {
+    const { eventType, userEmail, userId, request, details } = options;
     const severity = eventType === 'login_failure' ? 'warning' : 'info';
     
     await this.logSecurityEvent({
@@ -140,17 +142,18 @@ export class AuditLogger {
   /**
    * Log data access events
    */
-  static async logDataAccess(
-    userId: string,
-    userEmail: string,
-    resourceType: string,
-    resourceId?: string,
-    action: 'read' | 'search' | 'export' | 'admin_access' = 'read',
+  static async logDataAccess(options: {
+    userId: string;
+    userEmail: string;
+    resourceType: string;
+    resourceId?: string;
+    action?: 'read' | 'search' | 'export' | 'admin_access';
     request?: {
       ip?: string;
       userAgent?: string;
-    }
-  ): Promise<void> {
+    };
+  }): Promise<void> {
+    const { userId, userEmail, resourceType, resourceId, action = 'read', request } = options;
     await this.logSecurityEvent({
       event_type: 'data_access',
       user_id: userId,

@@ -11,15 +11,8 @@ interface TooltipItemContentProps {
   readonly tooltipLabel: React.ReactNode;
 }
 
-export function TooltipItemContent({
-  formatter,
-  itemData,
-  item,
-  index,
-  itemConfig,
-  nestLabel,
-  tooltipLabel
-}: TooltipItemContentProps) {
+export function TooltipItemContent(props: TooltipItemContentProps) {
+  const { formatter, itemData, item, index, itemConfig, nestLabel, tooltipLabel } = props;
   if (formatter !== undefined && itemData?.value !== undefined && itemData.name !== undefined && itemData.name !== '') {
     const payloadArray = Array.isArray(itemData.payload)
       ? (itemData.payload as Record<string, unknown>[])

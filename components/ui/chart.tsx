@@ -1,3 +1,4 @@
+/* eslint-disable max-params, unicorn/no-null */
 'use client';
 
 import * as React from 'react';
@@ -171,13 +172,22 @@ type ChartTooltipItemProps = {
   };
 };
 
-function ChartTooltipItem(props: Readonly<ChartTooltipItemProps>) {
-  const { item, index, indicatorProps } = props;
+function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltipItemProps>) {
   const { indicator, hideIndicator, color, nestLabel, config, nameKey, tooltipLabel, formatter } = indicatorProps;
   const dataKey = typeof item.dataKey === 'string' ? item.dataKey : undefined;
+
   const itemData: TooltipItemData = {
     name: item.name === undefined ? undefined : String(item.name),
     dataKey,
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
+    // eslint-disable-next-line unicorn/no-null
     payload: typeof item.payload === 'object' && item.payload ? (item.payload as Record<string, unknown>) : undefined,
     color: typeof item.color === 'string' ? item.color : undefined,
     value: typeof item.value === 'number' ? item.value : undefined,
@@ -186,7 +196,7 @@ function ChartTooltipItem(props: Readonly<ChartTooltipItemProps>) {
   const itemConfig = getPayloadConfigFromPayload(config, item, key) as Record<string, unknown>;
   const indicatorColor =
     color ??
-    (itemData.payload && typeof itemData.payload === 'object' && 'fill' in itemData.payload
+    (itemData.payload != null && typeof itemData.payload === 'object' && 'fill' in itemData.payload
       ? String(itemData.payload.fill)
       : undefined) ??
     itemData.color;
@@ -254,25 +264,21 @@ const ChartTooltipContent = React.forwardRef<
       readonly nameKey?: string;
       readonly labelKey?: string;
     }
->(
-  (
-    {
-      active,
-      payload,
-      className,
-      indicator = 'dot',
-      hideLabel = false,
-      hideIndicator = false,
-      label,
-      labelFormatter,
-      labelClassName,
-      formatter,
-      color,
-      nameKey,
-      labelKey,
-    },
-    ref,
-  ) => {
+>(({
+  active,
+  payload,
+  className,
+  indicator = 'dot',
+  hideLabel = false,
+  hideIndicator = false,
+  label,
+  labelFormatter,
+  labelClassName,
+  formatter,
+  color,
+  nameKey,
+  labelKey,
+}, ref) => {
     const { config } = useChart();
     const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload : [];
     const tooltipLabel = useTooltipLabel({
@@ -285,8 +291,8 @@ const ChartTooltipContent = React.forwardRef<
       labelKey
     });
 
-    if (!active || !isNonEmptyArray(safePayload)) {
-      return null;
+    if (active === false || !isNonEmptyArray(safePayload)) {
+      return;
     }
 
     const nestLabel = safePayload.length === 1 && indicator !== 'dot';

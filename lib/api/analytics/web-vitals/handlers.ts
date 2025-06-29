@@ -112,27 +112,36 @@ export function getPercentile(sortedValues: number[], percentile: number): numbe
 
 export async function handlePostRequest(request: NextRequest) {
   try {
-    const metric = await request.json() as WebVitalMetric;
+    const metric: unknown = await request.json();
 
     // Validate metric data
-    if (!metric.name || typeof metric.value !== 'number' || !metric.url) {
+    if (
+      typeof metric !== 'object' ||
+      metric == undefined ||
+      !('name' in metric) ||
+      !('value' in metric) ||
+      !('url' in metric) ||
+      typeof (metric as WebVitalMetric).value !== 'number'
+    ) {
       return NextResponse.json(
         { success: false, error: 'Invalid metric data' },
         { status: 400 }
       );
     }
 
+    const validatedMetric = metric as WebVitalMetric;
+
     if (supabaseAdmin) {
       try {
         const { error } = await supabaseAdmin
           .from('web_vitals_metrics')
           .insert({
-            metric_name: metric.name,
-            metric_value: metric.value,
-            rating: metric.rating,
-            page_url: metric.url,
-            user_agent: metric.userAgent,
-            recorded_at: new Date(metric.timestamp).toISOString()
+            metric_name: validatedMetric.name,
+            metric_value: validatedMetric.value,
+            rating: validatedMetric.rating,
+            page_url: validatedMetric.url,
+            user_agent: validatedMetric.userAgent,
+            recorded_at: new Date(validatedMetric.timestamp).toISOString()
           });
 
         if (error) {
@@ -145,11 +154,11 @@ export async function handlePostRequest(request: NextRequest) {
     }
 
     // Log performance issues for monitoring
-    if (metric.rating === 'poor') {
-      console.warn(`Poor ${metric.name} performance detected:`, {
-        value: metric.value,
-        url: metric.url,
-        timestamp: new Date(metric.timestamp).toISOString()
+    if (validatedMetric.rating === 'poor') {
+      console.warn(`Poor ${validatedMetric.name} performance detected:`, {
+        value: validatedMetric.value,
+        url: validatedMetric.url,
+        timestamp: new Date(validatedMetric.timestamp).toISOString()
       });
     }
 
@@ -167,7 +176,7 @@ export async function handleGetRequest(request: NextRequest) {
   try {
     const { metrics, days, startDate } = await fetchAndFilterMetrics(request);
 
-    const summary = calculateMetricsSummary(metrics);
+    const summary = calculateMetricsSummary(metrics as { metric_name: string; metric_value: number; rating: string }[]);
 
     return NextResponse.json({
       success: true,

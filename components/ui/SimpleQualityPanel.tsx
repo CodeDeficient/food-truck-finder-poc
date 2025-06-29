@@ -103,7 +103,7 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button
-            onClick={handleRecalculateAll}
+            onClick={() => { void handleRecalculateAll(); }}
             disabled={isRecalculating}
             className="flex items-center gap-2"
             variant="default"

@@ -1,81 +1,33 @@
 {
-  "timestamp": "2025-06-28T19:25:02.333Z",
-  "totalErrors": 73,
+  "timestamp": "2025-06-29T15:45:05.873Z",
+  "totalErrors": 22,
   "errorCounts": {
-    "@typescript-eslint/await-thenable": 3,
-    "sonarjs/no-invalid-await": 3,
-    "sonarjs/no-identical-expressions": 5,
+    "@typescript-eslint/require-await": 1,
     "@typescript-eslint/no-unsafe-call": 3,
-    "@typescript-eslint/no-unsafe-return": 7,
-    "@typescript-eslint/no-unsafe-member-access": 3,
-    "sonarjs/unused-import": 8,
-    "sonarjs/no-redundant-optional": 3,
-    "sonarjs/prefer-read-only-props": 2,
     "@typescript-eslint/no-misused-promises": 1,
-    "max-params": 7,
-    "@typescript-eslint/no-unsafe-argument": 4,
-    "sonarjs/deprecation": 4,
-    "sonarjs/pseudo-random": 2,
-    "@typescript-eslint/no-unsafe-assignment": 11,
-    "@typescript-eslint/require-await": 2,
-    "sonarjs/no-unused-vars": 1,
-    "sonarjs/no-dead-store": 1,
-    "unicorn/consistent-function-scoping": 3
+    "unknown": 1,
+    "@typescript-eslint/no-unsafe-argument": 2,
+    "max-params": 2,
+    "sonarjs/deprecation": 2,
+    "sonarjs/no-redundant-optional": 2,
+    "@typescript-eslint/await-thenable": 1,
+    "sonarjs/no-invalid-await": 1,
+    "sonarjs/different-types-comparison": 1,
+    "sonarjs/pseudo-random": 1,
+    "@typescript-eslint/no-unsafe-assignment": 3,
+    "@typescript-eslint/no-unsafe-return": 1
   },
-  "automationCandidates": [
-    {
-      "ruleId": "sonarjs/unused-import",
-      "count": 8,
-      "confidence": "HIGH",
-      "method": "eslint-autofix",
-      "description": "Remove unused imports",
-      "estimatedFixes": 7,
-      "priority": 21
-    },
-    {
-      "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 11,
-      "confidence": "MEDIUM",
-      "method": "type-annotation",
-      "description": "Add type annotations for unsafe assignments",
-      "estimatedFixes": 3,
-      "priority": 6
-    }
-  ],
+  "automationCandidates": [],
   "recommendations": {
     "highConfidence": {
-      "candidates": [
-        {
-          "ruleId": "sonarjs/unused-import",
-          "count": 8,
-          "confidence": "HIGH",
-          "method": "eslint-autofix",
-          "description": "Remove unused imports",
-          "estimatedFixes": 7,
-          "priority": 21
-        }
-      ],
-      "totalFixes": 7,
-      "methods": [
-        "eslint-autofix"
-      ]
+      "candidates": [],
+      "totalFixes": 0,
+      "methods": []
     },
     "mediumConfidence": {
-      "candidates": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 11,
-          "confidence": "MEDIUM",
-          "method": "type-annotation",
-          "description": "Add type annotations for unsafe assignments",
-          "estimatedFixes": 3,
-          "priority": 6
-        }
-      ],
-      "totalFixes": 3,
-      "methods": [
-        "type-annotation"
-      ]
+      "candidates": [],
+      "totalFixes": 0,
+      "methods": []
     }
   }
 }
