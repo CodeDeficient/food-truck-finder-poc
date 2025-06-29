@@ -120,7 +120,7 @@ export const FoodTruckService = {
         .select('*', { count: 'exact' })
         .order('updated_at', { ascending: false })
         .range(offset, offset + limit - 1);
-      if (error !== null) throw error;
+      if (error != undefined) throw error;
       const trucks: FoodTruck[] = (data ?? []).map((t: FoodTruck) => normalizeTruckLocation(t));
       if (trucks.length === 0) return { trucks: [], total: count ?? 0 };
       const truckIds = trucks.map((t: FoodTruck) => t.id);
@@ -129,7 +129,7 @@ export const FoodTruckService = {
         if (truckIds.length > 0) {
           const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
             await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
-          if (menuError) throw menuError;
+          if (menuError) throw new Error(menuError.message);
           menuItems = Array.isArray(items) ? items : [];
         }
       } catch (menuError) {
@@ -152,7 +152,7 @@ export const FoodTruckService = {
         .select('*')
         .eq('id', id)
         .single();
-      if (error !== null) throw error;
+      if (error != undefined) throw error;
       if (!data) {
         return { error: "That didn't work, please try again later." };
       }
@@ -284,11 +284,11 @@ export const FoodTruckService = {
 };
 
 // Helper functions to reduce cognitive complexity
-const isMenuCategory = (obj: unknown): obj is MenuCategory =>
-  typeof obj === 'object' && obj != undefined && 'name' in obj && 'items' in obj && Array.isArray(obj.items);
+  const isMenuCategory = (obj: unknown): obj is MenuCategory =>
+  typeof obj === 'object' && obj !== undefined && 'name' in obj && 'items' in obj && Array.isArray(obj.items);
 
 const isMenuItem = (obj: unknown): obj is MenuItem => {
-  if (typeof obj !== 'object' || obj === null) return false;
+  if (typeof obj !== 'object' || obj === undefined) return false;
   const item = obj as Record<string, unknown>;
   return (
     typeof item.name === 'string' &&
@@ -613,7 +613,7 @@ export const DataProcessingService = {
       .limit(1)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && String(error.code) !== 'PGRST116') throw error;
     return data ?? undefined;
   },
 
@@ -673,7 +673,7 @@ export const DataQualityService = {
          (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
     ) score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours != undefined) score += 10;
+    if (truck.operating_hours !== undefined) score += 10;
     return { score: Math.min(100, score) };
   },
 
@@ -697,7 +697,7 @@ export const DataQualityService = {
 
     const { score } = this.calculateQualityScore(truck);
 
-    const { data, error } = await supabaseAdmin
+    const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
       .from('food_trucks')
       .update({ data_quality_score: score })
       .eq('id', truckId)
@@ -721,12 +721,15 @@ export const APIUsageService = {
     try {
       const today = new Date().toISOString().split('T')[0];
 
-      const { data: existing }: { data: ApiUsage | null; error: PostgrestError | null } = await supabaseAdmin
+      const { data: existing, error: existingError }: { data: ApiUsage | undefined; error: PostgrestError | undefined } = await supabaseAdmin
         .from('api_usage')
         .select('*')
         .eq('service_name', serviceName)
         .eq('usage_date', today)
         .single();
+
+      if (existingError && existingError.code !== 'PGRST116') throw existingError;
+
       if (existing) {
         const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
           .from('api_usage')
@@ -773,7 +776,7 @@ export const APIUsageService = {
         .eq('usage_date', today)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error && String(error.code) !== 'PGRST116') throw error;
       return data ?? undefined;
     } catch (error: unknown) {
       console.warn('Error getting today usage:', error);
@@ -790,7 +793,7 @@ export const APIUsageService = {
         .limit(30);
 
       if (error) throw error;
-      return data ?? [];
+      return data as ApiUsage[] ?? [];
     } catch (error: unknown) {
       console.warn('Error getting usage stats:', error);
       throw error;

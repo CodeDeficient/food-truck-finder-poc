@@ -370,10 +370,8 @@ export class ScraperEngine {
 
 interface LocationData {
   current?: {
-    // eslint-disable-next-line sonarjs/no-redundant-optional
-    lat?: number | undefined;
-    // eslint-disable-next-line sonarjs/no-redundant-optional
-    lng?: number | undefined;
+    lat?: number;
+    lng?: number;
     address?: string;
   };
 }

@@ -11,13 +11,14 @@ This will further reduce the risk of leaking technical details and improve maint
 
 This comprehensive guide consolidates all linting, code quality, and related governance documentation for the Food Truck Finder project. It aims to provide a single source of truth for maintaining high code standards, preventing errors, and ensuring efficient multi-agent development.
 
-## 1. Current Status & Remediation Plan (as of 2025-06-29)
+## 1. Current Status & Remediation Plan (as of June 29, 2025)
 
-Based on the latest analysis, we have **13 remaining errors** across **X files**.
+Based on the latest analysis, we have **59 remaining problems (11 errors, 48 warnings)** across **multiple files**.
 
 ### New Learnings from Recent Remediation
 
 -   **Validate `await` Usage Against Function Return Types**: Redundant `await` keywords on non-Promise-returning functions can lead to linting errors (`@typescript-eslint/await-thenable`, `sonarjs/no-invalid-await`). Always verify that a function is `async` and returns a `Promise` before using `await` on its call. This section provides a full breakdown and a clear path forward.
+-   **`@typescript-eslint/require-await`**: Functions marked `async` but containing no `await` expressions should have the `async` keyword removed and their return types updated from `Promise<NextResponse>` to `NextResponse`.
 
 ### Error Categorization & Certainty
 
@@ -448,7 +449,7 @@ Our workflow for each error category will follow a strict three-step process:
         4.  Use `replace_in_file` to remove the redundant `await` keywords.
     *   **Fallback:** If removing `await` causes type errors, it implies the handler functions *should* be async. In that case, modify the handler functions to be `async` and ensure they return `Promise<NextResponse>`.
 
-*   **[ ] WBS 1.2: Fix Unnecessary `async` Functions (2 Errors)**
+*   **[x] WBS 1.2: Fix Unnecessary `async` Functions (0 Errors remaining)**
     *   **File:** `lib/api/admin/data-cleanup/handlers.ts`
     *   **Rule:** `@typescript-eslint/require-await`
     *   **Instructions:**

@@ -16,11 +16,11 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // SOTA color scheme for data quality categories
-const QUALITY_COLORS = {
-  high: '#22c55e',    // Green for high quality (≥80%)
-  medium: '#f59e0b',  // Amber for medium quality (60-79%)
-  low: '#ef4444',     // Red for low quality (<60%)
-};
+const QUALITY_COLORS = [
+  '#22c55e',    // Green for high quality (≥80%)
+  '#f59e0b',  // Amber for medium quality (60-79%)
+  '#ef4444',     // Red for low quality (<60%)
+] as const;
 
 interface DataQualityStats {
   total_trucks: number;

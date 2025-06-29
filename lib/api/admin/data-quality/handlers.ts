@@ -41,7 +41,7 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
       if (truckId === undefined || truckId === '') {
         return NextResponse.json({ success: false, error: 'Missing truckId for update-single action' }, { status: 400 });
       }
-      return handleUpdateSingle(truckId);
+      return await handleUpdateSingle(truckId);
     }
     case 'batch-update': {
       return await handleBatchUpdate();
