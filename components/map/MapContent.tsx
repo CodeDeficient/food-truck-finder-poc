@@ -5,6 +5,7 @@ import type { LatLngExpression } from 'leaflet';
 import TruckMarkers from './TruckMarkers';
 import { MapViewUpdater } from './MapViewUpdater';
 import { UserLocationMarker } from './UserLocationMarker'; // Import external UserLocationMarker
+import { MapLoadingFallback } from './MapLoadingFallback'; // Import the fallback component
 
 interface MapContentProps {
   readonly initialMapCenter: LatLngExpression;
@@ -38,6 +39,7 @@ export function MapContent({
       scrollWheelZoom={true}
       style={{ height: '100%', width: '100%' }}
       className="rounded-lg"
+      placeholder={<MapLoadingFallback />}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
