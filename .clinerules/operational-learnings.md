@@ -146,3 +146,16 @@ This rule set documents key operational learnings and best practices derived fro
 - **Rule 1.33: ESLint Auto-fix Requires Multiple Passes**: ESLint's `--fix` option may not catch all auto-fixable issues in a single pass. When dealing with complex interdependent issues, run auto-fix multiple times or target specific files for more thorough correction.
   - *Trigger Case*: When auto-fix appears to miss obvious fixable issues.
   - *Example*: Run `npx eslint . --fix` multiple times, or use `npx eslint specific-file.ts --fix` for targeted fixes.
+
+- **Rule 1.34: Use `MapContainer`'s `placeholder` Prop for Leaflet in React Strict Mode**: When using `react-leaflet` in a Next.js application or any React environment with Strict Mode enabled, utilize the `placeholder` prop of the `MapContainer` component. This helps prevent the "Map container is already initialized" error by allowing `react-leaflet` to better manage its lifecycle during client-side rendering and React Strict Mode's double effect invocations.
+  - *Trigger Case*: Encountering "Map container is already initialized" errors with `react-leaflet` in a React Strict Mode environment.
+  - *Example*:
+    ```tsx
+    // Instead of manually handling loading states before rendering MapContainer:
+    // if (!isMounted) return <CustomLoading />;
+    // return <MapContainer {...props} />;
+
+    // Use the placeholder prop:
+    import { MapLoadingFallback } from './MapLoadingFallback'; // Or any placeholder
+    return <MapContainer {...props} placeholder={<MapLoadingFallback />} />;
+    ```
