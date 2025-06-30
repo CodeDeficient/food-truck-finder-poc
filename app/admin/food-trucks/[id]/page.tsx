@@ -16,12 +16,13 @@ import { TruckNotFound } from '@/components/admin/food-trucks/detail/TruckNotFou
 
 interface FoodTruckDetailPageProps {
   readonly params: {
-    readonly id: string;
+    readonly id:string;
   };
+  readonly searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 
-export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
+export default async function FoodTruckDetailPage({ params, searchParams }: FoodTruckDetailPageProps) {
   const truck: FoodTruck | undefined = await FoodTruckService.getTruckById(params.id);
 
   if (truck == undefined) {

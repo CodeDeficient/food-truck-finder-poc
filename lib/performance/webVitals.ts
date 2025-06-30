@@ -1,20 +1,22 @@
 /**
  * SOTA Core Web Vitals Monitoring Implementation
- * Tracks LCP, FID, CLS, FCP, and TTFB metrics for performance optimization
+ * Tracks LCP, INP, CLS, FCP, and TTFB metrics for performance optimization
  */
 
-import { getCLS, getFCP, getFID, getLCP, getTTFB, Metric } from 'web-vitals';
+import { onCLS, onFCP, onINP, onLCP, onTTFB, Metric } from 'web-vitals';
 
 // Performance thresholds based on Google's Core Web Vitals standards
+// Note: FID is replaced by INP. INP thresholds are different.
+// Typical INP thresholds: good <= 200ms, needs improvement <= 500ms
 export const PERFORMANCE_THRESHOLDS = {
   LCP: { good: 2500, needsImprovement: 4000 }, // Largest Contentful Paint
-  FID: { good: 100, needsImprovement: 300 },   // First Input Delay
+  INP: { good: 200, needsImprovement: 500 },   // Interaction to Next Paint
   CLS: { good: 0.1, needsImprovement: 0.25 },  // Cumulative Layout Shift
   FCP: { good: 1800, needsImprovement: 3000 }, // First Contentful Paint
   TTFB: { good: 800, needsImprovement: 1800 }  // Time to First Byte
 } as const;
 
-export type MetricName = keyof typeof PERFORMANCE_THRESHOLDS;
+export type MetricName = keyof typeof PERFORMANCE_THRESHOLDS | 'FID'; // Keep FID for now if old data uses it
 
 export interface PerformanceMetric {
   name: MetricName;
@@ -100,11 +102,11 @@ export function initWebVitalsMonitoring(): void {
     // Type-safe metric handlers with explicit casting
     const safeHandleMetric = (metric: Metric) => handleMetric(metric);
 
-    getCLS(safeHandleMetric);
-    getFCP(safeHandleMetric);
-    getFID(safeHandleMetric);
-    getLCP(safeHandleMetric);
-    getTTFB(safeHandleMetric);
+    onCLS(safeHandleMetric);
+    onFCP(safeHandleMetric);
+    onINP(safeHandleMetric); // FID replaced by INP
+    onLCP(safeHandleMetric);
+    onTTFB(safeHandleMetric);
   } catch (error) {
     console.warn('Failed to initialize web vitals monitoring:', error);
   }
@@ -234,12 +236,16 @@ function getLCPSuggestions(data: { latest: number | null; }): PerformanceSuggest
   }];
 }
 
-function getFIDSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
+function getINPSuggestions(data: { latest: number | null; }): PerformanceSuggestion[] {
   return [{
-    metric: 'FID',
-    issue: `First Input Delay is ${data.latest}ms (target: <100ms)`,
+    metric: 'INP',
+    issue: `Interaction to Next Paint is ${data.latest}ms (target: <200ms)`,
     suggestions: [
-      'Reduce JavaScript bundle size',
+      'Reduce JavaScript execution time for interactions.',
+      'Optimize event handlers and minimize their complexity.',
+      'Break down long tasks using `requestIdleCallback` or `setTimeout`.',
+      'Ensure smooth animations and transitions that don\'t block the main thread.',
+      'Profile interactions using browser developer tools to identify bottlenecks.',
       'Implement code splitting',
       'Use web workers for heavy computations',
       'Optimize third-party scripts',
@@ -306,8 +312,8 @@ export function getPerformanceOptimizationSuggestions(): PerformanceSuggestion[]
           allSuggestions = [...allSuggestions, ...getLCPSuggestions(data)];
           break;
         }
-        case 'FID': {
-          allSuggestions = [...allSuggestions, ...getFIDSuggestions(data)];
+        case 'INP': { // Changed from FID to INP
+          allSuggestions = [...allSuggestions, ...getINPSuggestions(data)];
           break;
         }
         case 'CLS': {
