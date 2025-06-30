@@ -5,8 +5,8 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import 'leaflet-defaulticon-compatibility';
 
 import type { LatLngExpression } from 'leaflet';
-import { useEffect, useState } from 'react';
-import { MapLoadingFallback } from './map/MapLoadingFallback';
+// import { useEffect, useState } from 'react'; // Removed useEffect and useState
+// import { MapLoadingFallback } from './map/MapLoadingFallback'; // Removed MapLoadingFallback import
 import { MapContent } from './map/MapContent';
 import { getInitialMapCenter } from './map/mapHelpers';
 // Removed UserLocationMarker import from here, as it's now rendered inside MapContent
@@ -37,17 +37,17 @@ export default function MapDisplay(props: MapDisplayProps) {
     onSelectTruck,
     selectedTruckLocation,
   } = props;
-  const [isMounted, setIsMounted] = useState(false);
+  // const [isMounted, setIsMounted] = useState(false); // Removed isMounted state
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // useEffect(() => { // Removed useEffect
+  //   setIsMounted(true);
+  // }, []);
 
   const initialMapCenter = getInitialMapCenter(userLocation, defaultCenter);
 
-  if (!isMounted) {
-    return <MapLoadingFallback />;
-  }
+  // if (!isMounted) { // Removed conditional rendering
+  //   return <MapLoadingFallback />;
+  // }
 
   return (
     <MapContent
