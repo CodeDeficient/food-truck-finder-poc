@@ -76,30 +76,31 @@ export default tseslint.config(
     },
   },
 
-  // Next.js specific configurations
-  // Use the plugin's flat configs directly for App Router
-  nextPlugin.configs["flat/app/recommended"], // Changed from "flat/recommended"
-  // nextPlugin.configs["flat/core-web-vitals"], // Removed, as this was likely the source of 'undefined config'
-  // Core Web Vitals rules are often included in 'flat/app/recommended' or handled by Next.js build optimizations.
-  // If specific CWV lint rules are missed, they can be added manually if necessary,
-  // once the primary config error is resolved.
-  //
-  // The above lines replace the manual setup:
-  // {
-  //   plugins: {
-  //     "@next/next": nextPlugin,
-  //   },
-  //   rules: {
-  //     ...nextPlugin.configs.recommended.rules,
-  //     ...nextPlugin.configs["core-web-vitals"].rules,
-  //   },
-  //   languageOptions: { // Next.js specific globals
-  //       globals: {
-  //           ...globals.browser,
-  //           React: "readonly", // Example, Next.js preset handles this
-  //       }
-  //   }
-  // },
+  // Next.js specific configurations - Reverted to explicit object setup
+  {
+    files: [
+      "app/**/*.{ts,tsx,js,jsx}",
+      "components/**/*.{ts,tsx,js,jsx}",
+      "hooks/**/*.{ts,tsx,js,jsx}",
+      "lib/**/*.{ts,tsx,js,jsx}",
+      // Add other specific Next.js related directories if needed
+    ],
+    plugins: {
+      "@next/next": nextPlugin,
+    },
+    rules: {
+      // Spread rules from Next.js plugin's older (but existing) recommended sets
+      ...(nextPlugin.configs.recommended?.rules || {}),
+      ...(nextPlugin.configs["core-web-vitals"]?.rules || {}),
+      // Add any specific Next.js rule overrides here if necessary
+    },
+    languageOptions: {
+      globals: {
+        ...globals.browser, // Common browser globals
+        // React and JSX globals are typically handled by typescript-eslint or Next.js plugin itself
+      },
+    },
+  },
   
   // SonarJS recommended rules
   sonarjs.configs.recommended,
