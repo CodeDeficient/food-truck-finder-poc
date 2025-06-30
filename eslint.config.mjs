@@ -1,12 +1,25 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
+// Imports for FlatCompat
+import { FlatCompat } from '@eslint/eslintrc';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const globals = require('globals'); // Use require for globals
 import tseslint from "typescript-eslint";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
-import nextPlugin from "@next/eslint-plugin-next";
+// import nextPlugin from "@next/eslint-plugin-next"; // nextPlugin will be pulled by FlatCompat
 import eslintConfigPrettier from "eslint-config-prettier";
+
+// Prepare FlatCompat
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+    baseDirectory: __dirname,
+    resolvePluginsRelativeTo: __dirname, // Important for FlatCompat to find plugins
+});
 
 export default tseslint.config(
   // Global ignores - PREVENTION-FOCUSED
@@ -76,31 +89,26 @@ export default tseslint.config(
     },
   },
 
-  // Next.js specific configurations - Reverted to explicit object setup
-  {
-    files: [
-      "app/**/*.{ts,tsx,js,jsx}",
-      "components/**/*.{ts,tsx,js,jsx}",
-      "hooks/**/*.{ts,tsx,js,jsx}",
-      "lib/**/*.{ts,tsx,js,jsx}",
-      // Add other specific Next.js related directories if needed
-    ],
-    plugins: {
-      "@next/next": nextPlugin,
-    },
-    rules: {
-      // Spread rules from Next.js plugin's older (but existing) recommended sets
-      ...(nextPlugin.configs.recommended?.rules || {}),
-      ...(nextPlugin.configs["core-web-vitals"]?.rules || {}),
-      // Add any specific Next.js rule overrides here if necessary
-    },
-    languageOptions: {
-      globals: {
-        ...globals.browser, // Common browser globals
-        // React and JSX globals are typically handled by typescript-eslint or Next.js plugin itself
-      },
-    },
-  },
+  // Next.js specific configurations using FlatCompat
+  // These will translate string extends like "plugin:@next/next/recommended"
+  // and "next/core-web-vitals" into flat config objects.
+  // Note: `eslint-config-next` (which provides 'next' and 'next/core-web-vitals' as extends)
+  // should be a dependency, or `@next/eslint-plugin-next` must be resolvable by these strings.
+  // Given `@next/eslint-plugin-next` is a dependency, 'plugin:@next/next/recommended' targets it directly.
+  // 'next/core-web-vitals' typically comes from `eslint-config-next`. If `eslint-config-next`
+  // is not present, this specific extend might fail. The build log warning about plugin
+  // detection is the primary target.
+  // The Next.js docs show `extends: ['next/core-web-vitals']` which implies `eslint-config-next`.
+  // If `eslint-config-next` is not installed, then only `plugin:@next/next/recommended` might work directly.
+  // Let's try with what's documented for FlatCompat first.
+  // The project has `@next/eslint-plugin-next`.
+  // `plugin:@next/next/recommended` is the direct way to get rules from the plugin itself.
+  // `next/core-web-vitals` is a preset usually from `eslint-config-next`.
+  // For now, let's try to ensure the plugin itself is loaded via its direct preset.
+  // And add the core-web-vitals string as per Next.js docs, FlatCompat should handle it if `eslint-config-next` is implicitly available or if the string maps to the plugin.
+  ...compat.extends('plugin:@next/next/recommended'),
+  ...compat.extends('next/core-web-vitals'),
+  // Ensure these are spread in case `compat.extends` returns an array of config objects.
   
   // SonarJS recommended rules
   sonarjs.configs.recommended,
