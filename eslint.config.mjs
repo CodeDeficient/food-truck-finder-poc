@@ -77,8 +77,8 @@ export default tseslint.config(
   },
 
   // Next.js specific configurations
-  // Use the plugin's flat configs directly
-  nextPlugin.configs["flat/recommended"],
+  // Use the plugin's flat configs directly for App Router
+  nextPlugin.configs["flat/app/recommended"], // Changed from "flat/recommended"
   nextPlugin.configs["flat/core-web-vitals"],
   // The above lines replace the manual setup:
   // {
