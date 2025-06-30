@@ -108,7 +108,7 @@ export class TaskScheduler {
     // Calculate interval in milliseconds
     const intervalMs = task.intervalMinutes * 60 * 1000; // Schedule the task
     const interval = setInterval(() => {
-      void (() => {
+      void (async () => { // Make the IIFE async
         try {
           console.info(`Executing task: ${taskId}`);
           task.lastRun = new Date().toISOString();
