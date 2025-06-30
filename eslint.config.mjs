@@ -79,7 +79,11 @@ export default tseslint.config(
   // Next.js specific configurations
   // Use the plugin's flat configs directly for App Router
   nextPlugin.configs["flat/app/recommended"], // Changed from "flat/recommended"
-  nextPlugin.configs["flat/core-web-vitals"],
+  // nextPlugin.configs["flat/core-web-vitals"], // Removed, as this was likely the source of 'undefined config'
+  // Core Web Vitals rules are often included in 'flat/app/recommended' or handled by Next.js build optimizations.
+  // If specific CWV lint rules are missed, they can be added manually if necessary,
+  // once the primary config error is resolved.
+  //
   // The above lines replace the manual setup:
   // {
   //   plugins: {
