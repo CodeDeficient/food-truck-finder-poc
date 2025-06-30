@@ -77,22 +77,25 @@ export default tseslint.config(
   },
 
   // Next.js specific configurations
-  // These replace 'next/core-web-vitals'
-  {
-    plugins: {
-      "@next/next": nextPlugin,
-    },
-    rules: {
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules,
-    },
-    languageOptions: { // Next.js specific globals
-        globals: {
-            ...globals.browser,
-            React: "readonly", // Example, Next.js preset handles this
-        }
-    }
-  },
+  // Use the plugin's flat configs directly
+  nextPlugin.configs["flat/recommended"],
+  nextPlugin.configs["flat/core-web-vitals"],
+  // The above lines replace the manual setup:
+  // {
+  //   plugins: {
+  //     "@next/next": nextPlugin,
+  //   },
+  //   rules: {
+  //     ...nextPlugin.configs.recommended.rules,
+  //     ...nextPlugin.configs["core-web-vitals"].rules,
+  //   },
+  //   languageOptions: { // Next.js specific globals
+  //       globals: {
+  //           ...globals.browser,
+  //           React: "readonly", // Example, Next.js preset handles this
+  //       }
+  //   }
+  // },
   
   // SonarJS recommended rules
   sonarjs.configs.recommended,
