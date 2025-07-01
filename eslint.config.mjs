@@ -10,16 +10,16 @@ const globals = require('globals'); // Use require for globals
 import tseslint from "typescript-eslint";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
-// import nextPlugin from "@next/eslint-plugin-next"; // nextPlugin will be pulled by FlatCompat
+// import nextPlugin from "@next/eslint-plugin-next"; // Not needed when using FlatCompat with string extends that load plugins
 import eslintConfigPrettier from "eslint-config-prettier";
 
-// Prepare FlatCompat - Keep for later, but don't use `compat` for now.
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const compat = new FlatCompat({
-//     baseDirectory: __dirname,
-//     resolvePluginsRelativeTo: __dirname,
-// });
+// Prepare FlatCompat
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+    baseDirectory: __dirname,
+    resolvePluginsRelativeTo: __dirname, // Helps FlatCompat find plugins mentioned in extended configs
+});
 
 export default tseslint.config(
   // Global ignores - PREVENTION-FOCUSED
@@ -89,9 +89,12 @@ export default tseslint.config(
     },
   },
 
-  // Temporarily removing Next.js specific configurations to establish a stable base
-  // ...compat.extends('plugin:@next/next/recommended'), // Removed
-  // ...compat.extends('next/core-web-vitals'), // Removed
+  // Re-integrating Next.js specific configurations using FlatCompat
+  // This targets the installed @next/eslint-plugin-next directly.
+  ...compat.extends('plugin:@next/next/recommended'),
+  // For now, omitting 'next/core-web-vitals' as it might require eslint-config-next
+  // or might have been the source of the "undefined config" issue if not resolved by FlatCompat.
+  // The 'plugin:@next/next/recommended' should provide the core Next.js linting.
   
   // SonarJS recommended rules
   sonarjs.configs.recommended,
