@@ -12,7 +12,9 @@ interface QualityDistributionCardProps {
   readonly dataQualityStats: DataQualityStats;
 }
 
-export function QualityDistributionCard({ dataQualityStats }: Readonly<QualityDistributionCardProps>) {
+export function QualityDistributionCard({
+  dataQualityStats,
+}: Readonly<QualityDistributionCardProps>) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -25,8 +27,10 @@ export function QualityDistributionCard({ dataQualityStats }: Readonly<QualityDi
         </div>
         <p className="text-xs text-muted-foreground">
           <span className="text-green-600">{dataQualityStats.high_quality_count ?? 0} high</span>,{' '}
-          <span className="text-yellow-600">{dataQualityStats.medium_quality_count ?? 0} medium</span>,{' '}
-          <span className="text-red-600">{dataQualityStats.low_quality_count ?? 0} low</span>
+          <span className="text-yellow-600">
+            {dataQualityStats.medium_quality_count ?? 0} medium
+          </span>
+          , <span className="text-red-600">{dataQualityStats.low_quality_count ?? 0} low</span>
         </p>
       </CardContent>
     </Card>

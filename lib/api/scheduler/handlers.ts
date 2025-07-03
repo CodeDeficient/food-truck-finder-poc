@@ -135,7 +135,11 @@ export function handleUpdateTask(body: PutRequestBody) {
   };
 
   // Update next run time if interval changed
-  if (config.intervalMinutes != undefined && config.intervalMinutes > 0 && schedulerTasks[taskIndex].enabled) {
+  if (
+    config.intervalMinutes != undefined &&
+    config.intervalMinutes > 0 &&
+    schedulerTasks[taskIndex].enabled
+  ) {
     const lastRun = new Date(schedulerTasks[taskIndex].lastRun ?? Date.now());
     const nextRun = new Date(lastRun.getTime() + config.intervalMinutes * 60 * 1000);
     schedulerTasks[taskIndex].nextRun = nextRun.toISOString();

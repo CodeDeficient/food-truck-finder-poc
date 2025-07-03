@@ -138,7 +138,11 @@ export class PipelineManager {
   /**
    * Create success result
    */
-  private createSuccessResult(config: PipelineConfig, result: unknown, startTime: number): PipelineResult {
+  private createSuccessResult(
+    config: PipelineConfig,
+    result: unknown,
+    startTime: number,
+  ): PipelineResult {
     const duration = Date.now() - startTime;
     return {
       success: true,
@@ -158,7 +162,11 @@ export class PipelineManager {
   /**
    * Create error result
    */
-  private createErrorResult(config: PipelineConfig, error: unknown, startTime: number): PipelineResult {
+  private createErrorResult(
+    config: PipelineConfig,
+    error: unknown,
+    startTime: number,
+  ): PipelineResult {
     const duration = Date.now() - startTime;
     console.error(`❌ PipelineManager: ${config.type} pipeline failed:`, error);
 
@@ -256,7 +264,10 @@ export class PipelineManager {
   /**
    * Process a batch of jobs
    */
-  private async processJobBatch(jobsToProcess: ScrapingJob[], startTime: number): Promise<ProcessingResult> {
+  private async processJobBatch(
+    jobsToProcess: ScrapingJob[],
+    startTime: number,
+  ): Promise<ProcessingResult> {
     const errors: string[] = [];
     let jobsSuccessful = 0;
     let jobsFailed = 0;

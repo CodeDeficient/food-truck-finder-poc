@@ -11,7 +11,12 @@ interface SystemAlertsProps {
   readonly onAcknowledgeAlert: (alertId: string) => void;
 }
 
-export function SystemAlerts({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: SystemAlertsProps) {
+export function SystemAlerts({
+  alerts,
+  showDetails,
+  onToggleDetails,
+  onAcknowledgeAlert,
+}: SystemAlertsProps) {
   if (alerts.length === 0) return;
   return (
     <div className="mt-4">

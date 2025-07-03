@@ -15,12 +15,14 @@ interface DayData {
 
 function DaySchedule({ day, dayData }: Readonly<{ day: string; dayData?: DayData }>) {
   const dayName = day.charAt(0).toUpperCase() + day.slice(1);
-  
+
   return (
     <div className="flex justify-between items-center">
       <span className="text-sm font-medium dark:text-gray-200">{dayName}</span>
       <span className="text-sm text-gray-600 dark:text-gray-400">
-        {dayData?.closed === true ? 'Closed' : `${dayData?.open ?? 'N/A'} - ${dayData?.close ?? 'N/A'}`}
+        {dayData?.closed === true
+          ? 'Closed'
+          : `${dayData?.open ?? 'N/A'} - ${dayData?.close ?? 'N/A'}`}
       </span>
     </div>
   );
@@ -43,10 +45,10 @@ export function TruckOperatingHours({ truck }: TruckOperatingHoursProps) {
         {hasOperatingHours ? (
           <div className="space-y-2">
             {daysOfWeek.map((day) => {
-              const dayData = truck.operating_hours?.[day as keyof typeof truck.operating_hours] as DayData | undefined;
-              return (
-                <DaySchedule key={day} day={day} dayData={dayData} />
-              );
+              const dayData = truck.operating_hours?.[day as keyof typeof truck.operating_hours] as
+                | DayData
+                | undefined;
+              return <DaySchedule key={day} day={day} dayData={dayData} />;
             })}
           </div>
         ) : (

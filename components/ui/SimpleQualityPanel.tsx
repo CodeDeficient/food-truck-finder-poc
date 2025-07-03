@@ -33,16 +33,18 @@ const recalculateAllScores = async (): Promise<RecalculateAllResult> => {
   const result: unknown = await response.json();
 
   if (typeof result === 'object' && result !== null && 'success' in result) {
-    return result.success === true ? {
-        success: true,
-        data: {
-          updated: (result as { data?: { updated?: number } }).data?.updated ?? 0,
-          errors: (result as { data?: { errors?: number } }).data?.errors ?? 0,
-        },
-      } : {
-        success: false,
-        error: (result as { error?: string }).error ?? 'Failed to recalculate quality scores',
-      };
+    return result.success === true
+      ? {
+          success: true,
+          data: {
+            updated: (result as { data?: { updated?: number } }).data?.updated ?? 0,
+            errors: (result as { data?: { errors?: number } }).data?.errors ?? 0,
+          },
+        }
+      : {
+          success: false,
+          error: (result as { error?: string }).error ?? 'Failed to recalculate quality scores',
+        };
   }
   return { success: false, error: 'Invalid response format' };
 };
@@ -76,7 +78,9 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
     try {
       const result = await recalculateAllScores();
       if (result.success) {
-        alert(`Quality scores updated successfully! ${result.data?.updated} trucks updated, ${result.data?.errors} errors.`);
+        alert(
+          `Quality scores updated successfully! ${result.data?.updated} trucks updated, ${result.data?.errors} errors.`,
+        );
         onRefresh?.();
       } else {
         throw new Error(result.error);
@@ -103,7 +107,9 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Button
-            onClick={() => { void handleRecalculateAll(); }}
+            onClick={() => {
+              void handleRecalculateAll();
+            }}
             disabled={isRecalculating}
             className="flex items-center gap-2"
             variant="default"
@@ -121,7 +127,8 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
 
         <div className="text-xs text-muted-foreground">
           <p>
-            <strong>Recalculate All:</strong> Updates quality scores for all food trucks using the latest algorithm.
+            <strong>Recalculate All:</strong> Updates quality scores for all food trucks using the
+            latest algorithm.
           </p>
         </div>
       </CardContent>

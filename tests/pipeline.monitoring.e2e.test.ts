@@ -10,9 +10,7 @@ import { supabaseAdmin } from '../lib/supabase';
  */
 
 test.describe('Pipeline Health Monitoring', () => {
-  test('System Health Dashboard', async ({
-    request
-  }: any) => {
+  test('System Health Dashboard', async ({ request }: any) => {
     console.info('\n=== PIPELINE HEALTH CHECK ===');
 
     // 1. Database Health Check
@@ -154,9 +152,7 @@ test.describe('Pipeline Health Monitoring', () => {
     console.log('\n=== HEALTH CHECK COMPLETE ===\n');
   });
 
-  test('Performance Baseline Check', async ({
-    request
-  }: any) => {
+  test('Performance Baseline Check', async ({ request }: any) => {
     console.log('\n=== PERFORMANCE BASELINE CHECK ===');
 
     const testUrl = 'https://www.rotirolls.com/';
@@ -205,9 +201,7 @@ test.describe('Pipeline Health Monitoring', () => {
     console.log('\n=== BASELINE CHECK COMPLETE ===\n');
   });
 
-  test('Error Rate Monitoring', async ({
-    request
-  }: any) => {
+  test('Error Rate Monitoring', async ({ request }: any) => {
     console.log('\n=== ERROR RATE MONITORING ===');
 
     const testRequests = 5;

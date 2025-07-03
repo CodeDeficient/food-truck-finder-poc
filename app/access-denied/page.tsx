@@ -15,15 +15,16 @@ function AccessDeniedHeader() {
         <Shield className="h-8 w-8 text-destructive" />
       </div>
       <CardTitle className="text-2xl">Access Denied</CardTitle>
-      <CardDescription>
-        You don't have administrator privileges to access this area
-      </CardDescription>
+      <CardDescription>You don't have administrator privileges to access this area</CardDescription>
     </CardHeader>
   );
 }
 
 // Helper component for the action buttons
-function ActionButtons({ onGoHome, onSignOut }: {
+function ActionButtons({
+  onGoHome,
+  onSignOut,
+}: {
   readonly onGoHome: () => void;
   readonly onSignOut: () => Promise<void>;
 }) {

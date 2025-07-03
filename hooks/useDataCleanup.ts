@@ -31,7 +31,7 @@ export function useDataCleanup() {
     'remove_placeholders',
     'normalize_phone',
     'fix_coordinates',
-    'update_quality_scores'
+    'update_quality_scores',
   ]);
 
   const runCleanup = async (dryRun: boolean = false) => {
@@ -45,12 +45,16 @@ export function useDataCleanup() {
           options: {
             operations: selectedOperations,
             batchSize: 50,
-            dryRun
-          }
-        })
+            dryRun,
+          },
+        }),
       });
 
-      const data = await response.json() as { success: boolean; result?: CleanupResult; error?: string };
+      const data = (await response.json()) as {
+        success: boolean;
+        result?: CleanupResult;
+        error?: string;
+      };
 
       if (data.success === true) {
         setLastResult(data.result);
@@ -67,7 +71,7 @@ export function useDataCleanup() {
   const loadPreview = async () => {
     try {
       const response = await fetch('/api/admin/data-cleanup?action=preview');
-      const data = await response.json() as { success: boolean; preview?: unknown };
+      const data = (await response.json()) as { success: boolean; preview?: unknown };
 
       if (data.success === true) {
         setPreviewData(data.preview);
@@ -78,10 +82,8 @@ export function useDataCleanup() {
   };
 
   const toggleOperation = (operation: string) => {
-    setSelectedOperations(prev => 
-      prev.includes(operation)
-        ? prev.filter(op => op !== operation)
-        : [...prev, operation]
+    setSelectedOperations((prev) =>
+      prev.includes(operation) ? prev.filter((op) => op !== operation) : [...prev, operation],
     );
   };
 
@@ -92,6 +94,6 @@ export function useDataCleanup() {
     selectedOperations,
     runCleanup,
     loadPreview,
-    toggleOperation
+    toggleOperation,
   };
 }

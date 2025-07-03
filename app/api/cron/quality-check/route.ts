@@ -14,10 +14,9 @@ import { type QualityCategory } from '@/lib/utils/QualityScorer';
 interface QualityService {
   calculateQualityScore: (truck: FoodTruck) => QualityAssessment;
   categorizeQualityScore: (score: number) => QualityCategory;
-  batchUpdateQualityScores: (limit: number) => Promise<{ updatedCount: number; errors: string[]; }>;
+  batchUpdateQualityScores: (limit: number) => Promise<{ updatedCount: number; errors: string[] }>;
 
-  updateTruckQualityScore: (truckId: string) => Promise<{ success: boolean; }>;
-
+  updateTruckQualityScore: (truckId: string) => Promise<{ success: boolean }>;
 }
 
 interface QualityCheckResults {
@@ -27,7 +26,7 @@ interface QualityCheckResults {
   staleDataCount: number;
   averageQualityScore: number;
   qualityBreakdown: { high: number; medium: number; low: number };
-  updateResults: { updatedCount: number; errors: string[]; }; // Changed from unknown[] to string[]
+  updateResults: { updatedCount: number; errors: string[] }; // Changed from unknown[] to string[]
   timestamp: string;
 }
 
@@ -129,7 +128,9 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
     const assessment = (DataQualityService as QualityService).calculateQualityScore(truck);
     totalQualityScore += assessment.score;
 
-    const category = (DataQualityService as QualityService).categorizeQualityScore(assessment.score);
+    const category = (DataQualityService as QualityService).categorizeQualityScore(
+      assessment.score,
+    );
     qualityBreakdown[category.label.toLowerCase() as keyof typeof qualityBreakdown]++;
 
     if (assessment.issues.length > 0) {
@@ -163,8 +164,8 @@ function assessTrucksQuality(trucks: FoodTruck[]): {
 function aggregateQualityCheckResults(
   totalTrucks: number,
   assessmentResults: ReturnType<typeof assessTrucksQuality>,
-  updateResults: { updatedCount: number; errors: string[]; },
-  timestamp: string
+  updateResults: { updatedCount: number; errors: string[] },
+  timestamp: string,
 ): QualityCheckResults {
   return {
     totalTrucks: totalTrucks,
@@ -182,12 +183,14 @@ async function performDataQualityCheck() {
   try {
     const { trucks, total } = await FoodTruckService.getAllTrucks(1000, 0);
     const assessmentResults = assessTrucksQuality(trucks);
-    const updateResults = await (DataQualityService as QualityService).batchUpdateQualityScores(100);
+    const updateResults = await (DataQualityService as QualityService).batchUpdateQualityScores(
+      100,
+    );
     return aggregateQualityCheckResults(
       total,
       assessmentResults,
       updateResults,
-      new Date().toISOString()
+      new Date().toISOString(),
     );
   } catch (error: unknown) {
     console.error('Error performing data quality check:', error);

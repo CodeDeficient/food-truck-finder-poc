@@ -6,9 +6,7 @@ export function TechnicalDetailsCard() {
     <Card>
       <CardHeader>
         <CardTitle>Technical Implementation</CardTitle>
-        <CardDescription>
-          Advanced monitoring system built with SOTA practices
-        </CardDescription>
+        <CardDescription>Advanced monitoring system built with SOTA practices</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 md:grid-cols-3">

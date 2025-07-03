@@ -1,9 +1,5 @@
 import { FoodTruck } from '@/lib/types';
-import {
-  getPopularItems,
-  getPriceRange,
-  getTodayHours,
-} from '@/lib/utils/foodTruckHelpers';
+import { getPopularItems, getPriceRange, getTodayHours } from '@/lib/utils/foodTruckHelpers';
 
 export const useTruckCard = (truck: FoodTruck) => {
   const popularItems = getPopularItems(truck);

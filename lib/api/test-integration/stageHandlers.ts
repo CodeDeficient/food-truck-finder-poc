@@ -19,12 +19,20 @@ function getErrorMessage(error: unknown, fallback: string): string {
 async function handleUrlScrape(
   url: string,
   logs: string[],
-): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string }> {
+): Promise<{
+  firecrawlResult: StageResult;
+  contentToProcess: string | undefined;
+  sourceUrlForProcessing: string;
+}> {
   logs.push(`Starting Firecrawl scrape for URL: ${url}`);
   try {
     const fcOutput: GeminiResponse<FirecrawlOutputData> =
       await firecrawl.scrapeFoodTruckWebsite(url);
-    if (fcOutput.success === true && fcOutput.data?.markdown !== undefined && fcOutput.data?.markdown !== '') {
+    if (
+      fcOutput.success === true &&
+      fcOutput.data?.markdown !== undefined &&
+      fcOutput.data?.markdown !== ''
+    ) {
       return {
         contentToProcess: fcOutput.data.markdown,
         sourceUrlForProcessing: fcOutput.data.source_url ?? url,
@@ -39,9 +47,16 @@ async function handleUrlScrape(
       throw new Error(fcOutput.error ?? 'Firecrawl failed to return markdown.');
     }
   } catch (error) {
-    const errorMessage = getErrorMessage(error, 'An unknown error occurred during Firecrawl scrape.');
+    const errorMessage = getErrorMessage(
+      error,
+      'An unknown error occurred during Firecrawl scrape.',
+    );
     logs.push(`Firecrawl error: ${errorMessage}`);
-    return { firecrawlResult: { status: 'Error', error: errorMessage }, contentToProcess: undefined, sourceUrlForProcessing: url };
+    return {
+      firecrawlResult: { status: 'Error', error: errorMessage },
+      contentToProcess: undefined,
+      sourceUrlForProcessing: url,
+    };
   }
 }
 
@@ -64,7 +79,11 @@ function determineFirecrawlStageOutput(
   url: string,
   rawText: string | undefined,
   logs: string[],
-): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string }> {
+): Promise<{
+  firecrawlResult: StageResult;
+  contentToProcess: string | undefined;
+  sourceUrlForProcessing: string;
+}> {
   if (url && rawText === undefined) {
     return handleUrlScrape(url, logs);
   } else if (rawText === undefined) {
@@ -124,7 +143,10 @@ export async function handleGeminiStage(
       throw new Error(geminiOutput.error ?? 'Gemini processing failed to return data.');
     }
   } catch (error) {
-    const errorMessage = getErrorMessage(error, 'An unknown error occurred during Gemini processing.');
+    const errorMessage = getErrorMessage(
+      error,
+      'An unknown error occurred during Gemini processing.',
+    );
     logs.push(`Gemini error: ${errorMessage}`);
     geminiResult = { status: 'Error', error: errorMessage };
   }
@@ -175,7 +197,10 @@ export async function handleSupabaseStage(
 
     return await saveToSupabase(truckDataToSave, logs);
   } catch (error) {
-    const errorMessage = getErrorMessage(error, 'An unknown error occurred during Supabase interaction.');
+    const errorMessage = getErrorMessage(
+      error,
+      'An unknown error occurred during Supabase interaction.',
+    );
     logs.push(`Supabase interaction error: ${errorMessage}`);
     return { status: 'Error', error: errorMessage };
   }

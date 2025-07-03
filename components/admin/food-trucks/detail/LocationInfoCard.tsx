@@ -3,7 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MapPin } from 'lucide-react';
 
 interface LocationInfoCardProps {
-  readonly truck: { current_location?: { address?: string; lat?: number; lng?: number; timestamp?: string } };
+  readonly truck: {
+    current_location?: { address?: string; lat?: number; lng?: number; timestamp?: string };
+  };
 }
 
 export function LocationInfoCard({ truck }: Readonly<LocationInfoCardProps>) {
@@ -17,7 +19,7 @@ export function LocationInfoCard({ truck }: Readonly<LocationInfoCardProps>) {
         <CardDescription>Current location and address details</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {(truck.current_location?.address === undefined) ? (
+        {truck.current_location?.address === undefined ? (
           <p className="text-gray-400 text-sm">No address available</p>
         ) : (
           <div>

@@ -11,12 +11,16 @@ interface UseSystemAlertsLogicReturn {
   acknowledgeAlert: (alertId: string) => void;
 }
 
-export function useSystemAlertsLogic({ recentEvents }: UseSystemAlertsLogicProps): UseSystemAlertsLogicReturn {
+export function useSystemAlertsLogic({
+  recentEvents,
+}: UseSystemAlertsLogicProps): UseSystemAlertsLogicReturn {
   const [alerts, setAlerts] = useState<SystemAlert[]>([]);
 
   useEffect(() => {
     const newAlerts = recentEvents
-      .filter((event: RealtimeAdminEvent) => event.severity !== undefined && event.severity !== 'info')
+      .filter(
+        (event: RealtimeAdminEvent) => event.severity !== undefined && event.severity !== 'info',
+      )
       .map((event: RealtimeAdminEvent) => ({
         id: event.id,
         type: event.severity as 'warning' | 'error' | 'critical',

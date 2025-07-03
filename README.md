@@ -9,35 +9,35 @@ The Food Truck Finder Application is a modern, full-stack web application design
 
 ## Key Technologies
 
--   **Framework**: Next.js (React)
--   **Styling**: Tailwind CSS
--   **State Management**: React Hooks
--   **Backend & Database**: Next.js API Routes, Supabase (PostgreSQL, Auth, Storage, Edge Functions)
--   **Web Scraping**: Firecrawl
--   **AI-Powered Search**: Tavily AI
--   **AI/ML**: Google Gemini API (`@google/genai`)
--   **Mapping**: Leaflet, React-Leaflet
--   **UI Components**: Radix UI, Shadcn UI
--   **Testing**: Playwright (E2E), Jest (Unit/Integration)
--   **Type Safety**: TypeScript
+- **Framework**: Next.js (React)
+- **Styling**: Tailwind CSS
+- **State Management**: React Hooks
+- **Backend & Database**: Next.js API Routes, Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+- **Web Scraping**: Firecrawl
+- **AI-Powered Search**: Tavily AI
+- **AI/ML**: Google Gemini API (`@google/genai`)
+- **Mapping**: Leaflet, React-Leaflet
+- **UI Components**: Radix UI, Shadcn UI
+- **Testing**: Playwright (E2E), Jest (Unit/Integration)
+- **Type Safety**: TypeScript
 
 ## Features
 
--   **Food Truck Discovery**: Easily find food trucks based on location, cuisine type, and operating status.
--   **Detailed Information**: View comprehensive details for each food truck, including menus, operating hours, contact information, and social media links.
--   **Real-time Updates**: Get live updates on food truck locations and availability.
--   **Advanced Search & Filtering**: Robust search capabilities with filters for cuisine type, price range, and operating status.
--   **Event & Schedule Management**: Integration for food truck events and operating schedules.
--   **User Profiles**: Personalized user profiles for enhanced experience.
--   **Data Quality Metrics**: Built-in functions and dashboards to monitor and ensure data quality.
--   **Comprehensive Security**: Implemented security hardening measures across the application and database.
--   **Admin Dashboard**: A secure and comprehensive interface for administrators, currently under active development. It includes:
-    -   **Food Truck Management**: CRUD operations for food truck data.
-    -   **User Management**: Oversee and manage user accounts.
-    -   **Data Pipeline Monitoring**: Track scraping jobs, data quality, and automated cleanup processes.
-    -   **System Metrics & Alerts**: Real-time monitoring of application performance and system health, with configurable alerts.
-    -   **Analytics**: Insights into application usage and food truck popularity.
-    -   **Test Pipeline**: Tools for testing data scraping and processing pipelines.
+- **Food Truck Discovery**: Easily find food trucks based on location, cuisine type, and operating status.
+- **Detailed Information**: View comprehensive details for each food truck, including menus, operating hours, contact information, and social media links.
+- **Real-time Updates**: Get live updates on food truck locations and availability.
+- **Advanced Search & Filtering**: Robust search capabilities with filters for cuisine type, price range, and operating status.
+- **Event & Schedule Management**: Integration for food truck events and operating schedules.
+- **User Profiles**: Personalized user profiles for enhanced experience.
+- **Data Quality Metrics**: Built-in functions and dashboards to monitor and ensure data quality.
+- **Comprehensive Security**: Implemented security hardening measures across the application and database.
+- **Admin Dashboard**: A secure and comprehensive interface for administrators, currently under active development. It includes:
+  - **Food Truck Management**: CRUD operations for food truck data.
+  - **User Management**: Oversee and manage user accounts.
+  - **Data Pipeline Monitoring**: Track scraping jobs, data quality, and automated cleanup processes.
+  - **System Metrics & Alerts**: Real-time monitoring of application performance and system health, with configurable alerts.
+  - **Analytics**: Insights into application usage and food truck popularity.
+  - **Test Pipeline**: Tools for testing data scraping and processing pipelines.
 
 ## AI-Powered Data Pipeline
 
@@ -45,10 +45,10 @@ The backbone of the Food Truck Finder is its intelligent, automated data pipelin
 
 ### Key Components:
 
--   **Tavily AI for Intelligent Discovery**: The pipeline uses Tavily's AI-powered search API to intelligently discover new food trucks and their websites. This allows for a more efficient and targeted approach to data acquisition compared to traditional web scraping.
--   **Firecrawl for Web Scraping**: Once a potential food truck website is identified, Firecrawl is used to reliably scrape the necessary data, such as menus, operating hours, and contact information. Firecrawl's robust infrastructure ensures a high success rate and handles the complexities of web scraping.
--   **Gemini AI for Data Extraction**: The scraped data is then processed by Google's Gemini AI, which extracts and structures the information into a consistent format.
--   **Supabase for Data Storage**: The cleaned and structured data is stored in a Supabase PostgreSQL database, providing a reliable and scalable data storage solution.
+- **Tavily AI for Intelligent Discovery**: The pipeline uses Tavily's AI-powered search API to intelligently discover new food trucks and their websites. This allows for a more efficient and targeted approach to data acquisition compared to traditional web scraping.
+- **Firecrawl for Web Scraping**: Once a potential food truck website is identified, Firecrawl is used to reliably scrape the necessary data, such as menus, operating hours, and contact information. Firecrawl's robust infrastructure ensures a high success rate and handles the complexities of web scraping.
+- **Gemini AI for Data Extraction**: The scraped data is then processed by Google's Gemini AI, which extracts and structures the information into a consistent format.
+- **Supabase for Data Storage**: The cleaned and structured data is stored in a Supabase PostgreSQL database, providing a reliable and scalable data storage solution.
 
 ## Architecture Diagrams
 
@@ -145,9 +145,11 @@ To set up the project locally, follow these steps:
     ```
 3.  **Set up Environment Variables**:
     Create a `.env.local` file by copying the example file:
+
     ```bash
     cp .env.local.example .env.local
     ```
+
     Then, fill in the required environment variables in the `.env.local` file. Refer to the comments in the `.env.local.example` file for guidance on where to find the necessary API keys and other values.
 
 4.  **Run Database Migrations**:
@@ -186,47 +188,47 @@ We welcome contributions to the Food Truck Finder Application! Please follow the
 
 The `package.json` includes a variety of scripts to streamline development, testing, and quality assurance:
 
--   **Linting & Formatting**:
-    -   `npm run lint`: Runs ESLint on all `.js`, `.jsx`, `.ts`, `.tsx` files.
-    -   `npm run lint:fix`: Automatically fixes linting errors.
-    -   `npm run lint:count`: Counts the total number of linting errors.
-    -   `npm run format`: Formats code using Prettier.
--   **Testing**:
-    -   `npm run test`: Runs Jest unit/integration tests.
-    -   `npm run test:coverage`: Runs Jest tests with code coverage.
-    -   `npm run test:e2e`: Runs Playwright E2E tests (basic).
-    -   `npm run test:e2e:playwright`: Runs all Playwright tests.
-    -   `npm run test:e2e:pipeline`: Runs Playwright tests specific to the data pipeline.
-    -   `npm run test:e2e:upscaling`: Runs Playwright tests for pipeline upscaling.
-    -   `npm run test:e2e:load`: Runs Playwright load tests for the pipeline.
-    -   `npm run test:e2e:monitoring`: Runs Playwright tests for monitoring features.
-    -   `npm run test:pipeline:all`: Runs all Playwright pipeline-related E2E tests.
-    -   `npm run test:e2e:all`: Runs all Playwright E2E tests.
-    -   `npm run test:e2e:report`: Shows the Playwright test report.
-    -   `npm run test:setup`: Runs setup scripts for testing.
-    -   `npm run test:pipeline:health`: Runs Playwright tests specifically for the System Health Dashboard.
--   **Quality Gates & Type Checking**:
-    -   `npm run quality:gates`: Executes quality gate checks (e.g., linting, type checking).
-    -   `npm run quality:check`: Runs type checking and linting.
-    -   `npm run quality:fix`: Fixes linting errors and runs type checking.
-    -   `npm run type-check`: Performs TypeScript type checking.
-    -   `npm run type-coverage`: Checks TypeScript type coverage (at least 95%).
-    -   `npm run complexity:check`: Checks for cognitive complexity violations.
--   **Error & Baseline Management**:
-    -   `npm run error:count`: Counts current linting errors.
-    -   `npm run baseline:capture`: Captures a baseline of current errors.
-    -   `npm run baseline:compare`: Compares current errors against the baseline.
--   **OAuth Flow Testing**:
-    -   `npm run oauth:verify`: Verifies OAuth setup.
-    -   `npm run oauth:test`: Tests the OAuth flow.
-    -   `npm run oauth:test:dev`: Tests OAuth flow in development environment.
-    -   `npm run oauth:test:prod`: Tests OAuth flow in production environment.
--   **Monitoring**:
-    -   `npm run monitoring:update`: Updates monitoring configurations.
--   **TypeScript Migration (ts-migrate)**:
-    -   `npm run ts-migrate:init`: Initializes `ts-migrate`.
-    -   `npm run ts-migrate:migrate`: Migrates JavaScript to TypeScript.
-    -   `npm run ts-migrate:reignore`: Re-ignores files for `ts-migrate`.
+- **Linting & Formatting**:
+  - `npm run lint`: Runs ESLint on all `.js`, `.jsx`, `.ts`, `.tsx` files.
+  - `npm run lint:fix`: Automatically fixes linting errors.
+  - `npm run lint:count`: Counts the total number of linting errors.
+  - `npm run format`: Formats code using Prettier.
+- **Testing**:
+  - `npm run test`: Runs Jest unit/integration tests.
+  - `npm run test:coverage`: Runs Jest tests with code coverage.
+  - `npm run test:e2e`: Runs Playwright E2E tests (basic).
+  - `npm run test:e2e:playwright`: Runs all Playwright tests.
+  - `npm run test:e2e:pipeline`: Runs Playwright tests specific to the data pipeline.
+  - `npm run test:e2e:upscaling`: Runs Playwright tests for pipeline upscaling.
+  - `npm run test:e2e:load`: Runs Playwright load tests for the pipeline.
+  - `npm run test:e2e:monitoring`: Runs Playwright tests for monitoring features.
+  - `npm run test:pipeline:all`: Runs all Playwright pipeline-related E2E tests.
+  - `npm run test:e2e:all`: Runs all Playwright E2E tests.
+  - `npm run test:e2e:report`: Shows the Playwright test report.
+  - `npm run test:setup`: Runs setup scripts for testing.
+  - `npm run test:pipeline:health`: Runs Playwright tests specifically for the System Health Dashboard.
+- **Quality Gates & Type Checking**:
+  - `npm run quality:gates`: Executes quality gate checks (e.g., linting, type checking).
+  - `npm run quality:check`: Runs type checking and linting.
+  - `npm run quality:fix`: Fixes linting errors and runs type checking.
+  - `npm run type-check`: Performs TypeScript type checking.
+  - `npm run type-coverage`: Checks TypeScript type coverage (at least 95%).
+  - `npm run complexity:check`: Checks for cognitive complexity violations.
+- **Error & Baseline Management**:
+  - `npm run error:count`: Counts current linting errors.
+  - `npm run baseline:capture`: Captures a baseline of current errors.
+  - `npm run baseline:compare`: Compares current errors against the baseline.
+- **OAuth Flow Testing**:
+  - `npm run oauth:verify`: Verifies OAuth setup.
+  - `npm run oauth:test`: Tests the OAuth flow.
+  - `npm run oauth:test:dev`: Tests OAuth flow in development environment.
+  - `npm run oauth:test:prod`: Tests OAuth flow in production environment.
+- **Monitoring**:
+  - `npm run monitoring:update`: Updates monitoring configurations.
+- **TypeScript Migration (ts-migrate)**:
+  - `npm run ts-migrate:init`: Initializes `ts-migrate`.
+  - `npm run ts-migrate:migrate`: Migrates JavaScript to TypeScript.
+  - `npm run ts-migrate:reignore`: Re-ignores files for `ts-migrate`.
 
 ### Browser Debugging with browser-tools-mcp
 
@@ -245,10 +247,10 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 
 **How it works:**
 
--   When you attempt to commit changes, Husky triggers the pre-commit hook.
--   The pre-commit hook executes `pnpm exec lint-staged`.
--   `lint-staged` then runs configured linters (`eslint --fix` and `prettier --write`) only on the files you've staged for commit.
--   This process helps catch errors and enforce formatting standards automatically before code is added to the repository.
+- When you attempt to commit changes, Husky triggers the pre-commit hook.
+- The pre-commit hook executes `pnpm exec lint-staged`.
+- `lint-staged` then runs configured linters (`eslint --fix` and `prettier --write`) only on the files you've staged for commit.
+- This process helps catch errors and enforce formatting standards automatically before code is added to the repository.
 
 **Setup:**
 
@@ -256,6 +258,7 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 2.  Husky is initialized (via `pnpm husky init` or automatically by the `prepare` script in `package.json`).
 3.  The `.husky/pre-commit` hook is configured to run `pnpm exec lint-staged`.
 4.  The `lint-staged` configuration in `package.json` specifies which commands to run on which file types.
+
 ## Documentation
 
 For a comprehensive overview of the application's architecture, data pipeline, and database schema, please refer to the [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md). For linting and code quality guidelines, refer to the [Linting and Code Quality Guide](docs/LINTING_AND_CODE_QUALITY_GUIDE.md). For project planning and status updates, refer to the [Project Planning and Status](docs/PROJECT_PLANNING_AND_STATUS.md). For guidelines on agent interactions and development, refer to the [Agent Guidelines](docs/AGENT_GUIDELINES.md).
@@ -265,27 +268,31 @@ For a comprehensive overview of the application's architecture, data pipeline, a
 ### Next.js & TypeScript Best Practices (2024-2025)
 
 #### Code Quality Standards
--   **ESLint Configuration**: Use `next/core-web-vitals` and `next/typescript` for optimal linting
--   **Type Safety**: Leverage TypeScript for enhanced type safety and early error detection
--   **Error Boundaries**: Implement graceful error handling with proper error boundaries
--   **Performance**: Use `unstable_cache` with tags for efficient data caching strategies
+
+- **ESLint Configuration**: Use `next/core-web-vitals` and `next/typescript` for optimal linting
+- **Type Safety**: Leverage TypeScript for enhanced type safety and early error detection
+- **Error Boundaries**: Implement graceful error handling with proper error boundaries
+- **Performance**: Use `unstable_cache` with tags for efficient data caching strategies
 
 #### Development Workflow
--   **Incremental Development**: Small, atomic changes with frequent linting verification
--   **Testing Strategy**: Comprehensive unit, integration, and E2E testing
--   **Code Organization**: Modular folder structure with clear separation of concerns
--   **Documentation**: JSDoc comments for complex functions and comprehensive API documentation
+
+- **Incremental Development**: Small, atomic changes with frequent linting verification
+- **Testing Strategy**: Comprehensive unit, integration, and E2E testing
+- **Code Organization**: Modular folder structure with clear separation of concerns
+- **Documentation**: JSDoc comments for complex functions and comprehensive API documentation
 
 ### Food Truck Finder Application Best Practices
 
 #### Data Pipeline Excellence
--   **Web Scraping Ethics**: Respect robots.txt, implement rate limiting, and follow platform terms
--   **Data Quality Framework**: Implement comprehensive data validation and quality scoring
--   **Real-time Updates**: Use Server-Sent Events or WebSocket for live data updates
--   **Error Handling**: Robust error handling with retry mechanisms and graceful degradation
+
+- **Web Scraping Ethics**: Respect robots.txt, implement rate limiting, and follow platform terms
+- **Data Quality Framework**: Implement comprehensive data validation and quality scoring
+- **Real-time Updates**: Use Server-Sent Events or WebSocket for live data updates
+- **Error Handling**: Robust error handling with retry mechanisms and graceful degradation
 
 #### Security & Performance
--   **Authentication**: Implement SOTA authentication patterns with proper session management
--   **Rate Limiting**: Intelligent rate limiting with backoff strategies for API calls
--   **Caching Strategy**: Multi-layer caching with appropriate invalidation strategies
--   **Monitoring**: Comprehensive monitoring with real-time alerts and performance tracking
+
+- **Authentication**: Implement SOTA authentication patterns with proper session management
+- **Rate Limiting**: Intelligent rate limiting with backoff strategies for API calls
+- **Caching Strategy**: Multi-layer caching with appropriate invalidation strategies
+- **Monitoring**: Comprehensive monitoring with real-time alerts and performance tracking

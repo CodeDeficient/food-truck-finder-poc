@@ -11,13 +11,19 @@ export async function POST(request: NextRequest) {
 
     // Validate rawBody against DataCleanupRequestBody type
     if (typeof rawBody !== 'object' || rawBody == undefined) {
-      return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body: not an object' },
+        { status: 400 },
+      );
     }
 
     const body = rawBody as Partial<DataCleanupRequestBody>; // Use Partial for initial type assertion
 
     if (typeof body.action !== 'string') {
-      return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body: missing or invalid action' },
+        { status: 400 },
+      );
     }
 
     // Further validation can be added here for other properties of DataCleanupRequestBody if needed
@@ -29,9 +35,9 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Failed to process cleanup request',
-        details: error instanceof Error ? error.message : String(error)
+        details: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -45,9 +51,9 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Failed to process cleanup request',
-        details: error instanceof Error ? error.message : String(error)
+        details: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

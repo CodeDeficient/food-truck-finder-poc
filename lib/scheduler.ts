@@ -265,7 +265,10 @@ async function updateTruckLocationFromSocial(
   truck: FoodTruck,
   scraperEngine: ScraperEngine,
 ): Promise<void> {
-  if (truck.social_media.instagram_handle == undefined || truck.social_media.instagram_handle === '') {
+  if (
+    truck.social_media.instagram_handle == undefined ||
+    truck.social_media.instagram_handle === ''
+  ) {
     return;
   }
 
@@ -444,7 +447,10 @@ function createGeminiProcessingTask(geminiProcessor: GeminiProcessor): Scheduled
 /**
  * Process batch of data with Gemini
  */
-async function processGeminiDataBatch(geminiProcessor: GeminiProcessor, pendingData: PendingDataItem[]): Promise<void> {
+async function processGeminiDataBatch(
+  geminiProcessor: GeminiProcessor,
+  pendingData: PendingDataItem[],
+): Promise<void> {
   for (const data of pendingData) {
     switch (data.type) {
       case 'menu': {

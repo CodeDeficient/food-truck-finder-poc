@@ -12,7 +12,10 @@ export function parseEventData(eventData: string, eventType: string): RealtimeEv
 }
 
 // Setup event listeners for different event types
-export function setupEventListeners(eventSource: EventSource, handleEvent: (event: RealtimeEvent) => void) {
+export function setupEventListeners(
+  eventSource: EventSource,
+  handleEvent: (event: RealtimeEvent) => void,
+) {
   const eventTypes = ['heartbeat', 'scraping_update', 'data_quality_change', 'system_alert'];
 
   for (const eventType of eventTypes) {
@@ -27,8 +30,8 @@ export function setupEventListeners(eventSource: EventSource, handleEvent: (even
 
 // Helper function to setup authentication for event source
 export function setupEventSourceAuth(): string {
-  const token = localStorage.getItem('supabase.auth.token') ??
-               sessionStorage.getItem('supabase.auth.token');
+  const token =
+    localStorage.getItem('supabase.auth.token') ?? sessionStorage.getItem('supabase.auth.token');
 
   if (token == undefined || token === '') {
     throw new Error('No authentication token available');

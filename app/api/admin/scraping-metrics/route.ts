@@ -4,10 +4,7 @@ import { verifyAdminAccess, handleGetRequest } from '@/lib/api/admin/scraping-me
 export async function GET(request: Request): Promise<NextResponse> {
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized access' },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {

@@ -3,11 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 
 interface BasicInfoCardProps {
-  readonly truck: { name: string; description?: string; cuisine_type?: string[]; price_range?: string; specialties?: string[] };
+  readonly truck: {
+    name: string;
+    description?: string;
+    cuisine_type?: string[];
+    price_range?: string;
+    specialties?: string[];
+  };
 }
 
 function CuisineTypeSection({ cuisineType }: { readonly cuisineType?: string[] }) {
-  if ((cuisineType == undefined) || cuisineType.length === 0) return;
+  if (cuisineType == undefined || cuisineType.length === 0) return;
 
   return (
     <div>
@@ -24,7 +30,7 @@ function CuisineTypeSection({ cuisineType }: { readonly cuisineType?: string[] }
 }
 
 function PriceRangeSection({ priceRange }: { readonly priceRange?: string }) {
-  if ((priceRange == undefined) || priceRange === '') return;
+  if (priceRange == undefined || priceRange === '') return;
 
   return (
     <div>
@@ -35,7 +41,7 @@ function PriceRangeSection({ priceRange }: { readonly priceRange?: string }) {
 }
 
 function SpecialtiesSection({ specialties }: { readonly specialties?: string[] }) {
-  if ((specialties == undefined) || specialties.length === 0) return;
+  if (specialties == undefined || specialties.length === 0) return;
 
   return (
     <div>
@@ -64,7 +70,7 @@ export function BasicInfoCard({ truck }: Readonly<BasicInfoCardProps>) {
           <p className="text-lg font-semibold">{truck.name}</p>
         </div>
 
-        {(truck.description !== undefined) && truck.description !== '' && (
+        {truck.description !== undefined && truck.description !== '' && (
           <div>
             <label className="text-sm font-medium text-gray-500">Description</label>
             <p className="text-gray-900">{truck.description}</p>

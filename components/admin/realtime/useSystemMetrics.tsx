@@ -25,7 +25,11 @@ interface LatestMetrics {
   };
 }
 
-function getConnectionStatusMetric(isConnected: boolean, isConnecting: boolean, connectionError?: string): StatusMetric {
+function getConnectionStatusMetric(
+  isConnected: boolean,
+  isConnecting: boolean,
+  connectionError?: string,
+): StatusMetric {
   return {
     label: 'Connection Status',
     value: (() => {

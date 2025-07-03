@@ -21,22 +21,14 @@ const DetailsDisplay: React.FC<{ details: string }> = ({ details }) => (
 const PromptDisplay: React.FC<{ prompt: string }> = ({ prompt }) => (
   <div>
     <strong>Prompt:</strong>
-    <Textarea
-      readOnly
-      value={prompt}
-      className="mt-1 h-32 bg-gray-50 dark:bg-slate-700"
-    />
+    <Textarea readOnly value={prompt} className="mt-1 h-32 bg-gray-50 dark:bg-slate-700" />
   </div>
 );
 
 const RawContentDisplay: React.FC<{ rawContent: string }> = ({ rawContent }) => (
   <div>
     <strong>Raw Content (Firecrawl):</strong>
-    <Textarea
-      readOnly
-      value={rawContent}
-      className="mt-1 h-48 bg-gray-50 dark:bg-slate-700"
-    />
+    <Textarea readOnly value={rawContent} className="mt-1 h-48 bg-gray-50 dark:bg-slate-700" />
   </div>
 );
 
@@ -87,7 +79,9 @@ export function StageResultDetails({ result }: Readonly<StageResultDetailsProps>
       {result.prompt !== undefined && <PromptDisplay prompt={result.prompt} />}
       {result.rawContent !== undefined && <RawContentDisplay rawContent={result.rawContent} />}
       {result.data !== undefined && <DataOutputDisplay data={result.data} />}
-      {result.preparedData !== undefined && <PreparedDataDisplay preparedData={result.preparedData} />}
+      {result.preparedData !== undefined && (
+        <PreparedDataDisplay preparedData={result.preparedData} />
+      )}
       {result.recordId !== undefined && <RecordIdDisplay recordId={result.recordId} />}
       {result.tokensUsed !== undefined && <TokensUsedDisplay tokensUsed={result.tokensUsed} />}
       {result.metadata !== undefined && <MetadataDisplay metadata={result.metadata} />}

@@ -41,9 +41,11 @@ export const getStatusIcon = (status: Status): React.ReactNode => {
 // eslint-disable-next-line sonarjs/function-return-type
 export const getTrendIcon = (trend?: string): React.ReactNode => {
   switch (trend) {
-    case 'up': { return <TrendingUp className="h-3 w-3 text-green-600" />;
+    case 'up': {
+      return <TrendingUp className="h-3 w-3 text-green-600" />;
     }
-    case 'down': { return <TrendingDown className="h-3 w-3 text-red-600" />;
+    case 'down': {
+      return <TrendingDown className="h-3 w-3 text-red-600" />;
     }
     default: {
       return undefined; // Explicitly return undefined when no icon is needed

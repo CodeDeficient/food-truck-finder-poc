@@ -60,9 +60,11 @@ function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
           {truck.contact_info?.website !== undefined && (
             <div className="text-sm">🌐 {truck.contact_info.website}</div>
           )}
-          {(truck.contact_info?.phone === undefined) && (truck.contact_info?.email === undefined) && (truck.contact_info?.website === undefined) && (
-            <span className="text-muted-foreground">No contact info</span>
-          )}
+          {truck.contact_info?.phone === undefined &&
+            truck.contact_info?.email === undefined &&
+            truck.contact_info?.website === undefined && (
+              <span className="text-muted-foreground">No contact info</span>
+            )}
         </div>
       </TableCell>
       <TableCell>{truck.cuisine_type?.join(', ') ?? 'N/A'}</TableCell>
@@ -80,7 +82,7 @@ function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
         </div>
       </TableCell>
       <TableCell>
-        {(truck.last_scraped_at == undefined)
+        {truck.last_scraped_at == undefined
           ? 'N/A'
           : new Date(truck.last_scraped_at).toLocaleDateString()}
       </TableCell>
@@ -94,7 +96,13 @@ function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
 }
 
 // Food trucks table component
-function FoodTrucksTable({ trucks, total }: { readonly trucks: FoodTruck[]; readonly total: number }) {
+function FoodTrucksTable({
+  trucks,
+  total,
+}: {
+  readonly trucks: FoodTruck[];
+  readonly total: number;
+}) {
   return (
     <Card>
       <CardHeader>

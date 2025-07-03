@@ -6,55 +6,60 @@ This document provides a comprehensive overview of the Food Truck Finder applica
 
 The `food-truck-finder-poc` codebase is organized into several key directories, each serving a specific purpose:
 
--   **`app/`**: Contains the Next.js application's pages, API routes, and middleware.
-    -   `app/page.tsx`: The main landing page.
-    -   `app/layout.tsx`: Root layout for the Next.js application.
-    -   `app/globals.css`: Global CSS styles.
-    -   `app/middleware.ts`: Next.js middleware for request processing (e.g., authentication, routing).
-    -   `app/admin/`: Pages and components for the administrative dashboard.
-    -   `app/api/`: All API routes (serverless functions) for backend operations.
-        -   `app/api/search/route.ts`: Handles food truck search queries.
-        -   `app/api/trucks/route.ts`: API for retrieving food truck data.
-        -   `app/api/events/route.ts`: API for retrieving event data.
-        -   `app/api/scrape/route.ts`: Manual scraping trigger.
-        -   `app/api/auto-scrape-initiate/route.ts`: Initiates auto-scraping.
-        -   `app/api/cron/auto-scrape/route.ts`: Cron job endpoint for scheduled auto-scraping.
-        -   `app/api/cron/quality-check/route.ts`: Cron job for data quality checks.
-        -   `app/api/pipeline/route.ts`: Triggers and manages data pipeline runs.
-        -   `app/api/gemini/route.ts`: Handles interactions with the Gemini AI model.
+- **`app/`**: Contains the Next.js application's pages, API routes, and middleware.
 
--   **`components/`**: Reusable React components, including UI elements and application-specific components.
-    -   `components/FoodTruckInfoCard.tsx`: Displays detailed food truck information.
-    -   `components/MapDisplay.tsx`: Renders the map with food truck locations.
-    -   `components/SearchFilters.tsx`: Components for filtering search results.
-    -   `components/TruckCard.tsx`: Card component for food truck summaries.
-    -   `components/ui/`: Shadcn UI components.
+  - `app/page.tsx`: The main landing page.
+  - `app/layout.tsx`: Root layout for the Next.js application.
+  - `app/globals.css`: Global CSS styles.
+  - `app/middleware.ts`: Next.js middleware for request processing (e.g., authentication, routing).
+  - `app/admin/`: Pages and components for the administrative dashboard.
+  - `app/api/`: All API routes (serverless functions) for backend operations.
+    - `app/api/search/route.ts`: Handles food truck search queries.
+    - `app/api/trucks/route.ts`: API for retrieving food truck data.
+    - `app/api/events/route.ts`: API for retrieving event data.
+    - `app/api/scrape/route.ts`: Manual scraping trigger.
+    - `app/api/auto-scrape-initiate/route.ts`: Initiates auto-scraping.
+    - `app/api/cron/auto-scrape/route.ts`: Cron job endpoint for scheduled auto-scraping.
+    - `app/api/cron/quality-check/route.ts`: Cron job for data quality checks.
+    - `app/api/pipeline/route.ts`: Triggers and manages data pipeline runs.
+    - `app/api/gemini/route.ts`: Handles interactions with the Gemini AI model.
 
--   **`lib/`**: Core logic, utility functions, database interactions, and external service integrations.
-    -   `lib/supabase.ts`: Supabase client initialization and database operations.
-    -   `lib/database.types.ts`: TypeScript types from Supabase schema.
-    -   `lib/pipelineProcessor.ts`: Core logic for processing scraped data.
-    -   `lib/autoScraper.ts`: Logic for automated web scraping.
-    -   `lib/firecrawl.ts`: Integration with Firecrawl API.
-    -   `lib/gemini.ts`: Integration with Gemini AI API.
-    -   `lib/scheduler.ts`: Logic for scheduling tasks.
-    -   `lib/ScraperEngine.ts`: Abstraction for different scraping methods.
-    -   `lib/utils.ts`: General utility functions.
-    -   `lib/types.ts`: Custom TypeScript types.
-    -   `lib/activityLogger.ts`: Logging utility.
+- **`components/`**: Reusable React components, including UI elements and application-specific components.
 
--   **`hooks/`**: Custom React hooks for reusable frontend logic.
-    -   `hooks/UseMobile.tsx`: Hook for detecting mobile device usage.
-    -   `hooks/UseToast.ts`: Hook for displaying toast notifications.
+  - `components/FoodTruckInfoCard.tsx`: Displays detailed food truck information.
+  - `components/MapDisplay.tsx`: Renders the map with food truck locations.
+  - `components/SearchFilters.tsx`: Components for filtering search results.
+  - `components/TruckCard.tsx`: Card component for food truck summaries.
+  - `components/ui/`: Shadcn UI components.
 
--   **`public/`**: Static assets like images.
+- **`lib/`**: Core logic, utility functions, database interactions, and external service integrations.
 
--   **`styles/`**: Global stylesheets.
+  - `lib/supabase.ts`: Supabase client initialization and database operations.
+  - `lib/database.types.ts`: TypeScript types from Supabase schema.
+  - `lib/pipelineProcessor.ts`: Core logic for processing scraped data.
+  - `lib/autoScraper.ts`: Logic for automated web scraping.
+  - `lib/firecrawl.ts`: Integration with Firecrawl API.
+  - `lib/gemini.ts`: Integration with Gemini AI API.
+  - `lib/scheduler.ts`: Logic for scheduling tasks.
+  - `lib/ScraperEngine.ts`: Abstraction for different scraping methods.
+  - `lib/utils.ts`: General utility functions.
+  - `lib/types.ts`: Custom TypeScript types.
+  - `lib/activityLogger.ts`: Logging utility.
 
--   **`supabase/`**: Supabase configurations and database migrations.
-    -   `supabase/migrations/`: SQL migration files.
+- **`hooks/`**: Custom React hooks for reusable frontend logic.
 
--   **`tests/`**: All test files for the application.
+  - `hooks/UseMobile.tsx`: Hook for detecting mobile device usage.
+  - `hooks/UseToast.ts`: Hook for displaying toast notifications.
+
+- **`public/`**: Static assets like images.
+
+- **`styles/`**: Global stylesheets.
+
+- **`supabase/`**: Supabase configurations and database migrations.
+
+  - `supabase/migrations/`: SQL migration files.
+
+- **`tests/`**: All test files for the application.
 
 ## 2. Web Application Workflow
 
@@ -135,7 +140,8 @@ graph TD
 ```
 
 ### Workflow Details
-```
+
+````
 
 ### Workflow Details
 
@@ -278,7 +284,7 @@ erDiagram
     users ||--o{ api_usage_logs : "generates"
     food_trucks ||--o{ data_quality_metrics : "monitors"
     discovered_urls ||--o{ scraper_configs : "uses"
-```
+````
 
 ### New Table: `discovered_urls`
 
@@ -302,5 +308,5 @@ CREATE TABLE discovered_urls (
 
 ## 5. Related Documentation
 
--   **Google OAuth Setup Guide**: For detailed instructions on configuring Google OAuth authentication, refer to `docs/GOOGLE_OAUTH_SETUP_GUIDE.md`.
--   **Codebase Indexing for AI Agents**: For information on state-of-the-art practices for efficient codebase search and indexing for AI agents, refer to `docs/codebase_indexing.md`.
+- **Google OAuth Setup Guide**: For detailed instructions on configuring Google OAuth authentication, refer to `docs/GOOGLE_OAUTH_SETUP_GUIDE.md`.
+- **Codebase Indexing for AI Agents**: For information on state-of-the-art practices for efficient codebase search and indexing for AI agents, refer to `docs/codebase_indexing.md`.
