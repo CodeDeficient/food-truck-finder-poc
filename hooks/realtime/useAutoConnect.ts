@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
 
-export function useAutoConnect(
-  autoConnect: boolean,
-  connect: () => void,
-  disconnect: () => void
-) {
+export function useAutoConnect(autoConnect: boolean, connect: () => void, disconnect: () => void) {
   useEffect(() => {
     if (autoConnect) {
       connect();

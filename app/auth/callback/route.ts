@@ -37,9 +37,17 @@ export async function GET(request: NextRequest) {
     if (error) {
       await handleAuthFailure(error, identifier, requestMetadata);
     } else {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
-        return await handleSuccessfulAuth({ user, redirectTo, origin, identifier, requestMetadata });
+        return await handleSuccessfulAuth({
+          user,
+          redirectTo,
+          origin,
+          identifier,
+          requestMetadata,
+        });
       }
     }
   }

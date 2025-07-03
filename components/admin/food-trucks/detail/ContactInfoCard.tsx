@@ -5,7 +5,10 @@ import { ContactField } from './ContactField';
 import { SocialMediaLinks } from './SocialMediaLinks';
 
 interface ContactInfoCardProps {
-  readonly truck: { contact_info?: { phone?: string; email?: string; website?: string }; social_media?: { instagram?: string; facebook?: string; twitter?: string } };
+  readonly truck: {
+    contact_info?: { phone?: string; email?: string; website?: string };
+    social_media?: { instagram?: string; facebook?: string; twitter?: string };
+  };
 }
 
 export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
@@ -23,7 +26,11 @@ export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
           icon={Phone}
           label="Phone"
           value={truck.contact_info?.phone}
-          href={truck.contact_info?.phone != undefined && truck.contact_info.phone !== '' ? `tel:${truck.contact_info.phone}` : undefined}
+          href={
+            truck.contact_info?.phone != undefined && truck.contact_info.phone !== ''
+              ? `tel:${truck.contact_info.phone}`
+              : undefined
+          }
           unavailableText="No phone number available"
         />
 
@@ -31,7 +38,11 @@ export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
           icon={Mail}
           label="Email"
           value={truck.contact_info?.email}
-          href={truck.contact_info?.email != undefined && truck.contact_info.email !== '' ? `mailto:${truck.contact_info.email}` : undefined}
+          href={
+            truck.contact_info?.email != undefined && truck.contact_info.email !== ''
+              ? `mailto:${truck.contact_info.email}`
+              : undefined
+          }
           unavailableText="No email address available"
         />
 

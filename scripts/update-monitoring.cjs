@@ -17,7 +17,7 @@ function updateMonitoring() {
     // Get current metrics directly from error counting script
     const errorCountOutput = execSync('node scripts/count-errors.cjs', {
       encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     // Extract just the number from the output (last line should be the error count)
@@ -27,13 +27,14 @@ function updateMonitoring() {
     const baselineErrors = fs.existsSync('.baseline-errors.txt')
       ? parseInt(fs.readFileSync('.baseline-errors.txt', 'utf8').trim())
       : currentErrors;
-    
+
     const timestamp = new Date().toLocaleString();
     const isoTimestamp = new Date().toISOString();
 
     // Calculate progress metrics
     const errorsFixed = baselineErrors - currentErrors;
-    const reductionPercentage = baselineErrors > 0 ? Math.round((errorsFixed * 100) / baselineErrors) : 0;
+    const reductionPercentage =
+      baselineErrors > 0 ? Math.round((errorsFixed * 100) / baselineErrors) : 0;
 
     // Phase calculations
     let phase1Progress = 0;
@@ -85,16 +86,16 @@ function updateMonitoring() {
     updateFileContent('📊_PHASE_PROGRESS_TRACKER_📊.md', [
       {
         search: /OVERALL PROGRESS: .*$/m,
-        replace: `OVERALL PROGRESS: ${overallBar} ${overallProgress}% (Phase 1 Active)`
+        replace: `OVERALL PROGRESS: ${overallBar} ${overallProgress}% (Phase 1 Active)`,
       },
       {
         search: /ERROR REDUCTION:  .*$/m,
-        replace: `ERROR REDUCTION:  ${overallBar} ${reductionPercentage}% (${baselineErrors} → ${currentErrors} errors)`
+        replace: `ERROR REDUCTION:  ${overallBar} ${reductionPercentage}% (${baselineErrors} → ${currentErrors} errors)`,
       },
       {
         search: /PHASE 1 PROGRESS: .*$/m,
-        replace: `PHASE 1 PROGRESS: ${phase1Bar} ${phase1Progress}% (2/5 tasks complete)`
-      }
+        replace: `PHASE 1 PROGRESS: ${phase1Bar} ${phase1Progress}% (2/5 tasks complete)`,
+      },
     ]);
 
     // Update Success Metrics Dashboard
@@ -102,20 +103,20 @@ function updateMonitoring() {
     updateFileContent('📈_SUCCESS_METRICS_DASHBOARD_📈.md', [
       {
         search: /ERROR COUNT: 1,332 → \[UPDATE\]/g,
-        replace: `ERROR COUNT: ${baselineErrors} → ${currentErrors}`
+        replace: `ERROR COUNT: ${baselineErrors} → ${currentErrors}`,
       },
       {
         search: /REDUCTION: \[CALCULATE\]%/g,
-        replace: `REDUCTION: ${reductionPercentage}%`
+        replace: `REDUCTION: ${reductionPercentage}%`,
       },
       {
         search: /CURRENT:      \[UPDATE_REAL_TIME\] errors/g,
-        replace: `CURRENT:      ${currentErrors} errors`
+        replace: `CURRENT:      ${currentErrors} errors`,
       },
       {
         search: /REMAINING:    \[CALCULATE\] errors/g,
-        replace: `REMAINING:    ${currentErrors > 200 ? currentErrors - 200 : 0} errors`
-      }
+        replace: `REMAINING:    ${currentErrors > 200 ? currentErrors - 200 : 0} errors`,
+      },
     ]);
 
     // Update Command Center
@@ -123,16 +124,16 @@ function updateMonitoring() {
     updateFileContent('🚨_LINTING_REMEDIATION_COMMAND_CENTER_🚨.md', [
       {
         search: /CURRENT COUNT\*\*: .* errors/g,
-        replace: `CURRENT COUNT**: ${currentErrors} errors`
+        replace: `CURRENT COUNT**: ${currentErrors} errors`,
       },
       {
         search: /LAST UPDATED\*\*: .*/g,
-        replace: `LAST UPDATED**: ${timestamp}`
+        replace: `LAST UPDATED**: ${timestamp}`,
       },
       {
         search: /UPDATED BY\*\*: .*/g,
-        replace: `UPDATED BY**: Automated Monitoring`
-      }
+        replace: `UPDATED BY**: Automated Monitoring`,
+      },
     ]);
 
     // Add to error history
@@ -146,32 +147,32 @@ function updateMonitoring() {
         currentErrors,
         baselineErrors,
         errorsFixed,
-        reductionPercentage
+        reductionPercentage,
       },
       phases: {
         phase1: {
           progress: phase1Progress,
           complete: currentErrors <= 200,
-          target: 200
+          target: 200,
         },
         phase2: {
           progress: phase2Progress,
           complete: currentErrors <= 50,
-          target: 50
+          target: 50,
         },
         phase3: {
           progress: phase3Progress,
           complete: currentErrors <= 10,
-          target: 10
+          target: 10,
         },
         overall: {
-          progress: overallProgress
-        }
+          progress: overallProgress,
+        },
       },
       status: {
-        trend: errorsFixed > 0 ? 'improving' : (errorsFixed === 0 ? 'stable' : 'declining'),
-        onTrack: reductionPercentage >= 20
-      }
+        trend: errorsFixed > 0 ? 'improving' : errorsFixed === 0 ? 'stable' : 'declining',
+        onTrack: reductionPercentage >= 20,
+      },
     };
 
     fs.writeFileSync('.monitoring-report.json', JSON.stringify(monitoringReport, null, 2));
@@ -182,9 +183,10 @@ function updateMonitoring() {
     // Show summary
     console.log('\n📈 MONITORING SUMMARY');
     console.log(`Current Status: ${currentErrors} errors (${reductionPercentage}% reduction)`);
-    console.log(`Phase Progress: P1:${phase1Progress}% P2:${phase2Progress}% P3:${phase3Progress}%`);
+    console.log(
+      `Phase Progress: P1:${phase1Progress}% P2:${phase2Progress}% P3:${phase3Progress}%`,
+    );
     console.log(`Overall Progress: ${overallProgress}%`);
-
   } catch (error) {
     console.error('❌ Error updating monitoring:', error.message);
     process.exit(1);
@@ -199,11 +201,11 @@ function updateFileContent(filename, replacements) {
     }
 
     let content = fs.readFileSync(filename, 'utf8');
-    
+
     replacements.forEach(({ search, replace }) => {
       content = content.replace(search, replace);
     });
-    
+
     fs.writeFileSync(filename, content);
     console.log(`✅ Updated ${filename}`);
   } catch (error) {

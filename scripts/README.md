@@ -22,6 +22,7 @@ npm run oauth:test:prod
 **Purpose**: Comprehensive verification of Google OAuth setup status
 
 **Features**:
+
 - Environment variables validation
 - Supabase connection testing
 - Auth provider configuration check
@@ -29,6 +30,7 @@ npm run oauth:test:prod
 - Setup recommendations
 
 **Usage**:
+
 ```bash
 node scripts/verify-oauth-setup.js
 # or
@@ -36,6 +38,7 @@ npm run oauth:verify
 ```
 
 **Output**:
+
 - ✅ Configuration status checks
 - ⚠️ Warnings for potential issues
 - ❌ Errors that need resolution
@@ -46,6 +49,7 @@ npm run oauth:verify
 **Purpose**: Automated testing of OAuth flow components
 
 **Features**:
+
 - Login page accessibility testing
 - Auth callback route verification
 - Supabase connection validation
@@ -53,6 +57,7 @@ npm run oauth:verify
 - Test report generation
 
 **Usage**:
+
 ```bash
 # Test development environment
 node scripts/test-oauth-flow.js --env=development
@@ -64,6 +69,7 @@ npm run oauth:test:prod
 ```
 
 **Output**:
+
 - 📊 Test results summary
 - 📄 Detailed JSON reports in `/reports` directory
 - 💡 Recommendations for improvements
@@ -72,6 +78,7 @@ npm run oauth:test:prod
 ## 🔧 Configuration Requirements
 
 ### Environment Variables
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL="https://zkwliyjjkdnigizidlln.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
@@ -79,6 +86,7 @@ SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 ```
 
 ### Manual Setup Steps
+
 1. **Google Cloud Console**: Create OAuth 2.0 credentials
 2. **Supabase Dashboard**: Configure Google provider
 3. **Testing**: Verify OAuth flow works correctly
@@ -94,10 +102,12 @@ SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 ### Common Issues
 
 1. **"OAuth client not found"**
+
    - Check Google Cloud Console configuration
    - Verify Client ID in Supabase settings
 
 2. **"Redirect URI mismatch"**
+
    - Ensure redirect URIs match in both Google Console and Supabase
    - Check for typos in URLs
 
@@ -133,6 +143,7 @@ reports/
 ```
 
 Each report includes:
+
 - Test execution summary
 - Individual test results
 - Environment configuration
@@ -141,16 +152,19 @@ Each report includes:
 ## 🔄 Integration with Development Workflow
 
 ### Before OAuth Setup
+
 1. Run `npm run oauth:verify` to check prerequisites
 2. Follow recommendations in the output
 3. Complete manual setup steps
 
 ### After OAuth Setup
+
 1. Run `npm run oauth:test:dev` to verify development setup
 2. Run `npm run oauth:test:prod` to verify production setup
 3. Monitor `/api/admin/oauth-status` for ongoing status
 
 ### Continuous Monitoring
+
 - OAuth status is available via API endpoint
 - Admin dashboard shows real-time configuration status
 - Automated alerts for configuration issues
@@ -165,6 +179,7 @@ Each report includes:
 ## 🚀 Next Steps
 
 After successful OAuth setup:
+
 1. Test login flow manually at `/login`
 2. Verify admin role assignment
 3. Update admin user email to `zabrien@gmail.com`
@@ -173,6 +188,7 @@ After successful OAuth setup:
 ## 📞 Support
 
 For issues with OAuth setup:
+
 1. Check the setup guide: `docs/GOOGLE_OAUTH_SETUP_GUIDE.md`
 2. Run verification scripts for automated diagnosis
 3. Review test reports for detailed error information

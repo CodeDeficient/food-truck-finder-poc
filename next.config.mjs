@@ -14,7 +14,7 @@ const nextConfig = {
       'images.unsplash.com',
       'via.placeholder.com',
       'example.com',
-      'zkwliyjjkdnigizidlln.supabase.co'
+      'zkwliyjjkdnigizidlln.supabase.co',
     ],
     // Configure image formats for optimal loading
     formats: ['image/webp', 'image/avif'],
@@ -33,7 +33,7 @@ const nextConfig = {
       '@radix-ui/react-dialog',
       '@radix-ui/react-slot',
       'lucide-react',
-      'recharts'
+      'recharts',
     ],
     // Enable SWC minification for better performance
     swcMinify: true,
@@ -98,7 +98,10 @@ const nextConfig = {
       manifest-src 'self';
       media-src 'self';
       upgrade-insecure-requests;
-    `.replace(/\n/g, '').replace(/\s{2,}/g, ' ').trim();
+    `
+      .replace(/\n/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
 
     return [
       {
@@ -144,6 +147,6 @@ const nextConfig = {
       },
     ];
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

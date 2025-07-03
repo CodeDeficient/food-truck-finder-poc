@@ -12,14 +12,17 @@ export async function handleGetRequest(_request: NextRequest) {
     legacy_format: {
       oauth_status: status.overall_status,
       message: getStatusMessage(status.overall_status),
-      configuration_steps: status.overall_status === 'ready' ? undefined : [
-        '1. Go to Supabase Dashboard > Authentication > Providers',
-        '2. Enable Google provider',
-        '3. Add Google OAuth Client ID and Secret',
-        '4. Configure redirect URLs',
-        '5. Test OAuth flow'
-      ]
-    }
+      configuration_steps:
+        status.overall_status === 'ready'
+          ? undefined
+          : [
+              '1. Go to Supabase Dashboard > Authentication > Providers',
+              '2. Enable Google provider',
+              '3. Add Google OAuth Client ID and Secret',
+              '4. Configure redirect URLs',
+              '5. Test OAuth flow',
+            ],
+    },
   });
 }
 
@@ -27,13 +30,19 @@ export async function handleGetRequest(_request: NextRequest) {
 function generateOAuthTestUrl(baseUrl: string): string {
   const redirectPath = `${baseUrl}/auth/callback`;
   const encodedRedirect = encodeURIComponent(redirectPath);
-  return process.env.NEXT_PUBLIC_SUPABASE_URL + '/auth/v1/authorize?provider=google&redirect_to=' + encodedRedirect;
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_URL +
+    '/auth/v1/authorize?provider=google&redirect_to=' +
+    encodedRedirect
+  );
 }
 
-export function handlePostRequest() { // Removed _request parameter
-  const baseUrl = process.env.NODE_ENV === 'production'
-    ? 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app'
-    : 'http://localhost:3000';
+export function handlePostRequest() {
+  // Removed _request parameter
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app'
+      : 'http://localhost:3000';
 
   const testUrl = generateOAuthTestUrl(baseUrl);
 
@@ -46,19 +55,19 @@ export function handlePostRequest() { // Removed _request parameter
       '1. Open the test_url in a new browser tab',
       '2. Complete Google OAuth flow',
       '3. Verify redirect to admin dashboard',
-      '4. Check for proper role assignment'
+      '4. Check for proper role assignment',
     ],
     manual_test_steps: [
       'Navigate to /login page',
       'Click Google login button',
       'Complete OAuth flow',
-      'Verify admin access'
+      'Verify admin access',
     ],
     automation_commands: [
       'npm run oauth:verify - Check configuration',
       'npm run oauth:test:dev - Test development flow',
-      'npm run oauth:test:prod - Test production flow'
-    ]
+      'npm run oauth:test:prod - Test production flow',
+    ],
   });
 }
 
@@ -68,20 +77,20 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
     environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     supabase: {
       connected: false,
-      projectId: 'zkwliyjjkdnigizidlln' as string
+      projectId: 'zkwliyjjkdnigizidlln' as string,
     },
     environment_variables: {
       supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL !== undefined,
       supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== undefined,
-      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY !== undefined
+      supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY !== undefined,
     },
     oauth_flow: {
       loginPageExists: true,
       callbackRouteExists: true,
-      authProviderConfigured: false
+      authProviderConfigured: false,
     },
     recommendations: [],
-    overall_status: 'not_configured'
+    overall_status: 'not_configured',
   };
 
   await checkSupabaseConnection(status, supabase);
@@ -103,15 +112,15 @@ async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseCl
       status.supabase.error = error.message;
     }
   } catch (error: unknown) {
-    status.supabase.error =
-      error instanceof Error ? error.message : 'Unknown connection error';
+    status.supabase.error = error instanceof Error ? error.message : 'Unknown connection error';
   }
 }
 
 async function checkSupabaseAuthSettings(status: OAuthStatus) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (typeof supabaseUrl === 'string' && supabaseUrl.length > 0) { // Explicit check for undefined and empty string
+    if (typeof supabaseUrl === 'string' && supabaseUrl.length > 0) {
+      // Explicit check for undefined and empty string
       const settingsResponse = await fetch(`${supabaseUrl}/auth/v1/settings`);
       if (settingsResponse.ok === true) {
         const settings: {
@@ -126,9 +135,10 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
         status.supabase.authSettings = {
           googleEnabled: settings.external?.google ?? false,
           signupEnabled: settings.disable_signup === false,
-          autoconfirm: settings.autoconfirm ?? false
+          autoconfirm: settings.autoconfirm ?? false,
         };
-        if (settings.external?.google !== undefined) { // Explicit check for undefined
+        if (settings.external?.google !== undefined) {
+          // Explicit check for undefined
           status.oauth_flow.authProviderConfigured = true;
         }
       }
@@ -144,10 +154,11 @@ async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) 
       provider: 'google',
       options: {
         redirectTo: 'http://localhost:3000/auth/callback',
-        skipBrowserRedirect: true
-      }
+        skipBrowserRedirect: true,
+      },
     });
-    if (oauthError !== null && oauthError.message !== 'Provider not found') { // Explicitly check for oauthError existence
+    if (oauthError !== null && oauthError.message !== 'Provider not found') {
+      // Explicitly check for oauthError existence
       status.oauth_flow.authProviderConfigured = true;
     }
   } catch (error: unknown) {
@@ -170,15 +181,18 @@ function generateRecommendations(status: OAuthStatus): string[] {
 
   if (!status.supabase.connected) {
     recommendations.push('❌ Fix Supabase connection issue');
-  if (typeof status.supabase.error === 'string' && status.supabase.error.length > 0) {
-    recommendations.push(`   Error: ${status.supabase.error}`);
-  }
+    if (typeof status.supabase.error === 'string' && status.supabase.error.length > 0) {
+      recommendations.push(`   Error: ${status.supabase.error}`);
+    }
   }
 
   if (status.supabase.authSettings?.googleEnabled === true) {
     recommendations.push('✅ Google OAuth provider is enabled');
   } else {
-    recommendations.push('🔧 Enable Google OAuth provider in Supabase Dashboard', '   Go to: Authentication > Providers > Google');
+    recommendations.push(
+      '🔧 Enable Google OAuth provider in Supabase Dashboard',
+      '   Go to: Authentication > Providers > Google',
+    );
   }
 
   if (status.overall_status === 'ready') {
@@ -186,13 +200,18 @@ function generateRecommendations(status: OAuthStatus): string[] {
   }
 
   if (recommendations.length > 1) {
-    recommendations.push('📖 See docs/GOOGLE_OAUTH_SETUP_GUIDE.md for detailed instructions', '🔧 Run: npm run oauth:verify for automated checks');
+    recommendations.push(
+      '📖 See docs/GOOGLE_OAUTH_SETUP_GUIDE.md for detailed instructions',
+      '🔧 Run: npm run oauth:verify for automated checks',
+    );
   }
 
   return recommendations;
 }
 
-function determineOverallStatus(status: OAuthStatus): 'ready' | 'partial' | 'not_configured' | 'error' {
+function determineOverallStatus(
+  status: OAuthStatus,
+): 'ready' | 'partial' | 'not_configured' | 'error' {
   // eslint-disable-next-line sonarjs/different-types-comparison
   if (!status.supabase.connected || status.supabase.error !== null) {
     return 'error';

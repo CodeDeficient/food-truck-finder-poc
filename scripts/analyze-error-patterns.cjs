@@ -24,7 +24,7 @@ class ErrorPatternAnalyzer {
       const output = execSync('npx eslint . --format json', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 120000
+        timeout: 120000,
       });
       return JSON.parse(output);
     } catch (error) {
@@ -48,19 +48,20 @@ class ErrorPatternAnalyzer {
    */
   analyzePatterns(results) {
     console.log('📊 Analyzing error patterns...');
-    
-    results.forEach(file => {
+
+    results.forEach((file) => {
       const fileName = file.filePath.replace(process.cwd(), '').replace(/\\/g, '/');
       let fileErrorCount = 0;
-      
-      file.messages.forEach(msg => {
-        if (msg.severity === 2) { // Error (not warning)
+
+      file.messages.forEach((msg) => {
+        if (msg.severity === 2) {
+          // Error (not warning)
           const ruleId = msg.ruleId || 'unknown';
           this.errorCounts[ruleId] = (this.errorCounts[ruleId] || 0) + 1;
           fileErrorCount++;
         }
       });
-      
+
       if (fileErrorCount > 0) {
         this.fileErrorCounts[fileName] = fileErrorCount;
       }
@@ -72,7 +73,7 @@ class ErrorPatternAnalyzer {
    */
   identifyAutomationCandidates() {
     console.log('🎯 Identifying automation candidates...');
-    
+
     // Define automation-friendly rules
     const automationRules = {
       // High confidence - safe to automate
@@ -80,64 +81,66 @@ class ErrorPatternAnalyzer {
         confidence: 'HIGH',
         method: 'eslint-autofix',
         description: 'Remove unused variables and imports',
-        estimatedReduction: '90%'
+        estimatedReduction: '90%',
       },
       'sonarjs/unused-import': {
-        confidence: 'HIGH', 
+        confidence: 'HIGH',
         method: 'eslint-autofix',
         description: 'Remove unused imports',
-        estimatedReduction: '95%'
+        estimatedReduction: '95%',
       },
       'unicorn/no-null': {
         confidence: 'HIGH',
         method: 'pattern-replacement',
         description: 'Replace null with undefined',
-        estimatedReduction: '85%'
+        estimatedReduction: '85%',
       },
-      
+
       // Medium confidence - needs careful automation
       '@typescript-eslint/no-explicit-any': {
         confidence: 'MEDIUM',
         method: 'pattern-replacement',
         description: 'Replace any with unknown in safe contexts',
-        estimatedReduction: '40%'
+        estimatedReduction: '40%',
       },
       '@typescript-eslint/no-unsafe-assignment': {
         confidence: 'MEDIUM',
         method: 'type-annotation',
         description: 'Add type annotations for unsafe assignments',
-        estimatedReduction: '30%'
+        estimatedReduction: '30%',
       },
       'sonarjs/no-dead-store': {
         confidence: 'MEDIUM',
         method: 'pattern-replacement',
         description: 'Remove dead store assignments',
-        estimatedReduction: '70%'
+        estimatedReduction: '70%',
       },
-      
+
       // Low confidence - manual review needed
       '@typescript-eslint/strict-boolean-expressions': {
         confidence: 'LOW',
         method: 'manual-review',
         description: 'Complex boolean expression fixes',
-        estimatedReduction: '10%'
+        estimatedReduction: '10%',
       },
       'max-lines-per-function': {
         confidence: 'MANUAL_ONLY',
         method: 'manual-ide-refactor',
-        description: 'RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.',
+        description:
+          'RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.',
         estimatedReduction: '0%',
         automationRisk: 'HIGH',
-        researchEvidence: 'Academic studies show 47% failure rate, semantic errors common'
-      }
+        researchEvidence: 'Academic studies show 47% failure rate, semantic errors common',
+      },
     };
 
     // Calculate automation potential
     Object.entries(this.errorCounts).forEach(([ruleId, count]) => {
-      if (automationRules[ruleId] && count >= 5) { // Only consider rules with 5+ occurrences
+      if (automationRules[ruleId] && count >= 5) {
+        // Only consider rules with 5+ occurrences
         const rule = automationRules[ruleId];
         const estimatedFixes = Math.floor(count * (parseInt(rule.estimatedReduction) / 100));
-        
+
         this.automationCandidates.push({
           ruleId,
           count,
@@ -145,7 +148,7 @@ class ErrorPatternAnalyzer {
           method: rule.method,
           description: rule.description,
           estimatedFixes,
-          priority: this.calculatePriority(count, rule.confidence, estimatedFixes)
+          priority: this.calculatePriority(count, rule.confidence, estimatedFixes),
         });
       }
     });
@@ -159,11 +162,11 @@ class ErrorPatternAnalyzer {
    */
   calculatePriority(count, confidence, estimatedFixes) {
     const confidenceMultiplier = {
-      'HIGH': 3,
-      'MEDIUM': 2,
-      'LOW': 1
+      HIGH: 3,
+      MEDIUM: 2,
+      LOW: 1,
     };
-    
+
     return estimatedFixes * confidenceMultiplier[confidence];
   }
 
@@ -172,24 +175,34 @@ class ErrorPatternAnalyzer {
    */
   generateRecommendations() {
     console.log('💡 Generating automation recommendations...');
-    
-    const highConfidenceCandidates = this.automationCandidates.filter(c => c.confidence === 'HIGH');
-    const mediumConfidenceCandidates = this.automationCandidates.filter(c => c.confidence === 'MEDIUM');
-    
-    const totalHighConfidenceFixes = highConfidenceCandidates.reduce((sum, c) => sum + c.estimatedFixes, 0);
-    const totalMediumConfidenceFixes = mediumConfidenceCandidates.reduce((sum, c) => sum + c.estimatedFixes, 0);
-    
+
+    const highConfidenceCandidates = this.automationCandidates.filter(
+      (c) => c.confidence === 'HIGH',
+    );
+    const mediumConfidenceCandidates = this.automationCandidates.filter(
+      (c) => c.confidence === 'MEDIUM',
+    );
+
+    const totalHighConfidenceFixes = highConfidenceCandidates.reduce(
+      (sum, c) => sum + c.estimatedFixes,
+      0,
+    );
+    const totalMediumConfidenceFixes = mediumConfidenceCandidates.reduce(
+      (sum, c) => sum + c.estimatedFixes,
+      0,
+    );
+
     return {
       highConfidence: {
         candidates: highConfidenceCandidates,
         totalFixes: totalHighConfidenceFixes,
-        methods: [...new Set(highConfidenceCandidates.map(c => c.method))]
+        methods: [...new Set(highConfidenceCandidates.map((c) => c.method))],
       },
       mediumConfidence: {
         candidates: mediumConfidenceCandidates,
         totalFixes: totalMediumConfidenceFixes,
-        methods: [...new Set(mediumConfidenceCandidates.map(c => c.method))]
-      }
+        methods: [...new Set(mediumConfidenceCandidates.map((c) => c.method))],
+      },
     };
   }
 
@@ -200,60 +213,72 @@ class ErrorPatternAnalyzer {
     const totalErrors = Object.values(this.errorCounts).reduce((sum, count) => sum + count, 0);
     const sortedErrors = Object.entries(this.errorCounts).sort((a, b) => b[1] - a[1]);
     const recommendations = this.generateRecommendations();
-    
+
     console.log('\n📈 ERROR PATTERN ANALYSIS RESULTS');
     console.log('=====================================');
     console.log(`Total errors: ${totalErrors}`);
     console.log(`Unique error types: ${Object.keys(this.errorCounts).length}`);
     console.log(`Files with errors: ${Object.keys(this.fileErrorCounts).length}`);
-    
+
     console.log('\n🔝 TOP 15 ERROR TYPES:');
     console.log('----------------------');
     sortedErrors.slice(0, 15).forEach(([rule, count], index) => {
       const percentage = ((count / totalErrors) * 100).toFixed(1);
       console.log(`${index + 1}. ${rule}: ${count} (${percentage}%)`);
     });
-    
+
     console.log('\n🎯 HIGH CONFIDENCE AUTOMATION CANDIDATES:');
     console.log('------------------------------------------');
     if (recommendations.highConfidence.candidates.length > 0) {
-      recommendations.highConfidence.candidates.forEach(candidate => {
-        console.log(`✅ ${candidate.ruleId}: ${candidate.count} errors → ~${candidate.estimatedFixes} fixes (${candidate.method})`);
+      recommendations.highConfidence.candidates.forEach((candidate) => {
+        console.log(
+          `✅ ${candidate.ruleId}: ${candidate.count} errors → ~${candidate.estimatedFixes} fixes (${candidate.method})`,
+        );
         console.log(`   ${candidate.description}`);
       });
       console.log(`\n🚀 TOTAL HIGH CONFIDENCE FIXES: ${recommendations.highConfidence.totalFixes}`);
     } else {
       console.log('No high confidence automation candidates found.');
     }
-    
+
     console.log('\n⚠️  MEDIUM CONFIDENCE AUTOMATION CANDIDATES:');
     console.log('--------------------------------------------');
     if (recommendations.mediumConfidence.candidates.length > 0) {
-      recommendations.mediumConfidence.candidates.forEach(candidate => {
-        console.log(`🔶 ${candidate.ruleId}: ${candidate.count} errors → ~${candidate.estimatedFixes} fixes (${candidate.method})`);
+      recommendations.mediumConfidence.candidates.forEach((candidate) => {
+        console.log(
+          `🔶 ${candidate.ruleId}: ${candidate.count} errors → ~${candidate.estimatedFixes} fixes (${candidate.method})`,
+        );
         console.log(`   ${candidate.description}`);
       });
-      console.log(`\n⚡ TOTAL MEDIUM CONFIDENCE FIXES: ${recommendations.mediumConfidence.totalFixes}`);
+      console.log(
+        `\n⚡ TOTAL MEDIUM CONFIDENCE FIXES: ${recommendations.mediumConfidence.totalFixes}`,
+      );
     } else {
       console.log('No medium confidence automation candidates found.');
     }
-    
-    const totalAutomationPotential = recommendations.highConfidence.totalFixes + recommendations.mediumConfidence.totalFixes;
+
+    const totalAutomationPotential =
+      recommendations.highConfidence.totalFixes + recommendations.mediumConfidence.totalFixes;
     const automationPercentage = ((totalAutomationPotential / totalErrors) * 100).toFixed(1);
-    
+
     console.log('\n📊 AUTOMATION SUMMARY:');
     console.log('----------------------');
     console.log(`Current errors: ${totalErrors}`);
-    console.log(`Automation potential: ${totalAutomationPotential} fixes (${automationPercentage}%)`);
+    console.log(
+      `Automation potential: ${totalAutomationPotential} fixes (${automationPercentage}%)`,
+    );
     console.log(`Remaining manual work: ${totalErrors - totalAutomationPotential} errors`);
-    
+
     console.log('\n🛠️  RECOMMENDED AUTOMATION METHODS:');
     console.log('-----------------------------------');
-    const allMethods = [...recommendations.highConfidence.methods, ...recommendations.mediumConfidence.methods];
-    [...new Set(allMethods)].forEach(method => {
+    const allMethods = [
+      ...recommendations.highConfidence.methods,
+      ...recommendations.mediumConfidence.methods,
+    ];
+    [...new Set(allMethods)].forEach((method) => {
       console.log(`• ${method}`);
     });
-    
+
     return recommendations;
   }
 
@@ -271,24 +296,27 @@ class ErrorPatternAnalyzer {
 // CLI interface
 if (require.main === module) {
   const analyzer = new ErrorPatternAnalyzer();
-  analyzer.run().then(recommendations => {
-    // Save results for other scripts to use
-    const output = {
-      timestamp: new Date().toISOString(),
-      totalErrors: Object.values(analyzer.errorCounts).reduce((sum, count) => sum + count, 0),
-      errorCounts: analyzer.errorCounts,
-      automationCandidates: analyzer.automationCandidates,
-      recommendations
-    };
-    
-    fs.writeFileSync('error-analysis.json', JSON.stringify(output, null, 2));
-    console.log('\n💾 Analysis saved to error-analysis.json');
-    
-    process.exit(0);
-  }).catch(error => {
-    console.error('Analysis failed:', error);
-    process.exit(1);
-  });
+  analyzer
+    .run()
+    .then((recommendations) => {
+      // Save results for other scripts to use
+      const output = {
+        timestamp: new Date().toISOString(),
+        totalErrors: Object.values(analyzer.errorCounts).reduce((sum, count) => sum + count, 0),
+        errorCounts: analyzer.errorCounts,
+        automationCandidates: analyzer.automationCandidates,
+        recommendations,
+      };
+
+      fs.writeFileSync('error-analysis.json', JSON.stringify(output, null, 2));
+      console.log('\n💾 Analysis saved to error-analysis.json');
+
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('Analysis failed:', error);
+      process.exit(1);
+    });
 }
 
 module.exports = ErrorPatternAnalyzer;

@@ -25,7 +25,7 @@ export const CachedFoodTruckService = {
    * Get all food trucks with caching
    * Cache for 30 minutes since truck data changes moderately
    */
-  getAllTrucksCached : unstable_cache(
+  getAllTrucksCached: unstable_cache(
     async (): Promise<{ trucks: FoodTruck[]; count: number }> => {
       console.info('CachedFoodTruckService: Cache miss - fetching all trucks from database');
       const result = await FoodTruckService.getAllTrucks();
@@ -37,17 +37,19 @@ export const CachedFoodTruckService = {
     ['all-trucks'],
     {
       revalidate: CACHE_CONFIG.MEDIUM_TTL,
-      tags: ['food-trucks', 'all-trucks']
-    }
+      tags: ['food-trucks', 'all-trucks'],
+    },
   ),
 
   /**
    * Get trucks by location with caching
    * Cache for 5 minutes since location-based queries are time-sensitive
    */
-  getTrucksByLocationCached : unstable_cache(
+  getTrucksByLocationCached: unstable_cache(
     async (lat: number, lng: number, radiusKm: number): Promise<FoodTruck[]> => {
-      console.info(`CachedFoodTruckService: Cache miss - fetching trucks near ${lat},${lng} (${radiusKm}km)`);
+      console.info(
+        `CachedFoodTruckService: Cache miss - fetching trucks near ${lat},${lng} (${radiusKm}km)`,
+      );
       const result = await FoodTruckService.getTrucksByLocation(lat, lng, radiusKm);
       if ('error' in result) {
         throw new Error(`Failed to fetch trucks by location: ${result.error}`);
@@ -57,15 +59,15 @@ export const CachedFoodTruckService = {
     ['trucks-by-location'],
     {
       revalidate: CACHE_CONFIG.SHORT_TTL,
-      tags: ['food-trucks', 'location-search']
-    }
+      tags: ['food-trucks', 'location-search'],
+    },
   ),
 
   /**
    * Get truck by ID with caching
    * Cache for 30 minutes since individual truck data is relatively stable
    */
-  getTruckByIdCached : unstable_cache(
+  getTruckByIdCached: unstable_cache(
     async (id: string): Promise<FoodTruck | null> => {
       console.info(`CachedFoodTruckService: Cache miss - fetching truck ${id} from database`);
       const result = await FoodTruckService.getTruckById(id);
@@ -77,24 +79,27 @@ export const CachedFoodTruckService = {
     ['truck-by-id'],
     {
       revalidate: CACHE_CONFIG.MEDIUM_TTL,
-      tags: ['food-trucks', 'truck-details']
-    }
+      tags: ['food-trucks', 'truck-details'],
+    },
   ),
 
   /**
    * Search trucks with caching
    * Cache for 5 minutes since search results should be relatively fresh
    */
-  searchTrucksCached : unstable_cache(
-    async (query: string, filters?: {
-      cuisine?: string;
-      openNow?: boolean;
-      lat?: number;
-      lng?: number;
-      radius?: number;
-    }): Promise<FoodTruck[]> => {
+  searchTrucksCached: unstable_cache(
+    async (
+      query: string,
+      filters?: {
+        cuisine?: string;
+        openNow?: boolean;
+        lat?: number;
+        lng?: number;
+        radius?: number;
+      },
+    ): Promise<FoodTruck[]> => {
       console.info(`CachedFoodTruckService: Cache miss - searching trucks for "${query}"`);
-      
+
       if (supabaseAdmin == undefined) {
         throw new Error('Supabase admin client not available');
       }
@@ -122,14 +127,17 @@ export const CachedFoodTruckService = {
       // Apply location filter if provided
       if (filters?.lat != undefined && filters?.lng != undefined && filters?.radius != undefined) {
         results = results.filter((truck: FoodTruck): truck is FoodTruck => {
-          if (truck.current_location?.lat == undefined || truck.current_location?.lng == undefined) {
+          if (
+            truck.current_location?.lat == undefined ||
+            truck.current_location?.lng == undefined
+          ) {
             return false;
           }
           const distance = calculateDistance(
             filters.lat!, // Assert as number, as it's checked by the outer if condition
             filters.lng!, // Assert as number, as it's checked by the outer if condition
             truck.current_location.lat,
-            truck.current_location.lng
+            truck.current_location.lng,
           );
           return distance <= (filters.radius ?? 10);
         });
@@ -142,7 +150,9 @@ export const CachedFoodTruckService = {
         const currentTime = now.getHours() * 100 + now.getMinutes(); // HHMM format
 
         results = results.filter((truck: FoodTruck): truck is FoodTruck => {
-          const hours = truck.operating_hours?.[currentDay as keyof typeof truck.operating_hours] as { closed?: boolean; open?: string; close?: string } | undefined;
+          const hours = truck.operating_hours?.[
+            currentDay as keyof typeof truck.operating_hours
+          ] as { closed?: boolean; open?: string; close?: string } | undefined;
           if (hours == undefined || hours.closed === true) return false;
 
           const openTime = parseTimeString(hours.open ?? '');
@@ -157,22 +167,22 @@ export const CachedFoodTruckService = {
     ['search-trucks'],
     {
       revalidate: CACHE_CONFIG.SHORT_TTL,
-      tags: ['food-trucks', 'search']
-    }
+      tags: ['food-trucks', 'search'],
+    },
   ),
 
   /**
    * Get data quality statistics with caching
    * Cache for 24 hours since quality stats change slowly
    */
-  getDataQualityStatsCached : unstable_cache(
+  getDataQualityStatsCached: unstable_cache(
     async (): Promise<{
       averageScore: number;
       distribution: Record<string, number>;
       totalTrucks: number;
     }> => {
       console.info('CachedFoodTruckService: Cache miss - calculating data quality stats');
-      
+
       if (supabaseAdmin == undefined) {
         throw new Error('Supabase admin client not available');
       }
@@ -185,28 +195,32 @@ export const CachedFoodTruckService = {
         throw new Error(`Quality stats query failed: ${error.message}`);
       }
 
-      const scores = trucks == undefined ? [] : trucks.map((t: { data_quality_score?: number }) => t.data_quality_score ?? 0);
-      const averageScore = scores.length > 0
-        ? scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length
-        : 0;
+      const scores =
+        trucks == undefined
+          ? []
+          : trucks.map((t: { data_quality_score?: number }) => t.data_quality_score ?? 0);
+      const averageScore =
+        scores.length > 0
+          ? scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length
+          : 0;
 
       const distribution = {
         high: scores.filter((s: number) => s >= 0.8).length,
         medium: scores.filter((s: number) => s >= 0.6 && s < 0.8).length,
-        low: scores.filter((s: number) => s < 0.6).length
+        low: scores.filter((s: number) => s < 0.6).length,
       };
 
       return {
         averageScore: Math.round(averageScore * 100) / 100,
         distribution,
-        totalTrucks: scores.length
+        totalTrucks: scores.length,
       };
     },
     ['data-quality-stats'],
     {
       revalidate: CACHE_CONFIG.LONG_TTL,
-      tags: ['food-trucks', 'data-quality']
-    }
+      tags: ['food-trucks', 'data-quality'],
+    },
   ),
 };
 
@@ -261,13 +275,15 @@ export const CacheManager = {
  */
 function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371; // Earth's radius in kilometers
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
 

@@ -17,29 +17,29 @@ interface UseRealtimeAdminEventsReturn {
   isConnected: boolean;
   isConnecting: boolean;
   connectionError: string | undefined;
-  
+
   // Data
   latestMetrics: RealtimeMetrics | undefined;
   recentEvents: RealtimeEvent[];
-  
+
   // Controls
   connect: () => void;
   disconnect: () => void;
   clearEvents: () => void;
-  
+
   // Statistics
   connectionAttempts: number;
   lastEventTime: Date | undefined;
 }
 
 export function useRealtimeAdminEventsLogic(
-  options: UseRealtimeAdminEventsOptions = {}
+  options: UseRealtimeAdminEventsOptions = {},
 ): UseRealtimeAdminEventsReturn {
   const {
     autoConnect = true,
     reconnectInterval = 5000,
     maxReconnectAttempts = 10,
-    eventFilter
+    eventFilter,
   } = options;
 
   // State management
@@ -51,7 +51,7 @@ export function useRealtimeAdminEventsLogic(
     latestMetrics,
     recentEvents,
     connectionAttempts,
-    lastEventTime
+    lastEventTime,
   } = connectionState;
 
   // Refs
@@ -64,7 +64,7 @@ export function useRealtimeAdminEventsLogic(
     eventFilter,
     connectionState.setLastEventTime,
     connectionState.setLatestMetrics,
-    connectionState.setRecentEvents
+    connectionState.setRecentEvents,
   );
 
   // Connection management
@@ -77,7 +77,7 @@ export function useRealtimeAdminEventsLogic(
     connectionAttempts,
     maxReconnectAttempts,
     reconnectInterval,
-    isConnecting
+    isConnecting,
   );
 
   // Auto-connect on mount
@@ -100,18 +100,18 @@ export function useRealtimeAdminEventsLogic(
     isConnected,
     isConnecting,
     connectionError,
-    
+
     // Data
     latestMetrics,
     recentEvents,
-    
+
     // Controls
     connect,
     disconnect,
     clearEvents,
-    
+
     // Statistics
     connectionAttempts,
-    lastEventTime
+    lastEventTime,
   };
 }

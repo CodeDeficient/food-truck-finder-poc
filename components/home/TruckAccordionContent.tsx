@@ -24,7 +24,7 @@ export function TruckAccordionContent({
       collapsible
       className="w-full"
       value={selectedTruckId ?? undefined}
-      onValueChange={(value) => setSelectedTruckId(value === "" ? undefined : value)}
+      onValueChange={(value) => setSelectedTruckId(value === '' ? undefined : value)}
     >
       {filteredTrucks.map((truck) => (
         <TruckAccordionItem

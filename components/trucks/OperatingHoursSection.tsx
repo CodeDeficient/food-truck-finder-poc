@@ -7,7 +7,10 @@ interface OperatingHoursSectionProps {
   readonly formatHours: (hours: DailyOperatingHours) => string; // Update type
 }
 
-export function OperatingHoursSection({ todayHours, formatHours }: Readonly<OperatingHoursSectionProps>) {
+export function OperatingHoursSection({
+  todayHours,
+  formatHours,
+}: Readonly<OperatingHoursSectionProps>) {
   if (todayHours === undefined) return; // Return null if no hours
 
   return (

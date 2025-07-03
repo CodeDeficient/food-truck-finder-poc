@@ -25,14 +25,14 @@ export function CleanupOperationDetails({ operations }: CleanupOperationDetailsP
               {operation.successCount}/{operation.affectedCount}
             </Badge>
           </div>
-          
+
           {operation.affectedCount > 0 && (
-            <Progress 
-              value={(operation.successCount / operation.affectedCount) * 100} 
+            <Progress
+              value={(operation.successCount / operation.affectedCount) * 100}
               className="h-2 mb-2"
             />
           )}
-          
+
           {operation.errors.length > 0 && (
             <Alert variant="destructive" className="mt-2">
               <AlertTriangle className="h-4 w-4" />

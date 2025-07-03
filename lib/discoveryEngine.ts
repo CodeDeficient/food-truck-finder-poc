@@ -463,7 +463,13 @@ export class FoodTruckDiscoveryEngine {
     try {
       await this.performLocationSpecificSearch(locationQuery, discoveredUrls);
       results.urls_discovered = discoveredUrls.size;
-      await this.storeLocationDiscoveryResults({ discoveredUrls, locationQuery, city, state, results });
+      await this.storeLocationDiscoveryResults({
+        discoveredUrls,
+        locationQuery,
+        city,
+        state,
+        results,
+      });
     } catch (error) {
       console.error(`❌ Location search failed for ${city}:`, error);
       results.errors.push(
@@ -524,15 +530,13 @@ export class FoodTruckDiscoveryEngine {
   }
 
   // Helper method to store location discovery results
-  private async storeLocationDiscoveryResults(
-    params: {
-      discoveredUrls: Set<string>;
-      locationQuery: string;
-      city: string;
-      state: string;
-      results: DiscoveryResult;
-    }
-  ): Promise<void> {
+  private async storeLocationDiscoveryResults(params: {
+    discoveredUrls: Set<string>;
+    locationQuery: string;
+    city: string;
+    state: string;
+    results: DiscoveryResult;
+  }): Promise<void> {
     const { discoveredUrls, locationQuery, city, state, results } = params;
     for (const url of discoveredUrls) {
       try {

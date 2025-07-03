@@ -15,14 +15,17 @@ export async function GET(request: NextRequest): Promise<Response> {
     return handleGetRequest(request);
   } catch (error: unknown) {
     console.error('Realtime events GET error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 }
 
@@ -36,13 +39,16 @@ export async function POST(request: NextRequest): Promise<Response> {
     return await handlePostRequest(request);
   } catch (error: unknown) {
     console.error('Realtime events POST error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: 'Internal server error',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 }

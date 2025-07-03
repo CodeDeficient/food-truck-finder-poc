@@ -11,26 +11,16 @@ function addReadonlyToInterface(filePath) {
       return;
     }
 
-    const sourceFile = ts.createSourceFile(
-      filePath,
-      code,
-      ts.ScriptTarget.Latest,
-      true
-    );
+    const sourceFile = ts.createSourceFile(filePath, code, ts.ScriptTarget.Latest, true);
 
     const transformations = [];
 
     function visit(node) {
-      if (
-        ts.isInterfaceDeclaration(node) &&
-        node.name.text.endsWith('Props')
-      ) {
+      if (ts.isInterfaceDeclaration(node) && node.name.text.endsWith('Props')) {
         for (const member of node.members) {
           if (
             ts.isPropertySignature(member) &&
-            !member.modifiers?.some(
-              (mod) => mod.kind === ts.SyntaxKind.ReadonlyKeyword
-            )
+            !member.modifiers?.some((mod) => mod.kind === ts.SyntaxKind.ReadonlyKeyword)
           ) {
             transformations.push({
               pos: member.getStart(sourceFile),
@@ -49,10 +39,7 @@ function addReadonlyToInterface(filePath) {
       transformations.sort((a, b) => b.pos - a.pos);
       let newCode = code;
       for (const transform of transformations) {
-        newCode =
-          newCode.slice(0, transform.pos) +
-          transform.text +
-          newCode.slice(transform.end);
+        newCode = newCode.slice(0, transform.pos) + transform.text + newCode.slice(transform.end);
       }
 
       fs.writeFile(filePath, newCode, 'utf8', (err) => {

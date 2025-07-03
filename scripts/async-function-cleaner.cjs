@@ -3,12 +3,12 @@
 /**
  * Async Function Cleaner
  * Fixes @typescript-eslint/require-await errors by removing unnecessary async keywords
- * 
+ *
  * SAFE PATTERNS (auto-fix):
  * - async function with no await → remove async
  * - async arrow function with no await → remove async
  * - async method with no await → remove async
- * 
+ *
  * SAFETY MEASURES:
  * - Only removes async if no await expressions found
  * - Preserves function signatures and return types
@@ -24,7 +24,7 @@ class AsyncFunctionCleaner {
     this.stats = {
       filesProcessed: 0,
       asyncKeywordsRemoved: 0,
-      errors: []
+      errors: [],
     };
   }
 
@@ -60,7 +60,8 @@ class AsyncFunctionCleaner {
     let changes = 0;
 
     // Pattern 1: async function declarations
-    const functionPattern = /async\s+(function\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\([^)]*\)\s*\{[^}]*\})/g;
+    const functionPattern =
+      /async\s+(function\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\([^)]*\)\s*\{[^}]*\})/g;
     fixed = fixed.replace(functionPattern, (match, functionDef) => {
       if (!this.hasAwaitExpressions(functionDef)) {
         changes++;
@@ -121,15 +122,15 @@ class AsyncFunctionCleaner {
    */
   findTSFiles(directories = ['app', 'components', 'lib']) {
     const files = [];
-    
-    directories.forEach(dir => {
+
+    directories.forEach((dir) => {
       if (fs.existsSync(dir)) {
         const findFiles = (currentDir) => {
           const items = fs.readdirSync(currentDir);
-          items.forEach(item => {
+          items.forEach((item) => {
             const fullPath = path.join(currentDir, item);
             const stat = fs.statSync(fullPath);
-            
+
             if (stat.isDirectory() && !item.startsWith('.')) {
               findFiles(fullPath);
             } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx'))) {
@@ -140,7 +141,7 @@ class AsyncFunctionCleaner {
         findFiles(dir);
       }
     });
-    
+
     return files;
   }
 
@@ -148,14 +149,11 @@ class AsyncFunctionCleaner {
    * Run the async function cleaning process
    */
   async run(options = {}) {
-    const { 
-      maxFiles = null,
-      dryRun = false 
-    } = options;
+    const { maxFiles = null, dryRun = false } = options;
 
     console.log('🚀 Starting Async Function Cleaning');
     console.log('===================================');
-    
+
     if (dryRun) {
       console.log('🔍 DRY RUN MODE - No files will be modified');
     }
@@ -167,7 +165,7 @@ class AsyncFunctionCleaner {
     // Find files to process
     const allFiles = this.findTSFiles();
     const filesToProcess = maxFiles ? allFiles.slice(0, maxFiles) : allFiles;
-    
+
     console.log(`📁 Found ${allFiles.length} TypeScript files`);
     console.log(`🎯 Processing ${filesToProcess.length} files`);
     console.log('');
@@ -176,7 +174,7 @@ class AsyncFunctionCleaner {
     let filesChanged = 0;
     for (const file of filesToProcess) {
       console.log(`Processing: ${file}`);
-      
+
       if (!dryRun) {
         const changed = this.processFile(file);
         if (changed) filesChanged++;
@@ -184,13 +182,13 @@ class AsyncFunctionCleaner {
         // Dry run - just analyze
         const content = fs.readFileSync(file, 'utf8');
         const result = this.fixAsyncFunctions(content);
-        
+
         if (result.changes > 0) {
           console.log(`  Would remove ${result.changes} async keyword(s)`);
           filesChanged++;
         }
       }
-      
+
       this.stats.filesProcessed++;
     }
 
@@ -209,12 +207,14 @@ class AsyncFunctionCleaner {
     console.log('');
     console.log(`Initial errors: ${initialErrors}`);
     console.log(`Final errors: ${finalErrors}`);
-    console.log(`Error reduction: ${errorReduction} (${((errorReduction/initialErrors)*100).toFixed(1)}%)`);
+    console.log(
+      `Error reduction: ${errorReduction} (${((errorReduction / initialErrors) * 100).toFixed(1)}%)`,
+    );
 
     if (this.stats.errors.length > 0) {
       console.log('');
       console.log('❌ ERRORS:');
-      this.stats.errors.forEach(err => {
+      this.stats.errors.forEach((err) => {
         console.log(`  ${err.file}: ${err.error}`);
       });
     }
@@ -223,7 +223,7 @@ class AsyncFunctionCleaner {
       filesChanged,
       asyncKeywordsRemoved: this.stats.asyncKeywordsRemoved,
       errorReduction,
-      success: this.stats.errors.length === 0
+      success: this.stats.errors.length === 0,
     };
   }
 }
@@ -232,21 +232,24 @@ class AsyncFunctionCleaner {
 if (require.main === module) {
   const args = process.argv.slice(2);
   const options = {};
-  
+
   // Parse command line arguments
   if (args.includes('--dry-run')) options.dryRun = true;
   if (args.includes('--max-files')) {
     const maxIndex = args.indexOf('--max-files');
     options.maxFiles = parseInt(args[maxIndex + 1]) || 10;
   }
-  
+
   const cleaner = new AsyncFunctionCleaner();
-  cleaner.run(options).then(result => {
-    process.exit(result.success ? 0 : 1);
-  }).catch(error => {
-    console.error('Fatal error:', error);
-    process.exit(1);
-  });
+  cleaner
+    .run(options)
+    .then((result) => {
+      process.exit(result.success ? 0 : 1);
+    })
+    .catch((error) => {
+      console.error('Fatal error:', error);
+      process.exit(1);
+    });
 }
 
 module.exports = AsyncFunctionCleaner;

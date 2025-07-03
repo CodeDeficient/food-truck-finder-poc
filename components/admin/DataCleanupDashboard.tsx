@@ -16,20 +16,22 @@ export function DataCleanupDashboard() {
     selectedOperations,
     runCleanup,
     loadPreview,
-    toggleOperation
+    toggleOperation,
   } = useDataCleanup();
-
-
-
-
 
   return (
     <div className="space-y-6">
       <CleanupHeader
         isRunning={isRunning}
-        onPreview={() => { void loadPreview(); }}
-        onDryRun={() => { void runCleanup(true); }}
-        onRunCleanup={() => { void runCleanup(false); }}
+        onPreview={() => {
+          void loadPreview();
+        }}
+        onDryRun={() => {
+          void runCleanup(true);
+        }}
+        onRunCleanup={() => {
+          void runCleanup(false);
+        }}
       />
 
       <OperationSelector

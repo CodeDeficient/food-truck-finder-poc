@@ -21,19 +21,16 @@ export class GeminiApiClient {
     this.modelName = 'gemini-2.0-flash-lite-001';
   }
 
-  async makeRequest<T>(
-    prompt: string,
-    config: GeminiApiConfig = {}
-  ): Promise<GeminiResponse<T>> {
+  async makeRequest<T>(prompt: string, config: GeminiApiConfig = {}): Promise<GeminiResponse<T>> {
     let textOutput: string = '';
-    
+
     try {
       const sdkResponse = await this.genAI.models.generateContent({
         model: this.modelName,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: config.temperature ?? 0 },
       });
-      
+
       textOutput = sdkResponse.text ?? '';
 
       const tokensUsed =
@@ -50,12 +47,12 @@ export class GeminiApiClient {
         data: textOutput,
         tokensUsed,
       } as GeminiResponse<T>;
-
     } catch (error: unknown) {
       const tokensUsed = Math.ceil(
-        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) / 4
+        (prompt.length + (error instanceof Error ? error.message.length : String(error).length)) /
+          4,
       );
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -67,10 +64,10 @@ export class GeminiApiClient {
   async makeRequestWithParsing<T>(
     prompt: string,
     parser: (text: string) => T,
-    config: GeminiApiConfig = {}
+    config: GeminiApiConfig = {},
   ): Promise<GeminiResponse<T>> {
     const response = await this.makeRequest<string>(prompt, config);
-    
+
     if (!response.success) {
       return response as GeminiResponse<T>;
     }
@@ -85,7 +82,7 @@ export class GeminiApiClient {
     } catch (parseError: unknown) {
       console.warn('Gemini json parsing error:', parseError);
       console.warn('Problematic Gemini raw response text:', response.data.trim());
-      
+
       return {
         success: false,
         error: `Failed to parse Gemini response: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${response.data.trim().slice(0, 200)}...`,

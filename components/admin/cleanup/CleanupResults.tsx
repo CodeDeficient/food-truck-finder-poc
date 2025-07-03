@@ -20,7 +20,8 @@ export function CleanupResults({ lastResult }: CleanupResultsProps) {
           Last Cleanup Results
         </CardTitle>
         <CardDescription>
-          Completed in {Math.round(lastResult.duration / 1000)}s - {lastResult.totalProcessed} trucks processed
+          Completed in {Math.round(lastResult.duration / 1000)}s - {lastResult.totalProcessed}{' '}
+          trucks processed
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

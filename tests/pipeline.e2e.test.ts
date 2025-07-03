@@ -13,9 +13,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     await cleanupTestData();
   });
 
-  test('should handle pipeline initiation endpoint', async ({
-    request
-  }: any) => {
+  test('should handle pipeline initiation endpoint', async ({ request }: any) => {
     // Test that the endpoint responds correctly
     const response = await request.get('/api/auto-scrape-initiate');
 
@@ -29,9 +27,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     }
   });
 
-  test('should handle test pipeline endpoint', async ({
-    request
-  }: any) => {
+  test('should handle test pipeline endpoint', async ({ request }: any) => {
     // Test the test pipeline endpoint
     const response = await request.post('/api/test-pipeline-run', {
       data: {
@@ -43,9 +39,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     // Should respond without throwing errors
     expect(response.status()).toBeLessThan(500);
   });
-  test('should handle integration test endpoint', async ({
-    request
-  }: any) => {
+  test('should handle integration test endpoint', async ({ request }: any) => {
     // Test the integration endpoint
     const response = await request.get('/api/test-integration');
 
@@ -60,9 +54,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     }
   });
 
-  test('should validate pipeline error handling', async ({
-    request
-  }: any) => {
+  test('should validate pipeline error handling', async ({ request }: any) => {
     // Test pipeline with invalid data
     const response = await request.post('/api/test-pipeline-run', {
       data: {

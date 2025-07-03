@@ -20,9 +20,7 @@ export function EventControls({ recentEventsCount, onClearEvents }: Readonly<Eve
       >
         Clear Events ({recentEventsCount})
       </Button>
-      <Badge variant="secondary">
-        {recentEventsCount} events in buffer
-      </Badge>
+      <Badge variant="secondary">{recentEventsCount} events in buffer</Badge>
     </div>
   );
 }

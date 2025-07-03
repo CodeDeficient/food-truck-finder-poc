@@ -29,7 +29,9 @@ export function TruckLocationInfo({ truck }: TruckLocationInfoProps) {
 
         {truck.current_location?.lat != undefined && truck.current_location?.lng != undefined && (
           <div>
-            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Coordinates</label>
+            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Coordinates
+            </label>
             <p className="text-gray-900 dark:text-gray-200 text-sm">
               {truck.current_location.lat.toFixed(6)}, {truck.current_location.lng.toFixed(6)}
             </p>

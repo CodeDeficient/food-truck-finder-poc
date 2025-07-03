@@ -14,11 +14,7 @@ interface TruckCardContentProps {
   readonly popularItems: MenuItem[]; // Use the full MenuItem type
 }
 
-export function TruckCardContent({
-  truck,
-  todayHours,
-  popularItems,
-}: TruckCardContentProps) {
+export function TruckCardContent({ truck, todayHours, popularItems }: TruckCardContentProps) {
   return (
     <>
       {truck.description && (
@@ -28,13 +24,24 @@ export function TruckCardContent({
         {/* Ratings & Hours Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RatingSection averageRating={truck.average_rating} reviewCount={truck.review_count} />
-          <OperatingHoursSection todayHours={todayHours} formatHours={formatHours} />
+          {/* Handle hours availability and format dynamically */}
+          {todayHours &&
+            formatHours(todayHours)
+              ? (
+                  <OperatingHoursSection todayHours={todayHours} />
+                )
+              : (
+                  <p>Hours unavailable</p>
+                )}
         </div>
 
         {/* Menu & Contact Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <MenuSection popularItems={popularItems} />
-          <ContactSection contactInfo={truck.contact_info} verificationStatus={truck.verification_status} />
+          <ContactSection
+            contactInfo={truck.contact_info}
+            verificationStatus={truck.verification_status}
+          />
         </div>
 
         <SocialMediaSection socialMedia={truck.social_media} />

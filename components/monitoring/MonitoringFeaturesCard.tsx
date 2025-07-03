@@ -7,9 +7,7 @@ export function MonitoringFeaturesCard() {
     <Card>
       <CardHeader>
         <CardTitle>Monitoring Features</CardTitle>
-        <CardDescription>
-          State-of-the-art API monitoring and alerting capabilities
-        </CardDescription>
+        <CardDescription>State-of-the-art API monitoring and alerting capabilities</CardDescription>
       </CardHeader>
       <CardContent>
         <MonitoringFeaturesContent />

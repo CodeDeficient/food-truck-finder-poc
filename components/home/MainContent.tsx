@@ -17,7 +17,7 @@ export function MainContent({
   userLocation,
   selectedTruckId,
   setSelectedTruckId,
-  isOpen
+  isOpen,
 }: MainContentProps) {
   return (
     <div className="container mx-auto px-4 py-6">

@@ -9,7 +9,10 @@ interface UseTooltipLabelProps {
   readonly hideLabel: boolean;
   readonly payload: Payload<ValueType, NameType>[] | undefined;
   readonly label: unknown;
-  readonly labelFormatter?: (value: unknown, payload: Payload<ValueType, NameType>[]) => React.ReactNode;
+  readonly labelFormatter?: (
+    value: unknown,
+    payload: Payload<ValueType, NameType>[],
+  ) => React.ReactNode;
   readonly labelClassName?: string;
   readonly config: ChartConfig;
   readonly labelKey?: string;
@@ -22,7 +25,7 @@ export function useTooltipLabel({
   labelFormatter,
   labelClassName,
   config,
-  labelKey
+  labelKey,
 }: UseTooltipLabelProps) {
   return React.useMemo(() => {
     if (hideLabel || !payload || payload.length === 0) {
@@ -34,7 +37,9 @@ export function useTooltipLabel({
     const key = `${labelKey ?? (item as { dataKey?: string; name?: string }).dataKey ?? (item as { dataKey?: string; name?: string }).name ?? 'value'}`;
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
-      (labelKey === undefined && typeof label === 'string') ? config[label]?.label ?? label : itemConfig?.label;
+      labelKey === undefined && typeof label === 'string'
+        ? (config[label]?.label ?? label)
+        : itemConfig?.label;
 
     if (labelFormatter) {
       return (
@@ -43,7 +48,6 @@ export function useTooltipLabel({
     }
 
     if (value === undefined || value === null || value === '') {
-      
     }
 
     return <div className={cn('font-medium', labelClassName)}>{value}</div>;

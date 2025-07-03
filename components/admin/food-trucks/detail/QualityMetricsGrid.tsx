@@ -8,14 +8,14 @@ interface QualityMetricsGridProps {
     data_quality_score?: number;
     verification_status?: string;
     created_at?: string;
-    updated_at?: string
+    updated_at?: string;
   };
   readonly qualityCategory: QualityCategory;
 }
 
 export function QualityMetricsGrid({
   truck,
-  qualityCategory: _qualityCategory // Renamed to _qualityCategory
+  qualityCategory: _qualityCategory, // Renamed to _qualityCategory
 }: QualityMetricsGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -40,12 +40,20 @@ export function QualityMetricsGrid({
       />
 
       <QualityScoreMetric
-        value={(truck.created_at != undefined && truck.created_at !== '') ? new Date(truck.created_at).toLocaleDateString() : 'N/A'}
+        value={
+          truck.created_at != undefined && truck.created_at !== ''
+            ? new Date(truck.created_at).toLocaleDateString()
+            : 'N/A'
+        }
         label="Created"
       />
 
       <QualityScoreMetric
-        value={(truck.updated_at != undefined && truck.updated_at !== '') ? new Date(truck.updated_at).toLocaleDateString() : 'N/A'}
+        value={
+          truck.updated_at != undefined && truck.updated_at !== ''
+            ? new Date(truck.updated_at).toLocaleDateString()
+            : 'N/A'
+        }
         label="Updated"
       />
     </div>

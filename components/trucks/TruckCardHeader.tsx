@@ -11,18 +11,13 @@ interface TruckCardHeaderProps {
   readonly priceRange: string | undefined;
 }
 
-export function TruckCardHeader({
-  truck,
-  isOpen,
-  popularItems,
-  priceRange
-}: TruckCardHeaderProps) {
+export function TruckCardHeader({ truck, isOpen, popularItems, priceRange }: TruckCardHeaderProps) {
   return (
     <CardHeader>
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-          {(truck.current_location?.address != undefined) && (
+          {truck.current_location?.address != undefined && (
             <CardDescription className="flex items-center mt-1 dark:text-gray-400">
               <MapPin className="h-4 w-4 mr-1" />
               {truck.current_location.address}

@@ -13,7 +13,9 @@ export function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const service = searchParams.get('service') as APIService | null;
 
-    return service ? handleServiceSpecificMonitoring(request, service) : handleComprehensiveMonitoring();
+    return service
+      ? handleServiceSpecificMonitoring(request, service)
+      : handleComprehensiveMonitoring();
   } catch (error: unknown) {
     console.error('API monitoring error:', error);
     return NextResponse.json(
@@ -33,7 +35,10 @@ function handlePostAction(
   level: string | undefined,
 ): NextResponse {
   if (action === undefined) {
-    return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: 'Invalid request body: missing or invalid action' },
+      { status: 400 },
+    );
   }
 
   switch (action) {
@@ -65,8 +70,12 @@ export async function POST(request: NextRequest) {
   try {
     const rawBody: unknown = await request.json();
 
-    if (typeof rawBody !== 'object' || rawBody === null) { // Changed to check for null instead of undefined as typeof null is 'object'
-      return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
+    if (typeof rawBody !== 'object' || rawBody === null) {
+      // Changed to check for null instead of undefined as typeof null is 'object'
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body: not an object' },
+        { status: 400 },
+      );
     }
 
     const body = rawBody as Record<string, unknown>;

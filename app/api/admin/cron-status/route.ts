@@ -8,8 +8,6 @@ import { ScrapingJobService, FoodTruckService, supabase, supabaseAdmin } from '@
  * Provides real-time status, performance metrics, and alerting capabilities
  */
 
-
-
 // Type definitions for job data
 interface JobData {
   job_type?: string;
@@ -34,7 +32,10 @@ async function verifyAdminAccess(request: Request): Promise<boolean> {
     if (authHeader == undefined) return false;
 
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
 
     if (error || !user) return false;
 
@@ -83,9 +84,10 @@ async function fetchJobData(): Promise<{ recentJobs: JobData[]; todayTrucks: Tru
   let todayTrucks: TrucksResponse = { trucks: [], total: 0 };
 
   try {
-     
-    const recentJobsRaw = await ScrapingJobService.getJobsFromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
-    recentJobs = Array.isArray(recentJobsRaw) ? recentJobsRaw as JobData[] : [];
+    const recentJobsRaw = await ScrapingJobService.getJobsFromDate(
+      new Date(Date.now() - 24 * 60 * 60 * 1000),
+    );
+    recentJobs = Array.isArray(recentJobsRaw) ? (recentJobsRaw as JobData[]) : [];
   } catch (error: unknown) {
     console.warn('Failed to fetch recent jobs:', error);
   }
@@ -125,7 +127,12 @@ function countNewTrucksToday(todayTrucks: TrucksResponse): number {
 }
 
 // Helper function to create job result object
-function createJobResult(jobs: JobData[], todayTrucks: TrucksResponse, newTrucksToday: number, isQualityCheck = false) {
+function createJobResult(
+  jobs: JobData[],
+  todayTrucks: TrucksResponse,
+  newTrucksToday: number,
+  isQualityCheck = false,
+) {
   const firstJob = jobs[0];
   const hasJobs = jobs.length > 0;
   const isCompleted = hasJobs && firstJob?.status === 'completed';
@@ -133,7 +140,9 @@ function createJobResult(jobs: JobData[], todayTrucks: TrucksResponse, newTrucks
 
   let message: string;
   if (isCompleted) {
-    message = isQualityCheck ? 'Quality check completed successfully' : 'Successfully processed food trucks';
+    message = isQualityCheck
+      ? 'Quality check completed successfully'
+      : 'Successfully processed food trucks';
   } else if (isFailed) {
     message = isQualityCheck ? 'Quality check failed' : 'Scraping job failed';
   } else {
@@ -158,7 +167,14 @@ function createCronJobs(params: {
   getLastCronRun: (hour: number) => string;
   getNextCronRun: (hour: number) => string;
 }) {
-  const { autoScrapeJobs, qualityCheckJobs, todayTrucks, newTrucksToday, getLastCronRun, getNextCronRun } = params;
+  const {
+    autoScrapeJobs,
+    qualityCheckJobs,
+    todayTrucks,
+    newTrucksToday,
+    getLastCronRun,
+    getNextCronRun,
+  } = params;
 
   return [
     {
@@ -167,9 +183,13 @@ function createCronJobs(params: {
       schedule: '0 6 * * *', // Daily at 6 AM
       lastRun: getLastCronRun(6),
       nextRun: getNextCronRun(6),
-      status: Boolean(autoScrapeJobs.some((job: JobData) => {
-        return job.status === 'running';
-      })) ? 'running' as const : 'idle' as const,
+      status: Boolean(
+        autoScrapeJobs.some((job: JobData) => {
+          return job.status === 'running';
+        }),
+      )
+        ? ('running' as const)
+        : ('idle' as const),
       lastResult: createJobResult(autoScrapeJobs, todayTrucks, newTrucksToday, false),
     },
     {
@@ -178,9 +198,13 @@ function createCronJobs(params: {
       schedule: '0 8 * * *', // Daily at 8 AM
       lastRun: getLastCronRun(8),
       nextRun: getNextCronRun(8),
-      status: Boolean(qualityCheckJobs.some((job: JobData) => {
-        return job.status === 'running';
-      })) ? 'running' as const : 'idle' as const,
+      status: Boolean(
+        qualityCheckJobs.some((job: JobData) => {
+          return job.status === 'running';
+        }),
+      )
+        ? ('running' as const)
+        : ('idle' as const),
       lastResult: createJobResult(qualityCheckJobs, todayTrucks, newTrucksToday, true),
     },
   ];
@@ -190,10 +214,7 @@ export async function GET(request: Request) {
   // Verify admin access for API endpoint security
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized access' },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {

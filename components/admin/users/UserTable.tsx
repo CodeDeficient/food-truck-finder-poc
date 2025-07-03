@@ -40,9 +40,7 @@ export function UserTable({ users }: UserTableProps) {
           <TableRow key={user.id}>
             <TableCell className="font-medium">{user.email}</TableCell>
             <TableCell>
-              <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                {user.role}
-              </Badge>
+              <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>{user.role}</Badge>
             </TableCell>
             <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
             <TableCell>

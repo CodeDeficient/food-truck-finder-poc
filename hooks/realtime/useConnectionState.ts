@@ -11,12 +11,19 @@ export function useConnectionState() {
   const [lastEventTime, setLastEventTime] = useState<Date | undefined>();
 
   return {
-    isConnected, setIsConnected,
-    isConnecting, setIsConnecting,
-    connectionError, setConnectionError,
-    latestMetrics, setLatestMetrics,
-    recentEvents, setRecentEvents,
-    connectionAttempts, setConnectionAttempts,
-    lastEventTime, setLastEventTime
+    isConnected,
+    setIsConnected,
+    isConnecting,
+    setIsConnecting,
+    connectionError,
+    setConnectionError,
+    latestMetrics,
+    setLatestMetrics,
+    recentEvents,
+    setRecentEvents,
+    connectionAttempts,
+    setConnectionAttempts,
+    lastEventTime,
+    setLastEventTime,
   };
 }

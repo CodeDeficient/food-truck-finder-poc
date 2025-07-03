@@ -10,13 +10,14 @@ export function useAdminAuth() {
     router.push('/');
   };
 
-  const userInitials = user?.user_metadata?.full_name == undefined
-    ? user?.email?.slice(0, 2).toUpperCase() ?? 'AD'
-    : (user.user_metadata.full_name as string)
-        .split(' ')
-        .map((n: string) => n[0])
-        .join('')
-        .toUpperCase();
+  const userInitials =
+    user?.user_metadata?.full_name == undefined
+      ? (user?.email?.slice(0, 2).toUpperCase() ?? 'AD')
+      : (user.user_metadata.full_name as string)
+          .split(' ')
+          .map((n: string) => n[0])
+          .join('')
+          .toUpperCase();
 
   return { user, userInitials, handleSignOut };
 }

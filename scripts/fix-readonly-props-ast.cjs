@@ -24,15 +24,9 @@ function addReadonlyToInterface(filePath) {
 
       estraverse.traverse(ast, {
         enter: (node) => {
-          if (
-            node.type === 'TSInterfaceDeclaration' &&
-            node.id.name.endsWith('Props')
-          ) {
+          if (node.type === 'TSInterfaceDeclaration' && node.id.name.endsWith('Props')) {
             for (const property of node.body.body) {
-              if (
-                property.type === 'TSPropertySignature' &&
-                !property.readonly
-              ) {
+              if (property.type === 'TSPropertySignature' && !property.readonly) {
                 property.readonly = true;
                 modified = true;
               }

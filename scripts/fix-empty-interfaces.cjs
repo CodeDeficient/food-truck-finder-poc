@@ -11,20 +11,12 @@ function fixEmptyInterfaces(filePath) {
       return;
     }
 
-    const sourceFile = ts.createSourceFile(
-      filePath,
-      code,
-      ts.ScriptTarget.Latest,
-      true
-    );
+    const sourceFile = ts.createSourceFile(filePath, code, ts.ScriptTarget.Latest, true);
 
     const transformations = [];
 
     function visit(node) {
-      if (
-        ts.isInterfaceDeclaration(node) &&
-        node.members.length === 0
-      ) {
+      if (ts.isInterfaceDeclaration(node) && node.members.length === 0) {
         transformations.push({
           pos: node.getStart(sourceFile),
           end: node.getEnd(),
@@ -40,10 +32,7 @@ function fixEmptyInterfaces(filePath) {
       transformations.sort((a, b) => b.pos - a.pos);
       let newCode = code;
       for (const transform of transformations) {
-        newCode =
-          newCode.slice(0, transform.pos) +
-          transform.text +
-          newCode.slice(transform.end);
+        newCode = newCode.slice(0, transform.pos) + transform.text + newCode.slice(transform.end);
       }
 
       fs.writeFile(filePath, newCode, 'utf8', (err) => {

@@ -10,7 +10,10 @@ interface SystemAlertItemProps {
   readonly onAcknowledgeAlert: (id: string) => void;
 }
 
-const getAlertClasses = (type: 'info' | 'warning' | 'error' | 'critical', acknowledged: boolean | undefined) => {
+const getAlertClasses = (
+  type: 'info' | 'warning' | 'error' | 'critical',
+  acknowledged: boolean | undefined,
+) => {
   if (acknowledged === true) {
     return 'border-gray-300 bg-gray-50 text-gray-500';
   }
@@ -44,18 +47,12 @@ export function SystemAlertItem({ alert, onAcknowledgeAlert }: Readonly<SystemAl
           <span className="text-sm">{alert.message}</span>
         </div>
         {alert.acknowledged !== true && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onAcknowledgeAlert(alert.id)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onAcknowledgeAlert(alert.id)}>
             Acknowledge
           </Button>
         )}
       </div>
-      <p className="text-xs text-gray-500 mt-1">
-        {new Date(alert.timestamp).toLocaleString()}
-      </p>
+      <p className="text-xs text-gray-500 mt-1">{new Date(alert.timestamp).toLocaleString()}</p>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { DuplicatePreventionService } from '../data-quality/duplicatePrevention'
 export async function validateInputAndPrepare(
   jobId: string,
   extractedTruckData: ExtractedFoodTruckDetails,
-  sourceUrl: string
+  sourceUrl: string,
 ): Promise<{ isValid: boolean; name: string }> {
   // Basic input validation
   if (!validateTruckData(jobId, extractedTruckData)) {
@@ -30,7 +30,9 @@ export async function validateInputAndPrepare(
 }
 
 // New helper function for operating hours
-function buildOperatingHours(extractedOperatingHours: ExtractedFoodTruckDetails['operating_hours']) {
+function buildOperatingHours(
+  extractedOperatingHours: ExtractedFoodTruckDetails['operating_hours'],
+) {
   if (extractedOperatingHours == undefined) {
     return {
       monday: { closed: true as const },
@@ -54,7 +56,9 @@ function buildOperatingHours(extractedOperatingHours: ExtractedFoodTruckDetails[
 }
 
 // New helper function for scheduled locations
-function buildScheduledLocations(scheduledLocations: ExtractedFoodTruckDetails['scheduled_locations']) {
+function buildScheduledLocations(
+  scheduledLocations: ExtractedFoodTruckDetails['scheduled_locations'],
+) {
   if (!Array.isArray(scheduledLocations)) {
     return;
   }
@@ -72,7 +76,7 @@ function buildScheduledLocations(scheduledLocations: ExtractedFoodTruckDetails['
 export function buildTruckDataSchema(
   extractedTruckData: ExtractedFoodTruckDetails,
   sourceUrl: string,
-  name: string
+  name: string,
 ): FoodTruckSchema {
   const currentLocation = buildLocationData(extractedTruckData);
 
@@ -86,7 +90,7 @@ export function buildTruckDataSchema(
     contact_info: buildContactInfo(extractedTruckData.contact_info),
     social_media: buildSocialMedia(extractedTruckData.social_media),
     cuisine_type: Array.isArray(extractedTruckData.cuisine_type)
-      ? (extractedTruckData.cuisine_type.filter(c => typeof c === 'string'))
+      ? extractedTruckData.cuisine_type.filter((c) => typeof c === 'string')
       : [],
     price_range: extractedTruckData.price_range ?? undefined, // Ensure it's one of the allowed enum values or undefined
     specialties: Array.isArray(extractedTruckData.specialties)
@@ -122,11 +126,12 @@ interface DuplicateCheckResult {
 export async function handleDuplicateCheck(
   jobId: string,
   truckData: FoodTruckSchema,
-  name: string
+  name: string,
 ): Promise<FoodTruck> {
   // Check for duplicates before creating
   console.info(`Job ${jobId}: Checking for duplicates before creating truck: ${name}`);
-  const duplicateCheck: DuplicateCheckResult = await DuplicatePreventionService.checkForDuplicates(truckData);
+  const duplicateCheck: DuplicateCheckResult =
+    await DuplicatePreventionService.checkForDuplicates(truckData);
 
   if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
     return await handleDuplicate(jobId, truckData, duplicateCheck);
@@ -144,7 +149,7 @@ export async function handleDuplicateCheck(
 async function handleDuplicate(
   jobId: string,
   truckData: FoodTruckSchema,
-  duplicateCheck: DuplicateCheckResult
+  duplicateCheck: DuplicateCheckResult,
 ): Promise<FoodTruck> {
   const { bestMatch } = duplicateCheck;
   if (!bestMatch) {
@@ -156,10 +161,15 @@ async function handleDuplicate(
     return truck;
   }
 
-  console.info(`Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`);
+  console.info(
+    `Job ${jobId}: Found potential duplicate (${Math.round(bestMatch.similarity * 100)}% similarity) with truck: ${bestMatch.existingTruck.name}`,
+  );
 
   if (bestMatch.confidence === 'high' && bestMatch.recommendation === 'merge') {
-    const truck = await DuplicatePreventionService.mergeDuplicates(bestMatch.existingTruck.id, bestMatch.existingTruck.id);
+    const truck = await DuplicatePreventionService.mergeDuplicates(
+      bestMatch.existingTruck.id,
+      bestMatch.existingTruck.id,
+    );
     if ('error' in truck) {
       console.error(`Job ${jobId}: Error merging duplicates: ${truck.error}`);
       const newTruck = await FoodTruckService.createTruck(truckData);
@@ -169,7 +179,9 @@ async function handleDuplicate(
       }
       return newTruck;
     } else {
-      console.info(`Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`);
+      console.info(
+        `Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`,
+      );
       return truck;
     }
   } else if (bestMatch.recommendation === 'update') {
@@ -189,10 +201,14 @@ async function handleDuplicate(
   } else {
     const truck = await FoodTruckService.createTruck(truckData);
     if ('error' in truck) {
-      console.error(`Job ${jobId}: Error creating truck despite potential duplicate: ${truck.error}`);
+      console.error(
+        `Job ${jobId}: Error creating truck despite potential duplicate: ${truck.error}`,
+      );
       throw new Error(`Failed to create truck: ${truck.error}`);
     }
-    console.warn(`Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason ?? 'unknown reason'})`);
+    console.warn(
+      `Job ${jobId}: Created new truck despite potential duplicate (${duplicateCheck.reason ?? 'unknown reason'})`,
+    );
     return truck;
   }
 }
@@ -201,7 +217,7 @@ async function handleDuplicate(
 export async function finalizeJobStatus(
   jobId: string,
   truck: FoodTruck,
-  sourceUrl: string
+  sourceUrl: string,
 ): Promise<void> {
   console.info(
     `Job ${jobId}: Successfully created food truck: ${truck.name} (ID: ${truck.id}) from ${sourceUrl ?? 'Unknown Source'}`,
@@ -278,15 +294,19 @@ interface RawMenuCategory {
 
 // Type guard for RawMenuCategory
 function isRawMenuCategory(obj: unknown): obj is RawMenuCategory {
-  return typeof obj === 'object' && obj != undefined && (
-    ('category' in obj) || ('name' in obj) || ('items' in obj)
+  return (
+    typeof obj === 'object' &&
+    obj != undefined &&
+    ('category' in obj || 'name' in obj || 'items' in obj)
   );
 }
 
 // Type guard for RawMenuItem
 function isRawMenuItem(obj: unknown): obj is RawMenuItem {
-  return typeof obj === 'object' && obj != undefined && (
-    ('name' in obj) || ('description' in obj) || ('price' in obj) || ('dietary_tags' in obj)
+  return (
+    typeof obj === 'object' &&
+    obj != undefined &&
+    ('name' in obj || 'description' in obj || 'price' in obj || 'dietary_tags' in obj)
   );
 }
 

@@ -60,7 +60,13 @@ async function logSecurityEventAndRedirect({
   return NextResponse.redirect(redirectUrl);
 }
 
-async function logAndRedirect({ req, res, requestMetadata, reason, userError }: LogAndRedirectParams) {
+async function logAndRedirect({
+  req,
+  res,
+  requestMetadata,
+  reason,
+  userError,
+}: LogAndRedirectParams) {
   return logSecurityEventAndRedirect({
     req,
     res,
@@ -76,7 +82,7 @@ async function logAndRedirect({ req, res, requestMetadata, reason, userError }: 
       severity: 'warning',
     },
     redirectPath: '/login',
-    redirectFromPath: req.nextUrl.pathname
+    redirectFromPath: req.nextUrl.pathname,
   });
 }
 
@@ -89,7 +95,14 @@ interface LogAndRedirectDeniedParams {
   profileQueryError?: { message?: string } | null; // Changed to allow null
 }
 
-async function logAndRedirectDenied({ req, res, requestMetadata, user, profile, profileQueryError }: LogAndRedirectDeniedParams) {
+async function logAndRedirectDenied({
+  req,
+  res,
+  requestMetadata,
+  user,
+  profile,
+  profileQueryError,
+}: LogAndRedirectDeniedParams) {
   return logSecurityEventAndRedirect({
     req,
     res,
@@ -107,26 +120,43 @@ async function logAndRedirectDenied({ req, res, requestMetadata, user, profile, 
       },
       severity: 'error',
     },
-    redirectPath: '/access-denied'
+    redirectPath: '/access-denied',
   });
 }
 
-export async function protectAdminRoutes(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata) {
+export async function protectAdminRoutes(
+  req: NextRequest,
+  res: NextResponse,
+  requestMetadata: RequestMetadata,
+) {
   const supabase = createSupabaseMiddlewareClient(req, res);
   const { data, error: userError } = await supabase.auth.getUser();
   const user = data?.user;
 
   if (userError || !user) {
-    return logAndRedirect({ req, res, requestMetadata, reason: 'no_session', userError: userError ?? undefined });
+    return logAndRedirect({
+      req,
+      res,
+      requestMetadata,
+      reason: 'no_session',
+      userError: userError ?? undefined,
+    });
   }
   // Explicitly type the result of the Supabase query
-  const { data: profile, error: profileQueryError } = await supabase
+  const { data: profile, error: profileQueryError } = (await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single() as { data: SupabaseProfile | null; error: { message?: string } | null };
+    .single()) as { data: SupabaseProfile | null; error: { message?: string } | null };
   if (profileQueryError || (profile && profile.role !== 'admin')) {
-    return logAndRedirectDenied({ req, res, requestMetadata, user, profile: profile ?? undefined, profileQueryError: profileQueryError ?? undefined });
+    return logAndRedirectDenied({
+      req,
+      res,
+      requestMetadata,
+      user,
+      profile: profile ?? undefined,
+      profileQueryError: profileQueryError ?? undefined,
+    });
   }
   if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
     await AuditLogger.logDataAccess({

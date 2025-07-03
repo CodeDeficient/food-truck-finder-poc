@@ -12,10 +12,10 @@ import { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
 
 /**
  * SOTA Automated Data Cleanup API
- * 
+ *
  * Provides scheduled and on-demand data cleanup operations
  * with comprehensive monitoring and reporting capabilities
- * 
+ *
  * GET /api/admin/automated-cleanup - Get cleanup status and schedule
  * POST /api/admin/automated-cleanup - Run cleanup operations
  */
@@ -49,11 +49,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   } catch (error: unknown) {
     console.error('Automated cleanup GET error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to process cleanup request',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to process cleanup request',
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -68,13 +71,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Validate rawBody against RequestBody type
     if (typeof rawBody !== 'object' || rawBody == undefined) {
-      return NextResponse.json({ success: false, error: 'Invalid request body: not an object' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body: not an object' },
+        { status: 400 },
+      );
     }
 
     const body = rawBody as Partial<RequestBody>; // Use Partial for initial type assertion
 
     if (typeof body.action !== 'string') {
-      return NextResponse.json({ success: false, error: 'Invalid request body: missing or invalid action' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'Invalid request body: missing or invalid action' },
+        { status: 400 },
+      );
     }
 
     // Further validation can be added here for other properties of RequestBody if needed
@@ -83,10 +92,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return await handlePostRequest(body as RequestBody);
   } catch (error: unknown) {
     console.error('Automated cleanup POST error:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to process cleanup request',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Failed to process cleanup request',
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
   }
 }

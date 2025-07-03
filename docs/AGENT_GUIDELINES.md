@@ -14,24 +14,24 @@ Use `codebase-retrieval` to check for existing functionality before creating any
 
 ### Step 2: Check for Duplicates
 
--   **Database services**: Use `lib/supabase.ts` ONLY.
--   **Pipeline operations**: Use `/api/pipeline` ONLY.
--   **API routes**: Check existing routes first.
--   **Components**: Check `components/` directory.
+- **Database services**: Use `lib/supabase.ts` ONLY.
+- **Pipeline operations**: Use `/api/pipeline` ONLY.
+- **API routes**: Check existing routes first.
+- **Components**: Check `components/` directory.
 
 ### Step 3: Review Current Rules
 
--   Read the relevant sections of this document.
--   Check `FILE_STRUCTURE_STANDARDS.md` for patterns.
+- Read the relevant sections of this document.
+- Check `FILE_STRUCTURE_STANDARDS.md` for patterns.
 
 ### Step 4: ⚠️ STRUCTURAL CHANGE PREVENTION
 
 If planning file removal, import path changes, or service consolidation:
 
--   🚨 **MANDATORY**: Follow `STRUCTURAL_CHANGE_PREVENTION_CHECKLIST.md`.
--   🚨 **MANDATORY**: Run `npm run lint > lint-before.json` to capture a baseline.
--   🚨 **MANDATORY**: Single agent assignment only.
--   🚨 **MANDATORY**: Plan import path changes before starting.
+- 🚨 **MANDATORY**: Follow `STRUCTURAL_CHANGE_PREVENTION_CHECKLIST.md`.
+- 🚨 **MANDATORY**: Run `npm run lint > lint-before.json` to capture a baseline.
+- 🚨 **MANDATORY**: Single agent assignment only.
+- 🚨 **MANDATORY**: Plan import path changes before starting.
 
 ## 2. 🤖 AGENT EXCLUSIVITY PROTOCOL
 
@@ -67,21 +67,21 @@ If planning file removal, import path changes, or service consolidation:
 
 ### NEVER DO THESE THINGS:
 
--   ❌ **Work simultaneously with another agent** on linting tasks.
--   ❌ **Modify eslint.config.mjs** without creating a backup first.
--   ❌ **Create duplicate service implementations**.
--   ❌ **Skip the baseline linting check** before starting.
--   ❌ **Commit changes that increase error count**.
--   ❌ **Ignore governance framework protocols**.
--   ❌ **Work on linting without updating `PROJECT_PLANNING_AND_STATUS.md`**.
+- ❌ **Work simultaneously with another agent** on linting tasks.
+- ❌ **Modify eslint.config.mjs** without creating a backup first.
+- ❌ **Create duplicate service implementations**.
+- ❌ **Skip the baseline linting check** before starting.
+- ❌ **Commit changes that increase error count**.
+- ❌ **Ignore governance framework protocols**.
+- ❌ **Work on linting without updating `PROJECT_PLANNING_AND_STATUS.md`**.
 
 ### IMMEDIATE ROLLBACK TRIGGERS:
 
--   🚨 Error count increases unexpectedly.
--   🚨 Multiple agents detected as ACTIVE.
--   🚨 Configuration corruption detected.
--   🚨 Governance protocol violation.
--   🚨 Duplicate implementation created.
+- 🚨 Error count increases unexpectedly.
+- 🚨 Multiple agents detected as ACTIVE.
+- 🚨 Configuration corruption detected.
+- 🚨 Governance protocol violation.
+- 🚨 Duplicate implementation created.
 
 ## 4. 🔄 HANDOFF PROCEDURES
 
@@ -128,46 +128,46 @@ If planning file removal, import path changes, or service consolidation:
 
 ### PHASE-BASED ASSIGNMENT
 
-| Phase | Agent Assignment | Coordination Level |
-| :--- | :--- | :--- |
-| Phase 1: Pipeline Consolidation | Single Agent (Augment) | High |
-| Phase 2: Admin Dashboard | Can be parallel | Medium |
-| Phase 3: Authentication | Coordinate required | High |
-| Phase 4: Data Quality | Can be parallel | Low |
-| Phase 5: Performance | Single Agent | High |
-| Phase 6: Database Security | Single Agent (Supabase expert) | High |
-| Phase 7: Code Quality | Can be parallel | Low |
+| Phase                           | Agent Assignment               | Coordination Level |
+| :------------------------------ | :----------------------------- | :----------------- |
+| Phase 1: Pipeline Consolidation | Single Agent (Augment)         | High               |
+| Phase 2: Admin Dashboard        | Can be parallel                | Medium             |
+| Phase 3: Authentication         | Coordinate required            | High               |
+| Phase 4: Data Quality           | Can be parallel                | Low                |
+| Phase 5: Performance            | Single Agent                   | High               |
+| Phase 6: Database Security      | Single Agent (Supabase expert) | High               |
+| Phase 7: Code Quality           | Can be parallel                | Low                |
 
 ### FILE-BASED OWNERSHIP
 
-| File Category | Ownership | Coordination |
-| :--- | :--- | :--- |
-| `lib/supabase.ts` | Single Agent | Required |
-| `lib/pipelineManager.ts` | Single Agent | Required |
-| `app/api/pipeline/route.ts` | Single Agent | Required |
-| `app/middleware.ts` | Single Agent | Required |
-| `vercel.json` | Single Agent | Required |
-| `components/` | Multi-Agent | Recommended |
-| `app/admin/` | Multi-Agent | Recommended |
-| `docs/` | Multi-Agent | Optional |
-| `tests/` | Multi-Agent | Optional |
+| File Category               | Ownership    | Coordination |
+| :-------------------------- | :----------- | :----------- |
+| `lib/supabase.ts`           | Single Agent | Required     |
+| `lib/pipelineManager.ts`    | Single Agent | Required     |
+| `app/api/pipeline/route.ts` | Single Agent | Required     |
+| `app/middleware.ts`         | Single Agent | Required     |
+| `vercel.json`               | Single Agent | Required     |
+| `components/`               | Multi-Agent  | Recommended  |
+| `app/admin/`                | Multi-Agent  | Recommended  |
+| `docs/`                     | Multi-Agent  | Optional     |
+| `tests/`                    | Multi-Agent  | Optional     |
 
 ## 6. 🧪 TESTING REQUIREMENTS
 
 ### Before Committing
 
--   [ ] All existing tests pass.
--   [ ] New functionality has tests.
--   [ ] **MANDATORY: No linting errors** (`npm run lint` must pass).
--   [ ] **MANDATORY: TypeScript compiles** without errors.
--   [ ] **MANDATORY: Structural changes verified** (if applicable).
+- [ ] All existing tests pass.
+- [ ] New functionality has tests.
+- [ ] **MANDATORY: No linting errors** (`npm run lint` must pass).
+- [ ] **MANDATORY: TypeScript compiles** without errors.
+- [ ] **MANDATORY: Structural changes verified** (if applicable).
 
 ### Test Types Needed
 
--   **Unit tests**: For new services/functions.
--   **Integration tests**: For API endpoints.
--   **E2E tests**: For critical user flows.
--   **Performance tests**: For pipeline operations.
+- **Unit tests**: For new services/functions.
+- **Integration tests**: For API endpoints.
+- **E2E tests**: For critical user flows.
+- **Performance tests**: For pipeline operations.
 
 ## 7. 📊 PROGRESS TRACKING
 
@@ -175,10 +175,10 @@ If planning file removal, import path changes, or service consolidation:
 
 Each agent MUST update the `PROJECT_PLANNING_AND_STATUS.md` with:
 
--   Tasks started (mark as "🔄 In Progress").
--   Tasks completed (mark as "✅ Complete").
--   Issues encountered (mark as "⚠️ Blocked").
--   Dependencies identified (mark as "🔗 Depends on X").
+- Tasks started (mark as "🔄 In Progress").
+- Tasks completed (mark as "✅ Complete").
+- Issues encountered (mark as "⚠️ Blocked").
+- Dependencies identified (mark as "🔗 Depends on X").
 
 ### Commit Message Format
 

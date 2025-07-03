@@ -20,7 +20,7 @@ import {
   categorizeQualityScore,
   getQualityBadgeClasses,
   getQualityScoreAriaLabel,
-  type QualityCategory
+  type QualityCategory,
 } from '@/lib/utils/QualityScorer';
 
 // Define the data quality stats type based on the database function
@@ -59,7 +59,8 @@ function FoodTruckQualityTable({ trucks }: { readonly trucks: FoodTruck[] }) {
       <CardHeader>
         <CardTitle>Food Truck Data Quality Details</CardTitle>
         <CardDescription>
-          Review and manage individual food truck data quality scores. Trucks are sorted by quality score (lowest first for priority review).
+          Review and manage individual food truck data quality scores. Trucks are sorted by quality
+          score (lowest first for priority review).
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -87,11 +88,10 @@ function FoodTruckQualityTable({ trucks }: { readonly trucks: FoodTruck[] }) {
 
 // Food truck quality table row component
 function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
-   
   const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score ?? 0);
-   
+
   const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score ?? 0);
-   
+
   const ariaLabel: string = getQualityScoreAriaLabel(truck.data_quality_score ?? 0);
 
   return (
@@ -104,18 +104,18 @@ function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
       </TableCell>
       <TableCell>
         <span aria-label={ariaLabel}>
-          { }
+          {}
           {formatQualityScore(truck.data_quality_score)}
         </span>
       </TableCell>
       <TableCell>
         <Badge className={badgeClasses}>
-          { }
+          {}
           {qualityCategory.label}
         </Badge>
       </TableCell>
       <TableCell>
-        {(truck.last_scraped_at == undefined)
+        {truck.last_scraped_at == undefined
           ? 'N/A'
           : new Date(truck.last_scraped_at).toLocaleDateString()}
       </TableCell>

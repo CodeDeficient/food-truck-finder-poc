@@ -31,18 +31,26 @@ const handleOpen = (connectionState: ConnectionStateActions) => () => {
   connectionState.setConnectionAttempts(0);
 };
 
-const handleMessage = (handleEvent: (event: RealtimeEvent) => void, setConnectionError: (error: string | undefined) => void) => (event: MessageEvent) => {
-  try {
-    const adminEvent: RealtimeEvent = JSON.parse(event.data as string) as RealtimeEvent;
-    handleEvent(adminEvent);
-  } catch (error) {
-    console.error('Error parsing event data:', error);
-    setConnectionError('Error parsing event data');
-  }
-};
+const handleMessage =
+  (
+    handleEvent: (event: RealtimeEvent) => void,
+    setConnectionError: (error: string | undefined) => void,
+  ) =>
+  (event: MessageEvent) => {
+    try {
+      const adminEvent: RealtimeEvent = JSON.parse(event.data as string) as RealtimeEvent;
+      handleEvent(adminEvent);
+    } catch (error) {
+      console.error('Error parsing event data:', error);
+      setConnectionError('Error parsing event data');
+    }
+  };
 
 const handleReconnectLogic = (refs: EventSourceRefs, reconnectParams: ReconnectLogicParams) => {
-  if (refs.isManuallyDisconnectedRef.current !== true && reconnectParams.connectionAttempts < reconnectParams.maxReconnectAttempts) {
+  if (
+    refs.isManuallyDisconnectedRef.current !== true &&
+    reconnectParams.connectionAttempts < reconnectParams.maxReconnectAttempts
+  ) {
     reconnectParams.setConnectionAttempts((prev) => prev + 1);
 
     refs.reconnectTimeoutRef.current = setTimeout(() => {
@@ -55,14 +63,20 @@ const handleReconnectLogic = (refs: EventSourceRefs, reconnectParams: ReconnectL
   }
 };
 
-const handleError = (connectionState: ConnectionStateActions, refs: EventSourceRefs, reconnectParams: ReconnectLogicParams) => (error: Event) => {
-  console.error('Real-time admin events error:', error);
-  connectionState.setIsConnected(false);
-  connectionState.setIsConnecting(false);
-  connectionState.setConnectionError('Connection error occurred');
+const handleError =
+  (
+    connectionState: ConnectionStateActions,
+    refs: EventSourceRefs,
+    reconnectParams: ReconnectLogicParams,
+  ) =>
+  (error: Event) => {
+    console.error('Real-time admin events error:', error);
+    connectionState.setIsConnected(false);
+    connectionState.setIsConnecting(false);
+    connectionState.setConnectionError('Connection error occurred');
 
-  handleReconnectLogic(refs, reconnectParams);
-};
+    handleReconnectLogic(refs, reconnectParams);
+  };
 
 interface SetupEventSourceListenersParams {
   eventSource: EventSource;
@@ -78,7 +92,7 @@ interface SetupEventSourceListenersParams {
 
 function createReconnectLogicParams(
   params: Omit<SetupEventSourceListenersParams, 'eventSource' | 'handleEvent' | 'connectionState'>,
-  connectionState: ReturnType<typeof useConnectionState>
+  connectionState: ReturnType<typeof useConnectionState>,
 ): ReconnectLogicParams {
   return {
     ...params,
@@ -91,20 +105,29 @@ function addEventListeners(
   eventSource: EventSource,
   params: SetupEventSourceListenersParams,
   connectionActions: ConnectionStateActions,
-  reconnectLogicParams: ReconnectLogicParams
+  reconnectLogicParams: ReconnectLogicParams,
 ) {
   const { handleEvent, isManuallyDisconnectedRef, reconnectTimeoutRef } = params;
   const refs: EventSourceRefs = { isManuallyDisconnectedRef, reconnectTimeoutRef };
 
   eventSource.addEventListener('open', handleOpen(connectionActions));
-  eventSource.addEventListener('message', handleMessage(handleEvent, connectionActions.setConnectionError));
+  eventSource.addEventListener(
+    'message',
+    handleMessage(handleEvent, connectionActions.setConnectionError),
+  );
   eventSource.addEventListener('error', handleError(connectionActions, refs, reconnectLogicParams));
 }
 
 export function setupEventSourceListeners(params: SetupEventSourceListenersParams) {
   const { eventSource, connectionState } = params;
-  const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } = connectionState;
-  const connectionActions: ConnectionStateActions = { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts };
+  const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } =
+    connectionState;
+  const connectionActions: ConnectionStateActions = {
+    setIsConnected,
+    setIsConnecting,
+    setConnectionError,
+    setConnectionAttempts,
+  };
   const reconnectLogicParams = createReconnectLogicParams(params, connectionState);
 
   addEventListeners(eventSource, params, connectionActions, reconnectLogicParams);
