@@ -18,7 +18,7 @@ export function ConnectionStatusHeader({
   isConnecting,
   lastEventTime,
   connect,
-  disconnect
+  disconnect,
 }: Readonly<ConnectionStatusHeaderProps>) {
   return (
     <CardHeader className="pb-3">
@@ -28,9 +28,7 @@ export function ConnectionStatusHeader({
           Real-time System Status
         </CardTitle>
         <div className="flex items-center gap-2">
-          {isConnected && (
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          )}
+          {isConnected && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />}
           <Button
             variant="outline"
             size="sm"

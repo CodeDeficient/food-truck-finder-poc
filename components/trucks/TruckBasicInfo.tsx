@@ -19,24 +19,30 @@ export function TruckBasicInfo({ truck }: Readonly<TruckBasicInfoProps>) {
           <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</label>
           <p className="text-lg font-semibold dark:text-gray-100">{truck.name}</p>
         </div>
-        
+
         {truck.description != undefined && (
           <div>
-            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</label>
+            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Description
+            </label>
             <p className="text-gray-900 dark:text-gray-200">{truck.description}</p>
           </div>
         )}
 
         {truck.cuisine_type && (
           <div>
-            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Cuisine Type</label>
+            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Cuisine Type
+            </label>
             <p className="text-gray-900 dark:text-gray-200">{truck.cuisine_type}</p>
           </div>
         )}
 
         {truck.price_range && (
           <div>
-            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Price Range</label>
+            <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Price Range
+            </label>
             <Badge variant="outline" className="ml-2">
               {truck.price_range}
             </Badge>

@@ -10,10 +10,7 @@ export function handleComprehensiveMonitoring() {
   });
 }
 
-export async function handleServiceSpecificMonitoring(
-  request: NextRequest,
-  service: APIService,
-) {
+export async function handleServiceSpecificMonitoring(request: NextRequest, service: APIService) {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
 
@@ -21,11 +18,7 @@ export async function handleServiceSpecificMonitoring(
     const requestCount = Number.parseInt(searchParams.get('requests') ?? '1', 10);
     const tokenCount = Number.parseInt(searchParams.get('tokens') ?? '0', 10);
 
-    const canMakeRequest = await APIMonitor.canMakeRequest(
-      service,
-      requestCount,
-      tokenCount,
-    );
+    const canMakeRequest = await APIMonitor.canMakeRequest(service, requestCount, tokenCount);
     const usage = APIMonitor.getCurrentUsage(service);
 
     return NextResponse.json({

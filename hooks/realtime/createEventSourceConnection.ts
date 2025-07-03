@@ -4,10 +4,14 @@ import { setupEventSourceAuth } from '../useRealtimeAdminEventsHelpers';
 import { useConnectionState } from './useConnectionState';
 import { setupEventSourceListeners } from './setupEventSourceListeners';
 
-function handleConnectionError(error: unknown, setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>, setConnectionError: React.Dispatch<React.SetStateAction<string | undefined>>) {
+function handleConnectionError(
+  error: unknown,
+  setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>,
+  setConnectionError: React.Dispatch<React.SetStateAction<string | undefined>>,
+) {
   console.error('Failed to establish real-time connection:', error);
   setIsConnecting(false);
-  setConnectionError((error instanceof Error ? error.message : 'Connection failed'));
+  setConnectionError(error instanceof Error ? error.message : 'Connection failed');
 }
 
 function initializeEventSource(config: CreateConnectionConfig) {
@@ -41,7 +45,7 @@ function initializeEventSource(config: CreateConnectionConfig) {
 
 function setupInitialConnectionState(
   connectionState: ReturnType<typeof useConnectionState>,
-  isManuallyDisconnectedRef: React.RefObject<boolean>
+  isManuallyDisconnectedRef: React.RefObject<boolean>,
 ) {
   const { setIsConnecting, setConnectionError } = connectionState;
   setIsConnecting(true);
@@ -55,11 +59,18 @@ function establishEventSourceConnection(config: CreateConnectionConfig) {
     setupEventSourceAuth();
     eventSourceRef.current = initializeEventSource(config);
   } catch (error) {
-    handleConnectionError(error, connectionState.setIsConnecting, connectionState.setConnectionError);
+    handleConnectionError(
+      error,
+      connectionState.setIsConnecting,
+      connectionState.setConnectionError,
+    );
   }
 }
 
-function shouldPreventConnection(eventSourceRef: React.RefObject<EventSource | undefined>, isConnecting: boolean): boolean {
+function shouldPreventConnection(
+  eventSourceRef: React.RefObject<EventSource | undefined>,
+  isConnecting: boolean,
+): boolean {
   return !!eventSourceRef.current || isConnecting;
 }
 

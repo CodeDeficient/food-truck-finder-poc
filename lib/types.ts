@@ -11,7 +11,7 @@ export interface MenuItem {
   name: string;
   description: string | undefined;
   price: number | string | undefined;
-dietary_tags: any[];
+  dietary_tags: any[];
   is_popular?: boolean;
 }
 

@@ -5,10 +5,10 @@ const fs = require('fs');
 console.log('Running ESLint analysis...');
 let eslintOutput;
 try {
-  eslintOutput = execSync('npx eslint . --format json', { 
+  eslintOutput = execSync('npx eslint . --format json', {
     encoding: 'utf8',
     stdio: 'pipe',
-    timeout: 120000
+    timeout: 120000,
   });
 } catch (error) {
   // ESLint returns non-zero exit code when errors are found
@@ -25,15 +25,15 @@ const complexityRules = [
   'complexity',
   'max-depth',
   'max-params',
-  'sonarjs/no-identical-functions'
+  'sonarjs/no-identical-functions',
 ];
 
 // Extract components with complexity violations
 const complexityViolations = [];
 
-results.forEach(file => {
+results.forEach((file) => {
   if (file.messages && file.messages.length > 0) {
-    file.messages.forEach(message => {
+    file.messages.forEach((message) => {
       if (complexityRules.includes(message.ruleId)) {
         complexityViolations.push({
           filePath: file.filePath.replace('C:\\AI\\food-truck-finder-poc\\', ''),
@@ -42,7 +42,7 @@ results.forEach(file => {
           line: message.line,
           endLine: message.endLine,
           severity: message.severity,
-          nodeType: message.nodeType
+          nodeType: message.nodeType,
         });
       }
     });
@@ -51,7 +51,7 @@ results.forEach(file => {
 
 // Group by file and calculate severity
 const fileViolations = {};
-complexityViolations.forEach(violation => {
+complexityViolations.forEach((violation) => {
   if (!fileViolations[violation.filePath]) {
     fileViolations[violation.filePath] = [];
   }
@@ -59,52 +59,56 @@ complexityViolations.forEach(violation => {
 });
 
 // Calculate severity scores and sort
-const prioritizedFiles = Object.entries(fileViolations).map(([filePath, violations]) => {
-  let severityScore = 0;
-  let maxLinesViolation = null;
-  
-  violations.forEach(violation => {
-    switch (violation.ruleId) {
-      case 'max-lines-per-function':
-        // Extract current and max lines from message
-        const match = violation.message.match(/has too many lines \((\d+)\)\. Maximum allowed is (\d+)/);
-        if (match) {
-          const current = parseInt(match[1]);
-          const max = parseInt(match[2]);
-          const excess = current - max;
-          severityScore += excess * 2; // Weight function length heavily
-          maxLinesViolation = { current, max, excess };
-        }
-        break;
-      case 'sonarjs/cognitive-complexity':
-        severityScore += 15; // High impact
-        break;
-      case 'max-depth':
-        severityScore += 10;
-        break;
-      case 'max-params':
-        severityScore += 8;
-        break;
-      case 'sonarjs/no-identical-functions':
-        severityScore += 20; // Very high impact - duplicate code
-        break;
-      default:
-        severityScore += 5;
-    }
-  });
-  
-  return {
-    filePath,
-    violations,
-    severityScore,
-    maxLinesViolation,
-    violationCount: violations.length
-  };
-}).sort((a, b) => b.severityScore - a.severityScore);
+const prioritizedFiles = Object.entries(fileViolations)
+  .map(([filePath, violations]) => {
+    let severityScore = 0;
+    let maxLinesViolation = null;
+
+    violations.forEach((violation) => {
+      switch (violation.ruleId) {
+        case 'max-lines-per-function':
+          // Extract current and max lines from message
+          const match = violation.message.match(
+            /has too many lines \((\d+)\)\. Maximum allowed is (\d+)/,
+          );
+          if (match) {
+            const current = parseInt(match[1]);
+            const max = parseInt(match[2]);
+            const excess = current - max;
+            severityScore += excess * 2; // Weight function length heavily
+            maxLinesViolation = { current, max, excess };
+          }
+          break;
+        case 'sonarjs/cognitive-complexity':
+          severityScore += 15; // High impact
+          break;
+        case 'max-depth':
+          severityScore += 10;
+          break;
+        case 'max-params':
+          severityScore += 8;
+          break;
+        case 'sonarjs/no-identical-functions':
+          severityScore += 20; // Very high impact - duplicate code
+          break;
+        default:
+          severityScore += 5;
+      }
+    });
+
+    return {
+      filePath,
+      violations,
+      severityScore,
+      maxLinesViolation,
+      violationCount: violations.length,
+    };
+  })
+  .sort((a, b) => b.severityScore - a.severityScore);
 
 // Generate report
 console.log('\n🚨 REACT COMPONENT COMPLEXITY ANALYSIS REPORT 🚨\n');
-console.log('=' .repeat(80));
+console.log('='.repeat(80));
 
 console.log(`\n📊 SUMMARY:`);
 console.log(`- Total files with complexity violations: ${prioritizedFiles.length}`);
@@ -121,16 +125,18 @@ console.log('-'.repeat(80));
 prioritizedFiles.forEach((file, index) => {
   const isHighPriority = index < Math.ceil(prioritizedFiles.length * 0.2);
   const priority = isHighPriority ? '🔥 HIGH' : '📋 MEDIUM';
-  
+
   console.log(`\n${index + 1}. ${priority} PRIORITY - Severity Score: ${file.severityScore}`);
   console.log(`   📁 File: ${file.filePath}`);
-  
+
   if (file.maxLinesViolation) {
-    console.log(`   📏 Lines: ${file.maxLinesViolation.current} (limit: ${file.maxLinesViolation.max}, excess: ${file.maxLinesViolation.excess})`);
+    console.log(
+      `   📏 Lines: ${file.maxLinesViolation.current} (limit: ${file.maxLinesViolation.max}, excess: ${file.maxLinesViolation.excess})`,
+    );
   }
-  
+
   console.log(`   ⚠️  Violations (${file.violationCount}):`);
-  file.violations.forEach(violation => {
+  file.violations.forEach((violation) => {
     console.log(`      - ${violation.ruleId}: ${violation.message} (line ${violation.line})`);
   });
 });
@@ -161,10 +167,10 @@ const reportData = {
   summary: {
     totalFiles: prioritizedFiles.length,
     totalViolations: complexityViolations.length,
-    highPriorityFiles: highPriorityFiles.length
+    highPriorityFiles: highPriorityFiles.length,
   },
   prioritizedFiles,
-  allViolations: complexityViolations
+  allViolations: complexityViolations,
 };
 
 fs.writeFileSync('complexity-analysis-report.json', JSON.stringify(reportData, null, 2));

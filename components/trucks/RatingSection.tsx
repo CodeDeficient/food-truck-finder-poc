@@ -25,13 +25,9 @@ export function RatingSection({ averageRating, reviewCount }: Readonly<RatingSec
             />
           ))}
         </div>
-        <span className="text-sm font-medium dark:text-gray-200">
-          {averageRating.toFixed(1)}
-        </span>
-        {(reviewCount !== undefined) && (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            ({reviewCount} reviews)
-          </span>
+        <span className="text-sm font-medium dark:text-gray-200">{averageRating.toFixed(1)}</span>
+        {reviewCount !== undefined && (
+          <span className="text-xs text-gray-500 dark:text-gray-400">({reviewCount} reviews)</span>
         )}
       </div>
     </div>

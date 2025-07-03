@@ -5,8 +5,6 @@ import {
   type PostgrestError,
 } from '@supabase/supabase-js';
 
-
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -27,10 +25,7 @@ export const supabaseAdmin = supabaseServiceKey
   : undefined;
 
 // Database types
-import {
-  MenuCategory,
-  MenuItem,
-} from './types';
+import { MenuCategory, MenuItem } from './types';
 
 export interface FoodTruckLocation {
   lat: number;
@@ -113,7 +108,10 @@ function handleSupabaseError(error: unknown, context: string) {
 }
 
 export const FoodTruckService = {
-  async getAllTrucks(limit = 50, offset = 0): Promise<{ trucks: FoodTruck[]; total: number; error?: string }> {
+  async getAllTrucks(
+    limit = 50,
+    offset = 0,
+  ): Promise<{ trucks: FoodTruck[]; total: number; error?: string }> {
     try {
       const { data, error, count }: PostgrestResponse<FoodTruck> = await supabase
         .from('food_trucks')
@@ -137,7 +135,7 @@ export const FoodTruckService = {
       }
       const menuByTruck = buildMenuByTruck(menuItems);
       for (const truck of trucks) {
-      truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []);
+        truck.menu = groupMenuItems(menuByTruck[truck.id] ?? []);
       }
       return { trucks, total: count ?? 0 };
     } catch (error) {
@@ -170,7 +168,11 @@ export const FoodTruckService = {
     }
   },
 
-  async getTrucksByLocation(lat: number, lng: number, radiusKm: number): Promise<FoodTruck[] | { error: string }> {
+  async getTrucksByLocation(
+    lat: number,
+    lng: number,
+    radiusKm: number,
+  ): Promise<FoodTruck[] | { error: string }> {
     try {
       const { trucks } = await FoodTruckService.getAllTrucks();
       const nearbyTrucks = trucks.filter((truck: FoodTruck) => {
@@ -209,13 +211,16 @@ export const FoodTruckService = {
       .single();
     if (error) {
       handleSupabaseError(error, 'createTruck');
-      return { error: "Failed to create truck." };
+      return { error: 'Failed to create truck.' };
     }
     await insertMenuItems(truck.id, menuData);
     return truck;
   },
 
-  async updateTruck(id: string, updates: Partial<FoodTruck>): Promise<FoodTruck | { error: string }> {
+  async updateTruck(
+    id: string,
+    updates: Partial<FoodTruck>,
+  ): Promise<FoodTruck | { error: string }> {
     if (!supabaseAdmin) {
       return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
@@ -285,16 +290,22 @@ export const FoodTruckService = {
 
 // Helper functions to reduce cognitive complexity
 const isMenuCategory = (obj: unknown): obj is MenuCategory =>
-  typeof obj === 'object' && obj != null && 'name' in obj && 'items' in obj && Array.isArray(obj.items);
+  typeof obj === 'object' &&
+  obj != undefined &&
+  'name' in obj &&
+  'items' in obj &&
+  Array.isArray(obj.items);
 
 const isMenuItem = (obj: unknown): obj is MenuItem => {
-  if (typeof obj !== 'object' || obj == null) return false;
+  if (typeof obj !== 'object' || obj == undefined) return false;
   const item = obj as Record<string, unknown>;
   return (
     typeof item.name === 'string' &&
     (item.description === undefined || typeof item.description === 'string') &&
     (item.price === undefined || typeof item.price === 'number') &&
-    (item.dietary_tags === undefined || (Array.isArray(item.dietary_tags) && item.dietary_tags.every(tag => typeof tag === 'string')))
+    (item.dietary_tags === undefined ||
+      (Array.isArray(item.dietary_tags) &&
+        item.dietary_tags.every((tag) => typeof tag === 'string')))
   );
 };
 
@@ -315,7 +326,7 @@ async function updateTruckData(
 
   if (error) {
     handleSupabaseError(error, 'updateTruckData');
-    return { error: "Failed to update truck data." };
+    return { error: 'Failed to update truck data.' };
   }
   return truck;
 }
@@ -412,18 +423,18 @@ function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
     // Construct a MenuItem conforming to the MenuItem interface (no 'category' property)
     const menuItem: MenuItem = {
       name: rawItem.name,
-    // Use nullish coalescing to convert null from DB to undefined for the MenuItem type
+      // Use nullish coalescing to convert null from DB to undefined for the MenuItem type
       description: rawItem.description ?? undefined,
       price: rawItem.price ?? undefined,
-      dietary_tags: rawItem.dietary_tags as string[] ?? [], // Explicitly cast to string[]
+      dietary_tags: (rawItem.dietary_tags as string[]) ?? [], // Explicitly cast to string[]
     };
     byCategory[categoryName].push(menuItem);
   }
   // Map to MenuCategory structure { name: string, items: MenuItem[] }
-return Object.entries(byCategory).map(([categoryName, itemsList]: [string, MenuItem[]]) => ({
-  name: categoryName,
-  items: itemsList,
-}));
+  return Object.entries(byCategory).map(([categoryName, itemsList]: [string, MenuItem[]]) => ({
+    name: categoryName,
+    items: itemsList,
+  }));
 }
 
 // Remove redundant type constituent in normalizeTruckLocation
@@ -480,9 +491,9 @@ export const ScrapingJobService = {
     try {
       const query = supabase.from('scraping_jobs').select('*');
 
-      const { data, error }: PostgrestResponse<ScrapingJob> = await (status === 'all'
-        ? query
-        : query.eq('status', status))
+      const { data, error }: PostgrestResponse<ScrapingJob> = await (
+        status === 'all' ? query : query.eq('status', status)
+      )
         .order('priority', { ascending: false })
         .order('scheduled_at', { ascending: true });
 
@@ -663,17 +674,22 @@ export const DataQualityService = {
     if (typeof truck.name === 'string' && truck.name.trim() !== '') score += 20;
     if (
       truck.current_location &&
-      typeof truck.current_location.lat === 'number' && !Number.isNaN(truck.current_location.lat) &&
-      typeof truck.current_location.lng === 'number' && !Number.isNaN(truck.current_location.lng)
-    ) score += 30;
+      typeof truck.current_location.lat === 'number' &&
+      !Number.isNaN(truck.current_location.lat) &&
+      typeof truck.current_location.lng === 'number' &&
+      !Number.isNaN(truck.current_location.lng)
+    )
+      score += 30;
     if (
-      (truck.contact_info &&
-        ((typeof truck.contact_info.phone === 'string' && truck.contact_info.phone.trim() !== '') ||
-         (typeof truck.contact_info.email === 'string' && truck.contact_info.email.trim() !== '') ||
-         (typeof truck.contact_info.website === 'string' && truck.contact_info.website.trim() !== '')))
-    ) score += 25;
+      truck.contact_info &&
+      ((typeof truck.contact_info.phone === 'string' && truck.contact_info.phone.trim() !== '') ||
+        (typeof truck.contact_info.email === 'string' && truck.contact_info.email.trim() !== '') ||
+        (typeof truck.contact_info.website === 'string' &&
+          truck.contact_info.website.trim() !== ''))
+    )
+      score += 25;
     if (Array.isArray(truck.menu) && truck.menu.length > 0) score += 15;
-    if (truck.operating_hours != null) score += 10;
+    if (truck.operating_hours != undefined) score += 10;
     return { score: Math.min(100, score) };
   },
 
@@ -681,11 +697,11 @@ export const DataQualityService = {
     if (!supabaseAdmin) {
       return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
-    const { data: truck, error: fetchError } = await supabaseAdmin
+    const { data: truck, error: fetchError } = (await supabaseAdmin
       .from('food_trucks')
       .select('*')
       .eq('id', truckId)
-      .single() as { data: FoodTruck | null; error: PostgrestError | null };
+      .single()) as { data: FoodTruck | null; error: PostgrestError | null };
 
     if (fetchError) {
       handleSupabaseError(fetchError, 'updateTruckQualityScore:fetch');
@@ -721,7 +737,10 @@ export const APIUsageService = {
     try {
       const today = new Date().toISOString().split('T')[0];
 
-      const { data: existing, error: existingError }: { data: ApiUsage | undefined; error: PostgrestError | undefined } = await supabaseAdmin
+      const {
+        data: existing,
+        error: existingError,
+      }: { data: ApiUsage | undefined; error: PostgrestError | undefined } = await supabaseAdmin
         .from('api_usage')
         .select('*')
         .eq('service_name', serviceName)
@@ -804,29 +823,47 @@ export const APIUsageService = {
 export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange } from './types';
 
 // Helper to prepare menu items for DB insertion
-function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | unknown[] | undefined) {
+function prepareMenuItemsForInsert(
+  truckId: string,
+  menuData: MenuCategory[] | unknown[] | undefined,
+) {
   if (!Array.isArray(menuData) || menuData.length === 0) return [];
   // Explicitly filter for MenuCategory to ensure type safety
-  const categories = menuData.filter((category): category is MenuCategory =>
-    typeof category === 'object' && category != undefined && 'name' in category && 'items' in category && Array.isArray(category.items)
+  const categories = menuData.filter(
+    (category): category is MenuCategory =>
+      typeof category === 'object' &&
+      category != undefined &&
+      'name' in category &&
+      'items' in category &&
+      Array.isArray(category.items),
   ) as MenuCategory[];
 
-  return categories.flatMap((category) =>
-    (Array.isArray(category.items) ? category.items : []).map((item: unknown) => {
-      if (!isMenuItem(item)) {
-        console.warn('Skipping invalid menu item:', item);
-        return; // Return undefined for invalid items to be filtered out later
-      }
+  return categories.flatMap(
+    (category) =>
+      (Array.isArray(category.items) ? category.items : [])
+        .map((item: unknown) => {
+          if (!isMenuItem(item)) {
+            console.warn('Skipping invalid menu item:', item);
+            return; // Return undefined for invalid items to be filtered out later
+          }
 
-      return {
-        food_truck_id: truckId,
-        category: typeof category.name === 'string' && category.name !== '' ? category.name : 'Uncategorized',
-        name: typeof item.name === 'string' && item.name !== '' ? item.name : 'Unknown Item',
-        description: typeof item.description === 'string' && item.description !== '' ? item.description : undefined,
-        price: typeof item.price === 'number' && !Number.isNaN(item.price) ? item.price : undefined,
-        dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
-      };
-    }).filter(Boolean) as MenuItem[] // Filter out nulls and assert type
+          return {
+            food_truck_id: truckId,
+            category:
+              typeof category.name === 'string' && category.name !== ''
+                ? category.name
+                : 'Uncategorized',
+            name: typeof item.name === 'string' && item.name !== '' ? item.name : 'Unknown Item',
+            description:
+              typeof item.description === 'string' && item.description !== ''
+                ? item.description
+                : undefined,
+            price:
+              typeof item.price === 'number' && !Number.isNaN(item.price) ? item.price : undefined,
+            dietary_tags: Array.isArray(item.dietary_tags) ? item.dietary_tags : [],
+          };
+        })
+        .filter(Boolean) as MenuItem[], // Filter out nulls and assert type
   );
 }
 
@@ -846,4 +883,4 @@ async function insertMenuItems(truckId: string, menuData: MenuCategory[] | unkno
 
 // For all other conditionals, ensure explicit nullish/empty/NaN checks as above
 
-export {type PostgrestError, type PostgrestResponse} from '@supabase/supabase-js';
+export { type PostgrestError, type PostgrestResponse } from '@supabase/supabase-js';

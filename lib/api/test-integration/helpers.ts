@@ -1,6 +1,13 @@
 import { firecrawl, FirecrawlResponse } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
-import { FoodTruckService, ScrapingJobService, DataProcessingService, FoodTruck, ScrapingJob, DataProcessingQueue } from '@/lib/supabase';
+import {
+  FoodTruckService,
+  ScrapingJobService,
+  DataProcessingService,
+  FoodTruck,
+  ScrapingJob,
+  DataProcessingQueue,
+} from '@/lib/supabase';
 import { GeminiResponse, MenuCategory } from '@/lib/types';
 
 // Helper function to test Firecrawl scraping
@@ -124,7 +131,7 @@ async function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): P
   return result;
 }
 
- function createTestScrapingJob(testUrl: string): Promise<ScrapingJob> {
+function createTestScrapingJob(testUrl: string): Promise<ScrapingJob> {
   return ScrapingJobService.createJob({
     job_type: 'integration_test',
     target_url: testUrl,
@@ -133,7 +140,7 @@ async function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): P
   });
 }
 
- function addTestToProcessingQueue(truckId: string): Promise<DataProcessingQueue> {
+function addTestToProcessingQueue(truckId: string): Promise<DataProcessingQueue> {
   return DataProcessingService.addToQueue({
     truck_id: truckId,
     processing_type: 'integration_test',
@@ -145,7 +152,7 @@ async function createTestFoodTruck(testUrl: string, menuData: MenuCategory[]): P
 // Helper function to test Supabase operations
 export async function testSupabaseOperations(
   testUrl: string,
-  geminiResult: GeminiResponse<GeminiProcessMenuDataResult>
+  geminiResult: GeminiResponse<GeminiProcessMenuDataResult>,
 ): Promise<SupabaseTestResults> {
   // Create a test food truck
   const testTruck = await createTestFoodTruck(testUrl, geminiResult.data ?? []);
@@ -175,7 +182,7 @@ export async function testSupabaseOperations(
 export function formatTestResults(
   scrapeResult: FirecrawlTestResult,
   geminiResult: GeminiResponse<GeminiProcessMenuDataResult>,
-  supabaseResults: SupabaseTestResults
+  supabaseResults: SupabaseTestResults,
 ): FormattedTestResults {
   return {
     success: true,
@@ -222,9 +229,16 @@ export async function runIntegrationTestSteps(testUrl: string) {
 
   // Step 3: Test Supabase operations
   console.info('Testing Supabase operations...');
-  const supabaseResults = await testSupabaseOperations(testUrl, geminiTest.result as GeminiResponse<GeminiProcessMenuDataResult>);
+  const supabaseResults = await testSupabaseOperations(
+    testUrl,
+    geminiTest.result as GeminiResponse<GeminiProcessMenuDataResult>,
+  );
 
   // Step 4: Format and return results
-  const results = formatTestResults(firecrawlTest, geminiTest.result as GeminiResponse<GeminiProcessMenuDataResult>, supabaseResults);
+  const results = formatTestResults(
+    firecrawlTest,
+    geminiTest.result as GeminiResponse<GeminiProcessMenuDataResult>,
+    supabaseResults,
+  );
   return { success: true, results };
 }

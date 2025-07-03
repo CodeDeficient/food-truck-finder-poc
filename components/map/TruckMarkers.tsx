@@ -49,7 +49,8 @@ const TruckMarkers: React.FC<TruckMarkersProps> = ({ trucks, onSelectTruck }) =>
         >
           <Popup>
             <h4 className="font-bold">{truck.name}</h4>
-            {truck.current_location.address != undefined && truck.current_location.address != '' && <div>{truck.current_location.address}</div>}
+            {truck.current_location.address != undefined &&
+              truck.current_location.address != '' && <div>{truck.current_location.address}</div>}
           </Popup>
         </Marker>
       ))}

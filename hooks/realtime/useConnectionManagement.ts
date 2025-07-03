@@ -47,9 +47,16 @@ export function useConnectionManagement(options: UseConnectionManagementOptions)
       isManuallyDisconnectedRef: options.isManuallyDisconnectedRef,
       setIsConnected,
       setIsConnecting,
-      setConnectionError
+      setConnectionError,
     });
-  }, [options.eventSourceRef, options.reconnectTimeoutRef, options.isManuallyDisconnectedRef, setIsConnected, setIsConnecting, setConnectionError]);
+  }, [
+    options.eventSourceRef,
+    options.reconnectTimeoutRef,
+    options.isManuallyDisconnectedRef,
+    setIsConnected,
+    setIsConnecting,
+    setConnectionError,
+  ]);
 
   const clearEvents = useCallback(() => {
     clearRecentEvents(setRecentEvents);

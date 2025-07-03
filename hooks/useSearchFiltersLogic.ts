@@ -43,7 +43,7 @@ export function useSearchFiltersLogic(onSearch: (filters: SearchFilters) => void
   const activeFilterCount = [
     filters.query !== '',
     filters.cuisine !== '',
-    filters.openNow === true
+    filters.openNow === true,
   ].filter(Boolean).length;
 
   return {

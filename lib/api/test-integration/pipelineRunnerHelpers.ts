@@ -1,8 +1,4 @@
-import {
-  handleFirecrawlStage,
-  handleGeminiStage,
-  handleSupabaseStage,
-} from './stageHandlers';
+import { handleFirecrawlStage, handleGeminiStage, handleSupabaseStage } from './stageHandlers';
 import { ExtractedFoodTruckDetails, StageResult, PipelineRunResult } from '@/lib/types';
 
 // Helper function to handle stage errors and return a consistent error object
@@ -26,11 +22,14 @@ async function processFirecrawlStage(
   url: string,
   rawText: string | undefined,
   logs: string[],
-): Promise<{
-  firecrawlResult: StageResult;
-  contentToProcess: string | undefined;
-  sourceUrlForProcessing: string;
-} | undefined> {
+): Promise<
+  | {
+      firecrawlResult: StageResult;
+      contentToProcess: string | undefined;
+      sourceUrlForProcessing: string;
+    }
+  | undefined
+> {
   const firecrawlStageOutput = await handleFirecrawlStage(url ?? '', rawText, logs);
   const { firecrawlResult, contentToProcess, sourceUrlForProcessing } = firecrawlStageOutput;
 
@@ -45,23 +44,24 @@ async function processGeminiStage(
   contentToProcess: string | undefined,
   sourceUrlForProcessing: string,
   logs: string[],
-): Promise<{
-  geminiResult: StageResult;
-  extractedData: ExtractedFoodTruckDetails | undefined;
-} | undefined> {
+): Promise<
+  | {
+      geminiResult: StageResult;
+      extractedData: ExtractedFoodTruckDetails | undefined;
+    }
+  | undefined
+> {
   if (contentToProcess === undefined) {
     logs.push('Content to process is undefined before Gemini stage.');
     return undefined;
   }
-  const geminiStageOutput = await handleGeminiStage(
-    contentToProcess,
-    sourceUrlForProcessing,
-    logs,
-  );
+  const geminiStageOutput = await handleGeminiStage(contentToProcess, sourceUrlForProcessing, logs);
   const { geminiResult, extractedData } = geminiStageOutput;
 
   if (geminiResult.status === 'Error' || extractedData === undefined) {
-    logs.push(`Gemini stage failed or returned no data. Status: ${geminiResult.status}, Data: ${JSON.stringify(extractedData)}`);
+    logs.push(
+      `Gemini stage failed or returned no data. Status: ${geminiResult.status}, Data: ${JSON.stringify(extractedData)}`,
+    );
     return undefined;
   }
   return { geminiResult, extractedData };
@@ -88,12 +88,16 @@ async function processSupabaseStage(
 }
 
 // Helper function to handle the result of the Gemini stage
- 
+
 function handleGeminiStageResult(
-  geminiStage: { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails | undefined } | undefined,
+  geminiStage:
+    | { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails | undefined }
+    | undefined,
   firecrawlResult: StageResult,
   logs: string[],
-): { status: 'Success'; geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails } | { status: 'Error'; result: PipelineRunResult } {
+):
+  | { status: 'Success'; geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails }
+  | { status: 'Error'; result: PipelineRunResult } {
   if (geminiStage === undefined) {
     return {
       status: 'Error',
@@ -139,19 +143,10 @@ async function handleGeminiStagePipeline(
   logs: string[],
   firecrawlResult: StageResult,
 ): Promise<
-  | { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails }
-  | PipelineRunResult
+  { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails } | PipelineRunResult
 > {
-  const geminiStage = await processGeminiStage(
-    contentToProcess,
-    sourceUrlForProcessing,
-    logs,
-  );
-  const geminiStageHandled = handleGeminiStageResult(
-    geminiStage,
-    firecrawlResult,
-    logs,
-  );
+  const geminiStage = await processGeminiStage(contentToProcess, sourceUrlForProcessing, logs);
+  const geminiStageHandled = handleGeminiStageResult(geminiStage, firecrawlResult, logs);
   if (geminiStageHandled.status === 'Error') {
     return geminiStageHandled.result;
   }
@@ -168,8 +163,11 @@ interface SupabaseStageConfig {
   geminiResult: StageResult;
 }
 // Make handleSupabaseStagePipeline async and ensure it is awaited in runTestPipeline
-async function handleSupabaseStagePipeline(config: SupabaseStageConfig): Promise<StageResult | PipelineRunResult> {
-  const { extractedData, sourceUrlForProcessing, isDryRun, logs, firecrawlResult, geminiResult } = config;
+async function handleSupabaseStagePipeline(
+  config: SupabaseStageConfig,
+): Promise<StageResult | PipelineRunResult> {
+  const { extractedData, sourceUrlForProcessing, isDryRun, logs, firecrawlResult, geminiResult } =
+    config;
   const supabaseStage = await processSupabaseStage(
     extractedData,
     sourceUrlForProcessing,
@@ -192,7 +190,14 @@ async function executeFirecrawlStage(
   url: string,
   rawText: string | undefined,
   logs: string[],
-): Promise<{ firecrawlResult: StageResult; contentToProcess: string | undefined; sourceUrlForProcessing: string } | PipelineRunResult> {
+): Promise<
+  | {
+      firecrawlResult: StageResult;
+      contentToProcess: string | undefined;
+      sourceUrlForProcessing: string;
+    }
+  | PipelineRunResult
+> {
   const firecrawlStageOutput = await processFirecrawlStage(url ?? '', rawText, logs);
   if (!firecrawlStageOutput) {
     return handleStageErrorAndReturn(
@@ -211,8 +216,15 @@ async function executeGeminiStage(
   sourceUrlForProcessing: string,
   logs: string[],
   firecrawlResult: StageResult,
-): Promise<{ geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails } | PipelineRunResult> {
-  const geminiStageHandled = await handleGeminiStagePipeline(contentToProcess, sourceUrlForProcessing, logs, firecrawlResult);
+): Promise<
+  { geminiResult: StageResult; extractedData: ExtractedFoodTruckDetails } | PipelineRunResult
+> {
+  const geminiStageHandled = await handleGeminiStagePipeline(
+    contentToProcess,
+    sourceUrlForProcessing,
+    logs,
+    firecrawlResult,
+  );
   if ('overallStatus' in geminiStageHandled) {
     return geminiStageHandled;
   }
@@ -264,8 +276,7 @@ export async function executePipeline(
   if (isPipelineRunResult(firecrawlOutput)) {
     return firecrawlOutput;
   }
-  const { firecrawlResult, contentToProcess, sourceUrlForProcessing } =
-    firecrawlOutput;
+  const { firecrawlResult, contentToProcess, sourceUrlForProcessing } = firecrawlOutput;
 
   const geminiResultObject = await executeGeminiStage(
     contentToProcess,

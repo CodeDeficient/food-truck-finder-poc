@@ -125,10 +125,7 @@
         }
       ],
       "totalFixes": 46,
-      "methods": [
-        "eslint-autofix",
-        "pattern-replacement"
-      ]
+      "methods": ["eslint-autofix", "pattern-replacement"]
     },
     "mediumConfidence": {
       "candidates": [
@@ -161,10 +158,7 @@
         }
       ],
       "totalFixes": 20,
-      "methods": [
-        "type-annotation",
-        "pattern-replacement"
-      ]
+      "methods": ["type-annotation", "pattern-replacement"]
     }
   }
 }

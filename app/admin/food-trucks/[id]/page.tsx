@@ -3,7 +3,7 @@ import { FoodTruck, FoodTruckService } from '@/lib/supabase';
 import {
   categorizeQualityScore,
   getQualityBadgeClasses,
-  type QualityCategory
+  type QualityCategory,
 } from '@/lib/utils/dataQualityFormatters';
 import { BasicInfoCard } from '@/components/admin/food-trucks/detail/BasicInfoCard';
 import { ContactInfoCard } from '@/components/admin/food-trucks/detail/ContactInfoCard';
@@ -20,7 +20,6 @@ interface FoodTruckDetailPageProps {
   };
 }
 
-
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck: FoodTruck | undefined = await FoodTruckService.getTruckById(params.id);
 
@@ -33,7 +32,11 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
 
   return (
     <div className="flex flex-col gap-6">
-      <TruckDetailHeader truck={truck} badgeClasses={badgeClasses} qualityCategory={qualityCategory} />
+      <TruckDetailHeader
+        truck={truck}
+        badgeClasses={badgeClasses}
+        qualityCategory={qualityCategory}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BasicInfoCard truck={truck} />

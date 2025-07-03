@@ -28,9 +28,7 @@ test.describe('Pipeline Load Testing', () => {
   test.afterAll(async () => {
     console.info('Load testing completed');
   });
-  test('Concurrent Pipeline Requests', async ({
-    request
-  }: any) => {
+  test('Concurrent Pipeline Requests', async ({ request }: any) => {
     const testUrl = LOAD_TEST_URLS[0];
 
     // Clean up any existing data
@@ -77,9 +75,7 @@ test.describe('Pipeline Load Testing', () => {
     expect(finalTrucks?.length || 0).toBeLessThanOrEqual(LOAD_CONFIG.concurrentRequests + 1);
   });
 
-  test('Pipeline Memory and Resource Usage', async ({
-    request
-  }: any) => {
+  test('Pipeline Memory and Resource Usage', async ({ request }: any) => {
     // Test multiple sequential requests to check for memory leaks
     const testUrl = LOAD_TEST_URLS[0];
     const iterations = 5;
@@ -128,9 +124,7 @@ test.describe('Pipeline Load Testing', () => {
     expect(variance).toBeLessThan(avgTime * 2); // Variance shouldn't exceed 200% of average
   });
 
-  test('API Rate Limiting and Error Handling', async ({
-    request
-  }: any) => {
+  test('API Rate Limiting and Error Handling', async ({ request }: any) => {
     // Test rapid API calls to check rate limiting
     const rapidRequests = 10;
     const promises: Promise<any>[] = [];
@@ -171,9 +165,7 @@ test.describe('Pipeline Load Testing', () => {
     expect(successCount + rateLimitedCount).toBeGreaterThan(0);
     expect(errorCount).toBeLessThan(rapidRequests); // Not all should fail
   });
-  test('Database Connection Pool Under Load', async ({
-    request
-  }: any) => {
+  test('Database Connection Pool Under Load', async ({ request }: any) => {
     // Test database operations under concurrent load
     const dbOperations: Promise<unknown>[] = [];
     const operationCount = 15;
@@ -196,9 +188,7 @@ test.describe('Pipeline Load Testing', () => {
     expect(successful).toBeGreaterThan(operationCount * 0.8); // At least 80% success rate
   });
 
-  test('Pipeline Recovery After Failure', async ({
-    request
-  }: any) => {
+  test('Pipeline Recovery After Failure', async ({ request }: any) => {
     const testUrl = LOAD_TEST_URLS[0];
 
     // Clean up

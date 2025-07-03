@@ -14,7 +14,7 @@ export function ContactField({
   label,
   value,
   href,
-  unavailableText
+  unavailableText,
 }: Readonly<ContactFieldProps>) {
   if (value == undefined || value.length === 0) {
     return (

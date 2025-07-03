@@ -14,7 +14,7 @@ interface TruckDetailHeaderProps {
 export function TruckDetailHeader({
   truck,
   badgeClasses,
-  qualityCategory
+  qualityCategory,
 }: TruckDetailHeaderProps) {
   return (
     <div className="flex items-center justify-between">
@@ -27,15 +27,11 @@ export function TruckDetailHeader({
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{truck.name}</h1>
-          <p className="text-muted-foreground">
-            Food truck details and data quality information
-          </p>
+          <p className="text-muted-foreground">Food truck details and data quality information</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Badge className={badgeClasses}>
-          {qualityCategory.label} Quality
-        </Badge>
+        <Badge className={badgeClasses}>{qualityCategory.label} Quality</Badge>
         <Button asChild>
           <Link href={`/admin/food-trucks/${truck.id}/edit`}>
             <Edit className="h-4 w-4 mr-2" />

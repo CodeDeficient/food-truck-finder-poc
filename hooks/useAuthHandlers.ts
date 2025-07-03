@@ -20,51 +20,57 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleEmailLogin = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      setError(undefined);
+  const handleEmailLogin = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        setLoading(true);
+        setError(undefined);
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      if (signInError) {
-        throw signInError;
-      }
-
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-      if (userError) {
-        throw userError;
-      }
-
-      if (user) {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          throw profileError;
+        if (signInError) {
+          throw signInError;
         }
 
-        if (profile?.role === 'admin') {
-          router.push(redirectTo);
-        } else {
-          router.push('/access-denied');
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          throw userError;
         }
+
+        if (user) {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          if (profileError) {
+            throw profileError;
+          }
+
+          if (profile?.role === 'admin') {
+            router.push(redirectTo);
+          } else {
+            router.push('/access-denied');
+          }
+        }
+      } catch (error_: unknown) {
+        console.error('Login error:', error_);
+        setError(error_ instanceof Error ? error_.message : 'An error occurred during login');
+      } finally {
+        setLoading(false);
       }
-    } catch (error_: unknown) {
-      console.error('Login error:', error_);
-      setError(error_ instanceof Error ? error_.message : 'An error occurred during login');
-    } finally {
-      setLoading(false);
-    }
-  }, [email, password, router, redirectTo]);
+    },
+    [email, password, router, redirectTo],
+  );
 
   const handleGoogleLogin = useCallback(async () => {
     try {

@@ -4,17 +4,45 @@ import { FeatureList } from './FeatureList';
 
 export function MonitoringFeaturesContent() {
   const proactiveMonitoringItems = [
-    { icon: <Activity />, text: 'Real-time usage tracking for all APIs', iconColorClass: 'text-blue-600' },
-    { icon: <Shield />, text: 'Predictive limit checking before requests', iconColorClass: 'text-green-600' },
-    { icon: <Zap />, text: 'Automatic throttling to prevent quota exceeded', iconColorClass: 'text-yellow-600' },
-    { icon: <TrendingUp />, text: 'Historical usage trends and analytics', iconColorClass: 'text-purple-600' },
+    {
+      icon: <Activity />,
+      text: 'Real-time usage tracking for all APIs',
+      iconColorClass: 'text-blue-600',
+    },
+    {
+      icon: <Shield />,
+      text: 'Predictive limit checking before requests',
+      iconColorClass: 'text-green-600',
+    },
+    {
+      icon: <Zap />,
+      text: 'Automatic throttling to prevent quota exceeded',
+      iconColorClass: 'text-yellow-600',
+    },
+    {
+      icon: <TrendingUp />,
+      text: 'Historical usage trends and analytics',
+      iconColorClass: 'text-purple-600',
+    },
   ];
 
   const smartAlertingItems = [
-    { icon: <Activity />, text: 'Multi-level alerts (Warning 80%, Critical 95%)', iconColorClass: 'text-orange-600' },
+    {
+      icon: <Activity />,
+      text: 'Multi-level alerts (Warning 80%, Critical 95%)',
+      iconColorClass: 'text-orange-600',
+    },
     { icon: <Shield />, text: 'Service-specific recommendations', iconColorClass: 'text-red-600' },
-    { icon: <Zap />, text: 'Optimization suggestions for high usage', iconColorClass: 'text-blue-600' },
-    { icon: <TrendingUp />, text: 'Wait time calculations for rate limit resets', iconColorClass: 'text-green-600' },
+    {
+      icon: <Zap />,
+      text: 'Optimization suggestions for high usage',
+      iconColorClass: 'text-blue-600',
+    },
+    {
+      icon: <TrendingUp />,
+      text: 'Wait time calculations for rate limit resets',
+      iconColorClass: 'text-green-600',
+    },
   ];
 
   return (

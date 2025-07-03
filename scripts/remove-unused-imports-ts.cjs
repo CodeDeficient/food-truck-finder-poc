@@ -12,7 +12,7 @@ function fixUnusedImports() {
   const parsedCommandLine = ts.parseJsonConfigFileContent(
     configFile.config,
     ts.sys,
-    path.dirname(tsconfigPath)
+    path.dirname(tsconfigPath),
   );
 
   const program = ts.createProgram(parsedCommandLine.fileNames, parsedCommandLine.options);
@@ -21,7 +21,7 @@ function fixUnusedImports() {
   for (const sourceFile of sourceFiles) {
     const diagnostics = ts.getPreEmitDiagnostics(program, sourceFile);
     const unusedImportDiagnostics = diagnostics.filter(
-      (diag) => diag.code === 6133 || diag.code === 6192
+      (diag) => diag.code === 6133 || diag.code === 6192,
     );
 
     if (unusedImportDiagnostics.length > 0) {

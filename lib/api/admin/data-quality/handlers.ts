@@ -12,7 +12,10 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
     }
     case 'assess': {
       if (!truckId) {
-        return NextResponse.json({ success: false, error: 'Missing truckId for assess action' }, { status: 400 });
+        return NextResponse.json(
+          { success: false, error: 'Missing truckId for assess action' },
+          { status: 400 },
+        );
       }
       return await handleAssessAction(truckId);
     }
@@ -39,7 +42,10 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
   switch (action) {
     case 'update-single': {
       if (truckId === undefined || truckId === '') {
-        return NextResponse.json({ success: false, error: 'Missing truckId for update-single action' }, { status: 400 });
+        return NextResponse.json(
+          { success: false, error: 'Missing truckId for update-single action' },
+          { status: 400 },
+        );
       }
       return await handleUpdateSingle(truckId);
     }
@@ -50,7 +56,10 @@ export async function handlePostRequest(request: NextRequest): Promise<NextRespo
       return await handleRecalculateAll();
     }
     default: {
-      return NextResponse.json({ success: false, error: `Unknown action: ${action}` }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: `Unknown action: ${action}` },
+        { status: 400 },
+      );
     }
   }
 }
@@ -62,8 +71,8 @@ async function handleStatsAction() {
     success: true,
     data: {
       ...qualityStats,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 }
 
@@ -82,8 +91,8 @@ async function handleAssessAction(truckId: string) {
       truckId,
       truckName: truck.name,
       currentScore: truck.data_quality_score,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 }
 
@@ -91,13 +100,13 @@ async function handleDefaultGetAction() {
   const qualityStats = await FoodTruckService.getDataQualityStats();
   return NextResponse.json({
     success: true,
-    data: qualityStats
+    data: qualityStats,
   });
 }
 
 async function handleUpdateSingle(truckId: string) {
   const updatedTruckResult = await FoodTruckService.getTruckById(truckId);
-  
+
   if ('error' in updatedTruckResult) {
     return NextResponse.json({ success: false, error: updatedTruckResult.error }, { status: 404 });
   }
@@ -112,8 +121,8 @@ async function handleUpdateSingle(truckId: string) {
       truckName: updatedTruck.name,
       newScore: updatedTruck.data_quality_score,
       verificationStatus: updatedTruck.verification_status,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 }
 
@@ -122,8 +131,8 @@ function handleBatchUpdate() {
     success: true,
     message: 'Batch quality score update completed',
     data: {
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 }
 
@@ -142,7 +151,10 @@ async function handleRecalculateAll() {
   const allTrucksResult = await FoodTruckService.getAllTrucks(1000, 0);
   if (allTrucksResult.error !== undefined) {
     console.error('Error fetching all trucks for recalculation:', allTrucksResult.error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch trucks for recalculation' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch trucks for recalculation' },
+      { status: 500 },
+    );
   }
   const { trucks } = allTrucksResult;
   let updated = 0;
@@ -164,8 +176,8 @@ async function handleRecalculateAll() {
       totalTrucks: trucks.length,
       updated,
       errors,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 }
 
@@ -177,7 +189,7 @@ export async function verifyAdminAccess(request: Request): Promise<boolean> {
     const token = authHeader.replace('Bearer ', '');
     const { data, error } = await supabase.auth.getUser(token);
     const user = data?.user;
-    
+
     if (error || !user) return false;
 
     const { data: profile } = await supabase

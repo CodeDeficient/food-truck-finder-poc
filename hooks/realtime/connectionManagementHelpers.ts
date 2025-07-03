@@ -18,9 +18,9 @@ export function disconnectEventSource({
   isManuallyDisconnectedRef,
   setIsConnected,
   setIsConnecting,
-  setConnectionError
+  setConnectionError,
 }: DisconnectEventSourceParams) {
-  (isManuallyDisconnectedRef.current) = true;
+  isManuallyDisconnectedRef.current = true;
 
   if (reconnectTimeoutRef.current) {
     clearTimeout(reconnectTimeoutRef.current);
@@ -37,8 +37,6 @@ export function disconnectEventSource({
   setConnectionError(undefined);
 }
 
-export function clearRecentEvents(
-  setRecentEvents: (events: RealtimeEvent[]) => void
-) {
+export function clearRecentEvents(setRecentEvents: (events: RealtimeEvent[]) => void) {
   setRecentEvents([]);
 }

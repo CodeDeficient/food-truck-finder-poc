@@ -32,7 +32,7 @@ describe('DiscoveryEngine', () => {
       // Mock successful Tavily API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json:  () => ({
+        json: () => ({
           success: true,
           data: {
             results: [
@@ -105,7 +105,7 @@ describe('DiscoveryEngine', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json:  () => ({
+        json: () => ({
           success: true,
           data: { results: mockResults },
         }),
@@ -135,7 +135,7 @@ describe('DiscoveryEngine', () => {
     it('should crawl a directory URL successfully', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json:  () => ({
+        json: () => ({
           success: true,
           data: {
             results: [
@@ -179,7 +179,7 @@ describe('DiscoveryEngine', () => {
       mockFetch
         .mockResolvedValueOnce({
           ok: true,
-          json:  () => ({
+          json: () => ({
             success: true,
             data: {
               results: [
@@ -196,7 +196,7 @@ describe('DiscoveryEngine', () => {
         // Mock crawl results
         .mockResolvedValueOnce({
           ok: true,
-          json:  () => ({
+          json: () => ({
             success: true,
             data: {
               results: [
@@ -245,7 +245,7 @@ describe('DiscoveryEngine', () => {
       mockFetch
         .mockResolvedValueOnce({
           ok: true,
-          json:  () => ({
+          json: () => ({
             success: true,
             data: {
               results: [

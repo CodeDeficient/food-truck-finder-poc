@@ -21,9 +21,7 @@ export function DataQualityScoreCard({ dataQualityStats }: Readonly<DataQualityS
         <div className="text-2xl font-bold">
           {((dataQualityStats.avg_quality_score ?? 0) * 100).toFixed(1)}%
         </div>
-        <p className="text-xs text-muted-foreground">
-          Average quality score across all trucks
-        </p>
+        <p className="text-xs text-muted-foreground">Average quality score across all trucks</p>
       </CardContent>
     </Card>
   );

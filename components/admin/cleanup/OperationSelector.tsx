@@ -16,42 +16,43 @@ const operationConfig = {
     name: 'Remove Placeholders',
     description: 'Remove placeholder and mock data values',
     icon: <Trash2 className="h-4 w-4" />,
-    color: 'text-red-600'
+    color: 'text-red-600',
   },
   normalize_phone: {
     name: 'Normalize Phone Numbers',
     description: 'Format phone numbers consistently',
     icon: <Phone className="h-4 w-4" />,
-    color: 'text-blue-600'
+    color: 'text-blue-600',
   },
   fix_coordinates: {
     name: 'Fix GPS Coordinates',
     description: 'Correct invalid location coordinates',
     icon: <MapPin className="h-4 w-4" />,
-    color: 'text-green-600'
+    color: 'text-green-600',
   },
   update_quality_scores: {
     name: 'Update Quality Scores',
     description: 'Recalculate data quality scores',
     icon: <Star className="h-4 w-4" />,
-    color: 'text-yellow-600'
+    color: 'text-yellow-600',
   },
   merge_duplicates: {
     name: 'Merge Duplicates',
     description: 'Identify and merge duplicate entries',
     icon: <Merge className="h-4 w-4" />,
-    color: 'text-purple-600'
-  }
+    color: 'text-purple-600',
+  },
 };
 
-export function OperationSelector({ selectedOperations, onToggleOperation }: Readonly<OperationSelectorProps>) {
+export function OperationSelector({
+  selectedOperations,
+  onToggleOperation,
+}: Readonly<OperationSelectorProps>) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Cleanup Operations</CardTitle>
-        <CardDescription>
-          Select which cleanup operations to run
-        </CardDescription>
+        <CardDescription>Select which cleanup operations to run</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -65,9 +66,7 @@ export function OperationSelector({ selectedOperations, onToggleOperation }: Rea
               }`}
               onClick={() => onToggleOperation(key)}
             >
-              <div className={config.color}>
-                {config.icon}
-              </div>
+              <div className={config.color}>{config.icon}</div>
               <div className="flex-1">
                 <div className="font-medium text-sm">{config.name}</div>
                 <div className="text-xs text-muted-foreground">{config.description}</div>

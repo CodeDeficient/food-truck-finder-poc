@@ -21,32 +21,36 @@ export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>)
       <CardContent>
         {truck.operating_hours != undefined && Object.keys(truck.operating_hours).length > 0 ? (
           <div className="space-y-2">
-            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
-              const dayData = truck.operating_hours?.[day as keyof OperatingHours];
-              const dayName = day.charAt(0).toUpperCase() + day.slice(1);
+            {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(
+              (day) => {
+                const dayData = truck.operating_hours?.[day as keyof OperatingHours];
+                const dayName = day.charAt(0).toUpperCase() + day.slice(1);
 
-              return (
-                <div key={day} className="flex justify-between items-center py-1">
-                  <span className="font-medium text-gray-700">{dayName}</span>
-                  {(() => {
-                    if (dayData?.closed === true) {
-                      return <span className="text-red-600 text-sm">Closed</span>;
-                    }
-                    if (
-                      dayData?.open != undefined && dayData.open !== '' &&
-                      dayData?.close != undefined && dayData.close !== ''
-                    ) {
-                      return (
-                        <span className="text-gray-900 text-sm">
-                          {dayData.open} - {dayData.close}
-                        </span>
-                      );
-                    }
-                    return <span className="text-gray-400 text-sm">Not specified</span>;
-                  })()}
-                </div>
-              );
-            })}
+                return (
+                  <div key={day} className="flex justify-between items-center py-1">
+                    <span className="font-medium text-gray-700">{dayName}</span>
+                    {(() => {
+                      if (dayData?.closed === true) {
+                        return <span className="text-red-600 text-sm">Closed</span>;
+                      }
+                      if (
+                        dayData?.open != undefined &&
+                        dayData.open !== '' &&
+                        dayData?.close != undefined &&
+                        dayData.close !== ''
+                      ) {
+                        return (
+                          <span className="text-gray-900 text-sm">
+                            {dayData.open} - {dayData.close}
+                          </span>
+                        );
+                      }
+                      return <span className="text-gray-400 text-sm">Not specified</span>;
+                    })()}
+                  </div>
+                );
+              },
+            )}
           </div>
         ) : (
           <p className="text-gray-400 text-sm">No operating hours available</p>

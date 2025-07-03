@@ -23,7 +23,15 @@ export interface AuditLogEntry {
 }
 
 export interface SecurityEvent {
-  event_type: 'login_attempt' | 'login_success' | 'login_failure' | 'logout' | 'permission_denied' | 'data_access' | 'data_modification' | 'admin_action';
+  event_type:
+    | 'login_attempt'
+    | 'login_success'
+    | 'login_failure'
+    | 'logout'
+    | 'permission_denied'
+    | 'data_access'
+    | 'data_modification'
+    | 'admin_action';
   user_id?: string;
   user_email?: string;
   ip_address?: string;
@@ -64,17 +72,17 @@ export class AuditLogger {
       user_agent: request?.userAgent,
       session_id: request?.sessionId,
       timestamp: new Date().toISOString(),
-      severity: this.determineSeverity(action, resourceType)
+      severity: this.determineSeverity(action, resourceType),
     };
 
     await this.writeAuditLog(auditEntry);
-    
+
     // Log to console for immediate monitoring
     console.info('Admin Action Audit:', {
       user: userEmail,
       action,
-      resource: (resourceId === undefined) ? resourceType : `${resourceType}:${resourceId}`,
-      timestamp: auditEntry.timestamp
+      resource: resourceId === undefined ? resourceType : `${resourceType}:${resourceId}`,
+      timestamp: auditEntry.timestamp,
     });
   }
 
@@ -90,14 +98,12 @@ export class AuditLogger {
       user_agent: event.user_agent,
       details: event.details,
       severity: event.severity,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     try {
       if (supabaseAdmin) {
-        await supabaseAdmin
-          .from('security_events')
-          .insert(logEntry);
+        await supabaseAdmin.from('security_events').insert(logEntry);
       }
     } catch (error) {
       console.error('Failed to log security event:', error);
@@ -127,7 +133,7 @@ export class AuditLogger {
   }): Promise<void> {
     const { eventType, userEmail, userId, request, details } = options;
     const severity = eventType === 'login_failure' ? 'warning' : 'info';
-    
+
     await this.logSecurityEvent({
       event_type: eventType,
       user_id: userId,
@@ -135,7 +141,7 @@ export class AuditLogger {
       ip_address: request?.ip,
       user_agent: request?.userAgent,
       details,
-      severity
+      severity,
     });
   }
 
@@ -163,9 +169,9 @@ export class AuditLogger {
       details: {
         resource_type: resourceType,
         resource_id: resourceId,
-        action
+        action,
       },
-      severity: 'info'
+      severity: 'info',
     });
   }
 
@@ -175,9 +181,7 @@ export class AuditLogger {
   private static async writeAuditLog(entry: AuditLogEntry): Promise<void> {
     try {
       if (supabaseAdmin) {
-        await supabaseAdmin
-          .from('audit_logs')
-          .insert(entry);
+        await supabaseAdmin.from('audit_logs').insert(entry);
       }
     } catch (error) {
       console.error('Failed to write audit log:', error);
@@ -193,17 +197,17 @@ export class AuditLogger {
     if (action.includes('delete') || action.includes('remove')) {
       return 'critical';
     }
-    
+
     // Warning actions
     if (action.includes('update') || action.includes('modify') || action.includes('change')) {
       return 'warning';
     }
-    
+
     // Admin-specific actions
     if (resourceType === 'user' || resourceType === 'admin' || resourceType === 'system') {
       return 'warning';
     }
-    
+
     // Default to info
     return 'info';
   }
@@ -214,7 +218,7 @@ export class AuditLogger {
   static async getUserAuditLogs(
     userId: string,
     limit: number = 100,
-    offset: number = 0
+    offset: number = 0,
   ): Promise<AuditLogEntry[]> {
     try {
       if (!supabaseAdmin) {
@@ -245,7 +249,7 @@ export class AuditLogger {
    */
   static async getRecentSecurityEvents(
     hours: number = 24,
-    severity?: SeverityLevel
+    severity?: SeverityLevel,
   ): Promise<Record<string, unknown>[]> {
     try {
       if (!supabaseAdmin) {
@@ -298,10 +302,7 @@ export const SecurityMonitor = {
     try {
       // Check recent failed login attempts
       const recentEvents = await AuditLogger.getRecentSecurityEvents(1, 'warning');
-      const failedLogins = recentEvents.filter(
-         
-        
-      );
+      const failedLogins = recentEvents.filter();
 
       if (failedLogins.length > 5) {
         reasons.push('Multiple failed login attempts');
@@ -314,7 +315,7 @@ export const SecurityMonitor = {
       // Check for unusual access patterns
       const auditLogs = await AuditLogger.getUserAuditLogs(userId, 50);
       const recentActions = auditLogs.filter(
-        log => new Date(log.timestamp) > new Date(Date.now() - 60 * 60 * 1000) // Last hour
+        (log) => new Date(log.timestamp) > new Date(Date.now() - 60 * 60 * 1000), // Last hour
       );
 
       if (recentActions.length > 20) {
@@ -325,14 +326,14 @@ export const SecurityMonitor = {
       return {
         suspicious: reasons.length > 0,
         reasons,
-        riskLevel
+        riskLevel,
       };
     } catch (error) {
       console.error('Error checking suspicious activity:', error);
       return {
         suspicious: false,
         reasons: [],
-        riskLevel: 'low'
+        riskLevel: 'low',
       };
     }
   },

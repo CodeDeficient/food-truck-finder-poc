@@ -213,7 +213,9 @@ async function findExistingTruck(url: string): Promise<{ truck?: FoodTruck; erro
   }
 
   const truck: FoodTruck | undefined =
-    existingTrucks != undefined && existingTrucks.length > 0 ? (existingTrucks[0] as FoodTruck) : undefined;
+    existingTrucks != undefined && existingTrucks.length > 0
+      ? (existingTrucks[0] as FoodTruck)
+      : undefined;
 
   return { truck };
 }
@@ -322,7 +324,10 @@ export async function callGeminiWithCache(
       delete geminiCache[key];
     }
   }
-  if (geminiCache[cacheKey] != undefined && now - geminiCache[cacheKey].timestamp < GEMINI_CACHE_TTL_MS) {
+  if (
+    geminiCache[cacheKey] != undefined &&
+    now - geminiCache[cacheKey].timestamp < GEMINI_CACHE_TTL_MS
+  ) {
     return geminiCache[cacheKey].data;
   }
   // Check Gemini usage limits before making a call
