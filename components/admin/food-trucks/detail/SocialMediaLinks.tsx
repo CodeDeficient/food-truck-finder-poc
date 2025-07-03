@@ -5,13 +5,19 @@ interface SocialMediaLinksProps {
   readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }
 
-export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps>) { // Added readonly
+export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps>) {
+  // Added readonly
   if (socialMedia === undefined || Object.keys(socialMedia).length === 0) {
     return;
   }
 
   const socialPlatforms = [
-    { key: 'instagram' as const, name: 'Instagram', baseUrl: 'https://instagram.com/', color: 'pink' },
+    {
+      key: 'instagram' as const,
+      name: 'Instagram',
+      baseUrl: 'https://instagram.com/',
+      color: 'pink',
+    },
     { key: 'facebook' as const, name: 'Facebook', baseUrl: 'https://facebook.com/', color: 'blue' },
     { key: 'twitter' as const, name: 'Twitter', baseUrl: 'https://twitter.com/', color: 'sky' },
   ];

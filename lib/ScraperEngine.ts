@@ -128,7 +128,8 @@ export class ScraperEngine {
         note: 'Fetched using basic fetch as Firecrawl failed.',
       };
     } catch (fallbackError) {
-      const errMsg = fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback fetch error';
+      const errMsg =
+        fallbackError instanceof Error ? fallbackError.message : 'Unknown fallback fetch error';
       console.warn(`Fallback fetch error for ${url}:`, errMsg);
       return {
         success: false,
@@ -151,13 +152,19 @@ export class ScraperEngine {
       }
 
       const returnedData: WebsiteScrapeData = {};
-      if (typeof firecrawlResult.data.markdown === 'string' && firecrawlResult.data.markdown !== '') {
+      if (
+        typeof firecrawlResult.data.markdown === 'string' &&
+        firecrawlResult.data.markdown !== ''
+      ) {
         returnedData.markdown = firecrawlResult.data.markdown;
       }
       if (typeof firecrawlResult.data.html === 'string' && firecrawlResult.data.html !== '') {
         returnedData.html = firecrawlResult.data.html;
       }
-      if (firecrawlResult.data.metadata != undefined && typeof firecrawlResult.data.metadata === 'object') {
+      if (
+        firecrawlResult.data.metadata != undefined &&
+        typeof firecrawlResult.data.metadata === 'object'
+      ) {
         returnedData.metadata = firecrawlResult.data.metadata as Record<string, unknown>;
       }
 
@@ -245,8 +252,7 @@ export class ScraperEngine {
     const posts: FacebookPost[] = [
       {
         id: 'fb_post_001',
-        content:
-          "Today we'll be at Union Square from 11 AM to 3 PM! Come try our new BBQ burger!",
+        content: "Today we'll be at Union Square from 11 AM to 3 PM! Come try our new BBQ burger!",
         timestamp: new Date(Date.now() - 7_200_000).toISOString(),
         reactions: { likes: 23, loves: 5, shares: 3 },
         comments: 12,
@@ -338,7 +344,7 @@ export class ScraperEngine {
     return new Promise((resolve) => setTimeout(resolve, delay));
   }
 
-   handleRateLimit(retryAfter: number): Promise<void> {
+  handleRateLimit(retryAfter: number): Promise<void> {
     console.info(`Rate limited. Waiting ${retryAfter} seconds before retry...`);
     return new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
   }
@@ -425,13 +431,16 @@ export class DataQualityAssessor {
       score -= 25;
     } else {
       if (
-        truckData.location.current.lat == undefined || 
+        truckData.location.current.lat == undefined ||
         truckData.location.current.lng == undefined
       ) {
         issues.push('Missing GPS coordinates');
         score -= 15;
       }
-      if (truckData.location.current.address == undefined || truckData.location.current.address === '') {
+      if (
+        truckData.location.current.address == undefined ||
+        truckData.location.current.address === ''
+      ) {
         issues.push('Missing address information');
         score -= 10;
       }
@@ -441,8 +450,10 @@ export class DataQualityAssessor {
 
   private assessContactInfo(truckData: TruckData, issues: string[], score: number): number {
     if (truckData.contact) {
-      const hasPhone = typeof truckData.contact.phone === 'string' && truckData.contact.phone.trim() !== '';
-      const hasEmail = typeof truckData.contact.email === 'string' && truckData.contact.email.trim() !== '';
+      const hasPhone =
+        typeof truckData.contact.phone === 'string' && truckData.contact.phone.trim() !== '';
+      const hasEmail =
+        typeof truckData.contact.email === 'string' && truckData.contact.email.trim() !== '';
 
       if (!hasPhone && !hasEmail) {
         issues.push('No phone or email contact available');
@@ -464,7 +475,10 @@ export class DataQualityAssessor {
   }
 
   private assessOperatingHours(truckData: TruckData, issues: string[], score: number): number {
-    if (truckData.operating_hours == undefined || Object.keys(truckData.operating_hours).length === 0) {
+    if (
+      truckData.operating_hours == undefined ||
+      Object.keys(truckData.operating_hours).length === 0
+    ) {
       issues.push('Missing operating hours');
       score -= 15;
     }
@@ -516,7 +530,11 @@ export class DataQualityAssessor {
     };
   }
 
-  private validateMenuCategory(category: MenuCategory, categoryIndex: number, issues: string[]): void {
+  private validateMenuCategory(
+    category: MenuCategory,
+    categoryIndex: number,
+    issues: string[],
+  ): void {
     if (category.category == undefined || category.category.trim().length === 0) {
       issues.push(`Menu category ${categoryIndex + 1} missing name`);
     }
@@ -528,7 +546,9 @@ export class DataQualityAssessor {
     } else {
       for (const [itemIndex, item] of category.items.entries()) {
         if (item.name == undefined || item.name.trim().length === 0) {
-          issues.push(`Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`);
+          issues.push(
+            `Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`,
+          );
         }
         if (typeof item.price !== 'number' || item.price <= 0) {
           issues.push(`Menu item "${item.name ?? 'Unknown'}" has invalid price`);
@@ -638,7 +658,12 @@ export class GeminiDataProcessor {
 
       // Ensure type safety for parsed response
       const parsed: unknown = JSON.parse(response);
-      if (typeof parsed !== 'object' || parsed == undefined || !('categories' in parsed) || !Array.isArray((parsed as { categories: unknown[] }).categories)) {
+      if (
+        typeof parsed !== 'object' ||
+        parsed == undefined ||
+        !('categories' in parsed) ||
+        !Array.isArray((parsed as { categories: unknown[] }).categories)
+      ) {
         throw new Error('Invalid Gemini menu response: missing or malformed categories array');
       }
       return parsed as { categories: MenuCategory[] };
@@ -693,7 +718,8 @@ export class GeminiDataProcessor {
     ) {
       throw new Error('Invalid Gemini location response');
     }
-    const coordinates = (parsedResponse as { coordinates?: { lat?: unknown; lng?: unknown } }).coordinates;
+    const coordinates = (parsedResponse as { coordinates?: { lat?: unknown; lng?: unknown } })
+      .coordinates;
     if (coordinates && typeof coordinates === 'object') {
       if (typeof coordinates.lat !== 'number') {
         (coordinates as { lat?: number }).lat = undefined;

@@ -12,7 +12,7 @@ export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionP
     <div>
       <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Social Media</h4>
       <div className="flex flex-wrap gap-2">
-        {(socialMedia.instagram !== undefined) && (
+        {socialMedia.instagram !== undefined && (
           <a
             href={`https://instagram.com/${socialMedia.instagram}`}
             target="_blank"
@@ -23,7 +23,7 @@ export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionP
             Instagram
           </a>
         )}
-        {(socialMedia.facebook !== undefined) && (
+        {socialMedia.facebook !== undefined && (
           <a
             href={`https://facebook.com/${socialMedia.facebook}`}
             target="_blank"
@@ -34,7 +34,7 @@ export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionP
             Facebook
           </a>
         )}
-        {(socialMedia.twitter !== undefined) && (
+        {socialMedia.twitter !== undefined && (
           <a
             href={`https://twitter.com/${socialMedia.twitter}`}
             target="_blank"

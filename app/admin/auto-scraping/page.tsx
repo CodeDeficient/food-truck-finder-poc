@@ -66,7 +66,7 @@ function MetricCard({
   title,
   value,
   subtitle,
-  icon
+  icon,
 }: {
   readonly title: string;
   readonly value: string | number;
@@ -89,9 +89,8 @@ function MetricCard({
 
 // Metrics cards component
 function MetricsCards({ metrics }: { readonly metrics: ScrapingMetrics }) {
-  const successRate = metrics.totalRuns > 0
-    ? Math.round((metrics.successfulRuns / metrics.totalRuns) * 100)
-    : 0;
+  const successRate =
+    metrics.totalRuns > 0 ? Math.round((metrics.successfulRuns / metrics.totalRuns) * 100) : 0;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -127,7 +126,7 @@ function MetricsCards({ metrics }: { readonly metrics: ScrapingMetrics }) {
 function CronJobRow({
   job,
   getStatusIcon,
-  getStatusBadge
+  getStatusBadge,
 }: {
   readonly job: CronJobStatus;
   readonly getStatusIcon: (status: string) => React.ReactNode;
@@ -155,8 +154,7 @@ function CronJobRow({
             </div>
             {job.lastResult.trucksProcessed !== undefined && (
               <div className="text-xs text-muted-foreground">
-                {job.lastResult.trucksProcessed} trucks, {job.lastResult.newTrucksFound}{' '}
-                new
+                {job.lastResult.trucksProcessed} trucks, {job.lastResult.newTrucksFound} new
               </div>
             )}
           </div>
@@ -172,7 +170,7 @@ function CronJobRow({
 function CronJobsTable({
   cronJobs,
   getStatusIcon,
-  getStatusBadge
+  getStatusBadge,
 }: {
   readonly cronJobs: CronJobStatus[];
   readonly getStatusIcon: (status: string) => React.ReactNode;
@@ -222,7 +220,7 @@ function CronJobsTable({
 // Dashboard header component
 function DashboardHeader({
   onRefresh,
-  onTriggerScrape
+  onTriggerScrape,
 }: {
   readonly onRefresh: () => void;
   readonly onTriggerScrape: () => void;
@@ -291,7 +289,7 @@ function useDashboardData() {
     } catch (error_) {
       // Log detailed error for developers
       console.error('Dashboard data fetch error:', error_);
-      setError('That didn\'t work, please try again later.');
+      setError("That didn't work, please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -301,17 +299,21 @@ function useDashboardData() {
     try {
       setError(undefined);
       await triggerScrape();
-      setTimeout(() => { void fetchDashboardData(); }, 2000);
+      setTimeout(() => {
+        void fetchDashboardData();
+      }, 2000);
     } catch (error_) {
       // Log detailed error for developers
       console.error('Manual scrape trigger error:', error_);
-      setError('That didn\'t work, please try again later.');
+      setError("That didn't work, please try again later.");
     }
   };
 
   useEffect(() => {
     void fetchDashboardData();
-    const interval = setInterval(() => { void fetchDashboardData(); }, 30_000);
+    const interval = setInterval(() => {
+      void fetchDashboardData();
+    }, 30_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -343,7 +345,8 @@ function getStatusBadge(status: string) {
 }
 
 export default function AutoScrapingDashboard() {
-  const { cronJobs, metrics, isLoading, error, fetchDashboardData, triggerManualScrape } = useDashboardData();
+  const { cronJobs, metrics, isLoading, error, fetchDashboardData, triggerManualScrape } =
+    useDashboardData();
 
   if (isLoading) {
     return <LoadingState />;
@@ -352,8 +355,12 @@ export default function AutoScrapingDashboard() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        onRefresh={() => { void fetchDashboardData(); }}
-        onTriggerScrape={() => { void triggerManualScrape(); }}
+        onRefresh={() => {
+          void fetchDashboardData();
+        }}
+        onTriggerScrape={() => {
+          void triggerManualScrape();
+        }}
       />
 
       {error !== undefined && (

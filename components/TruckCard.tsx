@@ -15,12 +15,7 @@ interface TruckCardProps {
   readonly hideHeader?: boolean;
 }
 
-export function TruckCard({
-  truck,
-  isOpen,
-  onSelectTruck,
-  hideHeader = false,
-}: TruckCardProps) {
+export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: TruckCardProps) {
   const { popularItems, priceRange, todayHours } = useTruckCard(truck);
 
   return (
@@ -37,11 +32,7 @@ export function TruckCard({
         />
       )}
       <CardContent className={hideHeader ? 'pt-0' : ''}>
-        <TruckCardContent
-          truck={truck}
-          todayHours={todayHours}
-          popularItems={popularItems}
-        />
+        <TruckCardContent truck={truck} todayHours={todayHours} popularItems={popularItems} />
       </CardContent>
       <TruckCardFooter truck={truck} />
     </Card>

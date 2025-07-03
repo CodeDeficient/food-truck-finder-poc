@@ -11,12 +11,7 @@ function fixRequireAwait(filePath) {
       return;
     }
 
-    const sourceFile = ts.createSourceFile(
-      filePath,
-      code,
-      ts.ScriptTarget.Latest,
-      true
-    );
+    const sourceFile = ts.createSourceFile(filePath, code, ts.ScriptTarget.Latest, true);
 
     const transformations = [];
 
@@ -40,7 +35,7 @@ function fixRequireAwait(filePath) {
 
         if (!hasAwait) {
           const asyncModifier = node.modifiers.find(
-            (mod) => mod.kind === ts.SyntaxKind.AsyncKeyword
+            (mod) => mod.kind === ts.SyntaxKind.AsyncKeyword,
           );
           if (asyncModifier) {
             transformations.push({
@@ -60,10 +55,7 @@ function fixRequireAwait(filePath) {
       transformations.sort((a, b) => b.pos - a.pos);
       let newCode = code;
       for (const transform of transformations) {
-        newCode =
-          newCode.slice(0, transform.pos) +
-          transform.text +
-          newCode.slice(transform.end);
+        newCode = newCode.slice(0, transform.pos) + transform.text + newCode.slice(transform.end);
       }
 
       fs.writeFile(filePath, newCode, 'utf8', (err) => {

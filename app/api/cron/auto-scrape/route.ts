@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  handlePostRequest,
-  handleGetRequest,
-} from '@/lib/api/cron/auto-scrape/handlers';
+import { handlePostRequest, handleGetRequest } from '@/lib/api/cron/auto-scrape/handlers';
 
 export async function POST(request: NextRequest) {
   try {

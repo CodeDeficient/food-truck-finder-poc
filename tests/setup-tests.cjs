@@ -2,7 +2,7 @@
 
 /**
  * Test Setup Script for Food Truck Finder E2E Tests
- * 
+ *
  * This script helps set up the testing environment for comprehensive
  * end-to-end testing of the data pipeline upscaling scenarios.
  */
@@ -18,7 +18,7 @@ const envExamplePath = path.join(process.cwd(), '.env.example');
 
 if (!fs.existsSync(envPath)) {
   console.log('📝 Creating .env.local from template...');
-  
+
   if (fs.existsSync(envExamplePath)) {
     fs.copyFileSync(envExamplePath, envPath);
     console.log('✅ .env.local created from .env.example');
@@ -37,7 +37,7 @@ const requiredEnvVars = [
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
   'SUPABASE_SERVICE_ROLE_KEY',
   'GEMINI_API_KEY',
-  'FIRECRAWL_API_KEY'
+  'FIRECRAWL_API_KEY',
 ];
 
 console.log('🔍 Checking environment variables...');
@@ -49,11 +49,11 @@ try {
   console.log('⚠️  dotenv not installed, skipping environment variable validation');
 }
 
-const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
   console.log('❌ Missing required environment variables:');
-  missingVars.forEach(varName => {
+  missingVars.forEach((varName) => {
     console.log(`   - ${varName}`);
   });
   console.log('\nPlease update .env.local with these values before running full tests\n');

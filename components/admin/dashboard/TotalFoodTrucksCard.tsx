@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; 
 import { Truck } from 'lucide-react';
 
 interface TotalFoodTrucksCardProps {
@@ -7,7 +7,10 @@ interface TotalFoodTrucksCardProps {
   readonly pendingVerifications: number;
 }
 
-export function TotalFoodTrucksCard({ totalFoodTrucks, pendingVerifications }: Readonly<TotalFoodTrucksCardProps>) {
+export function TotalFoodTrucksCard({
+  totalFoodTrucks,
+  pendingVerifications,
+}: Readonly<TotalFoodTrucksCardProps>) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -16,9 +19,7 @@ export function TotalFoodTrucksCard({ totalFoodTrucks, pendingVerifications }: R
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{totalFoodTrucks}</div>
-        <p className="text-xs text-muted-foreground">
-          {pendingVerifications} pending verification
-        </p>
+        <p className="text-xs text-muted-foreground">{pendingVerifications} pending verification</p>
       </CardContent>
     </Card>
   );

@@ -39,8 +39,8 @@ async function handleGeminiExtraction(markdown: string, sourceUrl: string, jobId
 async function handleJobFailure(jobId: string, error: string) {
   console.error(`Job ${jobId} failed:`, error);
   try {
-    const currentJob = await ScrapingJobService.getJobsByStatus('all').then(jobs =>
-      jobs.find(j => j.id === jobId)
+    const currentJob = await ScrapingJobService.getJobsByStatus('all').then((jobs) =>
+      jobs.find((j) => j.id === jobId),
     );
     if (currentJob && currentJob.status !== 'failed') {
       await ScrapingJobService.updateJobStatus(jobId, 'failed', { errors: [error] });
@@ -63,7 +63,9 @@ async function handleRetryLogic(jobId: string) {
         console.warn(`Job ${jobId} reached max retries (${job.max_retries}).`);
       }
     } else {
-      console.error(`Job ${jobId}: Could not get valid retry_count or max_retries. Won't attempt retry.`);
+      console.error(
+        `Job ${jobId}: Could not get valid retry_count or max_retries. Won't attempt retry.`,
+      );
     }
   } catch (retryError) {
     console.error(`Error during retry logic for job ${jobId}:`, retryError);
@@ -78,7 +80,11 @@ export async function processScrapingJob(jobId: string): Promise<void> {
     }
 
     const scrapeData = await handleScraping(job.target_url, jobId);
-    const extractedData = await handleGeminiExtraction(scrapeData.markdown, scrapeData.source_url ?? job.target_url, jobId);
+    const extractedData = await handleGeminiExtraction(
+      scrapeData.markdown,
+      scrapeData.source_url ?? job.target_url,
+      jobId,
+    );
 
     await ScrapingJobService.updateJobStatus(jobId, 'completed', {
       data_collected: extractedData as unknown as Record<string, unknown>,
@@ -109,7 +115,10 @@ export async function createOrUpdateFoodTruck(
     await finalizeJobStatus(jobId, truck, sourceUrl);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl ?? 'Unknown Source'}:`, error);
+    console.error(
+      `Job ${jobId}: Error in createOrUpdateFoodTruck from ${sourceUrl ?? 'Unknown Source'}:`,
+      error,
+    );
     await handleJobFailure(jobId, `Food truck data processing/saving failed: ${errorMessage}`);
   }
 }

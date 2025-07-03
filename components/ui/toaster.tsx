@@ -28,14 +28,16 @@ export function Toaster() {
               'open',
               'variant',
               // add other allowed keys as needed
-            ].includes(key)
-          )
+            ].includes(key),
+          ),
         );
         return (
           <Toast key={id} {...safeProps}>
             <div className="grid gap-1">
               {title != undefined && title !== '' && <ToastTitle>{title}</ToastTitle>}
-              {description != undefined && description !== '' && <ToastDescription>{description}</ToastDescription>}
+              {description != undefined && description !== '' && (
+                <ToastDescription>{description}</ToastDescription>
+              )}
             </div>
             {action}
             <ToastClose />

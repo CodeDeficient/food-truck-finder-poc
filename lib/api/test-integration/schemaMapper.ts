@@ -1,9 +1,4 @@
-import {
-  ExtractedFoodTruckDetails,
-  FoodTruckSchema,
-  MenuCategory,
-  MenuItem,
-} from '@/lib/types';
+import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '@/lib/types';
 
 export function mapExtractedDataToTruckSchema(
   extractedData: ExtractedFoodTruckDetails,
@@ -31,7 +26,7 @@ export function mapExtractedDataToTruckSchema(
     current_location: {
       lat: locationData.lat ?? 0,
       lng: locationData.lng ?? 0,
-      address: fullAddress ?? (locationData.raw_text ?? undefined),
+      address: fullAddress ?? locationData.raw_text ?? undefined,
       timestamp: new Date().toISOString(),
     },
     scheduled_locations: extractedData.scheduled_locations ?? undefined,
@@ -42,9 +37,7 @@ export function mapExtractedDataToTruckSchema(
         name: item.name ?? 'Unknown Item',
         description: item.description ?? undefined,
         price:
-          typeof item.price === 'number' || typeof item.price === 'string'
-            ? item.price
-            : undefined,
+          typeof item.price === 'number' || typeof item.price === 'string' ? item.price : undefined,
         dietary_tags: item.dietary_tags ?? [],
       })),
     })),

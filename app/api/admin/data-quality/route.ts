@@ -8,10 +8,7 @@ import {
 export async function GET(request: NextRequest) {
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized access' },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {
@@ -22,9 +19,9 @@ export async function GET(request: NextRequest) {
       {
         success: false,
         error: 'Failed to fetch data quality information',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -32,10 +29,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized access' },
-      { status: 401 }
-    );
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
   }
 
   try {
@@ -46,9 +40,9 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: 'Failed to update data quality',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        message: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

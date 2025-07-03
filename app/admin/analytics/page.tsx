@@ -12,13 +12,17 @@ import {
 import { BarChart3 } from 'lucide-react';
 
 // API Usage Statistics Table Component
-function APIUsageTable({ usageStats }: { readonly usageStats: Array<{
-  readonly id: string;
-  readonly service_name: string;
-  readonly usage_date: string;
-  readonly requests_count: number;
-  readonly tokens_used: number;
-}> }) {
+function APIUsageTable({
+  usageStats,
+}: {
+  readonly usageStats: Array<{
+    readonly id: string;
+    readonly service_name: string;
+    readonly usage_date: string;
+    readonly requests_count: number;
+    readonly tokens_used: number;
+  }>;
+}) {
   return (
     <Card>
       <CardHeader>

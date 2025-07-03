@@ -18,9 +18,9 @@ export interface QualityCategory {
 
 // SOTA quality thresholds based on industry standards
 export const QUALITY_THRESHOLDS: QualityThresholds = {
-  high: 0.8,    // 80%+ = High quality
-  medium: 0.6,  // 60-79% = Medium quality
-  low: 0.6      // <60% = Low quality
+  high: 0.8, // 80%+ = High quality
+  medium: 0.6, // 60-79% = Medium quality
+  low: 0.6, // <60% = Low quality
 };
 
 // SOTA color scheme for accessibility and visual hierarchy
@@ -29,20 +29,20 @@ export const QUALITY_CATEGORIES: Record<string, QualityCategory> = {
     label: 'High',
     color: '#22c55e',
     bgColor: 'bg-green-100',
-    textColor: 'text-green-800'
+    textColor: 'text-green-800',
   },
   medium: {
     label: 'Medium',
     color: '#f59e0b',
     bgColor: 'bg-yellow-100',
-    textColor: 'text-yellow-800'
+    textColor: 'text-yellow-800',
   },
   low: {
     label: 'Low',
     color: '#ef4444',
     bgColor: 'bg-red-100',
-    textColor: 'text-red-800'
-  }
+    textColor: 'text-red-800',
+  },
 };
 
 /**
@@ -51,11 +51,14 @@ export const QUALITY_CATEGORIES: Record<string, QualityCategory> = {
  * @param precision - Number of decimal places (default: 1)
  * @returns Formatted percentage string
  */
-export function formatQualityScore(score: number | null | undefined, precision: number = 1): string {
+export function formatQualityScore(
+  score: number | null | undefined,
+  precision: number = 1,
+): string {
   if (score === null || score === undefined || Number.isNaN(score)) {
     return 'N/A';
   }
-  
+
   // Ensure score is in 0-1 range
   const normalizedScore = Math.max(0, Math.min(1, score));
   return `${(normalizedScore * 100).toFixed(precision)}%`;
@@ -98,35 +101,36 @@ export function getQualityBadgeClasses(score: number | null | undefined): string
  */
 export function calculateQualityTrend(
   currentScore: number | null | undefined,
-  previousScore: number | null | undefined
+  previousScore: number | null | undefined,
 ): {
   direction: 'up' | 'down' | 'stable' | 'unknown';
   change: number;
   changeText: string;
 } {
-  if ((currentScore == undefined) || (previousScore == undefined)) {
+  if (currentScore == undefined || previousScore == undefined) {
     return {
       direction: 'unknown',
       change: 0,
-      changeText: 'N/A'
+      changeText: 'N/A',
     };
   }
 
   const change = currentScore - previousScore;
   const changePercentage = Math.abs(change * 100);
 
-  if (Math.abs(change) < 0.01) { // Less than 1% change
+  if (Math.abs(change) < 0.01) {
+    // Less than 1% change
     return {
       direction: 'stable',
       change: 0,
-      changeText: 'No change'
+      changeText: 'No change',
     };
   }
 
   return {
     direction: change > 0 ? 'up' : 'down',
     change: changePercentage,
-    changeText: `${change > 0 ? '+' : '-'}${changePercentage.toFixed(1)}%`
+    changeText: `${change > 0 ? '+' : '-'}${changePercentage.toFixed(1)}%`,
   };
 }
 
@@ -136,7 +140,7 @@ export function calculateQualityTrend(
  * @returns Array of improvement suggestions
  */
 export function getQualityImprovementSuggestions(score: number | null | undefined): string[] {
-  if ((score == undefined) || score >= QUALITY_THRESHOLDS.high) {
+  if (score == undefined || score >= QUALITY_THRESHOLDS.high) {
     return ['Quality score is excellent! Continue maintaining data standards.'];
   }
 
@@ -147,14 +151,14 @@ export function getQualityImprovementSuggestions(score: number | null | undefine
       'Critical: Add missing core information (name, location, contact details)',
       'Verify and update GPS coordinates for accurate location data',
       'Add comprehensive menu information and pricing',
-      'Update operating hours and schedule information'
+      'Update operating hours and schedule information',
     );
   } else {
     suggestions.push(
       'Add missing optional fields (website, social media, ratings)',
       'Enhance menu descriptions and categories',
       'Update recent photos and promotional content',
-      'Verify contact information accuracy'
+      'Verify contact information accuracy',
     );
   }
 
@@ -183,31 +187,31 @@ export function formatQualityStats(stats: {
     distribution: {
       high: {
         count: stats.high_quality_count,
-        percentage: ((stats.high_quality_count / stats.total_trucks) * 100).toFixed(1)
+        percentage: ((stats.high_quality_count / stats.total_trucks) * 100).toFixed(1),
       },
       medium: {
         count: stats.medium_quality_count,
-        percentage: ((stats.medium_quality_count / stats.total_trucks) * 100).toFixed(1)
+        percentage: ((stats.medium_quality_count / stats.total_trucks) * 100).toFixed(1),
       },
       low: {
         count: stats.low_quality_count,
-        percentage: ((stats.low_quality_count / stats.total_trucks) * 100).toFixed(1)
-      }
+        percentage: ((stats.low_quality_count / stats.total_trucks) * 100).toFixed(1),
+      },
     },
     verification: {
       verified: {
         count: stats.verified_count,
-        percentage: ((stats.verified_count / stats.total_trucks) * 100).toFixed(1)
+        percentage: ((stats.verified_count / stats.total_trucks) * 100).toFixed(1),
       },
       pending: {
         count: stats.pending_count,
-        percentage: ((stats.pending_count / stats.total_trucks) * 100).toFixed(1)
+        percentage: ((stats.pending_count / stats.total_trucks) * 100).toFixed(1),
       },
       flagged: {
         count: stats.flagged_count,
-        percentage: ((stats.flagged_count / stats.total_trucks) * 100).toFixed(1)
-      }
-    }
+        percentage: ((stats.flagged_count / stats.total_trucks) * 100).toFixed(1),
+      },
+    },
   };
 }
 
@@ -232,6 +236,6 @@ export function getQualityScoreAriaLabel(score: number | null | undefined): stri
 
   const category = categorizeQualityScore(score);
   const percentage = formatQualityScore(score);
-  
+
   return `Data quality score: ${percentage}, categorized as ${category.label.toLowerCase()} quality`;
 }

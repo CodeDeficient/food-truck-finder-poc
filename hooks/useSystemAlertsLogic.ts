@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { RealtimeEvent } from '@/hooks/useRealtimeAdminEvents.types';
 
-export interface SystemAlert { // Added export keyword
+export interface SystemAlert {
+  // Added export keyword
   id: string;
   type: 'info' | 'warning' | 'error' | 'critical';
   message: string;

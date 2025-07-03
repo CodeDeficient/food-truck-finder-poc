@@ -6,7 +6,9 @@ interface RecentErrorsCardProps {
   readonly failedProcessingQueueItemsCount: number;
 }
 
-export function RecentErrorsCard({ failedProcessingQueueItemsCount }: Readonly<RecentErrorsCardProps>) {
+export function RecentErrorsCard({
+  failedProcessingQueueItemsCount,
+}: Readonly<RecentErrorsCardProps>) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

@@ -21,7 +21,11 @@ function assessBasicInfo(truck: FoodTruck, issues: string[], currentScore: numbe
     score -= 0.1;
     issues.push('Missing description');
   }
-  if (!Array.isArray(truck.cuisine_type) || truck.cuisine_type.length === 0 || !truck.cuisine_type.every(item => typeof item === 'string')) {
+  if (
+    !Array.isArray(truck.cuisine_type) ||
+    truck.cuisine_type.length === 0 ||
+    !truck.cuisine_type.every((item) => typeof item === 'string')
+  ) {
     score -= 0.1;
     issues.push('Missing or invalid cuisine type');
   }
@@ -71,11 +75,19 @@ function assessContactInfo(truck: FoodTruck, issues: string[], currentScore: num
 
 function assessLocationData(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
-  if (typeof truck.current_location?.lat !== 'number' || Number.isNaN(truck.current_location.lat) || typeof truck.current_location?.lng !== 'number' || Number.isNaN(truck.current_location.lng)) {
+  if (
+    typeof truck.current_location?.lat !== 'number' ||
+    Number.isNaN(truck.current_location.lat) ||
+    typeof truck.current_location?.lng !== 'number' ||
+    Number.isNaN(truck.current_location.lng)
+  ) {
     score -= 0.15;
     issues.push('Missing current location data');
   } else {
-    if (typeof truck.current_location.timestamp === 'string' && truck.current_location.timestamp.length > 0) {
+    if (
+      typeof truck.current_location.timestamp === 'string' &&
+      truck.current_location.timestamp.length > 0
+    ) {
       const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
       const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
       if (daysSinceUpdate > 7) {
@@ -155,7 +167,9 @@ export const DataQualityService = {
   getQualityBadgeClasses,
   getQualityScoreAriaLabel,
 
-  async batchUpdateQualityScores(limit: number = 100): Promise<{ updatedCount: number; errors: string[] }> {
+  async batchUpdateQualityScores(
+    limit: number = 100,
+  ): Promise<{ updatedCount: number; errors: string[] }> {
     const { data, error } = await supabase
       .from('food_trucks')
       .select('*')

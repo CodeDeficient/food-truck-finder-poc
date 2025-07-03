@@ -28,7 +28,8 @@ export function SystemMetricsGrid({ metrics }: SystemMetricsGridProps) {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-lg font-bold">
-              {metric.value}{metric.unit}
+              {metric.value}
+              {metric.unit}
             </span>
             {getTrendIcon(metric.trend as Trend)}
           </div>

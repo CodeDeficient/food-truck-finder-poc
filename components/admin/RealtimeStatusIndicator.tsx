@@ -2,7 +2,7 @@
 
 /**
  * SOTA Real-time Status Indicator Component
- * 
+ *
  * Provides visual real-time status updates for admin dashboard
  * with animated indicators, health scores, and alert notifications
  */
@@ -23,17 +23,22 @@ export function RealtimeStatusIndicator() {
     connect,
     disconnect,
     clearEvents,
-    lastEventTime
+    lastEventTime,
   } = useRealtimeAdminEvents({
     autoConnect: true,
     reconnectInterval: 5000,
-    maxReconnectAttempts: 10
+    maxReconnectAttempts: 10,
   });
 
   const { alerts, acknowledgeAlert } = useSystemAlertsLogic({ recentEvents });
   const [showDetails, setShowDetails] = useState(false);
 
-  const systemMetrics = useSystemMetrics({ isConnected, isConnecting, connectionError, latestMetrics });
+  const systemMetrics = useSystemMetrics({
+    isConnected,
+    isConnecting,
+    connectionError,
+    latestMetrics,
+  });
 
   return (
     <RealtimeStatusDisplay

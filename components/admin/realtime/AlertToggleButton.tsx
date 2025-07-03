@@ -7,16 +7,15 @@ interface AlertToggleButtonProps {
   readonly onToggleDetails: () => void;
 }
 
-export function AlertToggleButton({ alertsLength, showDetails, onToggleDetails }: AlertToggleButtonProps) {
+export function AlertToggleButton({
+  alertsLength,
+  showDetails,
+  onToggleDetails,
+}: AlertToggleButtonProps) {
   if (alertsLength <= 3) return;
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      className="mt-2"
-      onClick={onToggleDetails}
-    >
+    <Button variant="outline" size="sm" className="mt-2" onClick={onToggleDetails}>
       {showDetails ? 'Hide' : 'Show'} {alertsLength - 3} more alerts
     </Button>
   );

@@ -41,9 +41,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     console.info('Test suite completed');
   });
 
-  test('Pipeline Health Check - Basic Functionality', async ({
-    request
-  }: any) => {
+  test('Pipeline Health Check - Basic Functionality', async ({ request }: any) => {
     // Test all key API endpoints
     const endpoints = [
       '/api/test-integration',
@@ -60,9 +58,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     }
   });
 
-  test('Single URL Processing - Complete Pipeline', async ({
-    request
-  }: any) => {
+  test('Single URL Processing - Complete Pipeline', async ({ request }: any) => {
     const testUrl = TEST_URLS[0];
 
     // Clean up existing data for this URL
@@ -102,9 +98,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     }
   });
 
-  test('Autonomous Discovery - Multiple URLs', async ({
-    request
-  }: any) => {
+  test('Autonomous Discovery - Multiple URLs', async ({ request }: any) => {
     // Record current state
     const { count: beforeCount } = await supabaseAdmin
       .from('food_trucks')
@@ -132,9 +126,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     console.log(`Trucks before: ${beforeCount}, after: ${afterCount}`);
   });
 
-  test('Data Quality Validation - Menu Normalization', async ({
-    request
-  }: any) => {
+  test('Data Quality Validation - Menu Normalization', async ({ request }: any) => {
     // Get trucks with menus
     const { data: trucks, error } = await supabaseAdmin
       .from('food_trucks')
@@ -171,9 +163,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     }
   });
 
-  test('Pipeline Error Handling - Invalid URL', async ({
-    request
-  }: any) => {
+  test('Pipeline Error Handling - Invalid URL', async ({ request }: any) => {
     const invalidUrl = 'https://invalid-test-url-that-does-not-exist.com';
 
     const response = await request.post('/api/test-pipeline-run', {
@@ -199,9 +189,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     }
   });
 
-  test('Pipeline Performance - Processing Time', async ({
-    request
-  }: any) => {
+  test('Pipeline Performance - Processing Time', async ({ request }: any) => {
     const testUrl = TEST_URLS[0];
     await cleanupTruckByUrl(testUrl);
 
@@ -233,9 +221,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     expect(processingTime).toBeLessThan(5 * 60 * 1000); // 5 minutes max
   });
 
-  test('Data Consistency - Duplicate Prevention', async ({
-    request
-  }: any) => {
+  test('Data Consistency - Duplicate Prevention', async ({ request }: any) => {
     const testUrl = TEST_URLS[0];
 
     // Run pipeline twice for same URL
@@ -268,9 +254,7 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     }
   });
 
-  test('Stale Data Detection and Refresh', async ({
-    request
-  }: any) => {
+  test('Stale Data Detection and Refresh', async ({ request }: any) => {
     // Find trucks that might be stale
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);

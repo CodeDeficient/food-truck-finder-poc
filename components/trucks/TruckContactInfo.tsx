@@ -15,14 +15,15 @@ interface ContactFieldProps {
   readonly unavailableText: string;
 }
 
-function ContactField({ 
-  icon: Icon, 
-  label, 
-  value, 
-  href, 
-  unavailableText 
+function ContactField({
+  icon: Icon,
+  label,
+  value,
+  href,
+  unavailableText,
 }: Readonly<ContactFieldProps>) {
-  if (value == undefined || value.length === 0) { // Handles null, undefined, and empty string
+  if (value == undefined || value.length === 0) {
+    // Handles null, undefined, and empty string
     return (
       <div className="flex items-center gap-3 text-gray-400">
         <Icon className="h-4 w-4" />
@@ -37,7 +38,7 @@ function ContactField({
       <div>
         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</label>
         {href ? (
-          <a 
+          <a
             href={href}
             target={href.startsWith('http') ? '_blank' : undefined}
             rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
@@ -53,7 +54,9 @@ function ContactField({
   );
 }
 
-function SocialMediaLinks({ socialMedia }: Readonly<{ readonly socialMedia?: Record<string, string> }>) {
+function SocialMediaLinks({
+  socialMedia,
+}: Readonly<{ readonly socialMedia?: Record<string, string> }>) {
   if (socialMedia == undefined || Object.keys(socialMedia).length === 0) {
     return;
   }

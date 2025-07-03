@@ -14,7 +14,7 @@ class BooleanFixerReverter {
     this.stats = {
       filesProcessed: 0,
       fixesApplied: 0,
-      errors: []
+      errors: [],
     };
   }
 
@@ -49,7 +49,8 @@ class BooleanFixerReverter {
 
     // Pattern 2: Fix boolean ternary expressions
     // "booleanVar != null ? a : b" → "booleanVar ? a : b" (for known boolean patterns)
-    const booleanTernaryPattern = /(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*\?\s*([^:]+)\s*:\s*([^;,}]+)/g;
+    const booleanTernaryPattern =
+      /(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*\?\s*([^:]+)\s*:\s*([^;,}]+)/g;
     fixed = fixed.replace(booleanTernaryPattern, (match, booleanVar, trueExpr, falseExpr) => {
       changes++;
       return `${booleanVar} ? ${trueExpr} : ${falseExpr}`;
@@ -57,7 +58,8 @@ class BooleanFixerReverter {
 
     // Pattern 3: Fix boolean if conditions
     // "if (booleanVar != null)" → "if (booleanVar)"
-    const booleanIfPattern = /if\s*\(\s*(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*\)/g;
+    const booleanIfPattern =
+      /if\s*\(\s*(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*\)/g;
     fixed = fixed.replace(booleanIfPattern, (match, booleanVar) => {
       changes++;
       return `if (${booleanVar})`;
@@ -65,7 +67,8 @@ class BooleanFixerReverter {
 
     // Pattern 4: Fix boolean && expressions
     // "booleanVar != null &&" → "booleanVar &&"
-    const booleanAndPattern = /(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*&&/g;
+    const booleanAndPattern =
+      /(is\w+|has\w+|can\w+|should\w+|success|loading|error|active|enabled|disabled|visible|hidden)\s*!=\s*null\s*&&/g;
     fixed = fixed.replace(booleanAndPattern, (match, booleanVar) => {
       changes++;
       return `${booleanVar} &&`;
@@ -119,24 +122,31 @@ class BooleanFixerReverter {
   findFilesWithMalformedPatterns() {
     try {
       // Use PowerShell to find files with the malformed patterns
-      const output = execSync('Get-ChildItem -Path . -Include "*.ts", "*.tsx" -Recurse | Select-String "!= null \\?" | Select-Object -ExpandProperty Filename | Sort-Object | Get-Unique', {
-        encoding: 'utf8',
-        shell: 'powershell'
-      });
-      
-      return output.trim().split('\n').filter(file => file.trim()).map(file => file.trim());
+      const output = execSync(
+        'Get-ChildItem -Path . -Include "*.ts", "*.tsx" -Recurse | Select-String "!= null \\?" | Select-Object -ExpandProperty Filename | Sort-Object | Get-Unique',
+        {
+          encoding: 'utf8',
+          shell: 'powershell',
+        },
+      );
+
+      return output
+        .trim()
+        .split('\n')
+        .filter((file) => file.trim())
+        .map((file) => file.trim());
     } catch (error) {
       console.warn('Could not find files with malformed patterns, using fallback');
       // Fallback to known affected files
       return [
         'app/admin/auto-scraping/page.tsx',
-        'app/admin/events/page.tsx', 
+        'app/admin/events/page.tsx',
         'app/admin/food-trucks/[id]/page.tsx',
         'app/admin/pipeline/page.tsx',
         'app/admin/test-pipeline/page.tsx',
         'app/api/admin/automated-cleanup/route.ts',
         'app/api/admin/data-cleanup/route.ts',
-        'app/api/admin/data-quality/route.ts'
+        'app/api/admin/data-quality/route.ts',
       ];
     }
   }
@@ -154,7 +164,7 @@ class BooleanFixerReverter {
 
     // Find files to process
     const filesToProcess = this.findFilesWithMalformedPatterns();
-    
+
     console.log(`📁 Found ${filesToProcess.length} files to check`);
     console.log('');
 
@@ -184,12 +194,14 @@ class BooleanFixerReverter {
     console.log('');
     console.log(`Initial errors: ${initialErrors}`);
     console.log(`Final errors: ${finalErrors}`);
-    console.log(`Error reduction: ${errorReduction} (${((errorReduction/initialErrors)*100).toFixed(1)}%)`);
+    console.log(
+      `Error reduction: ${errorReduction} (${((errorReduction / initialErrors) * 100).toFixed(1)}%)`,
+    );
 
     if (this.stats.errors.length > 0) {
       console.log('');
       console.log('❌ ERRORS:');
-      this.stats.errors.forEach(err => {
+      this.stats.errors.forEach((err) => {
         console.log(`  ${err.file}: ${err.error}`);
       });
     }
@@ -198,7 +210,7 @@ class BooleanFixerReverter {
       filesChanged,
       fixesApplied: this.stats.fixesApplied,
       errorReduction,
-      success: this.stats.errors.length === 0
+      success: this.stats.errors.length === 0,
     };
   }
 }
@@ -206,12 +218,15 @@ class BooleanFixerReverter {
 // CLI interface
 if (require.main === module) {
   const reverter = new BooleanFixerReverter();
-  reverter.run().then(result => {
-    process.exit(result.success ? 0 : 1);
-  }).catch(error => {
-    console.error('Fatal error:', error);
-    process.exit(1);
-  });
+  reverter
+    .run()
+    .then((result) => {
+      process.exit(result.success ? 0 : 1);
+    })
+    .catch((error) => {
+      console.error('Fatal error:', error);
+      process.exit(1);
+    });
 }
 
 module.exports = BooleanFixerReverter;

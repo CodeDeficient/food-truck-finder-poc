@@ -783,89 +783,26 @@
     }
   },
   "sortedErrors": [
-    [
-      "@typescript-eslint/strict-boolean-expressions",
-      34
-    ],
-    [
-      "max-params",
-      7
-    ],
-    [
-      "@typescript-eslint/no-unsafe-assignment",
-      7
-    ],
-    [
-      "@typescript-eslint/no-explicit-any",
-      7
-    ],
-    [
-      "unicorn/no-null",
-      4
-    ],
-    [
-      "@typescript-eslint/await-thenable",
-      3
-    ],
-    [
-      "sonarjs/no-invalid-await",
-      3
-    ],
-    [
-      "@typescript-eslint/no-unsafe-call",
-      3
-    ],
-    [
-      "@typescript-eslint/no-unused-vars",
-      3
-    ],
-    [
-      "@typescript-eslint/no-unsafe-argument",
-      3
-    ],
-    [
-      "unicorn/consistent-function-scoping",
-      3
-    ],
-    [
-      "sonarjs/deprecation",
-      2
-    ],
-    [
-      "sonarjs/no-redundant-optional",
-      2
-    ],
-    [
-      "@typescript-eslint/require-await",
-      2
-    ],
-    [
-      "@typescript-eslint/no-misused-promises",
-      1
-    ],
-    [
-      "@typescript-eslint/no-unnecessary-type-assertion",
-      1
-    ],
-    [
-      "sonarjs/pseudo-random",
-      1
-    ],
-    [
-      "sonarjs/no-unused-vars",
-      1
-    ],
-    [
-      "sonarjs/no-dead-store",
-      1
-    ],
-    [
-      "sonarjs/cognitive-complexity",
-      1
-    ],
-    [
-      "@typescript-eslint/no-unsafe-return",
-      1
-    ]
+    ["@typescript-eslint/strict-boolean-expressions", 34],
+    ["max-params", 7],
+    ["@typescript-eslint/no-unsafe-assignment", 7],
+    ["@typescript-eslint/no-explicit-any", 7],
+    ["unicorn/no-null", 4],
+    ["@typescript-eslint/await-thenable", 3],
+    ["sonarjs/no-invalid-await", 3],
+    ["@typescript-eslint/no-unsafe-call", 3],
+    ["@typescript-eslint/no-unused-vars", 3],
+    ["@typescript-eslint/no-unsafe-argument", 3],
+    ["unicorn/consistent-function-scoping", 3],
+    ["sonarjs/deprecation", 2],
+    ["sonarjs/no-redundant-optional", 2],
+    ["@typescript-eslint/require-await", 2],
+    ["@typescript-eslint/no-misused-promises", 1],
+    ["@typescript-eslint/no-unnecessary-type-assertion", 1],
+    ["sonarjs/pseudo-random", 1],
+    ["sonarjs/no-unused-vars", 1],
+    ["sonarjs/no-dead-store", 1],
+    ["sonarjs/cognitive-complexity", 1],
+    ["@typescript-eslint/no-unsafe-return", 1]
   ]
 }

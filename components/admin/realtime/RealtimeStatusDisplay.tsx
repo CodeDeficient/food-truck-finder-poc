@@ -11,12 +11,14 @@ import { type StatusMetric } from './useSystemMetrics';
 interface RealtimeStatusDisplayContentProps {
   readonly connectionError: string | undefined;
   readonly systemMetrics: StatusMetric[];
-  readonly scrapingJobs: {
-    active: number;
-    completed: number;
-    failed: number;
-    pending: number;
-  } | undefined;
+  readonly scrapingJobs:
+    | {
+        active: number;
+        completed: number;
+        failed: number;
+        pending: number;
+      }
+    | undefined;
   readonly alerts: SystemAlert[];
   readonly showDetails: boolean;
   readonly onToggleDetails: () => void;
@@ -43,9 +45,7 @@ function RealtimeStatusDisplayContent({
           <p className="text-sm text-red-600">{connectionError}</p>
         </div>
       )}
-      <SystemMetricsGrid
-        metrics={systemMetrics}
-      />
+      <SystemMetricsGrid metrics={systemMetrics} />
       <ScrapingJobsStatus scrapingJobs={scrapingJobs} />
       <SystemAlerts
         alerts={alerts}
@@ -53,10 +53,7 @@ function RealtimeStatusDisplayContent({
         onToggleDetails={onToggleDetails}
         onAcknowledgeAlert={onAcknowledgeAlert}
       />
-      <EventControls
-        recentEventsCount={recentEventsCount}
-        onClearEvents={onClearEvents}
-      />
+      <EventControls recentEventsCount={recentEventsCount} onClearEvents={onClearEvents} />
     </CardContent>
   );
 }
@@ -69,12 +66,14 @@ interface RealtimeStatusDisplayProps {
   readonly connect: () => void;
   readonly disconnect: () => void;
   readonly systemMetrics: StatusMetric[];
-  readonly scrapingJobs: {
-    active: number;
-    completed: number;
-    failed: number;
-    pending: number;
-  } | undefined;
+  readonly scrapingJobs:
+    | {
+        active: number;
+        completed: number;
+        failed: number;
+        pending: number;
+      }
+    | undefined;
   readonly alerts: SystemAlert[];
   readonly showDetails: boolean;
   readonly onToggleDetails: () => void;

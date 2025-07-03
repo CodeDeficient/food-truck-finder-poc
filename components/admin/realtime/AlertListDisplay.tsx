@@ -12,17 +12,18 @@ interface AlertListDisplayProps {
   readonly onAcknowledgeAlert: (alertId: string) => void;
 }
 
-export function AlertListDisplay({ alerts, showDetails, onToggleDetails, onAcknowledgeAlert }: Readonly<AlertListDisplayProps>) {
+export function AlertListDisplay({
+  alerts,
+  showDetails,
+  onToggleDetails,
+  onAcknowledgeAlert,
+}: Readonly<AlertListDisplayProps>) {
   const visibleAlerts = showDetails ? alerts : alerts.slice(0, 3);
   return (
     <>
       <div className="space-y-2">
         {visibleAlerts.map((alert) => (
-          <SystemAlertItem
-            key={alert.id}
-            alert={alert}
-            onAcknowledgeAlert={onAcknowledgeAlert}
-          />
+          <SystemAlertItem key={alert.id} alert={alert} onAcknowledgeAlert={onAcknowledgeAlert} />
         ))}
       </div>
       <AlertToggleButton

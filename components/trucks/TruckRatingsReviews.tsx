@@ -14,9 +14,7 @@ function StarRating({ rating }: Readonly<{ rating: number }>) {
         <Star
           key={star}
           className={`h-6 w-6 ${
-            star <= Math.round(rating)
-              ? 'text-yellow-400 fill-current'
-              : 'text-gray-300'
+            star <= Math.round(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
           }`}
         />
       ))}

@@ -11,7 +11,12 @@ interface CleanupHeaderProps {
   readonly onRunCleanup: () => void;
 }
 
-export function CleanupHeader({ isRunning, onPreview, onDryRun, onRunCleanup }: Readonly<CleanupHeaderProps>) {
+export function CleanupHeader({
+  isRunning,
+  onPreview,
+  onDryRun,
+  onRunCleanup,
+}: Readonly<CleanupHeaderProps>) {
   return (
     <div className="flex items-center justify-between">
       <div>

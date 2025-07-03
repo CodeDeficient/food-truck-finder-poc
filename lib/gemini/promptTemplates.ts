@@ -226,5 +226,5 @@ ${schema}
 
 ${instructions}
 `;
-  }
+  },
 };

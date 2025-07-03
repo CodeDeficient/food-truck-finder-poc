@@ -16,9 +16,7 @@ export function CleanupPreview({ previewData }: CleanupPreviewProps) {
     <Card>
       <CardHeader>
         <CardTitle>Cleanup Preview</CardTitle>
-        <CardDescription>
-          Estimated changes (based on sample of 10 trucks)
-        </CardDescription>
+        <CardDescription>Estimated changes (based on sample of 10 trucks)</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -42,7 +40,12 @@ export function CleanupPreview({ previewData }: CleanupPreviewProps) {
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-yellow-600">
-              ~{Math.round(((previewData as { estimated_improvements: number }).estimated_improvements / 10) * 100)}%
+              ~
+              {Math.round(
+                ((previewData as { estimated_improvements: number }).estimated_improvements / 10) *
+                  100,
+              )}
+              %
             </div>
             <div className="text-sm text-muted-foreground">Improvement Rate</div>
           </div>

@@ -3,11 +3,7 @@
 
 import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
-import {
-  NameType,
-  Payload,
-  ValueType,
-} from 'recharts/types/component/DefaultTooltipContent';
+import { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 import { cn } from '@/lib/utils';
 import { useTooltipLabel } from './chart/useTooltipLabel';
@@ -46,7 +42,9 @@ const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & {
     readonly config: ChartConfig;
-    readonly children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
+    readonly children: React.ComponentProps<
+      typeof RechartsPrimitive.ResponsiveContainer
+    >['children'];
   }
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId();
@@ -72,7 +70,9 @@ const ChartContainer = React.forwardRef<
 ChartContainer.displayName = 'Chart';
 
 const ChartStyle = ({ id, config }: { readonly id: string; readonly config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined);
+  const colorConfig = Object.entries(config).filter(
+    ([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined,
+  );
   if (colorConfig.length === 0) {
     return;
   }
@@ -105,9 +105,20 @@ function isNonEmptyArray<T>(arr: T[] | undefined): arr is T[] {
   return Array.isArray(arr) && arr.length > 0;
 }
 
-type TooltipFormatter = (value: number, name: string, item: unknown, index: number, payload: Record<string, unknown>[]) => React.ReactNode;
-type TooltipItemData = { name?: string; dataKey?: string; payload?: Record<string, unknown>; color?: string; value?: number };
-
+type TooltipFormatter = (
+  value: number,
+  name: string,
+  item: unknown,
+  index: number,
+  payload: Record<string, unknown>[],
+) => React.ReactNode;
+type TooltipItemData = {
+  name?: string;
+  dataKey?: string;
+  payload?: Record<string, unknown>;
+  color?: string;
+  value?: number;
+};
 
 type ChartTooltipIndicatorAndContentProps = {
   indicator: 'line' | 'dot' | 'dashed';
@@ -173,13 +184,17 @@ type ChartTooltipItemProps = {
 };
 
 function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltipItemProps>) {
-  const { indicator, hideIndicator, color, nestLabel, config, nameKey, tooltipLabel, formatter } = indicatorProps;
+  const { indicator, hideIndicator, color, nestLabel, config, nameKey, tooltipLabel, formatter } =
+    indicatorProps;
   const dataKey = typeof item.dataKey === 'string' ? item.dataKey : undefined;
 
   const itemData: TooltipItemData = {
     name: item.name === undefined ? undefined : String(item.name),
     dataKey,
-    payload: typeof item.payload === 'object' && item.payload ? (item.payload as Record<string, unknown>) : undefined,
+    payload:
+      typeof item.payload === 'object' && item.payload
+        ? (item.payload as Record<string, unknown>)
+        : undefined,
     color: typeof item.color === 'string' ? item.color : undefined,
     value: typeof item.value === 'number' ? item.value : undefined,
   };
@@ -187,7 +202,9 @@ function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltip
   const itemConfig = getPayloadConfigFromPayload(config, item, key) as Record<string, unknown>;
   const indicatorColor =
     color ??
-    (itemData.payload !== undefined && typeof itemData.payload === 'object' && 'fill' in itemData.payload
+    (itemData.payload !== undefined &&
+    typeof itemData.payload === 'object' &&
+    'fill' in itemData.payload
       ? String(itemData.payload.fill)
       : undefined) ??
     itemData.color;
@@ -255,21 +272,25 @@ const ChartTooltipContent = React.forwardRef<
       readonly nameKey?: string;
       readonly labelKey?: string;
     }
->(({
-  active,
-  payload,
-  className,
-  indicator = 'dot',
-  hideLabel = false,
-  hideIndicator = false,
-  label,
-  labelFormatter,
-  labelClassName,
-  formatter,
-  color,
-  nameKey,
-  labelKey,
-}, ref) => {
+>(
+  (
+    {
+      active,
+      payload,
+      className,
+      indicator = 'dot',
+      hideLabel = false,
+      hideIndicator = false,
+      label,
+      labelFormatter,
+      labelClassName,
+      formatter,
+      color,
+      nameKey,
+      labelKey,
+    },
+    ref,
+  ) => {
     const { config } = useChart();
     const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload : [];
     const tooltipLabel = useTooltipLabel({
@@ -279,7 +300,7 @@ const ChartTooltipContent = React.forwardRef<
       labelFormatter,
       labelClassName,
       config,
-      labelKey
+      labelKey,
     });
 
     if (active === false || !isNonEmptyArray(safePayload)) {
@@ -367,7 +388,9 @@ const ChartLegendContent = React.forwardRef<
     }
 >(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
   const { config } = useChart();
-  const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload) ? payload as Payload<ValueType, NameType>[] : [];
+  const safePayload: Payload<ValueType, NameType>[] = isNonEmptyArray(payload)
+    ? (payload as Payload<ValueType, NameType>[])
+    : [];
   if (!isNonEmptyArray(safePayload)) {
     return;
   }

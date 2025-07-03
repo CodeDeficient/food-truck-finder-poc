@@ -8,7 +8,7 @@ interface DataQualityCardProps {
     data_quality_score?: number;
     verification_status?: string;
     created_at?: string;
-    updated_at?: string
+    updated_at?: string;
   };
   readonly qualityCategory: QualityCategory;
 }
@@ -19,8 +19,8 @@ export function DataQualityCard({ truck, qualityCategory }: Readonly<DataQuality
       <CardHeader>
         <CardTitle>Data Quality Assessment</CardTitle>
         <CardDescription>
-          Quality score: {formatQualityScore(truck.data_quality_score)}
-          ({qualityCategory.label} quality)
+          Quality score: {formatQualityScore(truck.data_quality_score)}({qualityCategory.label}{' '}
+          quality)
         </CardDescription>
       </CardHeader>
       <CardContent>

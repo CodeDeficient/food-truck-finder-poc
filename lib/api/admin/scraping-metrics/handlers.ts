@@ -8,7 +8,10 @@ export async function verifyAdminAccess(request: Request): Promise<boolean> {
     if (authHeader == undefined) return false;
 
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
 
     if (error || !user) return false;
 
@@ -29,7 +32,7 @@ export async function handleGetRequest(): Promise<NextResponse> {
   return NextResponse.json({
     success: true,
     data: metrics,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 }
 
@@ -40,16 +43,20 @@ async function getScrapingMetrics(): Promise<RealtimeMetrics> {
     FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
   ]);
 
-  const typedJobs = allJobs as Array<{ status?: string; started_at?: string; completed_at?: string }>;
-  const successfulRuns = typedJobs.filter(job => job.status === 'completed').length;
-  const failedRuns = typedJobs.filter(job => job.status === 'failed').length;
+  const typedJobs = allJobs as Array<{
+    status?: string;
+    started_at?: string;
+    completed_at?: string;
+  }>;
+  const successfulRuns = typedJobs.filter((job) => job.status === 'completed').length;
+  const failedRuns = typedJobs.filter((job) => job.status === 'failed').length;
 
   return {
     scrapingJobs: {
-      active: typedJobs.filter(job => job.status === 'running').length,
+      active: typedJobs.filter((job) => job.status === 'running').length,
       completed: successfulRuns,
       failed: failedRuns,
-      pending: typedJobs.filter(job => job.status === 'pending').length,
+      pending: typedJobs.filter((job) => job.status === 'pending').length,
     },
     dataQuality: {
       averageScore: 0, // Placeholder, actual calculation might be complex

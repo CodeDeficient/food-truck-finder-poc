@@ -8,10 +8,7 @@ interface DistanceSliderSectionProps {
   readonly setFilters: (filters: SearchFilters) => void;
 }
 
-export function DistanceSliderSection({
-  filters,
-  setFilters
-}: DistanceSliderSectionProps) {
+export function DistanceSliderSection({ filters, setFilters }: DistanceSliderSectionProps) {
   return (
     <div>
       <label className="text-sm font-medium mb-2 block dark:text-gray-100">

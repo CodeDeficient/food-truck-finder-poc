@@ -26,12 +26,13 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   magenta: '\x1b[35m',
-  cyan: '\x1b[36m'
+  cyan: '\x1b[36m',
 };
 
 // Configuration
 const SUPABASE_PROJECT_ID = 'zkwliyjjkdnigizidlln';
-const PRODUCTION_URL = 'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app';
+const PRODUCTION_URL =
+  'https://food-truck-finder-poc-git-feat-s-20ec1c-codedeficients-projects.vercel.app';
 
 class OAuthVerifier {
   constructor() {
@@ -45,7 +46,7 @@ class OAuthVerifier {
     const envPath = path.join(process.cwd(), '.env.local');
     if (fs.existsSync(envPath)) {
       const envContent = fs.readFileSync(envPath, 'utf8');
-      envContent.split('\n').forEach(line => {
+      envContent.split('\n').forEach((line) => {
         const [key, value] = line.split('=');
         if (key && value) {
           process.env[key] = value.replace(/"/g, '');
@@ -89,10 +90,10 @@ class OAuthVerifier {
     const requiredVars = [
       'NEXT_PUBLIC_SUPABASE_URL',
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-      'SUPABASE_SERVICE_ROLE_KEY'
+      'SUPABASE_SERVICE_ROLE_KEY',
     ];
 
-    requiredVars.forEach(varName => {
+    requiredVars.forEach((varName) => {
       if (process.env[varName]) {
         this.logSuccess(`${varName} is configured`);
       } else {
@@ -140,7 +141,6 @@ class OAuthVerifier {
       } else {
         this.logWarning('User signup is disabled');
       }
-
     } catch (error) {
       this.logWarning(`Unable to fetch Supabase auth settings: ${error.message}`);
       this.logInfo('This is normal if the endpoint requires authentication');
@@ -153,11 +153,11 @@ class OAuthVerifier {
     const expectedUrls = [
       `${PRODUCTION_URL}/auth/callback`,
       'http://localhost:3000/auth/callback',
-      'http://localhost:3001/auth/callback'
+      'http://localhost:3001/auth/callback',
     ];
 
     this.logInfo('Expected redirect URLs for Google Cloud Console:');
-    expectedUrls.forEach(url => {
+    expectedUrls.forEach((url) => {
       this.log(`  • ${url}`, 'blue');
     });
 
@@ -174,7 +174,7 @@ class OAuthVerifier {
     const loginPagePath = path.join(process.cwd(), 'app', 'login', 'page.tsx');
     if (fs.existsSync(loginPagePath)) {
       this.logSuccess('Login page exists');
-      
+
       // Check if Google OAuth is implemented
       const loginContent = fs.readFileSync(loginPagePath, 'utf8');
       if (loginContent.includes('signInWithOAuth') && loginContent.includes('google')) {
@@ -199,7 +199,7 @@ class OAuthVerifier {
     return new Promise((resolve, reject) => {
       const request = https.get(url, (response) => {
         let data = '';
-        response.on('data', chunk => data += chunk);
+        response.on('data', (chunk) => (data += chunk));
         response.on('end', () => {
           if (response.statusCode >= 200 && response.statusCode < 300) {
             resolve(data);
@@ -232,12 +232,12 @@ class OAuthVerifier {
     this.log('   • Create OAuth 2.0 credentials', 'blue');
     this.log('   • Configure authorized redirect URIs', 'blue');
     this.log('   • Copy Client ID and Client Secret', 'blue');
-    
+
     this.log('\n2. Supabase Configuration:', 'yellow');
     this.log('   • Go to Authentication > Providers > Google', 'blue');
     this.log('   • Enable Google provider', 'blue');
     this.log('   • Add Client ID and Client Secret', 'blue');
-    
+
     this.log('\n3. Testing:', 'yellow');
     this.log('   • Test login flow in development', 'blue');
     this.log('   • Test login flow in production', 'blue');
@@ -282,7 +282,7 @@ class OAuthVerifier {
 
 // Run the verification
 const verifier = new OAuthVerifier();
-verifier.run().catch(error => {
+verifier.run().catch((error) => {
   console.error('Verification failed:', error);
   process.exit(1);
 });

@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { NextRequest } from 'next/server';
-import { supabase, supabaseAdmin, ScrapingJobService, FoodTruckService, type ScrapingJob, type FoodTruck } from '@/lib/supabase';
+import {
+  supabase,
+  supabaseAdmin,
+  ScrapingJobService,
+  FoodTruckService,
+  type ScrapingJob,
+  type FoodTruck,
+} from '@/lib/supabase';
 import { AdminEvent } from './types';
 
 interface RealtimeMetrics {
@@ -65,10 +72,10 @@ export function handleGetRequest(request: NextRequest): Response {
         timestamp: new Date().toISOString(),
         data: {
           message: 'Real-time admin dashboard connected',
-          connectionId: generateEventId()
-        }
+          connectionId: generateEventId(),
+        },
       };
-      
+
       controller.enqueue(encoder.encode(formatSSEMessage(connectionEvent)));
 
       const intervalId = setInterval(async () => {
@@ -82,23 +89,23 @@ export function handleGetRequest(request: NextRequest): Response {
         clearInterval(changeMonitorId);
         controller.close();
       });
-    }
+    },
   });
 
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Cache-Control'
-    }
+      'Access-Control-Allow-Headers': 'Cache-Control',
+    },
   });
 }
 
 async function sendHeartbeatEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
-  encoder: TextEncoder
+  encoder: TextEncoder,
 ): Promise<void> {
   try {
     const metrics = await fetchRealtimeMetrics();
@@ -106,7 +113,7 @@ async function sendHeartbeatEvent(
       id: generateEventId(),
       type: 'heartbeat',
       timestamp: new Date().toISOString(),
-      data: { ...metrics }
+      data: { ...metrics },
     };
 
     controller.enqueue(encoder.encode(formatSSEMessage(event)));
@@ -119,9 +126,9 @@ async function sendHeartbeatEvent(
       timestamp: new Date().toISOString(),
       data: {
         error: 'Failed to fetch metrics',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      severity: 'error'
+      severity: 'error',
     };
 
     controller.enqueue(encoder.encode(formatSSEMessage(errorEvent)));
@@ -130,7 +137,7 @@ async function sendHeartbeatEvent(
 
 function setupDataChangeMonitor(
   controller: ReadableStreamDefaultController<Uint8Array>,
-  encoder: TextEncoder
+  encoder: TextEncoder,
 ): NodeJS.Timeout {
   return setInterval(async () => {
     try {
@@ -147,16 +154,24 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
     let action: string;
 
     // Type guard to ensure 'body' has 'action' property and is a string
-    if (typeof body === 'object' && body !== null && 'action' in body && typeof (body as { action: string }).action === 'string') {
+    if (
+      typeof body === 'object' &&
+      body !== null &&
+      'action' in body &&
+      typeof (body as { action: string }).action === 'string'
+    ) {
       action = (body as { action: string }).action;
     } else {
-      return new Response(JSON.stringify({
-        success: false,
-        error: "Invalid request body: 'action' property is missing or not a string."
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Invalid request body: 'action' property is missing or not a string.",
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
     }
 
     switch (action) {
@@ -169,24 +184,30 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
       }
 
       default: {
-        return new Response(JSON.stringify({
-          success: false,
-          error: "That didn't work, please try again later."
-        }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "That didn't work, please try again later.",
+          }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
       }
     }
   } catch (error) {
     console.error('Realtime events POST error:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      error: "That didn't work, please try again later."
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "That didn't work, please try again later.",
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
   }
 }
 
@@ -197,26 +218,26 @@ async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
       active: recentJobs.filter((job: ScrapingJob) => job.status === 'running').length,
       completed: recentJobs.filter((job: ScrapingJob) => job.status === 'completed').length,
       failed: recentJobs.filter((job: ScrapingJob) => job.status === 'failed').length,
-      pending: recentJobs.filter((job: ScrapingJob) => job.status === 'pending').length
+      pending: recentJobs.filter((job: ScrapingJob) => job.status === 'pending').length,
     };
 
     const qualityStats = await FoodTruckService.getDataQualityStats();
     const dataQualityMetrics = {
       averageScore: qualityStats.avg_quality_score ?? 0,
       totalTrucks: qualityStats.total_trucks ?? 0,
-      recentChanges: 0
+      recentChanges: 0,
     };
 
     const systemHealth = {
       status: 'healthy' as const,
       uptime: process.uptime(),
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
 
     return {
       scrapingJobs: scrapingMetrics,
       dataQuality: dataQualityMetrics,
-      systemHealth
+      systemHealth,
     };
   } catch (error) {
     console.error('Error fetching realtime metrics:', error);
@@ -226,8 +247,8 @@ async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
       systemHealth: {
         status: 'error',
         uptime: 0,
-        lastUpdate: new Date().toISOString()
-      }
+        lastUpdate: new Date().toISOString(),
+      },
     };
   }
 }
@@ -243,7 +264,7 @@ function isScrapingJob(obj: unknown): obj is ScrapingJob {
 
 async function sendScrapingUpdateEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
-  encoder: TextEncoder
+  encoder: TextEncoder,
 ): Promise<void> {
   const recentJobs = await ScrapingJobService.getJobsByStatus('all');
 
@@ -253,15 +274,18 @@ async function sendScrapingUpdateEvent(
       type: 'scraping_update',
       timestamp: new Date().toISOString(),
       data: {
-        recentJobs: recentJobs.filter((job) => isScrapingJob(job)).map((job) => ({ // Fixed unicorn/no-array-callback-reference
-          id: job.id,
-          status: job.status,
-          started_at: job.started_at,
-          completed_at: job.completed_at
-        })),
-        count: recentJobs.length
+        recentJobs: recentJobs
+          .filter((job) => isScrapingJob(job))
+          .map((job) => ({
+            // Fixed unicorn/no-array-callback-reference
+            id: job.id,
+            status: job.status,
+            started_at: job.started_at,
+            completed_at: job.completed_at,
+          })),
+        count: recentJobs.length,
       },
-      severity: 'info'
+      severity: 'info',
     };
 
     controller.enqueue(encoder.encode(formatSSEMessage(event)));
@@ -270,7 +294,7 @@ async function sendScrapingUpdateEvent(
 
 async function sendDataQualityChangeEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
-  encoder: TextEncoder
+  encoder: TextEncoder,
 ): Promise<void> {
   const recentTrucksResult = await FoodTruckService.getAllTrucks(10, 0);
   const recentlyUpdated = recentTrucksResult.trucks.filter((truck: FoodTruck) => {
@@ -286,15 +310,15 @@ async function sendDataQualityChangeEvent(
       type: 'data_quality_change',
       timestamp: new Date().toISOString(),
       data: {
-        updatedTrucks: recentlyUpdated.map(truck => ({
+        updatedTrucks: recentlyUpdated.map((truck) => ({
           id: truck.id,
           name: truck.name,
           data_quality_score: truck.data_quality_score,
-          updated_at: truck.updated_at
+          updated_at: truck.updated_at,
         })),
-        count: recentlyUpdated.length
+        count: recentlyUpdated.length,
       },
-      severity: 'info'
+      severity: 'info',
     };
 
     controller.enqueue(encoder.encode(formatSSEMessage(event)));
@@ -303,7 +327,7 @@ async function sendDataQualityChangeEvent(
 
 async function monitorDataChanges(
   controller: ReadableStreamDefaultController<Uint8Array>,
-  encoder: TextEncoder
+  encoder: TextEncoder,
 ): Promise<void> {
   try {
     await sendScrapingUpdateEvent(controller, encoder);
@@ -324,22 +348,28 @@ function generateEventId(): string {
 
 async function handleHealthCheck(): Promise<Response> {
   const metrics = await fetchRealtimeMetrics();
-  return new Response(JSON.stringify({
-    success: true,
-    status: 'healthy',
-    metrics,
-    timestamp: new Date().toISOString()
-  }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return new Response(
+    JSON.stringify({
+      success: true,
+      status: 'healthy',
+      metrics,
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      headers: { 'Content-Type': 'application/json' },
+    },
+  );
 }
 
 function handleTriggerTestEvent(): Response {
-  return new Response(JSON.stringify({
-    success: true,
-    message: 'Test event triggered',
-    timestamp: new Date().toISOString()
-  }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return new Response(
+    JSON.stringify({
+      success: true,
+      message: 'Test event triggered',
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      headers: { 'Content-Type': 'application/json' },
+    },
+  );
 }

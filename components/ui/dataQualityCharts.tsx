@@ -17,9 +17,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 // SOTA color scheme for data quality categories
 const QUALITY_COLORS = [
-  '#22c55e',    // Green for high quality (≥80%)
-  '#f59e0b',  // Amber for medium quality (60-79%)
-  '#ef4444',     // Red for low quality (<60%)
+  '#22c55e', // Green for high quality (≥80%)
+  '#f59e0b', // Amber for medium quality (60-79%)
+  '#ef4444', // Red for low quality (<60%)
 ] as const;
 
 interface DataQualityStats {
@@ -59,7 +59,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
       >
         <p className="font-medium">{`${label ?? 'Unknown'}: ${payload[0].value}`}</p>
         <p className="text-sm text-gray-600">
-          {payload[0].payload.percentage != undefined && payload[0].payload.percentage !== '' && `${payload[0].payload.percentage}% of total`}
+          {payload[0].payload.percentage != undefined &&
+            payload[0].payload.percentage !== '' &&
+            `${payload[0].payload.percentage}% of total`}
         </p>
       </div>
     );
@@ -67,7 +69,9 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 };
 
 // Quality Distribution Pie Chart Component
-const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = ({ qualityStats }) => {
+const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = ({
+  qualityStats,
+}) => {
   const data = [
     {
       name: 'High Quality',
@@ -77,7 +81,9 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
     {
       name: 'Medium Quality',
       value: qualityStats.medium_quality_count,
-      percentage: ((qualityStats.medium_quality_count / qualityStats.total_trucks) * 100).toFixed(1),
+      percentage: ((qualityStats.medium_quality_count / qualityStats.total_trucks) * 100).toFixed(
+        1,
+      ),
     },
     {
       name: 'Low Quality',
@@ -90,9 +96,7 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
     <Card>
       <CardHeader>
         <CardTitle>Quality Distribution</CardTitle>
-        <CardDescription>
-          Breakdown of food trucks by data quality categories
-        </CardDescription>
+        <CardDescription>Breakdown of food trucks by data quality categories</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -102,22 +106,15 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({
-                name,
-                percentage
-              }: {
-                name?: string;
-                percentage?: string;
-              }) => `${name ?? 'Unknown'}: ${percentage ?? '0'}%`}
+              label={({ name, percentage }: { name?: string; percentage?: string }) =>
+                `${name ?? 'Unknown'}: ${percentage ?? '0'}%`
+              }
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"
             >
               {data.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill={Object.values(QUALITY_COLORS)[index]} 
-                />
+                <Cell key={`cell-${index}`} fill={Object.values(QUALITY_COLORS)[index]} />
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />
@@ -129,7 +126,9 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
 };
 
 // Verification Status Bar Chart Component
-const VerificationStatusChart: React.FC<{ qualityStats: DataQualityStats }> = ({ qualityStats }) => {
+const VerificationStatusChart: React.FC<{ qualityStats: DataQualityStats }> = ({
+  qualityStats,
+}) => {
   const data = [
     {
       name: 'Verified',
@@ -152,9 +151,7 @@ const VerificationStatusChart: React.FC<{ qualityStats: DataQualityStats }> = ({
     <Card>
       <CardHeader>
         <CardTitle>Verification Status</CardTitle>
-        <CardDescription>
-          Current verification status of all food trucks
-        </CardDescription>
+        <CardDescription>Current verification status of all food trucks</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -194,15 +191,11 @@ const QualityScoreOverview: React.FC<{ qualityStats: DataQualityStats }> = ({ qu
     <Card>
       <CardHeader>
         <CardTitle>Overall Quality Score</CardTitle>
-        <CardDescription>
-          Average data quality score across all food trucks
-        </CardDescription>
+        <CardDescription>Average data quality score across all food trucks</CardDescription>
       </CardHeader>
       <CardContent className="flex items-center justify-center">
         <div className="text-center">
-          <div className={`text-6xl font-bold ${scoreColor}`}>
-            {averageScore}%
-          </div>
+          <div className={`text-6xl font-bold ${scoreColor}`}>{averageScore}%</div>
           <p className="text-sm text-muted-foreground mt-2">
             Based on {qualityStats.total_trucks} food trucks
           </p>

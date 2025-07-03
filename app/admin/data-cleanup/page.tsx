@@ -23,7 +23,13 @@ function PageHeader() {
 }
 
 // Helper component for individual feature cards
-function FeatureCard({ title, icon, value, description, colorClass }: {
+function FeatureCard({
+  title,
+  icon,
+  value,
+  description,
+  colorClass,
+}: {
   readonly title: string;
   readonly icon: React.ReactNode;
   readonly value: string;
@@ -81,7 +87,10 @@ function FeatureOverviewCards() {
 }
 
 // Helper component for feature lists
-function FeatureList({ title, items }: {
+function FeatureList({
+  title,
+  items,
+}: {
   readonly title: string;
   readonly items: Array<{ readonly icon: React.ReactNode; readonly text: string }>;
 }) {
@@ -103,17 +112,35 @@ function FeatureList({ title, items }: {
 // Helper component for system features
 function SystemFeatures() {
   const duplicatePreventionItems = [
-    { icon: <Merge className="h-3 w-3 text-purple-600" />, text: "Advanced similarity detection (85%+ accuracy)" },
-    { icon: <Shield className="h-3 w-3 text-green-600" />, text: "Multi-field matching (name, location, contact)" },
-    { icon: <Zap className="h-3 w-3 text-blue-600" />, text: "Intelligent merging with data preservation" },
-    { icon: <RefreshCw className="h-3 w-3 text-yellow-600" />, text: "Real-time duplicate checking in pipeline" },
+    {
+      icon: <Merge className="h-3 w-3 text-purple-600" />,
+      text: 'Advanced similarity detection (85%+ accuracy)',
+    },
+    {
+      icon: <Shield className="h-3 w-3 text-green-600" />,
+      text: 'Multi-field matching (name, location, contact)',
+    },
+    {
+      icon: <Zap className="h-3 w-3 text-blue-600" />,
+      text: 'Intelligent merging with data preservation',
+    },
+    {
+      icon: <RefreshCw className="h-3 w-3 text-yellow-600" />,
+      text: 'Real-time duplicate checking in pipeline',
+    },
   ];
 
   const automatedCleanupItems = [
-    { icon: <RefreshCw className="h-3 w-3 text-red-600" />, text: "Placeholder and mock data removal" },
-    { icon: <Shield className="h-3 w-3 text-blue-600" />, text: "Phone number normalization" },
-    { icon: <Zap className="h-3 w-3 text-green-600" />, text: "GPS coordinate validation and correction" },
-    { icon: <Merge className="h-3 w-3 text-purple-600" />, text: "Quality score recalculation" },
+    {
+      icon: <RefreshCw className="h-3 w-3 text-red-600" />,
+      text: 'Placeholder and mock data removal',
+    },
+    { icon: <Shield className="h-3 w-3 text-blue-600" />, text: 'Phone number normalization' },
+    {
+      icon: <Zap className="h-3 w-3 text-green-600" />,
+      text: 'GPS coordinate validation and correction',
+    },
+    { icon: <Merge className="h-3 w-3 text-purple-600" />, text: 'Quality score recalculation' },
   ];
 
   return (
@@ -199,8 +226,12 @@ function UsageGuidelines() {
           <div>
             <h4 className="font-semibold text-sm mb-2">Before Running Cleanup:</h4>
             <ul className="space-y-1 text-sm text-muted-foreground ml-4">
-              <li>1. Always run a <strong>Preview</strong> first to see estimated changes</li>
-              <li>2. Use <strong>Dry Run</strong> mode to test operations without making changes</li>
+              <li>
+                1. Always run a <strong>Preview</strong> first to see estimated changes
+              </li>
+              <li>
+                2. Use <strong>Dry Run</strong> mode to test operations without making changes
+              </li>
               <li>3. Review the operations you want to run - deselect any you don't need</li>
               <li>4. Consider running operations individually for better control</li>
             </ul>
@@ -209,10 +240,18 @@ function UsageGuidelines() {
           <div>
             <h4 className="font-semibold text-sm mb-2">Recommended Schedule:</h4>
             <ul className="space-y-1 text-sm text-muted-foreground ml-4">
-              <li>• <strong>Daily:</strong> Quality score updates and placeholder removal</li>
-              <li>• <strong>Weekly:</strong> Phone normalization and coordinate fixes</li>
-              <li>• <strong>Monthly:</strong> Full duplicate detection and merging</li>
-              <li>• <strong>As needed:</strong> Manual duplicate resolution</li>
+              <li>
+                • <strong>Daily:</strong> Quality score updates and placeholder removal
+              </li>
+              <li>
+                • <strong>Weekly:</strong> Phone normalization and coordinate fixes
+              </li>
+              <li>
+                • <strong>Monthly:</strong> Full duplicate detection and merging
+              </li>
+              <li>
+                • <strong>As needed:</strong> Manual duplicate resolution
+              </li>
             </ul>
           </div>
 

@@ -19,7 +19,7 @@ export function RatingsReviewsCard({ truck }: RatingsReviewsCardProps) {
         <CardDescription>Customer feedback and ratings</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {(truck.average_rating === undefined) ? (
+        {truck.average_rating === undefined ? (
           <p className="text-gray-400 text-sm">No ratings available</p>
         ) : (
           <div className="flex items-center gap-4">
@@ -36,9 +36,11 @@ export function RatingsReviewsCard({ truck }: RatingsReviewsCardProps) {
                   />
                 ))}
               </div>
-              <span className="text-lg font-semibold">{(truck.average_rating ?? 0).toFixed(1)}</span>
+              <span className="text-lg font-semibold">
+                {(truck.average_rating ?? 0).toFixed(1)}
+              </span>
             </div>
-            {(truck.review_count !== undefined) && (
+            {truck.review_count !== undefined && (
               <div className="flex items-center gap-1 text-gray-600">
                 <Users className="h-4 w-4" />
                 <span className="text-sm">{truck.review_count} reviews</span>

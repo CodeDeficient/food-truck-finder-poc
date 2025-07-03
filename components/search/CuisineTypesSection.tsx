@@ -13,13 +13,11 @@ interface CuisineTypesSectionProps {
 export function CuisineTypesSection({
   filters,
   setFilters,
-  cuisineTypes
+  cuisineTypes,
 }: CuisineTypesSectionProps) {
   return (
     <div>
-      <label className="text-sm font-medium mb-2 block dark:text-gray-100">
-        Cuisine Type
-      </label>
+      <label className="text-sm font-medium mb-2 block dark:text-gray-100">Cuisine Type</label>
       <div className="flex flex-wrap gap-2">
         {cuisineTypes.map((cuisine) => (
           <Badge

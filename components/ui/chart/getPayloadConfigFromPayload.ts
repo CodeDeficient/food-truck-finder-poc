@@ -15,7 +15,10 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
 
   let configLabelKey: string = key;
 
-  if (key in (payload as Record<string, unknown>) && typeof (payload as Record<string, unknown>)[key] === 'string') {
+  if (
+    key in (payload as Record<string, unknown>) &&
+    typeof (payload as Record<string, unknown>)[key] === 'string'
+  ) {
     configLabelKey = (payload as Record<string, unknown>)[key] as string;
   } else if (
     payloadPayload !== undefined &&

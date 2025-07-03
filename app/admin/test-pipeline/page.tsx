@@ -61,7 +61,7 @@ interface HandleTestPipelineSubmitParams {
 // Helper function extracted from TestPipelinePage to handle form submission
 async function handleTestPipelineSubmit(
   event: FormEvent<HTMLFormElement>,
-  params: HandleTestPipelineSubmitParams
+  params: HandleTestPipelineSubmitParams,
 ) {
   event.preventDefault();
   params.setIsLoading(true);

@@ -5,12 +5,15 @@ import { StageResult, TestPipelineResults } from '@/lib/types';
 
 interface TestResultsDisplayProps {
   readonly results?: TestPipelineResults;
-  readonly renderStageResult: (stageName: string, result?: StageResult) => React.ReactElement | undefined;
+  readonly renderStageResult: (
+    stageName: string,
+    result?: StageResult,
+  ) => React.ReactElement | undefined;
 }
 
 export function TestResultsDisplay({
   results,
-  renderStageResult
+  renderStageResult,
 }: Readonly<TestResultsDisplayProps>) {
   if (!results || results.error !== undefined) return;
 

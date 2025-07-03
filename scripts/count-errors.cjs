@@ -18,7 +18,7 @@ function countErrors() {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
       timeout: 120000, // 2 minutes timeout
-      maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+      maxBuffer: 1024 * 1024 * 10, // 10MB buffer
     });
 
     console.error('ESLint completed successfully');
@@ -47,13 +47,12 @@ function countErrors() {
       errors: totalErrors,
       warnings: totalWarnings,
       files: results.length,
-      filesWithErrors: results.filter(f => f.errorCount > 0).length
+      filesWithErrors: results.filter((f) => f.errorCount > 0).length,
     };
 
     fs.writeFileSync('.current-metrics.json', JSON.stringify(metrics, null, 2));
 
     return totalErrors;
-
   } catch (error) {
     console.error('ESLint failed:', error.message);
 
@@ -77,12 +76,11 @@ function countErrors() {
         errors: totalErrors,
         warnings: results.reduce((total, file) => total + file.warningCount, 0),
         files: results.length,
-        filesWithErrors: results.filter(f => f.errorCount > 0).length
+        filesWithErrors: results.filter((f) => f.errorCount > 0).length,
       };
 
       fs.writeFileSync('.current-metrics.json', JSON.stringify(metrics, null, 2));
       return totalErrors;
-
     } catch (parseError) {
       console.error('Could not parse ESLint output as JSON');
 
