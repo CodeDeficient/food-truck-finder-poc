@@ -78,9 +78,9 @@ export function categorizeQualityScore(score: number | null | undefined): Qualit
     return QUALITY_CATEGORIES.high;
   } else if (score >= QUALITY_THRESHOLDS.medium) {
     return QUALITY_CATEGORIES.medium;
-  } else {
+  } 
     return QUALITY_CATEGORIES.low;
-  }
+  
 }
 
 /**

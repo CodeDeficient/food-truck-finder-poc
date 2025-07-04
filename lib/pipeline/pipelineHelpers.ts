@@ -135,7 +135,7 @@ export async function handleDuplicateCheck(
 
   if (duplicateCheck.isDuplicate && duplicateCheck.bestMatch) {
     return await handleDuplicate(jobId, truckData, duplicateCheck);
-  } else {
+  } 
     // No duplicates found, create new truck
     const truck = await FoodTruckService.createTruck(truckData);
     if ('error' in truck) {
@@ -143,7 +143,7 @@ export async function handleDuplicateCheck(
       throw new Error(`Failed to create truck: ${truck.error}`);
     }
     return truck;
-  }
+  
 }
 
 async function handleDuplicate(
@@ -178,12 +178,12 @@ async function handleDuplicate(
         throw new Error(`Failed to merge or create truck: ${newTruck.error}`);
       }
       return newTruck;
-    } else {
+    } 
       console.info(
         `Job ${jobId}: Merged data with existing truck: ${truck.name} (ID: ${truck.id})`,
       );
       return truck;
-    }
+    
   } else if (bestMatch.recommendation === 'update') {
     const truck = await FoodTruckService.updateTruck(bestMatch.existingTruck.id, truckData);
     if ('error' in truck) {
