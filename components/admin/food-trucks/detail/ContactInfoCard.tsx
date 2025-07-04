@@ -11,6 +11,19 @@ interface ContactInfoCardProps {
   };
 }
 
+/**
+ * Renders the contact information for a specific truck in a card format.
+ * @example
+ * ContactInfoCard({ truck: { contact_info: { phone: '1234567890', email: 'example@mail.com', website: 'example.com' }, social_media: [] } })
+ * Returns a JSX element displaying the contact information including phone, email, website, and social media links.
+ * @param {Readonly<ContactInfoCardProps>} truck - Contains contact information and social media details of the truck.
+ * @returns {JSX.Element} A card component containing contact information fields and social media links.
+ * @description
+ *   - Uses several ContactField components to display phone, email, and website details.
+ *   - Includes a social media section using the SocialMediaLinks component.
+ *   - Handles cases where contact information might be unavailable, displaying an appropriate message.
+ *   - Designed to be used in the admin panel for the food truck detail page.
+ */
 export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
   return (
     <Card>

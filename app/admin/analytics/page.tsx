@@ -12,6 +12,23 @@ import {
 import { BarChart3 } from 'lucide-react';
 
 // API Usage Statistics Table Component
+/**
+ * Renders a table displaying API usage statistics.
+ * @example
+ * APIUsageTable({usageStats: [{id: '1', service_name: 'ServiceA', usage_date: '2023-01-01', requests_count: 100, tokens_used: 50}]})
+ * // Renders a card with a table showing service name, usage date, request count, and tokens used.
+ * @param {Object} {usageStats} - An object containing usage statistics.
+ * @param {Array} usageStats - Array of usage statistic objects.
+ * @param {string} usageStats[].id - Unique identifier for the statistic entry.
+ * @param {string} usageStats[].service_name - Name of the service.
+ * @param {string} usageStats[].usage_date - Date of the usage in ISO format.
+ * @param {number} usageStats[].requests_count - Number of requests made.
+ * @param {number} usageStats[].tokens_used - Number of tokens used.
+ * @returns {JSX.Element} A React component rendering API usage statistics in a table format.
+ * @description
+ *   - Transforms each usage date into a locale-specific date string.
+ *   - Iterates through `usageStats` to populate table rows.
+ */
 function APIUsageTable({
   usageStats,
 }: {
@@ -58,6 +75,17 @@ function APIUsageTable({
 }
 
 // Data Trends Placeholder Component
+/**
+ * Renders a placeholder component to represent food truck data trends.
+ * @example
+ * DataTrendsPlaceholder()
+ * <Card> ... </Card>
+ * @returns {JSX.Element} A JSX element containing placeholder content for future data trend visualizations.
+ * @description
+ *   - Utilizes the Card component to encapsulate the placeholder content.
+ *   - Displays a header specifying the focus on food truck data trends.
+ *   - Includes a notification for upcoming advanced charts and visualizations.
+ */
 function DataTrendsPlaceholder() {
   return (
     <Card>

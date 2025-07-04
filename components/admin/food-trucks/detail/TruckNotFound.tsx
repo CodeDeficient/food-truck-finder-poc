@@ -3,6 +3,17 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
+/**
+ * Displays a message indicating that the requested food truck could not be found.
+ * @example
+ * TruckNotFound()
+ * <div className="flex flex-col items-center ...">...</div>
+ * @returns {JSX.Element} A JSX element containing the "Not Found" message and a link to go back to the food trucks list.
+ * @description
+ *   - Utilizes Tailwind CSS classes for styling.
+ *   - Includes navigation back to the food trucks page via a button.
+ *   - Applies flexbox properties to center content vertically and horizontally.
+ */
 export function TruckNotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px]">

@@ -21,6 +21,23 @@ function AccessDeniedHeader() {
 }
 
 // Helper component for the action buttons
+/**
+ * Renders action buttons for navigating to home and signing out
+ * @example
+ * ActionButtons({
+ *   onGoHome: () => console.log("Going home"),
+ *   onSignOut: async () => await signOutService()
+ * })
+ * Returns JSX containing two buttons for home navigation and sign out
+ * @param {Object} props - An object containing action handlers.
+ * @param {Function} props.onGoHome - A function that navigates the user to the home page.
+ * @param {Promise<Function>} props.onSignOut - An async function that signs the user out, returning a promise.
+ * @returns {JSX.Element} A div containing two button elements with respective actions.
+ * @description
+ *   - The sign-out button handles promise rejection and logs a warning on failure.
+ *   - Buttons are styled using Tailwind CSS classes.
+ *   - Button actions are defined by the functions passed as props.
+ */
 function ActionButtons({
   onGoHome,
   onSignOut,
@@ -48,6 +65,18 @@ function ActionButtons({
   );
 }
 
+/**
+ * Renders a page indicating access is denied and provides navigation options for the user.
+ * @example
+ * AccessDeniedPage()
+ * Returns a React component for the access denied page.
+ * @returns {JSX.Element} A JSX element rendering the access denied page.
+ * @description
+ *   - Utilizes the router from Next.js to navigate to the home page upon certain actions.
+ *   - Integrates with Supabase authentication to manage user sign-out operations.
+ *   - Provides guidance to users for restricted access and contacts for further assistance.
+ *   - Features customizable components such as Card and AccessDeniedHeader for UI structure.
+ */
 export default function AccessDeniedPage() {
   const router = useRouter();
 

@@ -13,6 +13,17 @@ import { useSystemMetrics } from './realtime/useSystemMetrics';
 import { useSystemAlertsLogic } from './realtime/useSystemAlertsLogic';
 import { RealtimeStatusDisplay } from './realtime/RealtimeStatusDisplay';
 
+/**
+ * Displays the real-time status of system metrics and events.
+ * @example
+ * RealtimeStatusIndicator()
+ * // Returns a JSX component displaying connection status, system metrics, alerts, and events.
+ * @returns {JSX.Element} A component providing visual indicators for connection status, metrics, alerts, and the ability to manage events.
+ * @description
+ *   - Connects automatically with configurations for reconnection attempts and intervals.
+ *   - Manages alerts and recent events with acknowledgement and clearing capabilities.
+ *   - Utilizes hooks to derive system metrics and alert logic.
+ */
 export function RealtimeStatusIndicator() {
   const {
     isConnected,
