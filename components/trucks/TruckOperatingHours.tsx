@@ -62,7 +62,7 @@ export function TruckOperatingHours({ truck }: TruckOperatingHoursProps) {
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-gray-100">
-          <Clock className="h-5 w-5" />
+          <Clock className="size-5" />
           Operating Hours
         </CardTitle>
         <CardDescription className="dark:text-gray-400">Daily schedule</CardDescription>

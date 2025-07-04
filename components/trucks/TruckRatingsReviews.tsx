@@ -26,7 +26,7 @@ function StarRating({ rating }: Readonly<{ rating: number }>) {
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={`h-6 w-6 ${
+          className={`size-6 ${
             star <= Math.round(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
           }`}
         />
@@ -56,7 +56,7 @@ export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-gray-100">
-          <Star className="h-5 w-5" />
+          <Star className="size-5" />
           Ratings & Reviews
         </CardTitle>
         <CardDescription className="dark:text-gray-400">Customer feedback</CardDescription>
@@ -71,7 +71,7 @@ export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
           </div>
           {truck.review_count !== undefined && (
             <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-              <Users className="h-4 w-4" />
+              <Users className="size-4" />
               <span className="text-sm">{truck.review_count} reviews</span>
             </div>
           )}
