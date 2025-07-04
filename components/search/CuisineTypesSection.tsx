@@ -10,6 +10,21 @@ interface CuisineTypesSectionProps {
   readonly cuisineTypes: readonly string[];
 }
 
+/**
+ * Renders a section for selecting cuisine types with interactive badges.
+ * @example
+ * CuisineTypesSection({filters, setFilters, cuisineTypes})
+ * <div>...</div>
+ * @param {Object} props - Properties passed to the component.
+ * @param {Object} props.filters - Current state of the cuisine filters.
+ * @param {Function} props.setFilters - Function to update the filter state.
+ * @param {Array} props.cuisineTypes - List of cuisine types to display.
+ * @returns {JSX.Element} Returns a div containing cuisine type badges.
+ * @description
+ *   - Uses the `Badge` component to display each cuisine type.
+ *   - Allows toggling a cuisine type filter by clicking on a badge.
+ *   - Applies a different visual style if the cuisine type is selected.
+ */
 export function CuisineTypesSection({
   filters,
   setFilters,
