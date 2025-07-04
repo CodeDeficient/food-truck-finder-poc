@@ -4,8 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FoodTruck } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { TruckCardHeader } from './trucks/TruckCardHeader';
-import { TruckCardContent } from './trucks/TruckCardContent';
+import { UITruckCardContent as TruckCardContent } from '@/components/ui/TruckCardContent';
+
 import { TruckCardFooter } from './trucks/TruckCardFooter';
+
+
 
 interface TruckCardProps {
   readonly truck: FoodTruck;
