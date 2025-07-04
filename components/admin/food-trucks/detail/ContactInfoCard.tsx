@@ -16,7 +16,7 @@ export function ContactInfoCard({ truck }: Readonly<ContactInfoCardProps>) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Phone className="h-5 w-5" />
+          <Phone className="size-5" />
           Contact Information
         </CardTitle>
         <CardDescription>Phone, email, website, and social media</CardDescription>

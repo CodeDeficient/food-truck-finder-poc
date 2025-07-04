@@ -42,7 +42,7 @@ function getConnectionStatusMetric(
       if (connectionError !== undefined) return 'error';
       return 'healthy';
     })(),
-    icon: isConnected ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />,
+    icon: isConnected ? <Wifi className="size-4" /> : <WifiOff className="size-4" />,
   };
 }
 
@@ -51,7 +51,7 @@ function getActiveJobsMetric(latestMetrics?: LatestMetrics): StatusMetric {
     label: 'Active Jobs',
     value: latestMetrics?.scrapingJobs?.active ?? 0,
     status: (latestMetrics?.scrapingJobs?.active ?? 0) > 0 ? 'healthy' : 'warning',
-    icon: <Activity className="h-4 w-4" />,
+    icon: <Activity className="size-4" />,
   };
 }
 
@@ -65,7 +65,7 @@ function getSystemHealthMetric(latestMetrics?: LatestMetrics): StatusMetric {
       if (healthStatus === 'warning') return 'warning';
       return 'error';
     })(),
-    icon: <Server className="h-4 w-4" />,
+    icon: <Server className="size-4" />,
   };
 }
 
@@ -81,7 +81,7 @@ function getDataQualityMetric(latestMetrics?: LatestMetrics): StatusMetric {
       if (score >= 60) return 'warning';
       return 'error';
     })(),
-    icon: <Database className="h-4 w-4" />,
+    icon: <Database className="size-4" />,
   };
 }
 

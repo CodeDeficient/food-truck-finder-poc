@@ -21,7 +21,7 @@ export function TruckDetailHeader({
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
           <Link href="/admin/food-trucks">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="size-4 mr-2" />
             Back
           </Link>
         </Button>
@@ -34,7 +34,7 @@ export function TruckDetailHeader({
         <Badge className={badgeClasses}>{qualityCategory.label} Quality</Badge>
         <Button asChild>
           <Link href={`/admin/food-trucks/${truck.id}/edit`}>
-            <Edit className="h-4 w-4 mr-2" />
+            <Edit className="size-4 mr-2" />
             Edit
           </Link>
         </Button>

@@ -24,18 +24,18 @@ export function ConnectionStatusHeader({
     <CardHeader className="pb-3">
       <div className="flex items-center justify-between">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Zap className="h-5 w-5" />
+          <Zap className="size-5" />
           Real-time System Status
         </CardTitle>
         <div className="flex items-center gap-2">
-          {isConnected && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />}
+          {isConnected && <div className="size-2 bg-green-500 rounded-full animate-pulse" />}
           <Button
             variant="outline"
             size="sm"
             onClick={isConnected ? disconnect : connect}
             disabled={isConnecting}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${isConnecting ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`size-4 mr-2 ${isConnecting ? 'animate-spin' : ''}`} />
             {(() => {
               if (isConnected) return 'Disconnect';
               if (isConnecting) return 'Connecting...';
