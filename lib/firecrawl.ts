@@ -357,7 +357,7 @@ export class FirecrawlService {
   async scrapeWithRetry(url: string, maxRetries = 3, backoffMs = 1000): Promise<FirecrawlResponse> {
     let lastError: Error;
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    for (let attempt = 1; attempt <= maxRetries; attempt+=1) {
       try {
         const result = await this.scrapeUrl(url);
 
