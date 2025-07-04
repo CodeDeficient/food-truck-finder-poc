@@ -44,12 +44,20 @@ function getComponentImports(filePath) {
 *   - Recursion is employed to traverse subdirectories and gather files.
 *   - Filters out non '.tsx' files from the final result.
 */
-function getAllTSXFiles(dirPath) {
+function getAllTSXFiles(dirPath, baseDir = dirPath) {
   const files = fs.readdirSync(dirPath, { withFileTypes: true });
   return files.reduce((acc, file) => {
-    const fullPath = path.join(dirPath, file.name);
+    const fullPath = path.resolve(dirPath, file.name); // Use resolve for canonical path
+    const relativePath = path.relative(baseDir, fullPath);
+
+    // Prevent path traversal: ensure the resolved path is still within the base directory
+    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+      console.warn(`Skipping potentially unsafe path: ${fullPath}`);
+      return acc;
+    }
+
     if (file.isDirectory()) {
-      return acc.concat(getAllTSXFiles(fullPath));
+      return acc.concat(getAllTSXFiles(fullPath, baseDir)); // Pass baseDir in recursion
     } else if (path.extname(fullPath) === '.tsx') {
       return acc.concat(fullPath);
     }
