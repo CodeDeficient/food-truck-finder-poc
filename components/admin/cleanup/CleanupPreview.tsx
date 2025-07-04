@@ -7,6 +7,17 @@ interface CleanupPreviewProps {
   readonly previewData: unknown;
 }
 
+/**
+* Renders a card component displaying cleanup preview data for trucks.
+* @example
+* CleanupPreview({ previewData: { estimated_improvements: 5, estimated_duplicates: 2, operations: [] } })
+* Returns a JSX element with estimated changes summary.
+* @param {CleanupPreviewProps} { previewData } - Object containing the preview data for cleanup estimation.
+* @returns {JSX.Element | undefined} Returns a card element showcasing the estimated truck improvements, duplicates found, operations ready, and improvement rate; undefined if previewData is not provided.
+* @description
+*   - Utilizes conditionally rendered data based on the `previewData` property values.
+*   - The improvement rate is calculated approximately as a percentage of estimated improvements out of a sample of 10 trucks.
+*/
 export function CleanupPreview({ previewData }: CleanupPreviewProps) {
   if (previewData === undefined) {
     return;

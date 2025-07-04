@@ -49,6 +49,18 @@ interface TooltipProps {
   readonly label?: string;
 }
 
+/**
+* Renders a tooltip for data quality charts when active, displaying label and percentage information.
+* @example
+* renderTooltip({ active: true, payload: [{ value: 10, payload: { percentage: '20' } }], label: 'Data Point' })
+* returns a tooltip element containing "Data Point: 10" and "20% of total"
+* @param {TooltipProps} { active, payload, label } - Tooltip properties including active state, data payload, and label.
+* @returns {JSX.Element} A JSX element representing the tooltip.
+* @description
+*   - Ensures the tooltip is only rendered when active and payload is valid.
+*   - Utilizes optional chaining and default values for label display.
+*   - Percentage shown only if defined and not empty in the payload.
+*/
 const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active === true && payload != undefined && payload.length > 0) {
     return (
@@ -69,6 +81,22 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
 };
 
 // Quality Distribution Pie Chart Component
+/**
+ * Renders a pie chart displaying the quality distribution of food trucks.
+ * @example
+ * renderQualityDistribution({ high_quality_count: 20, medium_quality_count: 30, low_quality_count: 10, total_trucks: 60 })
+ * // Returns a JSX element with a pie chart.
+ * @param {Object} qualityStats - An object containing statistics of food truck data quality.
+ * @param {number} qualityStats.high_quality_count - Count of high-quality trucks.
+ * @param {number} qualityStats.medium_quality_count - Count of medium-quality trucks.
+ * @param {number} qualityStats.low_quality_count - Count of low-quality trucks.
+ * @param {number} qualityStats.total_trucks - Total number of trucks.
+ * @returns {JSX.Element} JSX element representing the pie chart for quality distribution.
+ * @description
+ *   - Utilizes the 'ResponsiveContainer', 'PieChart', 'Pie', and 'Tooltip' components for visualization.
+ *   - Uses 'QUALITY_COLORS' for the custom colors of the pie chart slices.
+ *   - Displays tooltips and labels with percentage data for each section.
+ */
 const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = ({
   qualityStats,
 }) => {
@@ -126,6 +154,21 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
 };
 
 // Verification Status Bar Chart Component
+/**
+ * Renders a card component displaying a bar chart of verification status statistics.
+ * @example
+ * renderVerificationStatusCard({ verified_count: 10, pending_count: 5, flagged_count: 2, total_trucks: 20 })
+ * <Card>...</Card>
+ * @param {Object} qualityStats - An object containing verification statistics.
+ * @param {number} qualityStats.verified_count - The count of verified trucks.
+ * @param {number} qualityStats.pending_count - The count of trucks pending verification.
+ * @param {number} qualityStats.flagged_count - The count of flagged trucks.
+ * @param {number} qualityStats.total_trucks - The total number of trucks.
+ * @returns {JSX.Element} Returns a JSX Card element displaying the bar chart.
+ * @description
+ *   - Calculates the percentage of each verification status to the total number of trucks.
+ *   - Utilizes the Recharts library to render a responsive bar chart.
+ */
 const VerificationStatusChart: React.FC<{ qualityStats: DataQualityStats }> = ({
   qualityStats,
 }) => {
@@ -183,6 +226,20 @@ const getQualityThreshold = (score: number): string => {
 };
 
 // Quality Score Overview Component
+/**
+* Displays a card showing the overall quality score based on the average quality score of food trucks.
+* @example
+* QualityCard({ qualityStats: { avg_quality_score: 0.85, total_trucks: 50 } })
+* Returns a JSX element with formatted overall quality score information.
+* @param {Object} qualityStats - Contains various statistics about the quality scores.
+* @param {number} qualityStats.avg_quality_score - Average quality score out of 1.
+* @param {number} qualityStats.total_trucks - Total number of food trucks considered.
+* @returns {JSX.Element} A card component displaying quality score information.
+* @description
+*   - Uses 'getScoreColor' and 'getQualityThreshold' functions to enhance data presentation.
+*   - Formats the average quality score as a percentage with one decimal.
+*   - Generates dynamic color styling for the score based on its value.
+*/
 const QualityScoreOverview: React.FC<{ qualityStats: DataQualityStats }> = ({ qualityStats }) => {
   const averageScore = (qualityStats.avg_quality_score * 100).toFixed(1);
   const scoreColor = getScoreColor(qualityStats.avg_quality_score);

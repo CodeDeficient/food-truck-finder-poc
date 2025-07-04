@@ -26,6 +26,17 @@ type FormFieldContextValue<
 
 const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFieldContextValue);
 
+/**
+* A React component that provides a form field context and renders a Controller with the supplied props.
+* @example
+* FormFieldComponent({ name: "username", control: someControlObject })
+* Renders a form field with context provider for 'username'
+* @param {ControllerProps<TFieldValues, TName>} {props} - Properties to pass to the Controller component.
+* @returns {JSX.Element} A JSX element wrapping the Controller component with a FormFieldContext provider.
+* @description
+*   - Utilizes FormFieldContext.Provider to set context based on 'name' prop.
+*   - Simplifies integration of React Hook Form's Controller by encapsulating the context logic.
+*/
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -39,6 +50,18 @@ const FormField = <
   );
 };
 
+/**
+ * Retrieves form field related identifiers and state.
+ * @example
+ * useFormField()
+ * { id: 'example-id', name: 'example-name', formItemId: 'example-id-form-item', ... }
+ * @param {FormFieldContext} {fieldContext} - Context providing field name and associated data.
+ * @returns {Object} Object containing form item identifiers and current field state.
+ * @description
+ *   - Throws an error if used outside of a <FormField> component.
+ *   - Combines multiple context values and form state into a single object.
+ *   - Generates unique identifiers for form item components using the `id` from itemContext.
+ */
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);

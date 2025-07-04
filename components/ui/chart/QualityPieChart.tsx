@@ -11,6 +11,18 @@ interface QualityPieChartProps {
   }[];
 }
 
+/**
+ * Renders a responsive pie chart displaying quality metrics.
+ * @example
+ * QualityPieChart({ data: sampleData })
+ * // renders a pie chart with specified quality data
+ * @param {QualityPieChartProps} {data} - The data used to populate the pie chart, consisting of quality metrics.
+ * @returns {JSX.Element} A JSX element representing a pie chart.
+ * @description
+ *   - Utilizes the ResponsiveContainer to ensure the pie chart scales properly.
+ *   - The Pie chart uses a static outer radius and custom cell colors.
+ *   - The Tooltip displays additional information with a custom content component.
+ */
 export function QualityPieChart({ data }: QualityPieChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>

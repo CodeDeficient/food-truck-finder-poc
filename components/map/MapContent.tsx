@@ -23,6 +23,32 @@ interface MapContentProps {
   readonly userLocation?: { lat: number; lng: number };
 }
 
+/**
+ * Renders a map with truck markers and user location.
+ * @example
+ * MapContent({
+ *   initialMapCenter: { lat: 51.505, lng: -0.09 },
+ *   defaultZoom: 10,
+ *   selectedTruckLocation: { lat: 51.51, lng: -0.12 },
+ *   trucks: [{ id: 1, location: { lat: 51.51, lng: -0.12 } }],
+ *   onSelectTruck: (truck) => console.log(truck),
+ *   userLocation: { lat: 51.503, lng: -0.06 },
+ * })
+ * Returns a MapContainer component with specified props set.
+ * @param {Object} MapContentProps - Properties for configuring the map.
+ * @param {Object} MapContentProps.initialMapCenter - Initial center of the map.
+ * @param {number} [MapContentProps.defaultZoom=10] - Default zoom level for the map.
+ * @param {Object} MapContentProps.selectedTruckLocation - Location of the selected truck.
+ * @param {Array} MapContentProps.trucks - Array of truck objects to be marked on the map.
+ * @param {Function} MapContentProps.onSelectTruck - Callback invoked when a truck is selected.
+ * @param {Object} MapContentProps.userLocation - Location of the user on the map.
+ * @returns {JSX.Element} MapContainer component configured with truck and user markers.
+ * @description
+ *   - Utilizes react-leaflet's MapContainer for rendering the map interface.
+ *   - Adjusts zoom level if a truck location is selected.
+ *   - Integrates tile layer from OpenStreetMap contributors.
+ *   - Contains rounded corner styling for map container.
+ */
 export function MapContent({
   initialMapCenter,
   defaultZoom = 10,

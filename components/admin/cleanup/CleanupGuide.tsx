@@ -3,6 +3,18 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+/**
+ * Renders a guide for various cleanup operations.
+ * @example
+ * CleanupGuide()
+ * <Card>...</Card>
+ * @returns {JSX.Element} The rendered component containing the cleanup operations guide.
+ * @description
+ *   - Provides detailed descriptions of various data cleanup operations.
+ *   - Includes instructions for removing placeholders and normalizing data formats.
+ *   - Highlights methods for correcting data errors and enhancing data quality.
+ *   - Discusses automatic merging of duplicate records to streamline data management.
+ */
 export function CleanupGuide() {
   return (
     <Card>
