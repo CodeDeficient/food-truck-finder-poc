@@ -43,7 +43,7 @@ function PageHeader() {
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" asChild>
           <Link href="/admin/data-quality/reports">
-            <BarChart3 className="h-4 w-4 mr-2" />
+            <BarChart3 className="size-4 mr-2" />
             View Reports
           </Link>
         </Button>
@@ -122,7 +122,7 @@ function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
       <TableCell className="text-right">
         <Button variant="outline" size="sm" asChild>
           <Link href={`/admin/food-trucks/${truck.id}`}>
-            <Edit className="h-4 w-4 mr-2" />
+            <Edit className="size-4 mr-2" />
             Review
           </Link>
         </Button>
