@@ -201,6 +201,19 @@ export class GeminiService {
   };
 }
 
+/**
+* Dispatches the appropriate Gemini operation based on the provided type.
+* @example
+* dispatchGeminiOperation('menu', 'data')
+* Returns a promise with processed menu data response
+* @param {'menu' | 'location' | 'hours' | 'sentiment' | 'enhance' | 'foodTruckExtraction'} type - The type of Gemini operation to dispatch.
+* @param {unknown} data - Data relevant to the specified Gemini operation type.
+* @returns {Promise<GeminiResponse<unknown>>} Returns a promise that resolves to the Gemini operation's response.
+* @description
+*   - Operates asynchronously, ensuring the flexibility and responsiveness of Gemini processing.
+*   - Utilizes type assertion to correctly handle various data types pertinent to the operation.
+*   - If the operation type is unrecognized, the function returns an error response.
+*/
 export async function dispatchGeminiOperation(
   type: 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance' | 'foodTruckExtraction',
   data: unknown,

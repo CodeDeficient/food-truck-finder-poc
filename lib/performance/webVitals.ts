@@ -225,6 +225,18 @@ type PerformanceSuggestion = {
   priority: 'high' | 'medium' | 'low';
 };
 
+/**
+ * Generates a list of suggestions to improve Largest Contentful Paint (LCP).
+ * @example
+ * getLCPSuggestions({ latest: 3000 })
+ * Returns an array with LCP improvement suggestions when the latest LCP is 3000ms.
+ * @param {Object} data - Contains performance metrics data.
+ * @param {number|null} data.latest - The latest LCP measure in milliseconds.
+ * @returns {PerformanceSuggestion[]} An array of performance suggestions for optimizing LCP.
+ * @description
+ *   - The function assumes the LCP target is less than 2500ms.
+ *   - Suggestions focus on optimizing various aspects like image loading, server response, and resource preloading.
+ */
 function getLCPSuggestions(data: { latest: number | null }): PerformanceSuggestion[] {
   return [
     {
@@ -242,6 +254,31 @@ function getLCPSuggestions(data: { latest: number | null }): PerformanceSuggesti
   ];
 }
 
+/**
+ * Generates suggestions to improve First Input Delay (FID) performance.
+ * @example
+ * getFIDSuggestions({ latest: 150 })
+ * [
+ *   {
+ *     metric: 'FID',
+ *     issue: 'First Input Delay is 150ms (target: <100ms)',
+ *     suggestions: [
+ *       'Reduce JavaScript bundle size',
+ *       'Implement code splitting',
+ *       'Use web workers for heavy computations',
+ *       'Optimize third-party scripts',
+ *       'Defer non-critical JavaScript',
+ *     ],
+ *     priority: 'high',
+ *   },
+ * ]
+ * @param {Object} data - Contains the latest FID measurement.
+ * @param {number|null} data.latest - The latest FID metric value.
+ * @returns {PerformanceSuggestion[]} A list of suggestions to improve FID.
+ * @description
+ *   - Suggests actionable improvements if FID exceeds target threshold.
+ *   - Provides solutions focusing on JS optimizations.
+ */
 function getFIDSuggestions(data: { latest: number | null }): PerformanceSuggestion[] {
   return [
     {
@@ -259,6 +296,18 @@ function getFIDSuggestions(data: { latest: number | null }): PerformanceSuggesti
   ];
 }
 
+/**
+ * Generates performance suggestions based on Cumulative Layout Shift (CLS) data.
+ * @example
+ * getCLSSuggestions({ latest: 0.25 })
+ * // Returns array of suggestions indicating the CLS value and recommendations on improving it.
+ * @param {{ latest: number | null }} data - Object containing the latest CLS measurement.
+ * @returns {PerformanceSuggestion[]} An array of performance suggestions to address CLS issues.
+ * @description
+ *   - Suggests best practices to reduce CLS, aiming for a value below 0.1.
+ *   - Prioritizes medium concern for updates that could improve visual stability.
+ *   - Incorporates practical strategies for developers focusing on layout changes.
+ */
 function getCLSSuggestions(data: { latest: number | null }): PerformanceSuggestion[] {
   return [
     {
@@ -276,6 +325,18 @@ function getCLSSuggestions(data: { latest: number | null }): PerformanceSuggesti
   ];
 }
 
+/**
+* Generates suggestions to improve the First Contentful Paint performance metric.
+* @example
+* getFCPSuggestions({ latest: 2000 })
+* Returns an array with suggestions to optimize FCP targeting <1800ms.
+* @param {Object} data - Contains performance metric values.
+* @param {number|null} data.latest - Latest measured FCP value in milliseconds.
+* @returns {PerformanceSuggestion[]} Array of suggestions for improving FCP metric.
+* @description
+*   - Suggests optimizations related to the rendering path and resource loading.
+*   - Provides actions with a medium priority level to improve website performance.
+*/
 function getFCPSuggestions(data: { latest: number | null }): PerformanceSuggestion[] {
   return [
     {
@@ -293,6 +354,31 @@ function getFCPSuggestions(data: { latest: number | null }): PerformanceSuggesti
   ];
 }
 
+/**
+ * Generates suggestions to improve Time to First Byte (TTFB) performance based on the latest measurement.
+ * @example
+ * getTTFBSuggestions({ latest: 950 })
+ * [
+ *   {
+ *     metric: 'TTFB',
+ *     issue: 'Time to First Byte is 950ms (target: <800ms)',
+ *     suggestions: [
+ *       'Optimize server response times',
+ *       'Use CDN for global distribution',
+ *       'Implement server-side caching',
+ *       'Optimize database queries',
+ *       'Use edge computing for dynamic content'
+ *     ],
+ *     priority: 'high'
+ *   }
+ * ]
+ * @param {Object} data - An object containing the latest TTFB measurement.
+ * @param {number|null} data.latest - The latest TTFB value in milliseconds or null if not available.
+ * @returns {PerformanceSuggestion[]} An array containing performance improvement suggestions for TTFB.
+ * @description
+ *   - The function assumes a target TTFB of under 800ms.
+ *   - Generates a high-priority performance suggestion report.
+ */
 function getTTFBSuggestions(data: { latest: number | null }): PerformanceSuggestion[] {
   return [
     {
@@ -310,6 +396,21 @@ function getTTFBSuggestions(data: { latest: number | null }): PerformanceSuggest
   ];
 }
 
+/**
+ * Generates a list of performance optimization suggestions based on Web Vitals metrics.
+ * @example
+ * getPerformanceOptimizationSuggestions()
+ * [
+ *   { name: 'Optimize LCP', priority: 'high' },
+ *   { name: 'Improve FID', priority: 'medium' }
+ * ]
+ * @returns {PerformanceSuggestion[]} An array of performance suggestions sorted by priority.
+ * @description
+ *   - Analyzes performance metrics including LCP, FID, CLS, FCP, and TTFB.
+ *   - Generates suggestions only for metrics rated as 'poor' or 'needs-improvement'.
+ *   - Prioritizes suggestions based on urgency, sorting them by priority level.
+ *   - Utilizes helper functions to generate specific suggestions for each metric type.
+ */
 export function getPerformanceOptimizationSuggestions(): PerformanceSuggestion[] {
   const { summary } = getPerformanceMetrics();
   let allSuggestions: PerformanceSuggestion[] = [];

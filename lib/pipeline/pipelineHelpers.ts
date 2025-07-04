@@ -3,6 +3,20 @@ import { ScrapingJobService, FoodTruckService, FoodTruck } from '../supabase';
 import { DuplicatePreventionService } from '../data-quality/duplicatePrevention';
 
 // Helper function to validate input and prepare basic data
+/**
+ * Validates input data and prepares food truck information.
+ * @example
+ * validateInputAndPrepare('job123', extractedTruckDataInstance, 'http://sourceurl.com')
+ * { isValid: true, name: 'Food Truck Name' }
+ * @param {string} jobId - The job identifier used for logging and job status updates.
+ * @param {ExtractedFoodTruckDetails} extractedTruckData - Contains details about the food truck such as name and other attributes.
+ * @param {string} sourceUrl - URL where the data was originally extracted from.
+ * @returns {Promise<{ isValid: boolean; name: string }>} Result of validation with food truck name.
+ * @description
+ *   - Logs a warning if the source URL is missing, but continues process as it might not be critical.
+ *   - Ensures the food truck name has a fallback value if it's missing in the extracted data.
+ *   - Updates job status as 'failed' if validation does not pass.
+ */
 export async function validateInputAndPrepare(
   jobId: string,
   extractedTruckData: ExtractedFoodTruckDetails,
@@ -30,6 +44,18 @@ export async function validateInputAndPrepare(
 }
 
 // New helper function for operating hours
+/**
+ * Constructs a weekly operating hours object for a food truck.
+ * @example
+ * buildOperatingHours({ monday: { open: '8:00', close: '17:00' } })
+ * // Returns: { monday: { open: '8:00', close: '17:00' }, tuesday: { closed: true }, ... }
+ * @param {ExtractedFoodTruckDetails['operating_hours']} extractedOperatingHours - The raw operating hours extracted for each day of the week.
+ * @returns {Object} An object containing operating hours for each day of the week, defaulting to closed if not provided.
+ * @description
+ *   - Days without specified operating hours default to closed.
+ *   - Ensures consistency in data structure by providing default closed status.
+ *   - Uses TypeScript's 'const' assertion for type safety on closed status.
+ */
 function buildOperatingHours(
   extractedOperatingHours: ExtractedFoodTruckDetails['operating_hours'],
 ) {
@@ -56,6 +82,18 @@ function buildOperatingHours(
 }
 
 // New helper function for scheduled locations
+/**
+ * Transforms and sanitizes an array of scheduled food truck locations.
+ * @example
+ * buildScheduledLocations([{ lat: 34.05, lng: -118.25, address: "123 Main St", start_time: "10:00", end_time: "14:00" }])
+ * [{ lat: 34.05, lng: -118.25, address: "123 Main St", start_time: "10:00", end_time: "14:00", timestamp: "2023-10-19T14:00:00.000Z" }]
+ * @param {ExtractedFoodTruckDetails['scheduled_locations']} scheduledLocations - Array of scheduled food truck location objects.
+ * @returns {Array} Array of sanitized location objects.
+ * @description
+ *   - Ensures latitude and longitude values are numbers; defaults to 0 if not.
+ *   - Adds a current timestamp to each location object in ISO format.
+ *   - Uses nullish coalescing to ensure address, start_time, and end_time are either their values or undefined.
+ */
 function buildScheduledLocations(
   scheduledLocations: ExtractedFoodTruckDetails['scheduled_locations'],
 ) {
@@ -73,6 +111,21 @@ function buildScheduledLocations(
 }
 
 // Helper function to build truck data schema
+/**
+ * Constructs a FoodTruckSchema object from extracted food truck details.
+ * @example
+ * buildTruckDataSchema(extractedTruckData, 'http://sourceUrl.com', 'Truck Name')
+ * { name: 'Truck Name', ... }
+ * @param {ExtractedFoodTruckDetails} extractedTruckData - Object containing raw data extracted from a food truck resource.
+ * @param {string} sourceUrl - URL source where the truck data was extracted from.
+ * @param {string} name - Name of the food truck.
+ * @returns {FoodTruckSchema} Fully constructed food truck schema ready for use.
+ * @description
+ *   - Ensures `description` and `price_range` are kept undefined if missing or null from extracted data.
+ *   - Filters any non-string values from the `cuisine_type` array.
+ *   - Ensures the `source_urls` field is always an array, even if empty or undefined.
+ *   - Default verification status is 'pending' and a default data quality score is set to 0.5.
+ */
 export function buildTruckDataSchema(
   extractedTruckData: ExtractedFoodTruckDetails,
   sourceUrl: string,
@@ -123,6 +176,20 @@ interface DuplicateCheckResult {
 }
 
 // Helper function to handle duplicate checking and resolution
+/**
+ * Checks for duplicates before creating a new food truck entry.
+ * @example
+ * handleDuplicateCheck('12345', truckDataObject, 'Awesome Food Truck')
+ * // Returns a promise resolving to the created truck object or result from handling a duplicate.
+ * @param {string} jobId - The unique identifier for the job process.
+ * @param {FoodTruckSchema} truckData - The data schema representing the food truck details.
+ * @param {string} name - The name of the food truck being processed.
+ * @returns {Promise<FoodTruck>} Returns a promise that resolves to the created or existing food truck.
+ * @description
+ *   - Utilizes the DuplicatePreventionService to verify if a similar truck already exists.
+ *   - If a duplicate is detected, delegates to a separate function to handle the duplicate scenario.
+ *   - Logs errors encountered during the creation process.
+ */
 export async function handleDuplicateCheck(
   jobId: string,
   truckData: FoodTruckSchema,
@@ -146,6 +213,21 @@ export async function handleDuplicateCheck(
   
 }
 
+/**
+ * Handles potential duplicate food truck entries by either merging, updating, or creating new truck data.
+ * @example
+ * handleDuplicate("job123", truckData, duplicateCheck)
+ * // Returns the processed Food Truck object.
+ * @param {string} jobId - Unique identifier for the job processing potential duplicates.
+ * @param {FoodTruckSchema} truckData - Data representing the food truck to be processed.
+ * @param {DuplicateCheckResult} duplicateCheck - Results from a duplicate check operation.
+ * @returns {Promise<FoodTruck>} Returns a promise that resolves to a Food Truck object if successful.
+ * @description
+ *   - Uses duplicate check results to determine whether to merge, update, or create new truck data.
+ *   - Logs information about the operation performed and potential duplicates found.
+ *   - Contains error handling for each operation, including fallback creations in case of failures.
+ *   - Provides warnings when creating new entries despite finding possible duplicates.
+ */
 async function handleDuplicate(
   jobId: string,
   truckData: FoodTruckSchema,
@@ -214,6 +296,20 @@ async function handleDuplicate(
 }
 
 // Helper function to finalize job status
+/**
+* Logs the successful creation of a food truck and updates the job status to completed.
+* @example
+* finalizeJobStatus('12345', { name: 'Best Food Truck', id: 'FT123' }, 'http://example.com')
+* // Logs: Job 12345: Successfully created food truck: Best Food Truck (ID: FT123) from http://example.com
+* @param {string} jobId - Unique identifier of the scraping job.
+* @param {FoodTruck} truck - Object representing the food truck that was created.
+* @param {string} sourceUrl - URL from where the data was sourced.
+* @returns {Promise<void>} Resolves when the job status is updated.
+* @description
+*   - Logs the truck creation event using `console.info`.
+*   - Ensures the job status is set to 'completed' with the current timestamp.
+*   - Uses a default source message if sourceUrl is not provided.
+*/
 export async function finalizeJobStatus(
   jobId: string,
   truck: FoodTruck,
@@ -239,6 +335,34 @@ function validateTruckData(jobId: string, extractedTruckData: ExtractedFoodTruck
 }
 
 // Helper function to build location data
+/**
+ * Constructs location data from extracted truck details.
+ * @example
+ * buildLocationData({
+ *   current_location: {
+ *     address: "123 Example St",
+ *     city: "Sample City",
+ *     state: "SC",
+ *     zip_code: "12345",
+ *     lat: 34.05,
+ *     lng: -118.25,
+ *     raw_text: "Raw Location Data"
+ *   }
+ * }) 
+ * // Returns: {
+ * //   lat: 34.05,
+ * //   lng: -118.25,
+ * //   address: "123 Example St, Sample City, SC, 12345",
+ * //   timestamp: "2023-09-15T14:38:00.000Z"
+ * // }
+ * @param {ExtractedFoodTruckDetails} extractedTruckData - Details of the food truck, including its current location.
+ * @returns {Object} Location data comprising latitude, longitude, formatted address, and current timestamp.
+ * @description
+ *   - Constructs a full address by combining address components.
+ *   - Defaults latitude and longitude to 0 if not provided as numbers.
+ *   - Uses raw text as address if address components are missing.
+ *   - Generates an ISO 8601 timestamp for the current date and time.
+ */
 function buildLocationData(extractedTruckData: ExtractedFoodTruckDetails) {
   const locationData = extractedTruckData.current_location ?? {};
   const fullAddress = [
@@ -311,6 +435,19 @@ function isRawMenuItem(obj: unknown): obj is RawMenuItem {
 }
 
 // Helper function to process menu data
+/**
+ * Processes extracted food truck data into structured menu categories.
+ * @example
+ * processMenuData(sample_truck_data)
+ * [ { name: 'Uncategorized', items: [{ name: 'Pizza', description: 'Cheese Pizza', price: 9.99, dietary_tags: ['vegetarian'] }] } ]
+ * @param {ExtractedFoodTruckDetails} extractedTruckData - The extracted food truck data.
+ * @returns {MenuCategory[]} Array of structured menu categories.
+ * @description
+ *   - Validates categories and items before mapping to a structured format.
+ *   - Converts item price to number and handles invalid input gracefully.
+ *   - Provides default values for category and item names in the case of invalid data.
+ *   - Logs warnings for encountered invalid category or item data.
+ */
 function processMenuData(extractedTruckData: ExtractedFoodTruckDetails): MenuCategory[] {
   if (!Array.isArray(extractedTruckData.menu)) {
     return [];
