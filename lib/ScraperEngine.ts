@@ -307,8 +307,8 @@ export class ScraperEngine {
   private getRandomUserAgent(): string {
     // Use Node.js crypto for stronger randomness if available, fallback to Math.random otherwise.
     let idx: number;
-    if (globalThis.window?.crypto?.getRandomValues != undefined) {
-      const array = globalThis.window.crypto.getRandomValues(new Uint32Array(1));
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues != undefined) {
+      const array = window.crypto.getRandomValues(new Uint32Array(1));
       idx = array[0] % this.userAgents.length;
     } else if (typeof crypto.randomInt === 'function') {
       idx = crypto.randomInt(0, this.userAgents.length);
@@ -323,8 +323,8 @@ export class ScraperEngine {
 
   private randomDelay(): Promise<void> {
     let randomMs: number;
-    if (globalThis.window?.crypto?.getRandomValues != undefined) {
-      const array = globalThis.window.crypto.getRandomValues(new Uint32Array(1));
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues != undefined) {
+      const array = window.crypto.getRandomValues(new Uint32Array(1));
       randomMs = array[0] % 1000;
     } else if (typeof crypto.randomInt === 'function') {
       randomMs = crypto.randomInt(0, 1000);

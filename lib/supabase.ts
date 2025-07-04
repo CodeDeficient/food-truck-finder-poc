@@ -815,7 +815,7 @@ function prepareMenuItemsForInsert(truckId: string, menuData: MenuCategory[] | u
     (Array.isArray(category.items) ? category.items : []).map((item: unknown) => {
       if (!isMenuItem(item)) {
         console.warn('Skipping invalid menu item:', item);
-        return; // Return undefined for invalid items to be filtered out later
+        return undefined; // Return undefined for invalid items to be filtered out later
       }
 
       return {

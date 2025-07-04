@@ -336,12 +336,10 @@ export class FirecrawlService {
     for (let i = 0; i < urls.length; i += batchSize) {
       const batch = urls.slice(i, i + batchSize);
 
-      const batchPromises = batch.map(async (url) => {
+      const batchResults = await Promise.all(batch.map(async (url) => {
         const result = await this.scrapeUrl(url);
         return { url, result };
-      });
-
-      const batchResults = await Promise.all(batchPromises);
+      }));
       results.push(...batchResults);
 
       // Add delay between batches to respect rate limits

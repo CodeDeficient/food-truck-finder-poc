@@ -148,7 +148,7 @@ export class FoodTruckDiscoveryEngine {
     discoveredUrls: Set<string>,
     results: DiscoveryResult,
   ): Promise<void> {
-    for (const searchTerm of this.searchTerms) {
+    await Promise.all(this.searchTerms.map(async (searchTerm) => {
       try {
         console.info(`🔍 Searching for: ${searchTerm}`);
 
@@ -167,7 +167,7 @@ export class FoodTruckDiscoveryEngine {
       }
 
       await this.delay(DISCOVERY_CONFIG.rateLimitDelayMs);
-    }
+    }));
   }
 
   // Helper method to perform directory crawling
@@ -175,10 +175,10 @@ export class FoodTruckDiscoveryEngine {
     discoveredUrls: Set<string>,
     results: DiscoveryResult,
   ): Promise<void> {
-    for (const directoryUrl of this.directoryUrls) {
+    await Promise.all(this.directoryUrls.map(async (directoryUrl) => {
       await this.crawlSingleDirectory(directoryUrl, discoveredUrls, results);
       await this.delay(DISCOVERY_CONFIG.rateLimitDelayMs);
-    }
+    }));
   }
 
   // Helper method to crawl a single directory
@@ -230,10 +230,10 @@ export class FoodTruckDiscoveryEngine {
     discoveredUrls: Set<string>,
     results: DiscoveryResult,
   ): Promise<void> {
-    for (const city of SC_TARGET_CITIES) {
+    await Promise.all(SC_TARGET_CITIES.map(async (city) => {
       await this.searchSingleCity(city, discoveredUrls, results);
       await this.delay(DISCOVERY_CONFIG.rateLimitDelayMs);
-    }
+    }));
   }
 
   // Helper method to search a single city
@@ -284,7 +284,7 @@ export class FoodTruckDiscoveryEngine {
     discoveredUrls: Set<string>,
     results: DiscoveryResult,
   ): Promise<void> {
-    for (const url of discoveredUrls) {
+    await Promise.all(Array.from(discoveredUrls).map(async (url) => {
       try {
         const stored = await this.storeDiscoveredUrl(url, 'autonomous_search', {
           search_context: 'full_discovery',
@@ -301,7 +301,7 @@ export class FoodTruckDiscoveryEngine {
           `Failed to store URL ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
       }
-    }
+    }));
   }
 
   async discoverNewFoodTrucks(): Promise<DiscoveryResult> {
@@ -534,7 +534,7 @@ export class FoodTruckDiscoveryEngine {
     }
   ): Promise<void> {
     const { discoveredUrls, locationQuery, city, state, results } = params;
-    for (const url of discoveredUrls) {
+    await Promise.all(Array.from(discoveredUrls).map(async (url) => {
       try {
         const stored = await this.storeDiscoveredUrl(url, 'tavily_search', {
           search_query: locationQuery,
@@ -552,7 +552,7 @@ export class FoodTruckDiscoveryEngine {
           `Failed to store URL ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         );
       }
-    }
+    }));
   }
 
   private delay(ms: number): Promise<void> {
@@ -581,7 +581,7 @@ export class FoodTruckDiscoveryEngine {
       errors: [],
     };
 
-    for (const url of urls) {
+    await Promise.all(urls.map(async (url) => {
       try {
         const stored = await this.storeDiscoveredUrl(url, discoveryMethod, metadata);
         if (stored.isNew === true) {
@@ -594,7 +594,7 @@ export class FoodTruckDiscoveryEngine {
         result.errors.push(errorMsg);
         console.error(errorMsg);
       }
-    }
+    }));
 
     return result;
   }
