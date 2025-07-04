@@ -3,6 +3,10 @@ name: 🛡️ Quality Gates
 on:
   push:
     branches: [main, develop, feature/*]
+
+permissions:
+  contents: read
+  actions: write
   pull_request:
     branches: [main, develop]
 
