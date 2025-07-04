@@ -472,7 +472,7 @@ export class FirecrawlService {
 
       // Add delay between batches to respect rate limits
       if (i + batchSize < urls.length) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise((resolve) => {setTimeout(resolve, delay)});
       }
     }
 
@@ -509,7 +509,7 @@ export class FirecrawlService {
         if (result.error?.includes('rate limit') === true) {
           const waitTime = backoffMs * Math.pow(2, attempt);
           console.info(`Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${maxRetries}`);
-          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          await new Promise((resolve) => {setTimeout(resolve, waitTime)});
           continue;
         }
 
@@ -523,7 +523,7 @@ export class FirecrawlService {
 
         const waitTime = backoffMs * Math.pow(2, attempt);
         console.info(`Attempt ${attempt} failed. Retrying in ${waitTime}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
+        await new Promise((resolve) => {setTimeout(resolve, waitTime)});
       }
     }
 

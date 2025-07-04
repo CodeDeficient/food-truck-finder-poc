@@ -49,7 +49,7 @@ export async function pollCrawlStatus(jobId: string): Promise<NextResponse> {
   const pollInterval = 10_000; // 10 seconds
 
   while (attempts < maxAttempts) {
-    await new Promise((resolve) => setTimeout(resolve, pollInterval));
+    await new Promise((resolve) => {setTimeout(resolve, pollInterval)});
 
     const status = await firecrawl.getCrawlStatus(jobId);
     if (status.success && status.status === 'completed' && status.data) {
