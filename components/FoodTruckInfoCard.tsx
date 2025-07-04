@@ -24,6 +24,18 @@ interface FoodTruck {
   events?: FoodTruckEvent[];
 }
 
+/**
+ * Renders a food truck information card including its schedule and upcoming events.
+ * @example
+ * FoodTruckInfoCard({ truck: sampleTruck })
+ * Renders a card component displaying the name, cuisine type, description, schedule, and events of the food truck.
+ * @param {Object} { truck } - An object representing a food truck with details such as name, description, schedule, and events.
+ * @param {FoodTruck} { truck.truck } - Food truck object containing details to be displayed on the card.
+ * @returns {JSX.Element} A JSX element representing a styled card with food truck information.
+ * @description
+ *   - The function uses conditional rendering to display active days in bold and with the primary color.
+ *   - It includes a section to list up to three upcoming events, if available, with each event's title, date, and optional location address.
+ */
 const FoodTruckCard = ({ truck }: { truck: FoodTruck }) => {
   return (
     <div className="border rounded-lg p-4">

@@ -9,6 +9,19 @@ export interface SystemAlert {
   acknowledged?: boolean;
 }
 
+/**
+* Processes recent events and returns a list of system alerts
+* @example
+* processRecentEvents(recentEvents)
+* [SystemAlert, SystemAlert, ...]
+* @param {RealtimeEvent[]} recentEvents - Array of recent events to be processed.
+* @returns {SystemAlert[]} A list of system alerts, filtered and formatted, based on the severity of the events.
+* @description
+*   - Filters out events with severity of 'info'.
+*   - Assigns a default message if event message is not available.
+*   - Ensures returned severity is one of the allowed types ('info', 'warning', 'error', 'critical').
+*   - Returns only up to 5 most recent alerts.
+*/
 function processRecentEvents(recentEvents: RealtimeEvent[]): SystemAlert[] {
   return recentEvents
     .filter((event) => (event.severity ?? 'info') !== 'info') // Handle nullable severity explicitly
@@ -42,6 +55,19 @@ function processRecentEvents(recentEvents: RealtimeEvent[]): SystemAlert[] {
     .slice(0, 5); // Keep only the latest 5 alerts
 }
 
+/**
+* Manages and updates system alerts and controls alert details visibility.
+* @example
+* useSystemAlerts(recentEvents)
+* { alerts: [...], showDetails: false, acknowledgeAlert: [Function], toggleDetails: [Function] }
+* @param {RealtimeEvent[]} recentEvents - List of recent events to be processed into alerts.
+* @returns {Object} Object containing alerts, showDetails, and handler functions.
+* @description
+*   - Uses useState to store alerts and the visibility state of alert details.
+*   - Prevents unnecessary re-renders by comparing current and new alerts.
+*   - Provides a mechanism to acknowledge individual alerts.
+*   - Allows toggling of a detailed view of alerts.
+*/
 export const useSystemAlerts = (recentEvents: RealtimeEvent[]) => {
   const [alerts, setAlerts] = useState<SystemAlert[]>([]);
   const [showDetails, setShowDetails] = useState(false);

@@ -42,6 +42,19 @@ class OAuthVerifier {
     this.loadEnvironment();
   }
 
+  /**
+  * Loads environment variables from a local .env file into process.env
+  * @example
+  * loadEnvironment()
+  * No undefined check is needed for process.env variables after this function call
+  * @param {void} No arguments are required.
+  * @returns {void} This function does not return any value.
+  * @description
+  *   - Reads from the '.env.local' file located at the current working directory.
+  *   - The function checks for the existence of the .env.local file before proceeding.
+  *   - Sets each environment variable in 'process.env', removing any double quotes from the value.
+  *   - Only assigns values when both key and value are present for a line.
+  */
   loadEnvironment() {
     const envPath = path.join(process.cwd(), '.env.local');
     if (fs.existsSync(envPath)) {
@@ -84,6 +97,17 @@ class OAuthVerifier {
     this.log(`ℹ️  ${message}`, 'blue');
   }
 
+  /**
+   * Checks if required environment variables for Supabase integration are configured correctly.
+   * @example
+   * checkEnvironmentVariables()
+   * // Outputs log messages indicating the status of each required environment variable.
+   * @param {void} No arguments are required for this function.
+   * @returns {void} This function returns no value, it logs messages to the console.
+   * @description
+   *   - Logs whether each necessary environment variable is configured or missing.
+   *   - Validates if the Supabase URL contains the expected project ID and logs the result.
+   */
   async checkEnvironmentVariables() {
     this.logSection('ENVIRONMENT VARIABLES CHECK');
 
@@ -110,6 +134,19 @@ class OAuthVerifier {
     }
   }
 
+  /**
+   * Checks the Supabase authentication settings and logs their configuration status.
+   * @example
+   * checkSupabaseAuthSettings()
+   * // Logs configuration status about Supabase settings including Google OAuth and signup options.
+   * @param {void} - This function does not take any arguments.
+   * @returns {void} This function does not return anything, it logs information regarding Supabase auth settings status.
+   * @description
+   *   - Retrieves settings from Supabase via HTTP request using the configured URL.
+   *   - Logs success, error, or warning messages based on the configuration status.
+   *   - Provides additional information if Google OAuth provider is disabled, indicating where to enable it in Supabase Dashboard.
+   *   - Handles cases when fetching settings fail, offering clarification if authentication is required.
+   */
   async checkSupabaseAuthSettings() {
     this.logSection('SUPABASE AUTH CONFIGURATION CHECK');
 
@@ -147,6 +184,18 @@ class OAuthVerifier {
     }
   }
 
+  /**
+   * Logs the expected redirect URLs and authorized origins for Google Cloud Console configuration.
+   * @example
+   * checkRedirectUrls()
+   * No return value, only logs information.
+   * @param {void} - This function does not accept any parameters.
+   * @returns {void} This function does not return any value.
+   * @description
+   *   - Logs the expected URLs and origins using 'logInfo' and 'log' methods for visualization.
+   *   - Uses 'blue' color for logging the URLs to differentiate from regular log entries.
+   *   - 'expectedUrls' includes both production and localhost URLs for development and testing purposes.
+   */
   async checkRedirectUrls() {
     this.logSection('REDIRECT URL CONFIGURATION CHECK');
 
@@ -167,6 +216,18 @@ class OAuthVerifier {
     this.log(`  • http://localhost:3001`, 'blue');
   }
 
+  /**
+  * Verify the existence of Google OAuth implementation within the project's login page and auth callback route.
+  * @example
+  * checkOAuthFlow()
+  * Logs success or error messages based on verification results.
+  * @returns {void} Logs messages indicating the presence or absence of critical OAuth implementation files and configurations.
+  * @description
+  *   - Verifies that the login page exists and checks for Google OAuth login code.
+  *   - Inspects the auth callback route to ensure it exists.
+  *   - Uses file system operations to perform these checks.
+  *   - Relies on logging utility methods to report status.
+  */
   async checkOAuthFlow() {
     this.logSection('OAUTH FLOW VERIFICATION');
 
@@ -195,6 +256,18 @@ class OAuthVerifier {
     }
   }
 
+  /**
+   * Makes an HTTP GET request to a specified URL and returns the response data.
+   * @example
+   * makeHttpRequest('https://example.com')
+   * Promise resolving with response data or rejecting with an error
+   * @param {string} url - The URL to send the HTTP GET request to.
+   * @returns {Promise<string>} A promise that resolves with the response data as a string if the request is successful, or rejects with an error if the request fails.
+   * @description
+   *   - Uses Node.js https module to perform the HTTP request.
+   *   - Handles request errors and timeouts to ensure robust error management.
+   *   - The promise resolves only on successful status codes (2xx range).
+   */
   makeHttpRequest(url) {
     return new Promise((resolve, reject) => {
       const request = https.get(url, (response) => {
@@ -217,6 +290,17 @@ class OAuthVerifier {
     });
   }
 
+  /**
+  * Generates setup instructions for configuring Google OAuth and Supabase.
+  * @example
+  * generateSetupInstructions()
+  * undefined
+  * @returns {void} No return value.
+  * @description
+  *   - Logs setup instructions for different stages including Google Cloud and Supabase configuration.
+  *   - Provides a checklist and indicates if automated checks have passed or if issues need resolution.
+  *   - References an external guide for detailed setup instructions.
+  */
   generateSetupInstructions() {
     this.logSection('SETUP INSTRUCTIONS');
 
@@ -246,6 +330,17 @@ class OAuthVerifier {
     this.log('\n📖 Detailed instructions: docs/GOOGLE_OAUTH_SETUP_GUIDE.md', 'cyan');
   }
 
+  /**
+   * Generates a summary of the OAuth setup verification process, detailing successes, warnings, and errors.
+   * @example
+   * generateSummary()
+   * // Outputs a summary of the verification process and next steps if needed.
+   * @returns {void} No return value.
+   * @description
+   *   - Categorizes the results into successes, warnings, and errors, and outputs them in corresponding colors.
+   *   - Provides guidance on next steps based on the presence of warnings or errors.
+   *   - Offers a motivational message if no issues are found to encourage continued progress.
+   */
   generateSummary() {
     this.logSection('VERIFICATION SUMMARY');
 
