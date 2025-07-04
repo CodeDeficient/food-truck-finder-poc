@@ -109,12 +109,12 @@ const handleDismissToast = (state: State, toastId?: string): State => {
   return {
     ...state,
     toasts: state.toasts.map((t) =>
-      t.id === toastId || toastId === undefined
+      (t.id === toastId || toastId === undefined
         ? {
             ...t,
             open: false,
           }
-        : t,
+        : t),
     ),
   };
 };
