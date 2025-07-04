@@ -43,7 +43,7 @@ export function MainSearchSection({
           }
         }}
       />
-      <Button onClick={handleSearch} disabled={loading} className="flex-shrink-0">
+      <Button onClick={handleSearch} disabled={loading} className="shrink-0">
         Search
       </Button>
       <FilterToggleButton
