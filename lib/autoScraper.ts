@@ -369,10 +369,10 @@ async function handleExistingTruck(
       details: triggerResult.error ?? triggerResult.message,
       jobId: triggerResult.jobId,
     };
-  } else {
+  } 
     console.info(`AutoScraper: Data for ${url} is fresh. No action needed.`);
     return { url, status: 'fresh', details: `Last scraped at ${truck.last_scraped_at}` };
-  }
+  
 }
 
 /**
