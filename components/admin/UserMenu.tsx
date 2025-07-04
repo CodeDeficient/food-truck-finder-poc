@@ -48,7 +48,7 @@ export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMen
             handleSignOut().catch((error) => console.warn('Sign out failed:', error));
           }}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 size-4" />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
