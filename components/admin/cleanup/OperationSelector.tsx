@@ -15,31 +15,31 @@ const operationConfig = {
   remove_placeholders: {
     name: 'Remove Placeholders',
     description: 'Remove placeholder and mock data values',
-    icon: <Trash2 className="h-4 w-4" />,
+    icon: <Trash2 className="size-4" />,
     color: 'text-red-600',
   },
   normalize_phone: {
     name: 'Normalize Phone Numbers',
     description: 'Format phone numbers consistently',
-    icon: <Phone className="h-4 w-4" />,
+    icon: <Phone className="size-4" />,
     color: 'text-blue-600',
   },
   fix_coordinates: {
     name: 'Fix GPS Coordinates',
     description: 'Correct invalid location coordinates',
-    icon: <MapPin className="h-4 w-4" />,
+    icon: <MapPin className="size-4" />,
     color: 'text-green-600',
   },
   update_quality_scores: {
     name: 'Update Quality Scores',
     description: 'Recalculate data quality scores',
-    icon: <Star className="h-4 w-4" />,
+    icon: <Star className="size-4" />,
     color: 'text-yellow-600',
   },
   merge_duplicates: {
     name: 'Merge Duplicates',
     description: 'Identify and merge duplicate entries',
-    icon: <Merge className="h-4 w-4" />,
+    icon: <Merge className="size-4" />,
     color: 'text-purple-600',
   },
 };
@@ -72,7 +72,7 @@ export function OperationSelector({
                 <div className="text-xs text-muted-foreground">{config.description}</div>
               </div>
               {selectedOperations.includes(key) && (
-                <CheckCircle className="h-4 w-4 text-blue-600" />
+                <CheckCircle className="size-4 text-blue-600" />
               )}
             </div>
           ))}

@@ -23,7 +23,7 @@ export function MonitoringPageHeader() {
         </p>
       </div>
       <Badge variant="outline" className="text-sm">
-        <Activity className="h-4 w-4 mr-1" />
+        <Activity className="size-4 mr-1" />
         Live Monitoring
       </Badge>
     </div>

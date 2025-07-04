@@ -38,7 +38,7 @@ export function QuickFiltersSection({
         onClick={() => setFilters({ ...filters, openNow: !filters.openNow })}
         className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700"
       >
-        <Clock className="h-4 w-4 mr-1" />
+        <Clock className="size-4 mr-1" />
         Open Now
       </Button>
       <Button
