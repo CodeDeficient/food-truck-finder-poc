@@ -12,6 +12,19 @@ export function parseEventData(eventData: string, eventType: string): RealtimeEv
 }
 
 // Setup event listeners for different event types
+/**
+ * Set up listeners for specific event types from an EventSource and handle them.
+ * @example
+ * setupEventListeners(myEventSource, myEventHandlerFunction)
+ * undefined
+ * @param {EventSource} eventSource - The source of the events to listen for.
+ * @param {function} handleEvent - The callback function to handle parsed real-time admin events.
+ * @returns {undefined} Function does not return a value.
+ * @description
+ *   - Listens for the following event types: 'heartbeat', 'scraping_update', 'data_quality_change', 'system_alert'.
+ *   - Uses parseEventData to interpret the event data based on its type.
+ *   - The handleEvent function is called only if the event data is successfully parsed into a RealtimeEvent.
+ */
 export function setupEventListeners(
   eventSource: EventSource,
   handleEvent: (event: RealtimeEvent) => void,

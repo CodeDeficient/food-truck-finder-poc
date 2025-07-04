@@ -11,6 +11,26 @@ interface TruckCardHeaderProps {
   readonly priceRange: string | undefined;
 }
 
+/**
+ * Renders a header component for a truck card, displaying truck details and status.
+ * @example
+ * TruckCardHeader({
+ *   truck: { name: 'Food Truck', current_location: { address: '123 Street' } },
+ *   isOpen: true,
+ *   popularItems: [{ name: 'Burger', price: undefined }],
+ *   priceRange: '$$'
+ * })
+ * <CardHeader>...</CardHeader>
+ * @param {Object} truck - Object containing information about the truck, including name and current location.
+ * @param {boolean} isOpen - Indicates whether the truck is currently open or closed.
+ * @param {Array} popularItems - Array containing popular items offered by the truck, typically objects with a name and optional price.
+ * @param {string} priceRange - String indicating the general price range of items if explicit prices are unavailable.
+ * @returns {JSX.Element} JSX representation of the card header for a truck.
+ * @description
+ *   - Displays the truck's name and current address if available.
+ *   - Shows the open/closed status with a badge, changing appearance according to the status.
+ *   - Fallback badge displaying price range shows only if no prices are available for popular items.
+ */
 export function TruckCardHeader({ truck, isOpen, popularItems, priceRange }: TruckCardHeaderProps) {
   return (
     <CardHeader>

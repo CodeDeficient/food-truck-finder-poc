@@ -16,6 +16,12 @@ interface MainSearchSectionProps {
   readonly activeFilterCount: number;
 }
 
+/**
+ * Renders the main search section with input, button, and advanced filter toggle.
+ * @example
+ * MainSearchSection({
+ *   filters: { query: '' },
+ *   setFilters: (filters) => { /* update filters */
 export function MainSearchSection({
   filters,
   setFilters,

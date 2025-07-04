@@ -15,6 +15,28 @@ interface ContactFieldProps {
   readonly unavailableText: string;
 }
 
+/**
+ * Renders a contact field with icon, label, and value, handling both available and unavailable states.
+ * @example
+ * ContactField({
+ *   icon: EmailIcon,
+ *   label: 'Email',
+ *   value: 'example@example.com',
+ *   href: 'mailto:example@example.com',
+ *   unavailableText: 'Not Available'
+ * })
+ * <div>...</div>
+ * @param {React.ComponentType} icon - The icon component to display in the contact field.
+ * @param {string} label - The label to display above the contact value.
+ * @param {string} value - The contact value to display; if undefined or empty, displays unavailableText instead.
+ * @param {string} [href] - The link associated with the contact value for redirection. Determines link behavior based on URL format.
+ * @param {string} unavailableText - Text displayed when value is unavailable or empty.
+ * @returns {JSX.Element} JSX structure for the contact field.
+ * @description
+ *   - Opens external links in a new tab with 'noopener noreferrer' for security.
+ *   - Conditionally renders either a hyperlink or plain text based on value and href.
+ *   - Applies specific styling based on the availability of the value.
+ */
 function ContactField({
   icon: Icon,
   label,
@@ -54,6 +76,19 @@ function ContactField({
   );
 }
 
+/**
+ * Renders social media links based on provided handles.
+ * @example
+ * SocialMediaLinks({ socialMedia: { instagram: 'insta_user', twitter: 'twit_user' } })
+ * Renders and displays links for Instagram and Twitter.
+ * @param {Object} {socialMedia} - Contains platform keys mapped to user handles.
+ * @returns {JSX.Element|undefined} A JSX element displaying social media links or undefined if no valid links exist.
+ * @description
+ *   - Checks for undefined or empty socialMedia input to prevent unnecessary rendering.
+ *   - Supports Instagram, Facebook, and Twitter platforms with specific styles.
+ *   - Handles links are generated dynamically based on platform keys and user handles.
+ *   - Applies consistent styling for light and dark themes using color properties.
+ */
 function SocialMediaLinks({
   socialMedia,
 }: Readonly<{ readonly socialMedia?: Record<string, string> }>) {
@@ -93,6 +128,19 @@ function SocialMediaLinks({
   );
 }
 
+/**
+ * Renders a truck's contact information within a styled card component.
+ * @example
+ * TruckContactInfo({ truck: sampleTruckObject })
+ * <Card>...</Card>
+ * @param {Readonly<TruckContactInfoProps>} {truck} - Object containing truck's contact information and social media links.
+ * @returns {JSX.Element} A card component displaying various contact fields and social media links.
+ * @description
+ *   - Utilizes conditional rendering to display availability of contact information.
+ *   - Applies Tailwind CSS classes for dark mode styling.
+ *   - Integrates icons alongside contact labels for visual aid.
+ *   - SocialMediaLinks component is used to list the truck's social media presence.
+ */
 export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">
