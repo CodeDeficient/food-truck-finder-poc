@@ -7,6 +7,19 @@ interface TruckDetailHeaderProps {
   readonly truckName: string;
 }
 
+/**
+* Renders the header section for a food truck's detail page.
+* @example
+* TruckDetailHeader({ truckName: 'Tasty Treats' })
+* <div> ... </div>
+* @param {object} TruckDetailHeaderProps - Contains properties required by the TruckDetailHeader component.
+* @returns {JSX.Element} A React component rendering the truck detail header layout.
+* @description
+*   - The header includes a button linking back to the main map page.
+*   - Displays the provided truck name prominently with additional descriptive text.
+*   - Incorporates responsive and accessible design using semantic HTML and CSS utility classes.
+*   - Utilizes React Router's Link component for navigation within the application.
+*/
 export function TruckDetailHeader({ truckName }: TruckDetailHeaderProps) {
   return (
     <div className="flex items-center justify-between">

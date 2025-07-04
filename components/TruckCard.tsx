@@ -18,6 +18,20 @@ interface TruckCardProps {
   readonly hideHeader?: boolean;
 }
 
+/**
+ * Renders a card component for displaying truck information with optional header.
+ * @example
+ * TruckCard({ truck: truckData, isOpen: true, onSelectTruck: handleSelect, hideHeader: false })
+ * Returns a JSX element representing the truck card.
+ * @param {Object} truck - The truck object containing details to be displayed on the card.
+ * @param {boolean} isOpen - Indicates whether the truck is currently open or closed.
+ * @param {function} onSelectTruck - Callback function to handle click events on the truck card.
+ * @param {boolean} [hideHeader=false] - Optional flag to hide the card header. If true, the header will not be rendered.
+ * @returns {JSX.Element} A JSX element representing the truck card, with optional header.
+ * @description
+ *   - Utilizes the useTruckCard hook for fetching truck-specific properties such as popular items and operating hours.
+ *   - Applies conditional styling based on the hideHeader flag to manage card appearance.
+ */
 export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: TruckCardProps) {
   const { popularItems, priceRange, todayHours } = useTruckCard(truck);
 

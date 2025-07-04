@@ -7,6 +7,19 @@ interface TruckLocationInfoProps {
   readonly truck: FoodTruck;
 }
 
+/**
+ * Displays information about a truck's current location.
+ * @example
+ * TruckLocationInfo({ truck: sample_truck })
+ * <Card>...</Card>
+ * @param {TruckLocationInfoProps} {truck} - Object containing truck data with location details.
+ * @returns {JSX.Element} A card displaying the truck's current location and coordinates.
+ * @description
+ *   - Uses Tailwind CSS classes for styling and responsiveness.
+ *   - Displays a message when the truck's address is unavailable.
+ *   - Renders latitude and longitude with precision up to six decimal places.
+ *   - Adapts text and background colors based on dark mode settings.
+ */
 export function TruckLocationInfo({ truck }: TruckLocationInfoProps) {
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">
