@@ -762,7 +762,7 @@ export const APIUsageService = {
 
         if (error) throw error;
         return data;
-      } else {
+      } 
         const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabaseAdmin
           .from('api_usage')
           .insert([
@@ -778,7 +778,7 @@ export const APIUsageService = {
 
         if (error) throw error;
         return data;
-      }
+      
     } catch (error: unknown) {
       console.warn('Error tracking usage:', error);
       throw error;
