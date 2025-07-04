@@ -240,8 +240,8 @@ export function isTruckOpen(truck: FoodTruck): boolean {
   try {
     const now = new Date();
     const currentTime = now.getHours() * 100 + now.getMinutes();
-    const openTime = Number.parseInt(hours.open.replace(':', ''));
-    const closeTime = Number.parseInt(hours.close.replace(':', ''));
+    const openTime = Number.parseInt(hours.open.replace(':', ''), 10);
+    const closeTime = Number.parseInt(hours.close.replace(':', ''), 10);
 
     return currentTime >= openTime && currentTime <= closeTime;
   } catch (error: unknown) {
