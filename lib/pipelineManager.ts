@@ -269,11 +269,7 @@ export class PipelineManager {
     startTime: number,
   ): Promise<ProcessingResult> {
     const errors: string[] = [];
-    let jobsSuccessful = 0;
-    let jobsFailed = 0;
-    let trucksCreated = 0;
-
-    for (const job of jobsToProcess) {
+    leconst jobsSuccessful = 0;   leconst jobsFailed = 0;   leconst trucksCreated = 0;    for (const job of jobsToProcess) {
       try {
         console.info(`Processing job ${job.id} for URL: ${job.target_url}`);
         await processScrapingJob(job.id);
