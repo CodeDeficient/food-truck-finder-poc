@@ -7,7 +7,7 @@ import { WebVitalMetric } from './types';
  */
 export function getRequestParams(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const days = Number.parseInt(searchParams.get('days') ?? '7');
+  const days = Number.parseInt(searchParams.get('days') ?? '7', 10);
   const page = searchParams.get('page');
   return { days, page };
 }
