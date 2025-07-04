@@ -13,6 +13,28 @@ interface ConnectionStatusHeaderProps {
   readonly disconnect: () => void;
 }
 
+/**
+ * Renders a status header for a connection management interface.
+ * @example
+ * ConnectionStatusHeader({
+ *   isConnected: true,
+ *   isConnecting: false,
+ *   lastEventTime: new Date(),
+ *   connect: () => {},
+ *   disconnect: () => {}
+ * })
+ * <CardHeader>...</CardHeader>
+ * @param {boolean} isConnected - Indicates if the connection is currently active.
+ * @param {boolean} isConnecting - Indicates if a connection attempt is in progress.
+ * @param {Date | null} lastEventTime - Timestamp of the last connection-related event.
+ * @param {function} connect - Function to initiate the connection.
+ * @param {function} disconnect - Function to terminate the connection.
+ * @returns {JSX.Element} The rendered header component.
+ * @description
+ *   - Displays real-time connection status with visual indicators.
+ *   - Button toggles between 'Connect', 'Disconnect', and 'Connecting...' states.
+ *   - Shows last event time if available.
+ */
 export function ConnectionStatusHeader({
   isConnected,
   isConnecting,

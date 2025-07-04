@@ -89,6 +89,17 @@ export interface ApiUsage {
 }
 
 // Food truck operations
+/**
+* Groups menu items by their associated food truck ID.
+* @example
+* buildMenuByTruck([{ food_truck_id: '1', name: 'Burger' }, { food_truck_id: '2', name: 'Pizza' }])
+* { '1': [{ food_truck_id: '1', name: 'Burger' }], '2': [{ food_truck_id: '2', name: 'Pizza' }] }
+* @param {RawMenuItemFromDB[]} menuItems - Array of menu items where each item must have a food truck ID.
+* @returns {Record<string, RawMenuItemFromDB[]>} A record with keys of food truck IDs and values of arrays of menu items.
+* @description
+*   - Ensures only menu items with valid, non-empty food truck IDs are included.
+*   - Initializes an array for each unique food truck ID, grouping corresponding menu items.
+*/
 function buildMenuByTruck(menuItems: RawMenuItemFromDB[]): Record<string, RawMenuItemFromDB[]> {
   const menuByTruck: Record<string, RawMenuItemFromDB[]> = {};
   for (const item of menuItems) {
@@ -296,6 +307,19 @@ const isMenuCategory = (obj: unknown): obj is MenuCategory =>
   'items' in obj &&
   Array.isArray(obj.items);
 
+/**
+ * Determines whether the given object is a MenuItem.
+ * @example
+ * isMenuItem({ name: "Pizza", description: "Delicious", price: 9.99, dietary_tags: ["Vegetarian"] })
+ * true
+ * @param {unknown} obj - The object to be checked.
+ * @returns {boolean} Returns true if the object has properties consistent with a MenuItem.
+ * @description
+ *   - Checks if 'name' is a string.
+ *   - Checks if 'description' is either undefined or a string.
+ *   - Checks if 'price' is either undefined or a number.
+ *   - Ensures 'dietary_tags' is either undefined or an array of strings.
+ */
 const isMenuItem = (obj: unknown): obj is MenuItem => {
   if (typeof obj !== 'object' || obj == undefined) return false;
   const item = obj as Record<string, unknown>;
@@ -309,6 +333,20 @@ const isMenuItem = (obj: unknown): obj is MenuItem => {
   );
 };
 
+/**
+* Updates the food truck data for a given truck ID with provided updates.
+* @example
+* updateTruckData('truck123', { name: 'New Truck Name', location: 'Downtown' })
+* { id: 'truck123', name: 'New Truck Name', location: 'Downtown', ... }
+* @param {string} id - The ID of the food truck to be updated.
+* @param {Partial<FoodTruck>} updatesWithoutMenu - Partial object containing truck attributes to be updated, excluding menu items.
+* @returns {Promise<FoodTruck | { error: string }>} Returns the updated FoodTruck object or an error message upon failure.
+* @description
+*   - Requires SUPABASE_SERVICE_ROLE_KEY to perform operations.
+*   - Updates only non-menu details of the food truck.
+*   - Selects and returns the single updated record from the database.
+*   - Handles errors by invoking handleSupabaseError and returns an error message if any issues occur during update.
+*/
 async function updateTruckData(
   id: string,
   updatesWithoutMenu: Partial<FoodTruck>,
@@ -331,6 +369,19 @@ async function updateTruckData(
   return truck;
 }
 
+/**
+ * Updates the menu items for a specific food truck in the Supabase database.
+ * @example
+ * updateTruckMenu('truck123', menuData)
+ * Promise<void> // Updates the menu items and resolves a promise.
+ * @param {string} id - Identifier for the food truck whose menu is being updated.
+ * @param {MenuCategory[] | unknown[]} menuData - Array containing menu category objects or unknown objects.
+ * @returns {Promise<void>} Resolves a promise when the operation is complete.
+ * @description
+ *   - Requires `SUPABASE_SERVICE_ROLE_KEY` to perform admin operations.
+ *   - Deletes existing menu items before inserting updated ones.
+ *   - Handles invalid categories or menu items by skipping them and logs warnings.
+ */
 async function updateTruckMenu(id: string, menuData: MenuCategory[] | unknown[]): Promise<void> {
   if (!supabaseAdmin) {
     throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
@@ -389,6 +440,21 @@ async function updateTruckMenu(id: string, menuData: MenuCategory[] | unknown[])
   }
 }
 
+/**
+* Computes the distance between two geographical points using the Haversine formula.
+* @example
+* calculateDistance(51.5074, -0.1278, 40.7128, -74.0060)
+* 5585.107071089907
+* @param {number} lat1 - Latitude of the first point in decimal degrees.
+* @param {number} lon1 - Longitude of the first point in decimal degrees.
+* @param {number} lat2 - Latitude of the second point in decimal degrees.
+* @param {number} lon2 - Longitude of the second point in decimal degrees.
+* @returns {number} The distance between the two points in kilometers.
+* @description
+*   - Uses Haversine formula to account for Earth's curvature.
+*   - Assumes Earth’s radius is 6371 kilometers.
+*   - Angles should be provided in decimal degrees, not radians.
+*/
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -415,6 +481,19 @@ interface RawMenuItemFromDB {
   [key: string]: unknown; // Allow other properties from DB select *
 }
 
+/**
+ * Groups raw menu items into categories based on their category property.
+ * @example
+ * groupMenuItems([{name: 'Salad', category: 'Appetizers'}, {name: 'Burger'}])
+ * // Returns: [{name: 'Appetizers', items: [{name: 'Salad', description: undefined, price: undefined, dietary_tags: []}]}, 
+ * //           {name: 'Uncategorized', items: [{name: 'Burger', description: undefined, price: undefined, dietary_tags: []}]}]
+ * @param {RawMenuItemFromDB[]} rawItems - Array of raw menu items from the database.
+ * @returns {MenuCategory[]} A list of menu categories with categorized menu items.
+ * @description
+ *   - Wraps raw menu items into a structured format separating them by categories.
+ *   - Uses the nullish coalescing operator to handle null and undefined values from the database.
+ *   - Explicitly casts dietary tags to an array of strings.
+ */
 function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
   const byCategory: Record<string, MenuItem[]> = {}; // Stores processed MenuItems
   for (const rawItem of rawItems) {
@@ -438,6 +517,19 @@ function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[] {
 }
 
 // Remove redundant type constituent in normalizeTruckLocation
+/**
+ * Normalizes the location of a food truck by selecting the most accurate available location data.
+ * @example
+ * normalizeTruckLocation(truckInstance)
+ * returns truckInstance with updated current_location property
+ * @param {FoodTruck} truck - A food truck object whose location needs normalization.
+ * @returns {FoodTruck} A food truck object with a standardized current location.
+ * @description
+ *   - If no valid latitude or longitude is found, it defaults to the fallback location.
+ *   - The function prioritizes exact_location over current_location and city_location.
+ *   - Ensures that the address is populated even if only latitude and longitude are available.
+ *   - Uses the current timestamp when none is provided in the location data.
+ */
 function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
   const fallback: FoodTruckLocation = {
     lat: 0,
@@ -823,6 +915,28 @@ export const APIUsageService = {
 export { type MenuItem, type MenuCategory, type OperatingHours, type PriceRange } from './types';
 
 // Helper to prepare menu items for DB insertion
+/**
+ * Prepares a list of menu items for insertion by filtering and transforming the input data.
+ * @example
+ * prepareMenuItemsForInsert("truck123", [{ name: "Beverages", items: [{name: "Tea", price: 3.00}]}])
+ * [
+ *   {
+ *     food_truck_id: "truck123",
+ *     category: "Beverages",
+ *     name: "Tea",
+ *     description: undefined,
+ *     price: 3.00,
+ *     dietary_tags: []
+ *   }
+ * ]
+ * @param {string} truckId - Unique identifier of the food truck.
+ * @param {MenuCategory[] | unknown[] | undefined} menuData - Array of menu categories or unknown data, which may contain items to insert.
+ * @returns {MenuItem[]} Returns an array of valid menu items formatted for database insertion, excluding invalid entries.
+ * @description
+ *   - Filters input data to ensure items are of MenuCategory type.
+ *   - Logs warnings for invalid menu items and skips them.
+ *   - Uses default values for missing item properties such as `category`, `name`, or `price`.
+ */
 function prepareMenuItemsForInsert(
   truckId: string,
   menuData: MenuCategory[] | unknown[] | undefined,

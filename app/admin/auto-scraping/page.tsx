@@ -41,6 +41,17 @@ interface ScrapingMetrics {
 }
 
 // Loading state component
+/**
+ * Displays a loading state for the Auto-Scraping Dashboard with pulsing placeholders.
+ * @example
+ * LoadingState()
+ * <div className="space-y-6">...</div>
+ * @returns {JSX.Element} JSX component representing the loading state for the dashboard.
+ * @description
+ *   - Utilizes `Array.from` to create an array of length 4 for rendering four loading cards.
+ *   - Each card contains header elements with `animate-pulse` CSS classes for pulsing effect.
+ *   - Layout adjusts with CSS grid classes for responsive design across different screen sizes.
+ */
 function LoadingState() {
   return (
     <div className="space-y-6">
@@ -62,6 +73,17 @@ function LoadingState() {
 }
 
 // Individual metric card component
+/**
+ * Renders a metric card with a title, value, subtitle, and an optional icon.
+ * @example
+ * MetricCard({ title: "Revenue", value: "$1000", subtitle: "per month", icon: <RevenueIcon /> })
+ * 
+ * @param {{readonly title: string, readonly value: string | number, readonly subtitle: string, readonly icon: React.ReactNode}} props - Object containing the metric card properties.
+ * @returns {JSX.Element} A React component that displays a card with a title, value, subtitle, and icon.
+ * @description
+ *   - Utilizes a flexbox layout to arrange the title and icon within the card header.
+ *   - Dynamically adjusts the content style based on the provided value type.
+ */
 function MetricCard({
   title,
   value,
@@ -88,6 +110,23 @@ function MetricCard({
 }
 
 // Metrics cards component
+/**
+ * Renders a grid of metrics cards displaying scraping statistics.
+ * @example
+ * MetricsCards({ metrics: { totalRuns: 100, successfulRuns: 80, failedRuns: 20, totalTrucksProcessed: 300, newTrucksToday: 10 } })
+ * // Returns a grid of metric cards for visualization in a dashboard.
+ * @param {Object} metrics - Contains scraping metrics data.
+ * @param {number} metrics.totalRuns - Total number of runs executed.
+ * @param {number} metrics.successfulRuns - Number of successful scraping runs.
+ * @param {number} metrics.failedRuns - Number of failed scraping runs.
+ * @param {number} metrics.totalTrucksProcessed - Total number of trucks processed.
+ * @param {number} metrics.newTrucksToday - Number of new trucks found today.
+ * @returns {JSX.Element} A grid layout of MetricCard components displaying various statistics.
+ * @description
+ *   - Computes the success rate for scraping as a percentage.
+ *   - Renders individual MetricCard components for each statistic with relevant icons.
+ *   - The layout adjusts based on screen size utilizing a grid format.
+ */
 function MetricsCards({ metrics }: { readonly metrics: ScrapingMetrics }) {
   const successRate =
     metrics.totalRuns > 0 ? Math.round((metrics.successfulRuns / metrics.totalRuns) * 100) : 0;
@@ -123,6 +162,14 @@ function MetricsCards({ metrics }: { readonly metrics: ScrapingMetrics }) {
 }
 
 // Cron job table row component
+/**
+* Renders a row in a table displaying information about a cron job's status.
+* @example
+* CronJobRow({
+*   job: {
+*     status: 'active',
+*     name: 'Job1',
+*     schedule: '*/
 function CronJobRow({
   job,
   getStatusIcon,
@@ -167,6 +214,23 @@ function CronJobRow({
 }
 
 // Cron jobs table component
+/**
+ * Renders a table displaying the status of scheduled cron jobs.
+ * @example
+ * CronJobsTable({
+ *   cronJobs: cronJobsArray,
+ *   getStatusIcon: statusIconFunction,
+ *   getStatusBadge: statusBadgeFunction
+ * })
+ * Returns the React component with rendered table of cron jobs status.
+ * @param {CronJobStatus[]} cronJobs - Array of cron job status objects.
+ * @param {(status: string) => React.ReactNode} getStatusIcon - Function to get the status icon based on job status.
+ * @param {(status: string) => React.ReactNode} getStatusBadge - Function to get the status badge based on job status.
+ * @returns {ReactElement} The rendered React component for displaying cron jobs.
+ * @description
+ *   - Displays a message when there are no scheduled jobs found.
+ *   - Uses CronJobRow components to render each job's details within the table.
+ */
 function CronJobsTable({
   cronJobs,
   getStatusIcon,
@@ -218,6 +282,23 @@ function CronJobsTable({
 }
 
 // Dashboard header component
+/**
+* Renders the dashboard header containing title and action buttons for refreshing and triggering a manual scrape.
+* @example
+* DashboardHeader({ onRefresh: handleRefresh, onTriggerScrape: handleManualScrape })
+* <div className="flex items-center justify-between">
+*   <h1 className="text-3xl font-bold">Auto-Scraping Dashboard</h1>
+*   <Button onClick={handleRefresh} variant="outline" size="sm">Refresh</Button>
+*   <Button onClick={handleManualScrape} size="sm">Trigger Manual Scrape</Button>
+* </div>
+* @param {Object} props - Component props.
+* @param {Function} props.onRefresh - Callback function to refresh the dashboard data.
+* @param {Function} props.onTriggerScrape - Callback function to trigger a manual data scrape.
+* @returns {JSX.Element} A JSX element representation of the dashboard header.
+* @description
+*   - The component assumes the presence of 'Button', 'RefreshCw', and 'Play' components for rendering action buttons and icons.
+*   - The header layout is styled using flexbox utilities for proper alignment and spacing.
+*/
 function DashboardHeader({
   onRefresh,
   onTriggerScrape,
@@ -273,12 +354,36 @@ async function triggerScrape() {
 }
 
 // Custom hook for dashboard data
+/**
+ * Custom hook to manage and fetch dashboard data related to cron jobs and scraping metrics.
+ * @example
+ * const { cronJobs, metrics, isLoading, error, fetchDashboardData, triggerManualScrape } = useDashboardData();
+ * // Retrieves data periodically and handles manual scraping
+ * @returns {object} An object containing state information and functions for interaction with the dashboard data.
+ * @description
+ *   - Initiates fetching of data immediately on component mount and periodically every 30 seconds.
+ *   - Provides functionality to manually trigger a data scrape with error logging.
+ *   - Manages loading state and error notification for dashboard operations.
+ */
 function useDashboardData() {
   const [cronJobs, setCronJobs] = useState<CronJobStatus[]>([]);
   const [metrics, setMetrics] = useState<ScrapingMetrics | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>();
 
+  /**
+  * Fetches and updates data for cron jobs and metrics with loading state management.
+  * @example
+  * sync()
+  * void
+  * @param {void} - No parameters are required.
+  * @returns {Promise<void>} Executes asynchronously, updating states on completion.
+  * @description
+  *   - Manages the loading state to enhance user experience while data is being fetched.
+  *   - Handles errors gracefully by updating an error state for UI feedback.
+  *   - Combines data fetching operations to optimize performance using Promise.all.
+  *   - Logs errors in detail for developers' debugging purposes.
+  */
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
@@ -295,6 +400,18 @@ function useDashboardData() {
     }
   };
 
+  /**
+   * Initiates a manual sync process for data scraping and dashboard update.
+   * @example
+   * sync()
+   * undefined
+   * @returns {undefined} Returns nothing; primarily triggers side effects.
+   * @description
+   *   - Resets error state before initiating scrape.
+   *   - Uses an artificial delay for fetching dashboard data.
+   *   - Implements error handling with user-friendly messaging.
+   *   - Logs detailed errors for development purposes.
+   */
   const triggerManualScrape = async () => {
     try {
       setError(undefined);
@@ -321,6 +438,18 @@ function useDashboardData() {
 }
 
 // Status helper functions
+/**
+ * Returns an icon component based on the given status.
+ * @example
+ * getStatusIcon('running')
+ * <RefreshCw className="size-4 animate-spin text-blue-500" />
+ * @param {string} status - The status for which the icon needs to be determined.
+ * @returns {JSX.Element} The icon component corresponding to the status.
+ * @description
+ *   - The default case returns a check circle for statuses other than 'running' and 'error'.
+ *   - Icons include specific CSS classes for size and color styling.
+ *   - Some icons have additional animation styles.
+ */
 function getStatusIcon(status: string) {
   switch (status) {
     case 'running': {
@@ -344,6 +473,18 @@ function getStatusBadge(status: string) {
   return <Badge variant={variants[status] ?? 'secondary'}>{status}</Badge>;
 }
 
+/**
+ * Represents a dashboard for managing and monitoring web scraping tasks.
+ * @example
+ * AutoScrapingDashboard()
+ * Returns a JSX element to display the dashboard UI.
+ * @returns {JSX.Element} Rendered dashboard component.
+ * @description
+ *   - Utilizes the `useDashboardData` custom hook to manage data fetching and state.
+ *   - Displays a loading indicator when data is being fetched.
+ *   - Provides functions for refreshing data and triggering manual scraping.
+ *   - Displays error messages and fetched metrics in a user-friendly manner.
+ */
 export default function AutoScrapingDashboard() {
   const { cronJobs, metrics, isLoading, error, fetchDashboardData, triggerManualScrape } =
     useDashboardData();

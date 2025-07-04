@@ -36,6 +36,16 @@ interface DataQualityStats {
 }
 
 // Page header component
+/**
+ * Renders the page header for data quality management section.
+ * @example
+ * PageHeader()
+ * Returns the JSX component for the header, containing a title and a button linking to reports.
+ * @returns {JSX.Element} The JSX markup for the page header.
+ * @description
+ *   - Integrates a responsive layout with flexbox utilities for alignment.
+ *   - "View Reports" button uses variant styling and links to a specific report page.
+ */
 function PageHeader() {
   return (
     <div className="flex items-center justify-between">
@@ -53,6 +63,18 @@ function PageHeader() {
 }
 
 // Food truck quality table component
+/**
+ * Generates a table displaying food truck data quality details
+ * @example
+ * FoodTruckQualityTable({ trucks: sampleTrucksArray })
+ * <Card>...</Card>
+ * @param {FoodTruck[]} trucks - An array of FoodTruck objects to display.
+ * @returns {JSX.Element} A JSX element containing the rendered table.
+ * @description
+ *   - Displays card with header, content, and table components.
+ *   - Sorts trucks by quality score with lowest scores first.
+ *   - Provides actions for each row to manage food truck data.
+ */
 function FoodTruckQualityTable({ trucks }: { readonly trucks: FoodTruck[] }) {
   return (
     <Card>
@@ -87,6 +109,18 @@ function FoodTruckQualityTable({ trucks }: { readonly trucks: FoodTruck[] }) {
 }
 
 // Food truck quality table row component
+/**
+* Renders a quality information row for a given food truck within a table.
+* @example
+* FoodTruckQualityRow({ truck: sampleTruck })
+* JSX representing a table row with quality indicators for the sample food truck.
+* @param {Object} truck - The food truck object containing quality and verification information.
+* @returns {JSX.Element} A table row displaying various quality metrics and actions related to the food truck.
+* @description
+*   - Utilizes helper functions to derive CSS classes, ARIA labels, and categorization labels based on quality score.
+*   - Handles undefined last scraped date by displaying 'N/A'.
+*   - Provides an action button linking to the review page for detailed inspection.
+*/
 function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
   const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score ?? 0);
 
@@ -131,6 +165,18 @@ function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
   );
 }
 
+/**
+ * Render the Data Quality Page with truck data and quality stats visualizations.
+ * @example
+ * DataQualityPage()
+ * Returns a React component representing the data quality page.
+ * @returns {JSX.Element} A React component rendering the data quality page layout.
+ * @description
+ *   - Fetches the first 100 food trucks using FoodTruckService for initial data.
+ *   - Utilizes Supabase to fetch data quality statistics through a remote procedure call.
+ *   - Displays error message if fetching data quality stats encounters an error.
+ *   - Sorts trucks by their data quality score for easy review, with lowest scores first.
+ */
 export default async function DataQualityPage() {
   const { trucks } = await FoodTruckService.getAllTrucks(100, 0); // Fetch first 100 trucks
 
