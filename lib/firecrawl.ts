@@ -507,7 +507,7 @@ export class FirecrawlService {
 
         // If it's a rate limit error, wait longer
         if (result.error?.includes('rate limit') === true) {
-          const waitTime = backoffMs * Math.pow(2, attempt);
+          const waitTime = backoffMs * 2**attempt;
           console.info(`Rate limited. Waiting ${waitTime}ms before retry ${attempt}/${maxRetries}`);
           await new Promise((resolve) => {setTimeout(resolve, waitTime)});
           continue;
@@ -521,7 +521,7 @@ export class FirecrawlService {
           break;
         }
 
-        const waitTime = backoffMs * Math.pow(2, attempt);
+        const waitTime = backoffMs * 2**attempt;
         console.info(`Attempt ${attempt} failed. Retrying in ${waitTime}ms...`);
         await new Promise((resolve) => {setTimeout(resolve, waitTime)});
       }
