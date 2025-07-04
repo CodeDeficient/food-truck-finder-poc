@@ -11,6 +11,25 @@ interface CleanupHeaderProps {
   readonly onRunCleanup: () => void;
 }
 
+/**
+ * Renders a header section for data cleanup features with interactive buttons.
+ * @example
+ * CleanupHeader({
+ *   isRunning: false,
+ *   onPreview: previewFunction,
+ *   onDryRun: dryRunFunction,
+ *   onRunCleanup: cleanupFunction
+ * })
+ * <div>...</div>
+ * @param {boolean} {isRunning} - Flag indicating if the cleanup process is currently running.
+ * @param {function} {onPreview} - Callback function triggered to preview changes.
+ * @param {function} {onDryRun} - Callback function executed for a dry run of cleanup.
+ * @param {function} {onRunCleanup} - Callback function initiated for running cleanup.
+ * @returns {JSX.Element} A JSX element rendering the header section with three interactive buttons.
+ * @description
+ *   - Buttons are disabled if the cleanup process is running.
+ *   - Provides visual feedback, e.g., spinning icon during a dry run while running.
+ */
 export function CleanupHeader({
   isRunning,
   onPreview,

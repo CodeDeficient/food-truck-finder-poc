@@ -24,6 +24,20 @@ const foodTruckIcon = new L.Icon({
   className: 'food-truck-marker-icon',
 });
 
+/**
+* Renders map markers for trucks with valid locations and handles click events.
+* @example
+* TruckMarkers({ trucks: arrayOfTrucks, onSelectTruck: handleTruckSelect })
+* Returns JSX elements rendering markers on a map for valid trucks.
+* @param {Array} {trucks} - An array of truck objects to be processed.
+* @param {Function} {onSelectTruck} - A callback function to handle truck selection via clicks.
+* @returns {JSX.Element} A JSX fragment containing map markers for trucks.
+* @description
+*   - Filters trucks to only include those with defined current locations and valid latitude and longitude values.
+*   - Uses a custom icon (`foodTruckIcon`) for displaying truck markers on the map.
+*   - Ensures that clicking on a marker triggers the provided `onSelectTruck` function with the truck's ID.
+*   - Displays a popup with the truck's name and address if available, upon clicking the marker.
+*/
 const TruckMarkers: React.FC<TruckMarkersProps> = ({ trucks, onSelectTruck }) => {
   const validTrucks = trucks.filter(
     (truck) =>

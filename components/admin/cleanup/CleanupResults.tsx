@@ -11,6 +11,18 @@ interface CleanupResultsProps {
   readonly lastResult: CleanupResult;
 }
 
+/**
+ * Displays the results of the last cleanup operation in a card format.
+ * @example
+ * CleanupResults({ lastResult: { duration: 12000, totalProcessed: 150, operations: [...] } })
+ * <Card>...</Card>
+ * @param {CleanupResultsProps} {lastResult} - Contains details of the last cleanup operation including duration and processed trucks.
+ * @returns {JSX.Element} A card with cleanup results summary and operation details.
+ * @description
+ *   - Uses a flex layout to align card title elements.
+ *   - Converts duration from milliseconds to seconds in the description.
+ *   - Displays a summary of operations within the card content.
+ */
 export function CleanupResults({ lastResult }: CleanupResultsProps) {
   return (
     <Card>
