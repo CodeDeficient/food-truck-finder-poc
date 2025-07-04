@@ -1,6 +1,17 @@
 import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+/**
+ * LoadingScreen component that renders a skeleton UI for loading state
+ * @example
+ * LoadingScreen()
+ * <div className="min-h-screen ...">
+ * @returns {JSX.Element} Returns JSX elements representing a loading screen with skeleton elements laid out.
+ * @description
+ *   - Provides a visually coherent loading state using skeleton components.
+ *   - Utilizes Tailwind CSS for styling and layout.
+ *   - Responsive layout adapting to different screen sizes using grid classes.
+ */
 export function LoadingScreen() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center">

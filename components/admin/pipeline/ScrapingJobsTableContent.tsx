@@ -12,6 +12,19 @@ interface ScrapingJobsTableContentProps {
   };
 }
 
+/**
+ * Renders a table displaying the content of scraping jobs with various details such as status, priority, and actions.
+ * @example
+ * ScrapingJobsTableContent({ scrapingJobs: sampleScrapingJobs })
+ * <Table>...</Table>
+ * @param {Readonly<ScrapingJobsTableContentProps>} {scrapingJobs} - Contains lists of scraping jobs categorized by their current status.
+ * @returns {JSX.Element} A table component representing the scraping jobs with specific formatting and columns.
+ * @description
+ *   - Jobs are sorted by the creation date in descending order.
+ *   - The table displays only the latest 20 scraping jobs.
+ *   - Each job entry in the table is rendered using the ScrapingJobRow component.
+ *   - Supports job statuses: pending, running, failed, and completed.
+ */
 export function ScrapingJobsTableContent({
   scrapingJobs,
 }: Readonly<ScrapingJobsTableContentProps>) {
