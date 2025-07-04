@@ -39,7 +39,7 @@ export function TruckCardHeader({ truck, isOpen, popularItems, priceRange }: Tru
           <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
           {truck.current_location?.address != undefined && (
             <CardDescription className="flex items-center mt-1 dark:text-gray-400">
-              <MapPin className="h-4 w-4 mr-1" />
+              <MapPin className="size-4 mr-1" />
               {truck.current_location.address}
             </CardDescription>
           )}
