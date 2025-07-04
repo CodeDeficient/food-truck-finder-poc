@@ -6,6 +6,18 @@ interface MenuSectionProps {
   readonly popularItems: MenuItem[]; // Use the imported MenuItem type
 }
 
+/**
+* Renders a list of popular menu items.
+* @example
+* MenuSection({ popularItems: [{ name: "Burger", price: 9.99 }] })
+* <div>...</div>
+* @param {Object[]} popularItems - An array of popular menu items, each with a name and price.
+* @returns {JSX.Element} The JSX code for rendering the menu section.
+* @description
+*   - If no popular items are provided, it displays a message indicating that the menu is not available.
+*   - The item's price is formatted using the `formatPrice` function.
+*   - Adjusts styling for light and dark themes.
+*/
 export function MenuSection({ popularItems }: Readonly<MenuSectionProps>) {
   return (
     <div>

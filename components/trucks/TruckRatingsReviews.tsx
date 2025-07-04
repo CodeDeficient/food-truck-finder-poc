@@ -7,6 +7,19 @@ interface TruckRatingsReviewsProps {
   readonly truck: FoodTruckWithRatings;
 }
 
+/**
+ * Displays a star rating based on the given numerical rating.
+ * @example
+ * StarRating({ rating: 3 })
+ * // Renders a component with 3 yellow stars and 2 gray stars
+ * @param {number} rating - Numerical representation of the rating, typically between 0 and 5.
+ * @returns {JSX.Element} A JSX element containing a graphical star rating.
+ * @description
+ *   - Rounds the rating to the nearest whole number for rendering.
+ *   - Uses a flexbox layout to display stars horizontally.
+ *   - Each star component utilizes conditional styling for filled or outlined appearance.
+ *   - Incorporates semantic class names for easy styling customization.
+ */
 function StarRating({ rating }: Readonly<{ rating: number }>) {
   return (
     <div className="flex">
@@ -22,6 +35,18 @@ function StarRating({ rating }: Readonly<{ rating: number }>) {
   );
 }
 
+/**
+ * Displays the ratings and reviews section for a truck.
+ * @example
+ * TruckRatingsReviews({ truck: { average_rating: 4.5, review_count: 10 } })
+ * <ReactElement>
+ * @param {TruckRatingsReviewsProps} { truck } - Contains truck information including average rating and review count.
+ * @returns {ReactElement | undefined} Returns a React element containing the ratings and reviews UI or undefined if average_rating is not present.
+ * @description
+ *   - Conditionally displays review count if it is defined.
+ *   - Integrates with styled components to apply dark mode styling.
+ *   - Utilizes helper sub-components like StarRating, Card, Users, etc., for structured UI.
+ */
 export function TruckRatingsReviews({ truck }: TruckRatingsReviewsProps) {
   if (truck.average_rating === undefined) {
     return;

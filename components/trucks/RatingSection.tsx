@@ -6,6 +6,19 @@ interface RatingSectionProps {
   readonly reviewCount?: number;
 }
 
+/**
+ * Renders a rating section displaying average rating and review count if available.
+ * @example
+ * RatingSection({ averageRating: 4.3, reviewCount: 123 })
+ * <div>...</div>
+ * @param {Readonly<RatingSectionProps>} props - The props contain averageRating and reviewCount to render.
+ * @returns {JSX.Element} A JSX element displaying a star rating and review count.
+ * @description
+ *   - The function returns nothing if averageRating is undefined.
+ *   - Renders star icons representing the average rating.
+ *   - Displays the average rating rounded to one decimal place.
+ *   - Shows review count only when it is defined.
+ */
 export function RatingSection({ averageRating, reviewCount }: Readonly<RatingSectionProps>) {
   if (averageRating === undefined) return;
 

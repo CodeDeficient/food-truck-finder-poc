@@ -7,6 +7,18 @@ interface OperatingHoursSectionProps {
   readonly formatHours: (hours: DailyOperatingHours) => string; // Update type
 }
 
+/**
+ * Renders today's operating hours section.
+ * @example
+ * OperatingHoursSection({ todayHours: { closed: false, open: '09:00', close: '17:00' }, formatHours: (hours) => `${hours.open} - ${hours.close}` })
+ * // Returns a JSX element with formatted operating hours or 'Closed'.
+ * @param {Readonly<OperatingHoursSectionProps>} {todayHours, formatHours} - The properties for today's operating hours and the function to format them.
+ * @returns {JSX.Element | undefined} A JSX element displaying today's hours, or nothing if hours are undefined.
+ * @description
+ *   - The component displays 'Closed' if todayHours indicates closure.
+ *   - Utilizes a Clock icon for a visual representation of hours.
+ *   - Ensures dark mode compatibility through styling classes.
+ */
 export function OperatingHoursSection({
   todayHours,
   formatHours,
