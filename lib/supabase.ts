@@ -448,8 +448,8 @@ function normalizeTruckLocation(truck: FoodTruck): FoodTruck {
   const loc = truck.exact_location ?? truck.current_location ?? truck.city_location ?? {};
   const lat = typeof loc.lat === 'number' ? loc.lat : 0;
   const lng = typeof loc.lng === 'number' ? loc.lng : 0;
-  const address = loc.address;
-  const timestamp = loc.timestamp;
+  const {address} = loc;
+  const {timestamp} = loc;
 
   truck.current_location =
     lat === 0 || lng === 0
