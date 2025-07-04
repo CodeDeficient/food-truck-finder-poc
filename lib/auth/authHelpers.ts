@@ -35,7 +35,7 @@ export async function handleSuccessfulAuth(options: {
 
   if (profile?.role === 'admin') {
     return NextResponse.redirect(`${origin}${redirectTo}`);
-  } else {
+  } 
     await AuditLogger.logSecurityEvent({
       event_type: 'permission_denied',
       user_id: user.id,
@@ -49,7 +49,7 @@ export async function handleSuccessfulAuth(options: {
       severity: 'warning',
     });
     return NextResponse.redirect(`${origin}/access-denied`);
-  }
+  
 }
 
 export async function handleAuthFailure(
