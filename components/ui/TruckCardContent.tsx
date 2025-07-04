@@ -1,7 +1,9 @@
 import React from 'react';
 import TruckCard from './TruckCard';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
-import { MenuSection, SocialMediaSection, ContactSection } from '.';
+import { MenuSection } from './MenuSection';
+import { SocialMediaSection } from './SocialMediaSection';
+import { ContactSection } from './ContactSection';
 
 interface MenuItem {
   name: string;

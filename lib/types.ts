@@ -203,3 +203,9 @@ export interface PipelineRunResult {
   logs: string[];
   overallStatus: 'Success' | 'Error';
 }
+
+export interface TruckRating {
+  id: string | number; // Allow string or number for ID
+  title: string;
+  score: number;
+}

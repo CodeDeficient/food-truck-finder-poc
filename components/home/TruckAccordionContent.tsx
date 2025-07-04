@@ -1,6 +1,6 @@
 import React from 'react';
 import { Accordion } from '@/components/ui/accordion';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 import { TruckAccordionItem } from '@/components/trucks/TruckAccordionItem';
 
 interface TruckAccordionContentProps {
