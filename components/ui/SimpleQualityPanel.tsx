@@ -155,7 +155,7 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
       }
     } catch (error) {
       console.error('Error recalculating quality scores:', error);
-      alert('Failed to recalculate quality scores. Please try again.');
+      ;
     } finally {
       setIsRecalculating(false);
     }
