@@ -8,6 +8,19 @@ import { MainContent } from '@/components/home/MainContent';
 import { LoadingScreen } from '@/components/home/LoadingScreen';
 import { useFoodTruckFinder } from '@/hooks/useFoodTruckFinder';
 
+/**
+* FoodTruckFinder is a React component that connects the UI components needed to search and display nearby food trucks.
+* @example
+* <FoodTruckFinder />
+* Renders a component that allows users to find food trucks based on their location.
+* @param None
+* @returns {JSX.Element} Returns the layout including the header and main content for the food truck finder application.
+* @description
+*   - Utilizes custom hooks `useFoodTruckFinder` and `useThemeSwitcher` for state management and theme switching.
+*   - It initiates a loading state screen while fetching data asynchronously.
+*   - Components inside include `AppHeader` and `MainContent` for interacting with the application.
+*   - The component supports theme switching between light and dark modes using `setTheme` and `resolvedTheme`.
+*/
 export default function FoodTruckFinder() {
   const {
     loading,

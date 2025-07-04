@@ -7,6 +7,11 @@ import {
 import { getAndFilterFoodTrucks, sortFoodTrucksByQuality } from '@/lib/api/search/data';
 import { FoodTruck } from '@/lib/types/foodTruck';
 
+/**
+ * Processes a search request and returns filtered and sorted food trucks based on query parameters.
+ * @example
+ * processSearchRequest(request)
+ * { trucks: [/* filtered food trucks */
 export async function processSearchRequest(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');

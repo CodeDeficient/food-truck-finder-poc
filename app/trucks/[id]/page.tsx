@@ -14,6 +14,18 @@ interface FoodTruckDetailPageProps {
   };
 }
 
+/**
+ * Renders the food truck detail page based on the provided truck ID.
+ * @example
+ * FoodTruckDetailPage({ params: { id: '123' } })
+ * Returns the JSX for the food truck detail page or a "TruckNotFound" component if the truck doesn't exist.
+ * @param {FoodTruckDetailPageProps} {params} - Contains the ID of the food truck to display details for.
+ * @returns {JSX.Element} JSX element representing the detailed information of the food truck.
+ * @description
+ *   - Fetches truck details using the ID provided in params and handles undefined truck scenario.
+ *   - Displays several components, such as TruckDetailHeader and TruckRatingsReviews, for comprehensive information.
+ *   - Adapts layout for smaller screens and larger displays dynamically.
+ */
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
   const truck = await getFoodTruckDetails(params.id);
 

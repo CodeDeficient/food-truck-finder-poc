@@ -35,6 +35,18 @@ interface FoodTruckSchedule {
   location: string;
 }
 
+/**
+ * Fetches events and food truck schedules from the Supabase database.
+ * @example
+ * getEventsAndSchedules()
+ * { events: [...], schedules: [...] }
+ * @param {void} - This function takes no arguments.
+ * @returns {Object} An object containing arrays of events and schedules.
+ * @description
+ *   - The function uses Supabase client to query the 'events' and 'food_truck_schedules' tables.
+ *   - Events are ordered by descending date and time, while schedules are ordered by ascending day of the week and start time.
+ *   - If an error occurs during fetching, it logs the error to the console and returns empty arrays.
+ */
 async function getEventsAndSchedules() {
   const { data: events, error: eventsError } = await supabase
     .from('events')
@@ -63,6 +75,17 @@ async function getEventsAndSchedules() {
 }
 
 // Page header component
+/**
+* Renders the page header for the event and schedule management section.
+* @example
+* PageHeader()
+* <div>...</div>
+* @returns {JSX.Element} Returns a JSX element that includes the header title and a button to add a new event/schedule.
+* @description
+*   - The header includes a button styled using a `Button` component with a `PlusCircle` icon.
+*   - The button redirects to a specific page using a `Link` that points to the `/admin/events/new` URL.
+*   - Utilizes Tailwind CSS classes for styling the header's layout and typography.
+*/
 function PageHeader() {
   return (
     <div className="flex items-center justify-between">
@@ -78,6 +101,17 @@ function PageHeader() {
 }
 
 // Events table component
+/**
+ * Renders a table displaying upcoming events for food trucks.
+ * @example
+ * EventsTable({ events: [{ id: 1, food_truck_id: 'FT123', date: '2023-10-10', time: '10:00', location: 'Downtown', description: 'Fall Festival' }] })
+ * <Card>...</Card>
+ * @param {{readonly events: Event[]}} events - List of event objects to be displayed in the table.
+ * @returns {JSX.Element} A React component representing the events table.
+ * @description
+ *   - Displays the total number of events within the card header.
+ *   - Provides actions for each event entry to facilitate editing.
+ */
 function EventsTable({ events }: { readonly events: Event[] }) {
   return (
     <Card>
@@ -125,6 +159,19 @@ function EventsTable({ events }: { readonly events: Event[] }) {
 }
 
 // Schedules table component
+/**
+* Renders a table displaying food truck schedules.
+* @example
+* SchedulesTable({ schedules: [{ id: 1, food_truck_id: '123', day_of_week: 'Monday', start_time: '10:00 AM', end_time: '2:00 PM', location: 'Main St', is_recurring: true }] })
+* <Card> ... </Card>
+* @param {Object} {schedules} - An array of food truck schedule objects.
+* @returns {JSX.Element} A JSX element containing the schedules table.
+* @description
+*   - Utilizes several UI components like Card, Table, and Badge for layout and styling.
+*   - Maps over the schedules array to render individual rows within the table.
+*   - Provides action buttons linked to edit each specific schedule entry.
+*   - Includes conditional styling based on whether a schedule is recurring.
+*/
 function SchedulesTable({ schedules }: { readonly schedules: FoodTruckSchedule[] }) {
   return (
     <Card>
