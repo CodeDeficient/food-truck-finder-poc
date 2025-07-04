@@ -777,8 +777,7 @@ export class FoodTruckDiscoveryEngine {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+    return new Promise((resolve) => setTim{setTimeout(resolve, ms)}
 
   /**
    * Store multiple discovered URLs with metadata
