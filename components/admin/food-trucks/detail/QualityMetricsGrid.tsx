@@ -13,6 +13,19 @@ interface QualityMetricsGridProps {
   readonly qualityCategory: QualityCategory;
 }
 
+/**
+ * Renders a grid displaying various quality metrics for a food truck.
+ * @example
+ * QualityMetricsGrid({ truck: truckData, qualityCategory: qualityCategory })
+ * <div> rendered grid component </div>
+ * @param {object} {truck} - Truck data object containing quality scores and timestamps.
+ * @param {object} {_qualityCategory} - Category of quality metrics to be displayed.
+ * @returns {JSX.Element} A JSX element representing the quality metrics grid.
+ * @description
+ *   - Utilizes <QualityScoreMetric> component to render individual metrics.
+ *   - Formats date values and handles empty date scenarios with 'N/A'.
+ *   - Classnames are used to style different verification status states.
+ */
 export function QualityMetricsGrid({
   truck,
   qualityCategory: _qualityCategory, // Renamed to _qualityCategory

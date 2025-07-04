@@ -5,6 +5,18 @@ interface SocialMediaLinksProps {
   readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }
 
+/**
+ * Displays links to social media profiles based on given handles.
+ * @example
+ * SocialMediaLinks({ instagram: 'handle', facebook: 'handle', twitter: 'handle' })
+ * Renders social media links for provided handles.
+ * @param {Object} socialMedia - Social media handles mapped by platform key.
+ * @returns {JSX.Element} JSX elements with social media links, or undefined if no valid handles are provided.
+ * @description
+ *   - If social media handles are undefined or empty, the function returns without rendering.
+ *   - Displays links styled appropriately for each social media platform.
+ *   - Ensures external links open in a new tab with security features.
+ */
 export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps>) {
   // Added readonly
   if (socialMedia === undefined || Object.keys(socialMedia).length === 0) {
