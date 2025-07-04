@@ -26,7 +26,7 @@ export function TruckDetailHeader({ truckName }: TruckDetailHeaderProps) {
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
           <Link href="/">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="size-4 mr-2" />
             Back to Map
           </Link>
         </Button>

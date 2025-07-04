@@ -16,7 +16,7 @@ export function ContactSection({ contactInfo, verificationStatus }: Readonly<Con
             href={`tel:${contactInfo.phone}`}
             className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
           >
-            <Phone className="h-3 w-3 mr-1" />
+            <Phone className="size-3 mr-1" />
             <span className="truncate">{contactInfo.phone}</span>
           </a>
         )}
@@ -27,13 +27,13 @@ export function ContactSection({ contactInfo, verificationStatus }: Readonly<Con
             rel="noopener noreferrer"
             className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400"
           >
-            <Globe className="h-3 w-3 mr-1" />
+            <Globe className="size-3 mr-1" />
             <span className="truncate">Website</span>
           </a>
         )}
         {verificationStatus !== undefined && (
           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-            <Star className="h-3 w-3 mr-1" />
+            <Star className="size-3 mr-1" />
             <span className="capitalize">{verificationStatus}</span>
           </div>
         )}
