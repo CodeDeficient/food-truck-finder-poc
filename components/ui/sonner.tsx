@@ -8,6 +8,19 @@ import { Toaster as Sonner } from 'sonner';
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 // @ts-expect-error TS(7022): 'Toaster' implicitly has type 'any' because it doe... Remove this comment to see the full error message
+/**
+ * Renders a Sonner toast notification with a customizable theme and style.
+ * @example
+ * renderToaster({ theme: 'light', position: 'top-right' })
+ * Creates a toaster with a light theme positioned at the top-right of the screen.
+ * @param {ToasterProps} props - Props for customizing the toaster appearance and behavior.
+ * @returns {JSX.Element} A JSX element rendering the custom-styled toaster notification.
+ * @description
+ *   - Applies default theme as 'system' if no theme is specified.
+ *   - Utilizes class groups for styling elements based on the parent toaster class.
+ *   - Binds toast option classes to style various components like toast and buttons.
+ *   - Requires React JSX environment to render properly.
+ */
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
 

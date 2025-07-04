@@ -40,6 +40,19 @@ function useCarousel() {
   return context;
 }
 
+/**
+ * Initializes and manages carousel control state and key events.
+ * @example
+ * const carouselControl = createCarouselControl(api, setApi);
+ * carouselControl.scrollPrev(); // Scrolls to the previous item in the carousel.
+ * @param {CarouselApi | undefined} api - Carousel API for performing scroll actions.
+ * @param {((api: CarouselApi) => void) | undefined} setApi - Callback to set the current Carousel API instance.
+ * @returns {object} Returns an object containing functions to scroll prev/next, check scroll state, and handle key events.
+ * @description
+ *   - Utilizes React hooks to manage state and handle side effects associated with the carousel operations.
+ *   - Ensures the carousel API is bound and initialized properly through useEffect hooks.
+ *   - Listens and responds to carousel-specific events like 'reInit' and 'select' to update scroll state.
+ */
 const useCarouselHandlers = (
   api: CarouselApi | undefined,
   setApi: ((api: CarouselApi) => void) | undefined,

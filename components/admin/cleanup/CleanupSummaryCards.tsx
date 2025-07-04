@@ -5,6 +5,18 @@ interface CleanupSummaryCardsProps {
   readonly lastResult: CleanupResult;
 }
 
+/**
+ * Renders summary cards displaying cleanup operation statistics.
+ * @example
+ * CleanupSummaryCards({ lastResult: someLastResultObject })
+ * <div className="grid ...">...</div>
+ * @param {Object} lastResult - The last result containing summary data.
+ * @returns {JSX.Element} A grid of styled summary cards.
+ * @description
+ *   - Displays four cards with different metrics: Trucks Improved, Duplicates Removed, Quality Updates, and Placeholders Removed.
+ *   - Each card uses a distinct color scheme that adapts in dark mode.
+ *   - Numbers in each card are displayed prominently, and descriptions are given in a smaller font.
+ */
 export function CleanupSummaryCards({ lastResult }: CleanupSummaryCardsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

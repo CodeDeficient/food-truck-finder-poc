@@ -44,6 +44,20 @@ const operationConfig = {
   },
 };
 
+/**
+ * Renders a set of selectable cleanup operations for the admin panel.
+ * @example
+ * OperationSelector({ selectedOperations: ['delete_unused'], onToggleOperation: toggleOperation })
+ * <Card>...</Card>
+ * @param {Object} {selectedOperations, onToggleOperation} - An object with two properties:
+ * - selectedOperations: An array of strings representing the currently selected operations.
+ * - onToggleOperation: A callback function that handles the toggling of an operation's selection state.
+ * @returns {JSX.Element} A card component containing the list of cleanup operations to display.
+ * @description
+ *   - Utilizes `Object.entries` to iterate through an operation configuration object.
+ *   - Applies dynamic styles to indicate selected operations.
+ *   - The operation items toggle their appearance and selection state on click.
+ */
 export function OperationSelector({
   selectedOperations,
   onToggleOperation,

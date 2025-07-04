@@ -2,6 +2,18 @@ import React from 'react';
 import { Activity, Shield, Zap, TrendingUp } from 'lucide-react';
 import { FeatureCard } from './FeatureCard';
 
+/**
+ * Renders a grid containing feature cards for an application's dashboard.
+ * @example
+ * FeatureOverviewContent()
+ * // Returns a JSX structure with feature cards displaying monitoring metrics.
+ * @returns {JSX.Element} Returns a div containing multiple FeatureCard components.
+ * @description
+ *   - Utilizes the CSS class grid layout that adjusts columns based on screen size.
+ *   - Each FeatureCard depicts a unique monitoring aspect with associated details.
+ *   - Icons are colored based on the feature state they represent.
+ *   - Designed to provide quick summaries of monitoring features with real-time data.
+ */
 export function FeatureOverviewContent() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
