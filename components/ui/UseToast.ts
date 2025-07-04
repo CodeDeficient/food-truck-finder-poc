@@ -46,6 +46,19 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
+/**
+* Initiates a timeout to remove a toast by its ID if not already scheduled
+* @example
+* setupToastRemoval('toast123')
+* undefined
+* @param {string} toastId - The unique identifier of the toast to be removed.
+* @returns {void} No return value as the function performs a timeout operation.
+* @description
+*   - Ensures that only one removal timeout is set for a given toast ID.
+*   - Utilizes a mapping (`toastTimeouts`) to track active timeouts by their toast IDs.
+*   - Removes the toast from the timeout mapping upon execution of the timeout.
+*   - Utilizes a pre-defined delay `TOAST_REMOVE_DELAY` for scheduling the removal.
+*/
 const addToRemoveQueue = (toastId: string) => {
   if (toastTimeouts.has(toastId)) {
     return;
@@ -72,6 +85,18 @@ const handleUpdateToast = (state: State, toast: Partial<ToasterToast>): State =>
   toasts: state.toasts.map((t) => (t.id === toast.id ? { ...t, ...toast } : t)),
 });
 
+/**
+ * Updates the state to close specific or all toasts.
+ * @example
+ * updateToastState(currentState, specificToastId)
+ * // Returns a new state with specified toast closed.
+ * @param {State} state - The current state of toasts.
+ * @param {string} [toastId] - Optional toast ID to close, closes all if undefined or empty.
+ * @returns {State} The new state with updated toasts openness.
+ * @description
+ *   - Closes the toast specified by `toastId` if provided; otherwise, closes all toasts.
+ *   - Adds specified toast or all toasts to a removal queue before closing.
+ */
 const handleDismissToast = (state: State, toastId?: string): State => {
   if (toastId != undefined && toastId !== '') {
     addToRemoveQueue(toastId);
@@ -94,6 +119,18 @@ const handleDismissToast = (state: State, toastId?: string): State => {
   };
 };
 
+/**
+* Updates the state by clearing specific toasts based on toastId.
+* @example
+* stateUpdate(currentState, '123')
+* // Returns updated state without the toast with id '123'
+* @param {State} state - The current state containing the list of toasts.
+* @param {string} [toastId] - The optional identifier of the toast to be removed; if not provided, all toasts are cleared.
+* @returns {State} A new state object with the specified toast removed or all toasts cleared.
+* @description
+*   - If no toastId is given, it will clear all toasts.
+*   - Uses shallow copy to avoid mutating the original state.
+*/
 const handleRemoveToast = (state: State, toastId?: string): State => {
   if (toastId === undefined) {
     return {
@@ -107,6 +144,20 @@ const handleRemoveToast = (state: State, toastId?: string): State => {
   };
 };
 
+/**
+* Manages toast notifications in the application state
+* @example
+* manageToasts(currentState, actionObject)
+* updatedState
+* @param {State} state - The current state of the application.
+* @param {Action} action - The action containing the type and payload for toast operations.
+* @returns {State} The updated state after applying the specified action on the toast notifications.
+* @description
+*   - Utilizes helper functions for different toast operations based on action type.
+*   - Handles various toast actions such as addition, update, dismiss, and removal.
+*   - Defaults to returning the current state when no matching action type is found.
+*   - Requires exhaustive type checking to ensure all action types are handled.
+*/
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_TOAST': {
@@ -140,6 +191,18 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>;
 
+/**
+* Creates and manages a toast notification.
+* @example
+* toast({ message: "Sample Message", duration: 3000 })
+* { id: 'someUniqueId', dismiss: ƒ, update: ƒ }
+* @param {Toast} props - Properties used to configure the toast display.
+* @returns {Object} An object with `id`, `dismiss`, and `update` functions.
+* @description
+*   - Generates a unique ID for each toast.
+*   - Provides a dismiss function to remove the toast.
+*   - Allows the toast to be updated with new properties.
+*/
 function toast({ ...props }: Toast) {
   const id = genId();
 
@@ -169,6 +232,19 @@ function toast({ ...props }: Toast) {
   };
 }
 
+/**
+* Manages the toast notification state and provides functions to display or dismiss notifications.
+* @example
+* const { toast, dismiss } = useToast();
+* toast({ title: 'Hello World' });
+* dismiss('toastId123');
+* @param {void} - This hook takes no arguments for initialization.
+* @returns {Object} An object containing the current state of toasts, a function to display a toast, and a function to dismiss a toast.
+* @description
+*   - The hook internally manages a list of listeners to update the component state whenever a change in toast notifications occurs.
+*   - Ensures the listener cleanup when the component is unmounted using a return function from useEffect.
+*   - Dispatches actions to update the toast state through a centralized mechanism.
+*/
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 

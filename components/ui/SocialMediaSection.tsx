@@ -5,6 +5,18 @@ interface SocialMediaSectionProps {
   readonly socialMedia?: { instagram?: string; facebook?: string; twitter?: string };
 }
 
+/**
+ * Renders a section with links to social media profiles if provided.
+ * @example
+ * SocialMediaSection({ instagram: 'username', facebook: 'user', twitter: 'user' })
+ * Returns JSX elements with social media links.
+ * @param {Readonly<SocialMediaSectionProps>} socialMedia - Object containing social media usernames.
+ * @returns {JSX.Element | undefined} JSX elements representing social media links if available.
+ * @description
+ *   - Only renders if at least one social media username is provided.
+ *   - Supports Instagram, Facebook, and Twitter links.
+ *   - Styles links with appropriate colors based on social media platform.
+ */
 export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionProps>) {
   if (socialMedia === undefined || Object.keys(socialMedia).length === 0) return;
 

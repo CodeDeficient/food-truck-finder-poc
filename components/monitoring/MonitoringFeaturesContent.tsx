@@ -2,6 +2,19 @@ import React from 'react';
 import { Activity, Shield, Zap, TrendingUp } from 'lucide-react';
 import { FeatureList } from './FeatureList';
 
+/**
+ * Component for displaying monitoring features with icons and descriptions
+ * @example
+ * MonitoringFeaturesContent()
+ * returns a JSX element containing two feature lists
+ * @param {none} - This function does not require any arguments.
+ * @returns {JSX.Element} A JSX element that represents a grid of features.
+ * @description
+ *   - Utilizes a grid layout to separate feature categories.
+ *   - Combines proactive monitoring items and smart alerting items.
+ *   - Each feature is represented with an icon and descriptive text.
+ *   - Applies specific color classes to icons for visual distinction.
+ */
 export function MonitoringFeaturesContent() {
   const proactiveMonitoringItems = [
     {

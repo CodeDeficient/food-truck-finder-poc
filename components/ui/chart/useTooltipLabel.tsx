@@ -18,6 +18,26 @@ interface UseTooltipLabelProps {
   readonly labelKey?: string;
 }
 
+/**
+ * Generates a formatted tooltip label based on provided payload data and configuration.
+ * @example
+ * useTooltipLabel({ hideLabel: false, payload: [...], label: 'Data', labelFormatter: (val) => val.toUpperCase() })
+ * // returns formatted label wrapped in a div
+ * @param {object} props - The properties to configure the tooltip label generation.
+ * @param {boolean} props.hideLabel - Flag indicating whether to hide the tooltip label.
+ * @param {array} props.payload - Array of payload objects to derive label information.
+ * @param {string} props.label - Label text or key used for lookup in configuration.
+ * @param {function} props.labelFormatter - Function to format the label display.
+ * @param {string} props.labelClassName - CSS class name for styling the label.
+ * @param {object} props.config - Configuration object for label customization.
+ * @param {string} props.labelKey - Key to determine the item in the payload to display.
+ * @returns {JSX.Element|undefined} Formatted label wrapped in a div or undefined if no label or payload is available.
+ * @description
+ *   - Uses `useMemo` for performance optimization by memoizing the label.
+ *   - Applies a default 'font-medium' CSS class for label styling.
+ *   - Uses configuration object to derive label when labelKey is not explicitly defined.
+ *   - Returns formatted label via labelFormatter if provided.
+ */
 export function useTooltipLabel({
   hideLabel,
   payload,
