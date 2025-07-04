@@ -458,7 +458,7 @@ Our workflow for each error category will follow a strict three-step process:
 - **[x] WBS 1.1: Fix Invalid `await` Expressions (0 Errors remaining)**
 - **[x] WBS 1.2: Fix Unnecessary `async` Functions (0 Errors remaining)**
 - **[x] WBS 1.3: Remove Unused Variables (0 Errors remaining)**
-- **[ ] WBS 1.4: Fix Unnecessary Type Assertion (1 Error)**
+- **[x] WBS 1.4: Fix Unnecessary Type Assertion (Done - see 0e6c327d26)**
 - **[ ] WBS 1.5: Fix Stylistic `null` Usage (2 Warnings)**
 
 ---
