@@ -17,6 +17,22 @@ const ResizablePanelGroup = ({
 
 const ResizablePanel = ResizablePrimitive.Panel;
 
+/**
+ * Renders a resizable panel handle with an optional grip indicator.
+ * @example
+ * renderResizablePanel(withHandle, className, props)
+ * <ResizablePrimitive.PanelResizeHandle {...props}>
+ *   {withHandle && <div className="handle">...</div>}
+ * </ResizablePrimitive.PanelResizeHandle>
+ * @param {boolean} withHandle - Indicates whether a grip indicator should be displayed.
+ * @param {string} className - Additional classes to be applied for styling purposes.
+ * @param {React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle>} props - Other props to be passed down to the component.
+ * @returns {JSX.Element} A JSX element representing a resizable panel handle with possible visual enhancements.
+ * @description
+ *   - Adjusts styling based on panel group direction.
+ *   - Uses Flexbox to control the layout and appearance of the handle.
+ *   - Ensures accessibility focus styles when the handle is selected.
+ */
 const ResizableHandle = ({
   withHandle,
   className,

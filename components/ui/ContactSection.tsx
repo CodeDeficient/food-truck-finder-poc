@@ -6,6 +6,19 @@ interface ContactSectionProps {
   readonly verificationStatus?: string;
 }
 
+/**
+* Renders a contact section displaying phone, website, and verification status information.
+* @example
+* ContactSection({ contactInfo: { phone: '123-456-7890', website: 'https://example.com' }, verificationStatus: 'verified' })
+* JSX component displaying contact details.
+* @param {Readonly<ContactSectionProps>} {contactInfo, verificationStatus} - Object containing contact information and verification status.
+* @returns {JSX.Element} A component that renders the user's contact information section.
+* @description
+*   - Uses conditional rendering to display contact details only if they are defined.
+*   - The phone link allows users to initiate a call via a clickable phone number.
+*   - The website link opens in a new tab ensuring original page remains intact.
+*   - Verification status is displayed as text indicating the status of the contact.
+*/
 export function ContactSection({ contactInfo, verificationStatus }: Readonly<ContactSectionProps>) {
   return (
     <div>

@@ -31,6 +31,18 @@ type PaginationLinkProps = {
 } & Pick<ButtonProps, 'size'> &
   React.ComponentProps<'a'>;
 
+/**
+ * Renders a pagination link with dynamic attributes.
+ * @example
+ * PaginationLink({ className: 'custom-class', isActive: true })
+ * <a aria-current="page" class="button-class custom-class" ...props></a>
+ * @param {Object} PaginationLinkProps - Props containing className, isActive, size, and additional attributes.
+ * @returns {JSX.Element} An anchor element with pagination related attributes and styles.
+ * @description
+ *   - Applies different styles based on whether the link is active or not.
+ *   - Uses the `buttonVariants` function to determine the button style variant.
+ *   - Further props can extend or override default attributes.
+ */
 const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
   <a
     aria-current={isActive === true ? 'page' : undefined}
@@ -46,6 +58,19 @@ const PaginationLink = ({ className, isActive, size = 'icon', ...props }: Pagina
 );
 PaginationLink.displayName = 'PaginationLink';
 
+/**
+ * Renders a customizable pagination link to navigate to the previous page.
+ * @example
+ * renderPreviousPageLink('custom-class', additionalProps)
+ * // Renders a PaginationLink with a chevron and 'Previous' label.
+ * @param {string} className - Additional CSS class names to style the PaginationLink.
+ * @param {React.ComponentProps<typeof PaginationLink>} props - Additional properties passed to PaginationLink.
+ * @returns {JSX.Element} A JSX Element rendering a PaginationLink.
+ * @description
+ *   - Uses default size and pre-defined optional class names for styling.
+ *   - Automatically spreads additional props to the PaginationLink component.
+ *   - Ensures navigation to the previous page with an accessible aria-label.
+ */
 const PaginationPrevious = ({
   className,
   ...props

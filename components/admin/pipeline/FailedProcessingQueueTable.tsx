@@ -21,6 +21,19 @@ interface FailedProcessingQueueTableProps {
   };
 }
 
+/**
+ * Renders a table displaying items that failed during data processing.
+ * @example
+ * FailedProcessingQueueTable({ processingQueue: { failed: [...] } })
+ * <Card>...</Card>
+ * @param {FailedProcessingQueueTableProps} { processingQueue } - Contains the failed processing queue items to be displayed.
+ * @returns {JSX.Element} A card component containing a table with failed queue items.
+ * @description
+ *   - Displays information specific to failed processing attempts like Truck ID and type of error.
+ *   - Utilizes a Badge component to indicate error status in a destructive format.
+ *   - Each item features a View Details button for further interaction.
+ *   - Formats creation dates to a locale-specific string for user readability.
+ */
 export function FailedProcessingQueueTable({ processingQueue }: FailedProcessingQueueTableProps) {
   return (
     <Card>

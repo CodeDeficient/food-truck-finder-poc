@@ -11,6 +11,16 @@ interface TruckListSectionProps {
   readonly userLocation: { lat: number; lng: number } | undefined;
 }
 
+/**
+ * Renders a section with a list of trucks and provides interactions for the user.
+ * @example
+ * TruckListSection({
+ *   filteredTrucks: [
+ *     { id: 1, name: 'Truck A' },
+ *     { id: 2, name: 'Truck B' }
+ *   ],
+ *   selectedTruckId: 1,
+ *   setSelectedTruckId: (id) => { /* set selected truck id */
 export function TruckListSection({
   filteredTrucks,
   selectedTruckId,
