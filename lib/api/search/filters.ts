@@ -75,8 +75,8 @@ export function applyOpenNowFilter(trucks: FoodTruck[], openNow: boolean): FoodT
       const hours = truck.operating_hours?.[currentDay];
       if (!hours || hours.closed) return false;
 
-      const openTime = Number.parseInt(hours.open.replace(':', ''));
-      const closeTime = Number.parseInt(hours.close.replace(':', ''));
+      const openTime = Number.parseInt(hours.open.replace(':', ''), 10);
+      const closeTime = Number.parseInt(hours.close.replace(':', ''), 10);
       return currentTime >= openTime && currentTime <= closeTime;
     });
   }
