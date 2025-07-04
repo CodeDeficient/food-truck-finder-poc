@@ -19,7 +19,7 @@ export function ContactField({
   if (value == undefined || value.length === 0) {
     return (
       <div className="flex items-center gap-3 text-gray-400">
-        <Icon className="h-4 w-4" />
+        <Icon className="size-4" />
         <span className="text-sm">{unavailableText}</span>
       </div>
     );
@@ -27,7 +27,7 @@ export function ContactField({
 
   return (
     <div className="flex items-center gap-3">
-      <Icon className="h-4 w-4 text-gray-500" />
+      <Icon className="size-4 text-gray-500" />
       <div>
         <label className="text-sm font-medium text-gray-500">{label}</label>
         {href ? (

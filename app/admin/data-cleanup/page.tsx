@@ -15,7 +15,7 @@ function PageHeader() {
         </p>
       </div>
       <Badge variant="outline" className="text-sm">
-        <Shield className="h-4 w-4 mr-1" />
+        <Shield className="size-4 mr-1" />
         SOTA Quality System
       </Badge>
     </div>
@@ -56,28 +56,28 @@ function FeatureOverviewCards() {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <FeatureCard
         title="Duplicate Prevention"
-        icon={<Merge className="h-4 w-4 text-purple-600" />}
+        icon={<Merge className="size-4 text-purple-600" />}
         value="85%+"
         description="Similarity detection with intelligent merging"
         colorClass="text-purple-600"
       />
       <FeatureCard
         title="Automated Cleanup"
-        icon={<RefreshCw className="h-4 w-4 text-blue-600" />}
+        icon={<RefreshCw className="size-4 text-blue-600" />}
         value="5 Types"
         description="Placeholder removal, phone normalization, coordinate fixes"
         colorClass="text-blue-600"
       />
       <FeatureCard
         title="Quality Scoring"
-        icon={<Zap className="h-4 w-4 text-green-600" />}
+        icon={<Zap className="size-4 text-green-600" />}
         value="Real-time"
         description="Automatic quality score recalculation"
         colorClass="text-green-600"
       />
       <FeatureCard
         title="Batch Processing"
-        icon={<Shield className="h-4 w-4 text-yellow-600" />}
+        icon={<Shield className="size-4 text-yellow-600" />}
         value="Safe"
         description="Dry run mode with comprehensive error handling"
         colorClass="text-yellow-600"
@@ -113,34 +113,34 @@ function FeatureList({
 function SystemFeatures() {
   const duplicatePreventionItems = [
     {
-      icon: <Merge className="h-3 w-3 text-purple-600" />,
+      icon: <Merge className="size-3 text-purple-600" />,
       text: 'Advanced similarity detection (85%+ accuracy)',
     },
     {
-      icon: <Shield className="h-3 w-3 text-green-600" />,
+      icon: <Shield className="size-3 text-green-600" />,
       text: 'Multi-field matching (name, location, contact)',
     },
     {
-      icon: <Zap className="h-3 w-3 text-blue-600" />,
+      icon: <Zap className="size-3 text-blue-600" />,
       text: 'Intelligent merging with data preservation',
     },
     {
-      icon: <RefreshCw className="h-3 w-3 text-yellow-600" />,
+      icon: <RefreshCw className="size-3 text-yellow-600" />,
       text: 'Real-time duplicate checking in pipeline',
     },
   ];
 
   const automatedCleanupItems = [
     {
-      icon: <RefreshCw className="h-3 w-3 text-red-600" />,
+      icon: <RefreshCw className="size-3 text-red-600" />,
       text: 'Placeholder and mock data removal',
     },
-    { icon: <Shield className="h-3 w-3 text-blue-600" />, text: 'Phone number normalization' },
+    { icon: <Shield className="size-3 text-blue-600" />, text: 'Phone number normalization' },
     {
-      icon: <Zap className="h-3 w-3 text-green-600" />,
+      icon: <Zap className="size-3 text-green-600" />,
       text: 'GPS coordinate validation and correction',
     },
-    { icon: <Merge className="h-3 w-3 text-purple-600" />, text: 'Quality score recalculation' },
+    { icon: <Merge className="size-3 text-purple-600" />, text: 'Quality score recalculation' },
   ];
 
   return (
