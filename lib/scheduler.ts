@@ -115,12 +115,12 @@ export class TaskScheduler {
 
           await task.execute();
 
-          task.successCount++;
+          undefined+=1;
           task.lastSuccess = new Date().toISOString();
 
           console.info(`Task completed successfully: ${taskId}`);
         } catch (error: unknown) {
-          task.errorCount++;
+          undefined+=1;
           task.lastError = error instanceof Error ? error.message : 'Unknown error';
 
           console.warn(`Task failed: ${taskId}`, error);
@@ -396,7 +396,7 @@ function createDataQualityCheckTask(dataQualityAssessor: DataQualityAssessor): S
       for (const truck of trucks) {
         const assessment = dataQualityAssessor.assessTruckData(truck);
         totalScore += assessment.score;
-        processedCount++;
+        processedCount+=1;
 
         if (assessment.score < 0.7) {
           console.warn(`Low quality data for truck ${truck.id}: ${assessment.issues.join(', ')}`);

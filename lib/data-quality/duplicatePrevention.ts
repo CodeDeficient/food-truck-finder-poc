@@ -191,16 +191,16 @@ export class DuplicatePreventionService {
     const len1 = s1.length;
     const len2 = s2.length;
 
-    for (let i = 0; i <= len1; i++) {
+    for (let i = 0; i <= len1; i+=1) {
       matrix[i] = [i];
     }
 
-    for (let j = 0; j <= len2; j++) {
+    for (let j = 0; j <= len2; j+=1) {
       matrix[0][j] = j;
     }
 
-    for (let i = 1; i <= len1; i++) {
-      for (let j = 1; j <= len2; j++) {
+    for (let i = 1; i <= len1; i+=1) {
+      for (let j = 1; j <= len2; j+=1) {
         const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
         matrix[i][j] = Math.min(
           matrix[i - 1][j] + 1, // deletion
@@ -231,7 +231,7 @@ export class DuplicatePreventionService {
     // Address similarity
     if (loc1.address && loc2.address) {
       similarity += this.calculateStringSimilarity(loc1.address, loc2.address);
-      factors++;
+      factors+=1;
     }
 
     // GPS coordinate similarity (within 100 meters = high similarity)
@@ -241,7 +241,7 @@ export class DuplicatePreventionService {
       // Distance similarity (closer = higher similarity)
       const distanceSimilarity = distance <= 0.1 ? 1 : Math.max(0, 1 - distance / 1); // 1km max
       similarity += distanceSimilarity;
-      factors++;
+      factors+=1;
     }
 
     return factors > 0 ? similarity / factors : 0;
@@ -285,8 +285,8 @@ export class DuplicatePreventionService {
     if (contact1.phone != undefined && contact2.phone != undefined) {
       const phone1 = contact1.phone.replaceAll(/\D/g, ''); // Remove non-digits
       const phone2 = contact2.phone.replaceAll(/\D/g, '');
-      if (phone1 === phone2) matches++;
-      total++;
+      if (phone1 === phone2) matches+=1;
+      total+=1;
     }
 
     // Website exact match
@@ -299,14 +299,14 @@ export class DuplicatePreventionService {
         .toLowerCase()
         .replace(/^https?:\/\//, '')
         .replace(/\/$/, '');
-      if (url1 === url2) matches++;
-      total++;
+      if (url1 === url2) matches+=1;
+      total+=1;
     }
 
     // Email similarity
     if (contact1.email != undefined && contact2.email != undefined) {
-      if (contact1.email.toLowerCase() === contact2.email.toLowerCase()) matches++;
-      total++;
+      if (contact1.email.toLowerCase() === contact2.email.toLowerCase()) matches+=1;
+      total+=1;
     }
 
     return total > 0 ? matches / total : 0;

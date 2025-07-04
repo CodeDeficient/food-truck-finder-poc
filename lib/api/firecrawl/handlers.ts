@@ -41,7 +41,7 @@ export async function pollCrawlStatus(jobId: string): Promise<NextResponse> {
       );
     }
 
-    attempts++;
+    attempts+=1;
   }
 
   // Timeout
