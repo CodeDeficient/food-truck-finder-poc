@@ -35,7 +35,7 @@ Addressing these duplication types proactively improves codebase health and deve
 
 ### Configuration Refactoring
 1. **Centralize Configurations**: Migrate repeated configuration settings to a single source of truth using modules like **config.js** to prevent duplication in **components/trucks/TruckContent.tsx** and **hooks/realtime/useTruckLocation.tsx**.
-2. **Establish Environmental Constants**: Use dynamic imports with `import('node:path).resolve()` to ensure uniform configuration paths in `components/map/MapContent.tsx`.
+2. **Establish Environmental Constants**: Use dynamic imports with `import('node:path').resolve()` to ensure uniform configuration paths in `components/map/MapContent.tsx`.
 
 ### UI Component Optimization
 1. **Consolidate React Components**: Identify similar UI components across different directories (e.g., TruckCard.tsx vs. AdminFoodTruckCard.tsx) and refactor into a shared component base in **components/ui/cards** like:
@@ -43,6 +43,57 @@ Addressing these duplication types proactively improves codebase health and deve
     <SharedCard truck={truckData} size="large" admin={false} />
     ```
 2. **Implement Shared Visual Patterns**: Create a UI Kit library pattern in components/ui/ using **Tailwind CSS classes** to prevent duplication in **map/MapDisplay.tsx**, where multiple identical button classes are detected. This ensures consistency.
+3. **Verify TruckCardContent Deduplication**: 
+- No duplicate `TruckCardContent.tsx` found in `components/trucks/`. Verification completed with `find-duplicate-component-names.js` on 2025-07-03.
+- Ensure consolidated `TruckCardContent` handles props and type safety:
+  ```typescript
+  interface TruckDetailsProps {
+    truck: FoodTruckSchema;
+    onSelect: () => void;
+  }
+
+  const TruckCardContent: React.FC<TruckDetailsProps> = ({ truck, onSelect }) => {
+    if (!truck.id) throw new Error("Truck ID is required");
+
+    return (
+      <div className="...">
+        <h2>{truck.name}</h2>
+        {/* Additional content with prop validation */}
+      </div>
+    );
+  };
+  ```
+- Confirm centralized API endpoints:
+  ```typescript
+  class TruckSearchQuery {
+    /**
+     * Fetch all trucks from the database, handling empty results and errors.
+     * 
+     * @returns {Promise<FoodTruckSchema[]>} A promise that resolves to an array of Food Truck schemas.
+     */
+    static async findAllTrucks(): Promise<FoodTruckSchema[]> {
+      try {
+        const result = await FoodTruckService.getAllTrucks();
+
+        // Handle empty results
+        if (result.data.length === 0) throw new Error("No trucks available");
+
+        return (result as any).data.map((truck: FoodTruckSchema) => ({
+          ...truck,
+          location: truck.location ?? 'Unknown', // Handle possible null locations
+          menu: truck.menu ?? 'Menu items not available' // Provide fallback if menu is null
+        }));
+      } catch (error) {
+        // Properly handle and log errors
+        const errorMessage = `Error fetching trucks: ${error instanceof Error ? error.message : JSON.stringify(error)}`;
+        console.error(errorMessage);
+
+        // Re-throw error to notify parent component
+        throw new Error(errorMessage);
+      }
+    }
+  }
+  ```
 
 ## 3. Implementation Plan
 
@@ -68,9 +119,9 @@ Addressing these duplication types proactively improves codebase health and deve
 1. **Function Extraction & Refactoring**
    - Migrate inline authentication functions like:
       ```javascript
-       async function _handleAuth(loginData, provider="gemini") {
-          // Logic from MapContent.tsx
-       }
+      async function _handleAuth(loginData, provider="gemini") {
+         // Logic from MapContent.tsx
+      }
       ```
    - Convert to shared module functions in hooks/auth/useFirebaseLogin.js
 
@@ -80,7 +131,8 @@ Addressing these duplication types proactively improves codebase health and deve
       module.exports = {
         rules: {
           "import/no-duplicate": "error"
-      }
+        }
+      };
       ```
 
 3. **Consolidate UI & Component Libraries**
@@ -89,13 +141,13 @@ Addressing these duplication types proactively improves codebase health and deve
 ### Phase 3: Preventive Protocols
 
 1. **Pre-CI/CD Hooks for Dupe Prevention**
-   - Implement `lint-staged` scripts to run `eslint . --fix` pre-commit. Example `.husky/pre-commit` script:
+   - Implement `lint-staged` scripts to run `eslint . --fix` pre-commit. Example `.husky/pre-commit.config.js`:
       ```json5
       module.exports = {
         "*.{js,jsx,ts,tsx}": [
            "eslint --fix",
            "git add"
-         ]
+        ]
       };
       ```
 
