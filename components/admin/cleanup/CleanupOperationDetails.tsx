@@ -10,6 +10,19 @@ interface CleanupOperationDetailsProps {
   readonly operations: CleanupResult['operations'];
 }
 
+/**
+ * Renders a list of cleanup operation details including icons, success rates, badges, progress bars, and error alerts.
+ * @example
+ * CleanupOperationDetails({ operations: [{ type: 'delete', description: 'Delete old records', successCount: 10, affectedCount: 12, errors: ['Error1', 'Error2'], errorCount: 2 }] })
+ * // The rendered component displays operation details for each entry in the operations array.
+ * @param {CleanupOperationDetailsProps} { operations } - An object containing an array of operation details.
+ * @returns {JSX.Element} A React component representing details of each cleanup operation.
+ * @description
+ *   - Displays operation icons, descriptions, and success rate badges.
+ *   - Conditionally renders a progress bar based on the success rate.
+ *   - Shows an alert with errors if any exist in the operation.
+ *   - Limits error display to the first three errors followed by a count of remaining errors.
+ */
 export function CleanupOperationDetails({ operations }: CleanupOperationDetailsProps) {
   return (
     <div className="space-y-3">

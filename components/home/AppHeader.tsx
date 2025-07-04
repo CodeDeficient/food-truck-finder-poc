@@ -14,6 +14,32 @@ interface AppHeaderProps {
   readonly loadNearbyTrucks: () => void;
 }
 
+/**
+ * Renders the main header for the Food Truck Finder application with theme toggle and search functionality.
+ * @example
+ * AppHeader({
+ *   mounted: true,
+ *   resolvedTheme: 'dark',
+ *   setTheme: (theme) => console.log(theme),
+ *   searchTerm: '',
+ *   setSearchTerm: (term) => console.log(term),
+ *   userLocation: { latitude: 40.7128, longitude: -74.0060 },
+ *   loadNearbyTrucks: () => console.log('Loading trucks...')
+ * })
+ * <header>...</header>
+ * @param {boolean} mounted - Determines if components are mounted to enable interactions.
+ * @param {string} resolvedTheme - Current theme ('light' or 'dark') to toggle the application display.
+ * @param {Function} setTheme - Function to toggle the theme between 'light' and 'dark'.
+ * @param {string} searchTerm - Current search term used to filter nearby trucks.
+ * @param {Function} setSearchTerm - Function to update the search term.
+ * @param {Object} userLocation - The user's current geographical location to find nearby trucks.
+ * @param {Function} loadNearbyTrucks - Function to load nearby food trucks based on user location.
+ * @returns {JSX.Element} The header element with search input, theme toggle, and location-based button.
+ * @description
+ *   - Displays the application title prominently in the header.
+ *   - Conditional rendering of components based on user location and component mount status.
+ *   - Facilitates user interaction with theme toggling based on current theme state.
+ */
 export function AppHeader({
   mounted,
   resolvedTheme,

@@ -69,6 +69,18 @@ const ChartContainer = React.forwardRef<
 });
 ChartContainer.displayName = 'Chart';
 
+/**
+ * Generates and returns a style JSX element with theme-based color configurations for charts.
+ * @example
+ * const jsxStyleElement = generateStyleElement({ id: 'myChart', config: myChartConfig });
+ * @param {Object} context - An object containing the chart's identifier and configuration.
+ * @param {string} context.id - The unique identifier for the chart.
+ * @param {ChartConfig} context.config - The configuration object for the chart.
+ * @returns {JSX.Element|undefined} A JSX style element setting CSS variables for chart colors, or undefined if no color configuration is provided.
+ * @description
+ *   - Only charts with theme or color properties in their configuration will generate color styles.
+ *   - Utilizes `dangerouslySetInnerHTML` to inject computed styles into JSX.
+ */
 const ChartStyle = ({ id, config }: { readonly id: string; readonly config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([_, itemConfig]) => (itemConfig.theme ?? itemConfig.color) !== undefined,
@@ -133,6 +145,18 @@ type ChartTooltipIndicatorAndContentProps = {
   tooltipLabel: React.ReactNode;
 };
 
+/**
+* Renders a tooltip indicator and content for a chart
+* @example
+* ChartTooltipIndicatorAndContent({ indicator: 'sample', hideIndicator: false })
+* Returns a JSX fragment containing TooltipIndicator and TooltipItemContent components
+* @param {ChartTooltipIndicatorAndContentProps} props - Configuration object for rendering the tooltip components.
+* @returns {JSX.Element} A fragment that contains tooltip indicator and item content components.
+* @description
+*   - Combines TooltipIndicator and TooltipItemContent using provided configuration.
+*   - Uses the `formatter` function to format the item data in the tooltip content.
+*   - Passes the `itemConfig` and `nestLabel` to both child components for consistent rendering.
+*/
 function ChartTooltipIndicatorAndContent(props: Readonly<ChartTooltipIndicatorAndContentProps>) {
   const {
     indicator,
@@ -183,6 +207,20 @@ type ChartTooltipItemProps = {
   };
 };
 
+/**
+ * Renders a chart tooltip item with a configurable indicator.
+ * @example
+ * ChartTooltipItem({ item: { name: "Sample", dataKey: "key" }, index: 0, indicatorProps: { indicator: "dot", hideIndicator: false, color: "blue" } })
+ * // Returns JSX element for tooltip with indicator
+ * @param {Object} item - The chart item containing dataKey, name, payload, color, and value attributes.
+ * @param {number} index - The index position of the chart item.
+ * @param {Object} indicatorProps - Properties for configuring the indicator like type, visibility, color, etc.
+ * @returns {JSX.Element} A JSX element rendering the chart tooltip item with an optional indicator.
+ * @description
+ *   - The tooltip item will display customizable content based on provided item configuration.
+ *   - Tooltip indicator can be hidden or shown based on `hideIndicator` property.
+ *   - Determines the color of the indicator, initially defaulting to item-specific color or payload-specific fill.
+ */
 function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltipItemProps>) {
   const { indicator, hideIndicator, color, nestLabel, config, nameKey, tooltipLabel, formatter } =
     indicatorProps;
@@ -246,6 +284,18 @@ type ChartTooltipItemsProps = {
   };
 };
 
+/**
+ * Represents a grid layout of tooltip items for a chart.
+ * @example
+ * ChartTooltipItems({ safePayload: payloadData, indicatorProps: chartIndicatorSettings })
+ * <div className="grid gap-1.5">...</div>
+ * @param {Readonly<ChartTooltipItemsProps>} props - Contains the payload and indicator properties required for rendering tooltip items.
+ * @returns {JSX.Element} A div containing tooltip items in a grid layout.
+ * @description
+ *   - Utilizes the `ChartTooltipItem` component to render individual tooltip items.
+ *   - Applies a CSS class for a grid layout with spacing between items.
+ *   - Ensures safe access to each item's key using `item.dataKey ?? index`.
+ */
 function ChartTooltipItems(props: Readonly<ChartTooltipItemsProps>) {
   const { safePayload, indicatorProps } = props;
   return (
@@ -347,6 +397,23 @@ interface ChartLegendItemProps {
   config: ChartConfig;
 }
 
+/**
+ * Renders a chart legend item with customizable appearance.
+ * @example
+ * ChartLegendItem({ item: sampleItem, idx: 0, hideIcon: false, nameKey: 'legendItem', config: sampleConfig })
+ * Returns a JSX element representing the chart legend item with an icon, label, or color box.
+ * @param {Object} item - The legend item data including `dataKey`, `value`, and `color`.
+ * @param {number} idx - The index of the item in the legend list to be used as a fallback key.
+ * @param {boolean} hideIcon - A flag to determine whether to hide the item icon.
+ * @param {string} [nameKey] - Optional key to identify the legend item, falling back to `dataKey` or 'value'.
+ * @param {Object} config - Configuration object to customize the legend item appearance and behavior.
+ * @returns {JSX.Element} A JSX element representing the chart legend item with optional icon, label, or color box.
+ * @description
+ *   - Uses the item's `dataKey` as a unique identifier when `nameKey` is not provided.
+ *   - Applies default styling to SVG icons within the legend item using Tailwind CSS classes.
+ *   - Dynamically renders either an icon or a styled color box based on the `hideIcon` flag and `itemConfig`.
+ *   - Retrieves configuration using `getPayloadConfigFromPayload` for interactive legend item customization.
+ */
 function ChartLegendItem({ item, idx, hideIcon, nameKey, config }: Readonly<ChartLegendItemProps>) {
   const dataKey = item.dataKey?.toString();
   const itemData = {
