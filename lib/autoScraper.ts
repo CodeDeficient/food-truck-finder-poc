@@ -227,7 +227,8 @@ export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult>
   const urlsToScrape = await getUrlsToScrape();
   console.info(`AutoScraper: Found ${urlsToScrape.length} URLs to process`);
 
-  for (const url of urlsToScrape) {
+  // Process URLs in parallel
+  await Promise.all(urlsToScrape.map(async (url) => {
     try {
       console.info(`AutoScraper: Checking url: ${url}`);
 
@@ -235,7 +236,7 @@ export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult>
 
       if (error != undefined) {
         errors.push({ url, details: error });
-        continue;
+        return; // Use return instead of continue in map
       }
 
       if (truck) {
@@ -252,7 +253,7 @@ export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult>
         details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
-  }
+  }));
 
   console.info('AutoScraper: Finished autonomous scraping process.');
   return {

@@ -114,10 +114,10 @@ export class BatchCleanupService {
   ): Promise<void> {
     for (let i = 0; i < trucks.length; i += batchSize) {
       const batch = trucks.slice(i, i + batchSize);
-      for (const op of operations) {
+      await Promise.all(operations.map(async (op) => {
         const opResult = await this.runOperation(op, batch, dryRun);
         result.operations.push(opResult);
-      }
+      }));
     }
   }
   
@@ -190,10 +190,9 @@ export class BatchCleanupService {
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
     const placeholderPatterns = getPlaceholderPatterns();
-    const promises = trucks.map(truck => 
+    await Promise.all(trucks.map(truck =>
       this.processSingleTruckForPlaceholders(truck, placeholderPatterns, dryRun, operation)
-    );
-    await Promise.all(promises);
+    ));
     return operation;
   }
 
@@ -237,7 +236,7 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
-    const promises = trucks.map(truck => {
+    await Promise.all(trucks.map(truck => {
       if (truck.contact_info?.phone !== undefined) {
         const originalPhone = truck.contact_info.phone;
         const normalizedPhone = this.normalizePhone(originalPhone);
@@ -247,8 +246,7 @@ export class BatchCleanupService {
         }
       }
       return Promise.resolve();
-    });
-    await Promise.all(promises);
+    }));
     return operation;
   }
 
@@ -311,10 +309,9 @@ export class BatchCleanupService {
       dryRun,
     };
 
-    const promises = trucks.map(truck => 
+    await Promise.all(trucks.map(truck =>
       this.processSingleTruckCoordinates(truck, { ...context, operation })
-    );
-    await Promise.all(promises);
+    ));
     return operation;
   }
 
@@ -364,10 +361,9 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation
   ): Promise<CleanupOperation> {
-    const promises = trucks.map(truck => 
+    await Promise.all(trucks.map(truck =>
       this.processSingleTruckForQualityScore(truck, dryRun, operation)
-    );
-    await Promise.all(promises);
+    ));
     return operation;
   }
 
