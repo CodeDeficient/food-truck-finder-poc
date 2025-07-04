@@ -10,6 +10,24 @@ export interface SystemAlert {
   acknowledged?: boolean;
 }
 
+/**
+ * Manages system alerts based on recent events and provides logic for displaying and acknowledging alerts.
+ * @example
+ * useSystemAlertsLogic(recentEvents)
+ * {
+ *   alerts: [...],
+ *   showDetails: false,
+ *   setShowDetails: (newValue) => void,
+ *   acknowledgeAlert: (alertId) => void
+ * }
+ * @param {RealtimeEvent[]} recentEvents - Array of recent real-time events containing severity levels and other data.
+ * @returns {object} An object containing alerts array, showDetails state, a setter for showDetails, and a function to acknowledge alerts.
+ * @description
+ *   - Filters events with severity levels of 'warning', 'error', or 'critical'.
+ *   - Transforms events into alert objects with a default message when none is provided.
+ *   - Limits the number of alerts to the 5 most recent non-informational events.
+ *   - Provides functionality to mark alerts as acknowledged.
+ */
 export function useSystemAlertsLogic(recentEvents: RealtimeEvent[]) {
   const [alerts, setAlerts] = useState<SystemAlert[]>([]);
   const [showDetails, setShowDetails] = useState(false);

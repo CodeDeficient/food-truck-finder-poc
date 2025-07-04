@@ -13,6 +13,23 @@ interface AdvancedFiltersProps {
   readonly cuisineTypes: readonly string[];
 }
 
+/**
+ * AdvancedFilters component renders filtering sections for search functionality.
+ * @example
+ * AdvancedFilters({
+ *   filters: {}, 
+ *   setFilters: () => {}, 
+ *   clearFilters: () => {}, 
+ *   cuisineTypes: []
+ * })
+ * // returns a JSX element containing QuickFilters, CuisineTypes, and DistanceSlider sections.
+ * @param {AdvancedFiltersProps} {filters, setFilters, clearFilters, cuisineTypes} - An object containing current filters, setter functions for filters, a function to clear filters, and an array of cuisine types.
+ * @returns {JSX.Element} A div containing multiple filtering sections.
+ * @description
+ *   - Utilizes QuickFiltersSection, CuisineTypesSection, and DistanceSliderSection components to handle different filtering criteria.
+ *   - Renders with added space and top padding, distinguished by a top border in dark mode.
+ *   - Filters, setFilters, and cuisineTypes props are propagated to child components.
+ */
 export function AdvancedFilters({
   filters,
   setFilters,

@@ -8,6 +8,19 @@ interface DistanceSliderSectionProps {
   readonly setFilters: (filters: SearchFilters) => void;
 }
 
+/**
+ * Renders a slider for selecting a distance radius in kilometers.
+ * @example
+ * DistanceSliderSection({ filters: { radius: 25 }, setFilters: someFunction })
+ * <div>...</div>
+ * @param {Object} filters - The current filter settings, including the radius.
+ * @param {Function} setFilters - Function to update the filter settings.
+ * @returns {JSX.Element} A container with a label, slider, and range indicators for distance selection.
+ * @description 
+ *   - The slider allows users to choose a distance between 1 km to 50 km.
+ *   - Displays the currently selected radius beside the slider.
+ *   - Updates the radius value using the setFilters function whenever the slider value changes.
+ */
 export function DistanceSliderSection({ filters, setFilters }: DistanceSliderSectionProps) {
   return (
     <div>

@@ -9,6 +9,25 @@ interface SearchInputWithIconProps {
   readonly placeholder: string;
 }
 
+/**
+ * Renders a search input field with an icon.
+ * @example
+ * SearchInputWithIcon({
+ *   value: 'search query',
+ *   onChange: handleInputChange,
+ *   onKeyDown: handleKeyDown,
+ *   placeholder: 'Search...',
+ * })
+ * <div>...</div>
+ * @param {string} value - The current value of the input field.
+ * @param {function} onChange - A callback function to handle input value changes.
+ * @param {function} onKeyDown - A callback function to handle key down events.
+ * @param {string} placeholder - The placeholder text for the input field.
+ * @returns {JSX.Element} A JSX element representing the search input with an icon.
+ * @description
+ *   - Ensures the icon is centrally positioned vertically within the input.
+ *   - Applies specific styling for dark mode UI components.
+ */
 export function SearchInputWithIcon({
   value,
   onChange,
