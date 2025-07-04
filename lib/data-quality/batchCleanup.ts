@@ -253,15 +253,15 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation,
   ): Promise<void> {
-    operation.affectedCount++;
+    undefined+=1;
     if (dryRun) {
-      operation.successCount++;
+      undefined+=1;
     } else {
       try {
         await FoodTruckService.updateTruck(truckId, updates);
-        operation.successCount++;
+        undefined+=1;
       } catch (error) {
-        operation.errorCount++;
+        undefined+=1;
         operation.errors.push(
           `Failed to update truck ${truckId}: ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -298,9 +298,9 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation,
   ): Promise<void> {
-    operation.affectedCount++;
+    undefined+=1;
     if (dryRun) {
-      operation.successCount++;
+      undefined+=1;
     } else {
       try {
         await FoodTruckService.updateTruck(truck.id, {
@@ -309,9 +309,9 @@ export class BatchCleanupService {
             phone: normalizedPhone,
           },
         });
-        operation.successCount++;
+        undefined+=1;
       } catch (error) {
-        operation.errorCount++;
+        undefined+=1;
         operation.errors.push(
           `Failed to normalize phone for truck ${truck.id}: ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -379,9 +379,9 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation,
   ): Promise<void> {
-    operation.affectedCount++;
+    undefined+=1;
     if (dryRun) {
-      operation.successCount++;
+      undefined+=1;
     } else {
       try {
         await FoodTruckService.updateTruck(truck.id, {
@@ -390,9 +390,9 @@ export class BatchCleanupService {
             ...updates,
           },
         });
-        operation.successCount++;
+        undefined+=1;
       } catch (error) {
-        operation.errorCount++;
+        undefined+=1;
         operation.errors.push(
           `Failed to fix coordinates for truck ${truck.id}: ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -436,18 +436,18 @@ export class BatchCleanupService {
     dryRun: boolean,
     operation: CleanupOperation,
   ): Promise<void> {
-    operation.affectedCount++;
+    undefined+=1;
     if (dryRun) {
-      operation.successCount++;
+      undefined+=1;
     } else {
       try {
         const updateResult = await DataQualityService.updateTruckQualityScore(truck.id);
         if ('error' in updateResult) {
           throw new Error(updateResult.error);
         }
-        operation.successCount++;
+        undefined+=1;
       } catch (error) {
-        operation.errorCount++;
+        undefined+=1;
         operation.errors.push(
           `Failed to update quality score for truck ${truck.id}: ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -501,9 +501,9 @@ export class BatchCleanupService {
     context: MergeOperationContext,
   ): Promise<void> {
     const { operation, processedIds } = context;
-    operation.affectedCount++;
+    undefined+=1;
     if (dryRun) {
-      operation.successCount++;
+      undefined+=1;
     } else {
       try {
         const mergeResult = await DuplicatePreventionService.mergeDuplicates(
@@ -514,9 +514,9 @@ export class BatchCleanupService {
           throw new Error(mergeResult.error);
         }
         processedIds.add(existingTruck.id);
-        operation.successCount++;
+        undefined+=1;
       } catch (error) {
-        operation.errorCount++;
+        undefined+=1;
         operation.errors.push(
           `Failed to merge duplicates ${truck.id} and ${existingTruck.id}: ${error instanceof Error ? error.message : String(error)}`,
         );
