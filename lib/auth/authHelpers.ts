@@ -9,6 +9,30 @@ interface RequestMetadata {
   userAgent: string;
 }
 
+/**
+ * Handles successful authentication by verifying user role and logging events.
+ * @example
+ * handleSuccessfulAuth({
+ *   user: { id: '123', email: 'user@example.com' },
+ *   redirectTo: '/dashboard',
+ *   origin: 'http://localhost:3000',
+ *   identifier: 'abc123',
+ *   requestMetadata: { ip: '192.168.0.1', userAgent: 'Mozilla/5.0' }
+ * })
+ * // Either redirects to specified path or access-denied page based on user role
+ * @param {Object} options - An object containing necessary authentication details.
+ * @param {User} options.user - The user's information including ID and email.
+ * @param {string} options.redirectTo - Path to redirect upon successful authentication.
+ * @param {string} options.origin - The origin to prepend to redirect paths.
+ * @param {string} options.identifier - Unique identifier for rate limiting.
+ * @param {RequestMetadata} options.requestMetadata - Metadata of the request including IP and user-agent.
+ * @returns {NextResponse} NextResponse object indicating redirection based on user role.
+ * @description
+ *   - Checks user role from the 'profiles' table.
+ *   - Logs authentication and security events with different severities.
+ *   - Employs rate limiting for successful authentication attempts.
+ *   - Redirects based on user's role, serving admin and non-admin users differently.
+ */
 export async function handleSuccessfulAuth(options: {
   user: User;
   redirectTo: string;

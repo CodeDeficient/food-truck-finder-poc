@@ -15,6 +15,17 @@ interface UserDisplayData {
   role: string;
 }
 
+/**
+ * Fetches user data along with their associated roles.
+ * @example
+ * getUsersData()
+ * Returns a promise resolving to an array of user data including roles.
+ * @returns {Promise<UserDisplayData[]>} Promise resolving to an array of user data objects.
+ * @description
+ *   - The function requires a global `supabaseAdmin` instance to be available.
+ *   - Handles errors during the fetching of users or profiles by logging them.
+ *   - Maps profile roles to users, defaulting roles to 'user' when not found.
+ */
 async function getUsersData(): Promise<UserDisplayData[]> {
   if (!supabaseAdmin) {
     throw new Error('Supabase admin client not available');
@@ -50,6 +61,17 @@ async function getUsersData(): Promise<UserDisplayData[]> {
   })) as UserDisplayData[];
 }
 
+/**
+ * Renders the header section for the user management page
+ * @example
+ * PageHeader()
+ * <div>...</div> // Returns a JSX element containing the page header
+ * @returns {JSX.Element} JSX element containing the page header 
+ * @description
+ *   - Includes a title and a button to add a new user.
+ *   - Uses Flexbox for layout styling.
+ *   - Button component utilizes a child link to navigate to the user creation page.
+ */
 function PageHeader() {
   return (
     <div className="flex items-center justify-between">
@@ -64,6 +86,19 @@ function PageHeader() {
   );
 }
 
+/**
+* Renders a card component displaying a list of system users with a description and a header.
+* @example
+* UserListCard({ users: [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }] })
+* //<Card>...</Card>
+* @param {Object} props - The props containing user data.
+* @param {Readonly<UserDisplayData[]>} props.users - An array of user data objects to display in the table.
+* @returns {JSX.Element} A card component with a user table.
+* @description
+*   - Utilizes Card, CardHeader, CardTitle, CardDescription, and CardContent components to structure the card.
+*   - Displays the total number of users in the card description.
+*   - Users are displayed in a UserTable component that is passed a new array created from the `users` prop.
+*/
 function UserListCard({ users }: Readonly<{ users: Readonly<UserDisplayData[]> }>) {
   return (
     <Card>

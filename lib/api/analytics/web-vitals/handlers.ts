@@ -12,6 +12,19 @@ export function getRequestParams(request: NextRequest) {
   return { days, page };
 }
 
+/**
+ * Fetches and filters web vital metrics based on the given request parameters.
+ * @example
+ * fetchAndFilterMetrics(request)
+ * { metrics: [{...}], days: 7, startDate: 2023-01-01T00:00:00.000Z }
+ * @param {NextRequest} request - The request object containing parameters for filtering metrics such as days and page.
+ * @returns {Object} An object containing an array of metrics, the number of days for the range, and the start date.
+ * @description
+ *   - Throws an error if the Supabase database connection is not available.
+ *   - Builds a query to select metrics recorded after a specific start date.
+ *   - Filters metrics by page URL if specified in the request parameters.
+ *   - Limits the number of returned metrics to 1000 to avoid overwhelming the client.
+ */
 export async function fetchAndFilterMetrics(request: NextRequest) {
   const { days, page } = getRequestParams(request);
 
@@ -123,6 +136,19 @@ export function getPercentile(sortedValues: number[], percentile: number): numbe
   return Math.round(sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight);
 }
 
+/**
+ * Handles POST requests to store and validate web vital metrics.
+ * @example
+ * handlePostRequest(request)
+ * { success: true }
+ * @param {NextRequest} request - The incoming request containing the web vital metric data.
+ * @returns {NextResponse} JSON response indicating success or failure of storing the metric.
+ * @description
+ *   - Validates that the metric contains required fields and checks the types of values.
+ *   - Stores validated metrics in a Supabase table if `supabaseAdmin` is available.
+ *   - Logs any 'poor' performance metrics for monitoring purposes.
+ *   - Ensures metrics collection is non-blocking, even if an error occurs during database operations.
+ */
 export async function handlePostRequest(request: NextRequest) {
   try {
     const metric: unknown = await request.json();
@@ -177,6 +203,19 @@ export async function handlePostRequest(request: NextRequest) {
   }
 }
 
+/**
+* Handles a GET request to fetch web vitals analytics data, process it, and respond with a summary.
+* @example
+* handleGetRequest(request)
+* { success: true, data: { metrics: [...], summary: {...}, period: {...} } }
+* @param {NextRequest} request - The incoming request object containing the necessary parameters.
+* @returns {Promise<NextResponse>} Returns a JSON response indicating success or failure along with the data.
+* @description
+*   - Fetches metrics which are filtered and evaluated from the request data.
+*   - Constructs a summary of the metrics including names, values, and ratings.
+*   - Generates a response containing the metrics, summary, and calculated time period.
+*   - Logs errors and responses with a status code in case of failure during data fetching.
+*/
 export async function handleGetRequest(request: NextRequest) {
   try {
     const { metrics, days, startDate } = await fetchAndFilterMetrics(request);

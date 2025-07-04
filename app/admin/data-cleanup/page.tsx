@@ -5,6 +5,17 @@ import { Badge } from '@/components/ui/badge';
 import { Shield, Zap, RefreshCw, Merge } from 'lucide-react';
 
 // Helper component for page header
+/**
+ * Creates the page header for the Data Cleanup & Quality Management section.
+ * @example
+ * PageHeader()
+ * <div className="flex items-center justify-between">...</div>
+ * @returns {JSX.Element} A React component rendering the header section.
+ * @description
+ *   - Utilizes CSS classes for styling and layout, ensuring consistency.
+ *   - Displays a title and description along with a badge indicating system status.
+ *   - Integrates an icon within the badge for visual emphasis.
+ */
 function PageHeader() {
   return (
     <div className="flex items-center justify-between">
@@ -23,6 +34,27 @@ function PageHeader() {
 }
 
 // Helper component for individual feature cards
+/**
+* Renders a feature card with a title, icon, value, description, and custom color styling.
+* @example
+* FeatureCard({
+*   title: "Total Users",
+*   icon: <UserIcon />,
+*   value: "1,024",
+*   description: "Number of active users",
+*   colorClass: "text-green-500"
+* })
+* @param {Object} params - The parameter object.
+* @param {string} params.title - The title displayed on the card.
+* @param {React.ReactNode} params.icon - The icon displayed alongside the title.
+* @param {string} params.value - The main value displayed in the card.
+* @param {string} params.description - A brief description underneath the value.
+* @param {string} params.colorClass - The CSS class for styling the value text.
+* @returns {JSX.Element} The JSX element rendering the feature card.
+* @description
+*   - The card consists of a header and a content section.
+*   - `colorClass` defines the text color of the `value` for visual emphasis.
+*/
 function FeatureCard({
   title,
   icon,
@@ -51,6 +83,18 @@ function FeatureCard({
 }
 
 // Helper component for feature overview cards
+/**
+ * Renders a set of feature overview cards.
+ * @example
+ * FeatureOverviewCards()
+ * Returns JSX for rendering feature cards in a grid layout.
+ * @returns {JSX.Element} A grid containing four FeatureCard components, each with specific properties.
+ * @description
+ *   - Utilizes a responsive grid layout with different column counts for different screen sizes.
+ *   - Each 'FeatureCard' component is assigned specific props such as title, icon, value, description, and colorClass.
+ *   - Icons are rendered with specific size and color classes for stylistic consistency.
+ *   - Represents a high-level overview of different features with distinctive functionalities via descriptive cards.
+ */
 function FeatureOverviewCards() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -87,6 +131,20 @@ function FeatureOverviewCards() {
 }
 
 // Helper component for feature lists
+/**
+ * Renders a list of features with icons and descriptions.
+ * @example
+ * FeatureList({ title: 'Features', items: [{ icon: <Icon />, text: 'Feature 1' }] })
+ * <div className="space-y-3">...</div>
+ * @param {Object} {title, items} - An object containing feature list title and array of items.
+ * @param {string} title - The title of the feature list.
+ * @param {Array<{icon: React.ReactNode, text: string}>} items - Array of items with icon and text.
+ * @returns {JSX.Element} A styled and structured list of features.
+ * @description
+ *   - Utilizes Tailwind CSS classes for styling.
+ *   - Maps through the items to display each feature with an icon.
+ *   - Ensures each list item has a unique key using its index.
+ */
 function FeatureList({
   title,
   items,
@@ -110,6 +168,18 @@ function FeatureList({
 }
 
 // Helper component for system features
+/**
+ * SystemFeatures component showcases data quality system features.
+ * @example
+ * SystemFeatures()
+ * <Card>...</Card>
+ * @returns {JSX.Element} A JSX element displaying data quality features.
+ * @description
+ *   - The component divides features into 'Duplicate Prevention' and 'Automated Cleanup' categories.
+ *   - Each feature is accompanied by an icon and a text description.
+ *   - Utilizes react components for displaying features in a card format.
+ *   - Leverages grid layout to organize features responsively.
+ */
 function SystemFeatures() {
   const duplicatePreventionItems = [
     {
@@ -162,6 +232,18 @@ function SystemFeatures() {
 }
 
 // Helper component for technical implementation details
+/**
+ * Renders a card component that describes advanced algorithms and safety measures for data quality management.
+ * @example
+ * TechnicalImplementation()
+ * <Card>...</Card>
+ * @returns {JSX.Element} A card component containing detailed sections about duplicate detection algorithms, cleanup operations, and safety features.
+ * @description
+ *   - Integrates methods for validating and normalizing data to ensure high quality standards.
+ *   - Provides algorithmic descriptions aimed at improving data safety and management.
+ *   - Utilizes multi-threshold alerting and confidence scoring for accuracy.
+ *   - Supports dry run modes and error handling to secure operations.
+ */
 function TechnicalImplementation() {
   return (
     <Card>
@@ -212,6 +294,18 @@ function TechnicalImplementation() {
 }
 
 // Helper component for usage guidelines
+/**
+* Displays best practices and guidelines for optimal data quality management
+* @example
+* UsageGuidelines()
+* Returns a structured card with recommendations and safety considerations for data cleanup operations.
+* @returns {JSX.Element} Returns a JSX card element with sections on preparation, recommended schedules, and safety considerations.
+* @description
+*   - The function provides a structured layout for integrating best practices into a UI component.
+*   - Contains detailed guidelines on the use of preview and dry run modes for data cleanup operations.
+*   - Offers scheduling recommendations to maintain data hygiene efficiently.
+*   - Highlights safety considerations to prevent irreversible operations.
+*/
 function UsageGuidelines() {
   return (
     <Card>
