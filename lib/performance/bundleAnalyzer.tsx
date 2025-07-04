@@ -229,6 +229,18 @@ export function createLazyComponent<T extends React.ComponentType<Record<string,
 ) {
   const LazyComponent = React.lazy(importFn);
 
+  /**
+   * Wraps a lazy loaded component with performance monitoring.
+   * @example
+   * WrappedComponent(props);
+   * Returns a React component wrapped with a Suspense fallback and performance tracking.
+   * @param {React.ComponentProps<T>} props - The props for the wrapped lazy component.
+   * @returns {React.ReactElement} A React element that wraps the lazy component within a Suspense fallback.
+   * @description
+   *   - Utilizes React's Suspense to handle lazy loading of components with a fallback UI.
+   *   - Tracks the performance of the component chunk loading using BundlePerformanceMonitor.
+   *   - Analyzes the load-time performance by capturing the start time at component mount.
+   */
   return function WrappedComponent(props: React.ComponentProps<T>) {
     const startTime = performance.now();
 

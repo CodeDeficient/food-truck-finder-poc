@@ -3,6 +3,18 @@ import { supabase } from '@/lib/supabase';
 import { OAuthStatus } from './types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+/**
+ * Handles a GET request to retrieve OAuth configuration status.
+ * @example
+ * handleGetRequest(request)
+ * Returns a JSON response with OAuth status details and legacy format.
+ * @param {NextRequest} _request - The incoming request object.
+ * @returns {NextResponse} JSON response indicating the current OAuth status.
+ * @description
+ *   - Retrieves the current OAuth configuration status from the server.
+ *   - Adapts the response to include both modern and legacy format details.
+ *   - Provides a step-by-step legacy configuration guide if OAuth is not ready.
+ */
 export async function handleGetRequest(_request: NextRequest) {
   const status = await getOAuthStatus();
 
@@ -37,6 +49,25 @@ function generateOAuthTestUrl(baseUrl: string): string {
   );
 }
 
+/**
+ * Handles a post request to generate an OAuth test URL based on the environment.
+ * @example
+ * handlePostRequest()
+ * {
+ *   success: true,
+ *   message: 'OAuth test URL generated',
+ *   test_url: 'http://localhost:3000/...',
+ *   environment: 'development',
+ *   instructions: [ ... ],
+ *   manual_test_steps: [ ... ],
+ *   automation_commands: [ ... ]
+ * }
+ * @returns {object} An object containing success status, message, the test URL, the environment, instructions, manual test steps, and automation commands.
+ * @description
+ *   - Determines the base URL depending on whether the environment is production or development.
+ *   - Utilizes `generateOAuthTestUrl` to construct the OAuth test URL.
+ *   - Responds with JSON containing test instructions and automation commands for verifying OAuth functionality.
+ */
 export function handlePostRequest() {
   // Removed _request parameter
   const baseUrl =
@@ -71,6 +102,20 @@ export function handlePostRequest() {
   });
 }
 
+/**
+ * Retrieves the current OAuth status including configuration and connectivity information.
+ * @example
+ * getOAuthStatus().then(status => {
+ *   console.log(status);
+ * });
+ * // Output: OAuthStatus object with current configuration and connection status details
+ * @returns {Promise<OAuthStatus>} An object representing the current status of OAuth configuration and connectivity.
+ * @description
+ *   - The function assesses the connectivity and configuration of Supabase and its authentication settings.
+ *   - It checks if the necessary environment variables are set.
+ *   - Executes a series of asynchronous checks to determine if the OAuth provider is properly configured.
+ *   - Recommendations for improving the OAuth setup are generated based on the current status.
+ */
 async function getOAuthStatus(): Promise<OAuthStatus> {
   const status: OAuthStatus = {
     timestamp: new Date().toISOString(),
@@ -103,6 +148,19 @@ async function getOAuthStatus(): Promise<OAuthStatus> {
   return status;
 }
 
+/**
+ * Checks the connection status with Supabase and updates the `OAuthStatus`.
+ * @example
+ * checkSupabaseConnection(status, supabase)
+ * // Updates the `status.supabase.connected` property based on connection success
+ * @param {OAuthStatus} status - The current OAuthStatus object that tracks connection state and errors.
+ * @param {SupabaseClient} supabase - The Supabase client instance used to interact with the database.
+ * @returns {void} No explicit return value, operates directly on the `status` object.
+ * @description
+ *   - Attempts a query to the 'profiles' table to ensure Supabase connection.
+ *   - Updates `status.supabase.connected` based on query success.
+ *   - Captures and records detailed error messages in case of connection failure.
+ */
 async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseClient) {
   try {
     const { error } = await supabase.from('profiles').select('count').limit(1);
@@ -116,6 +174,18 @@ async function checkSupabaseConnection(status: OAuthStatus, supabase: SupabaseCl
   }
 }
 
+/**
+ * Checks and processes Supabase authentication settings.
+ * @example
+ * checkSupabaseAuthSettings(oAuthStatusInstance)
+ * { supabase: { authSettings: { googleEnabled: true, signupEnabled: false, autoconfirm: true } } }
+ * @param {OAuthStatus} status - An object that holds OAuth configuration status.
+ * @returns {void} Modifies the passed status object with fetched authentication settings.
+ * @description
+ *   - The function fetches authentication settings from the Supabase URL defined in environment variables.
+ *   - If Supabase settings are fetched successfully, it updates the OAuth status with authentication settings like Google integration, signup availability, and autoconfirm feature.
+ *   - Provides a fallback log for cases where fetching settings require authentication.
+ */
 async function checkSupabaseAuthSettings(status: OAuthStatus) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -148,6 +218,20 @@ async function checkSupabaseAuthSettings(status: OAuthStatus) {
   }
 }
 
+/**
+ * Tests the configuration of an OAuth provider and updates the status based on the result.
+ * @example
+ * testOAuthProvider(status, supabase)
+ * undefined
+ * @param {OAuthStatus} status - An object representing the current OAuth status and configuration.
+ * @param {SupabaseClient} supabase - The Supabase client instance used to interact with the authentication system.
+ * @returns {void} Does not return any value.
+ * @description
+ *   - Utilizes Google as the OAuth provider for the sign-in attempt.
+ *   - Redirects to a localhost callback URL to simulate the OAuth process.
+ *   - Direct usage of the Supabase auth method to initiate OAuth process.
+ *   - Handles exceptions without altering the control flow and logs them for informational purposes.
+ */
 async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) {
   try {
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
@@ -166,6 +250,18 @@ async function testOAuthProvider(status: OAuthStatus, supabase: SupabaseClient) 
   }
 }
 
+/**
+ * Generates a list of recommendations for OAuth configuration based on the current status.
+ * @example
+ * generateRecommendations(status)
+ * ['❌ Configure NEXT_PUBLIC_SUPABASE_URL environment variable', ...]
+ * @param {OAuthStatus} status - The current status of OAuth configuration and environment variables.
+ * @returns {string[]} Array of recommendation messages to guide configuration setup.
+ * @description
+ *   - Checks for necessary environment variables and Supabase connectivity.
+ *   - Provides guidance on enabling Google OAuth.
+ *   - Suggests consulting documentation for further setup instructions.
+ */
 function generateRecommendations(status: OAuthStatus): string[] {
   const recommendations: string[] = [];
 
@@ -209,6 +305,19 @@ function generateRecommendations(status: OAuthStatus): string[] {
   return recommendations;
 }
 
+/**
+ * Determines the overall OAuth status based on provided conditions.
+ * @example
+ * determineOverallStatus(status)
+ * 'ready'
+ * @param {OAuthStatus} status - The status object containing configuration details.
+ * @returns {'ready' | 'partial' | 'not_configured' | 'error'} Overall status derived from the evaluations.
+ * @description
+ *   - Evaluates connectivity and configuration status from various parameters within the status object.
+ *   - Prioritizes returning 'error' if Supabase connection fails or if an error is detected.
+ *   - Checks completeness of environment variables before proceeding to other status evaluations.
+ *   - Distinguishes between 'ready' and 'partial' based on specific OAuth settings.
+ */
 function determineOverallStatus(
   status: OAuthStatus,
 ): 'ready' | 'partial' | 'not_configured' | 'error' {
@@ -233,6 +342,18 @@ function determineOverallStatus(
   return 'not_configured';
 }
 
+/**
+ * Retrieves a human-readable message based on the OAuth configuration status.
+ * @example
+ * getStatusMessage('ready')
+ * 'Google OAuth is fully configured and ready to use'
+ * @param {string} status - The current status of the OAuth configuration.
+ * @returns {string} A message explaining the OAuth configuration status.
+ * @description
+ *   - Handles several predefined status cases.
+ *   - Provides feedback for both success and error states.
+ *   - Returns a default message for unrecognized statuses.
+ */
 function getStatusMessage(status: string): string {
   switch (status) {
     case 'ready': {
