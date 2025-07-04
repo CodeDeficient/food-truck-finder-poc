@@ -283,16 +283,13 @@ export class PipelineManager {
         );
 
         if (updatedJob?.data_collected?.truck_id != undefined) {
-          trucksCreated++;
-        }
+          trtrucksCreated+=1        }
 
-        jobsSuccessful++;
-      } catch (jobError) {
+        jojobsSuccessful+=1      } catch (jobError) {
         const errorMsg = `Job ${job.id} failed: ${jobError instanceof Error ? jobError.message : 'Unknown error'}`;
         console.warn(errorMsg);
         errors.push(errorMsg);
-        jobsFailed++;
-      }
+        jojobsFailed+=1      }
     }
 
     return {
