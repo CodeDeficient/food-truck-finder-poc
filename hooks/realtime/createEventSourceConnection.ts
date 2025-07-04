@@ -14,6 +14,19 @@ function handleConnectionError(
   setConnectionError(error instanceof Error ? error.message : 'Connection failed');
 }
 
+/**
+* Initializes a new EventSource connection for real-time events
+* @example
+* initializeEventSource(config)
+* EventSource instance ready to handle real-time events
+* @param {CreateConnectionConfig} config - Configuration object containing handlers and settings for the connection.
+* @returns {EventSource} Instance of EventSource configured to listen and manage real-time event connections.
+* @description
+*   - Establishes a connection to '/api/admin/realtime-events' to receive real-time events.
+*   - Utilizes setupEventSourceListeners to apply custom event handling logic and reconnect strategies.
+*   - Ensures robust management of the connection attempts, with support for maximum retries and configurable intervals.
+*   - Facilitates connection state tracking and manual disconnection features through ref objects.
+*/
 function initializeEventSource(config: CreateConnectionConfig) {
   const {
     handleEvent,
@@ -53,6 +66,17 @@ function setupInitialConnectionState(
   isManuallyDisconnectedRef.current = false;
 }
 
+/**
+ * Establishes a new EventSource connection using the provided configuration.
+ * @example
+ * establishEventSourceConnection({eventSourceRef, connectionState})
+ * undefined
+ * @param {CreateConnectionConfig} config - Configuration object containing references and connection state management.
+ * @returns {undefined} This function does not return a value.
+ * @description
+ *   - Initializes authentication setup before creating the EventSource connection.
+ *   - Handles any errors during the connection process by updating connection state.
+ */
 function establishEventSourceConnection(config: CreateConnectionConfig) {
   const { eventSourceRef, connectionState } = config;
   try {

@@ -32,6 +32,30 @@ interface UseRealtimeAdminEventsReturn {
   lastEventTime: Date | undefined;
 }
 
+/**
+ * Manages real-time admin events connection and state logic.
+ * @example
+ * useRealtimeAdminEventsLogic({ autoConnect: false })
+ * {
+ *   isConnected: true,
+ *   isConnecting: false,
+ *   connectionError: null,
+ *   latestMetrics: {},
+ *   recentEvents: [],
+ *   connect: function,
+ *   disconnect: function,
+ *   clearEvents: function,
+ *   connectionAttempts: 5,
+ *   lastEventTime: Date,
+ * }
+ * @param {UseRealtimeAdminEventsOptions} options - Configuration options for connection logic.
+ * @returns {UseRealtimeAdminEventsReturn} An object containing connection state, data, controls, and statistics.
+ * @description
+ *   - Automatically attempts to connect on mount if autoConnect is true.
+ *   - Manages connection state including reconnect logic and event filtering.
+ *   - Provides controls for manual connection management.
+ *   - Cleans up resources, such as event sources, on component unmount.
+ */
 export function useRealtimeAdminEventsLogic(
   options: UseRealtimeAdminEventsOptions = {},
 ): UseRealtimeAdminEventsReturn {

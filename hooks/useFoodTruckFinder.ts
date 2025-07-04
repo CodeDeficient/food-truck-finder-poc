@@ -6,6 +6,18 @@ import {
   loadNearbyTrucksHelper,
 } from '@/lib/utils/foodTruckHelpers';
 
+/**
+* Custom hook to load and filter food truck data based on user location and search term.
+* @example
+* const { trucks, loadNearbyTrucks } = useFoodTruckFinder();
+* // Outputs a list of nearby food trucks
+* @param {void} - This hook does not take any arguments.
+* @returns {Object} An object with food truck data and utility methods.
+* @description
+*   - Initializes food truck data and loading states upon mounting.
+*   - Retrieves user's location to filter nearby food trucks.
+*   - Filters trucks by name and description based on the search term.
+*/
 export const useFoodTruckFinder = () => {
   const [trucks, setTrucks] = useState<FoodTruck[]>([]);
   const [loading, setLoading] = useState(true);
