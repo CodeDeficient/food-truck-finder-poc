@@ -43,7 +43,7 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     if (error || data.user === null) {
       return false;
     }
-    const user = data.user;
+    const {user} = data;
 
     if (!supabaseAdmin) {
       return false;
