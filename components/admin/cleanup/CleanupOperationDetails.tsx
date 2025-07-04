@@ -35,7 +35,7 @@ export function CleanupOperationDetails({ operations }: CleanupOperationDetailsP
 
           {operation.errors.length > 0 && (
             <Alert variant="destructive" className="mt-2">
-              <AlertTriangle className="h-4 w-4" />
+              <AlertTriangle className="size-4" />
               <AlertTitle>Errors ({operation.errors.length})</AlertTitle>
               <AlertDescription>
                 <div className="max-h-20 overflow-y-auto text-xs">
