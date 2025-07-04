@@ -32,7 +32,7 @@ export function FilterToggleButton({
     <Button
       variant="outline"
       onClick={() => setShowAdvanced(!showAdvanced)}
-      className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700 flex-shrink-0"
+      className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700 shrink-0"
     >
       <Filter className="size-4 mr-2" />
       Filters
