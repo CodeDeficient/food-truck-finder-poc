@@ -197,7 +197,7 @@ export async function handleGetSchedules(): Promise<NextResponse> {
 }
 
 export async function handleGetHistory(searchParams: URLSearchParams): Promise<NextResponse> {
-  const limit = Number.parseInt(searchParams.get('limit') ?? '10');
+  const limit = Number.parseInt(searchParams.get('limit') ?? '10', 10);
   const history = await getCleanupHistory(limit);
   return NextResponse.json({
     success: true,
