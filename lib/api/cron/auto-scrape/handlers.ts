@@ -4,6 +4,18 @@ import { scheduler } from '@/lib/scheduler';
 import { logActivity } from '@/lib/activityLogger';
 import { AutoScrapeResult } from './types';
 
+/**
+* Verifies the cron secret authorization header against a stored environment variable.
+* @example
+* verifyCronSecret(request)
+* NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+* @param {NextRequest} request - The incoming request object containing headers.
+* @returns {NextResponse | null} Returns an error response if authorization fails or if the secret is not set.
+* @description
+*   - Logs an error message if the CRON_SECRET environment variable is not configured or is empty.
+*   - Logs unauthorized attempts, including the provided authorization header value.
+*   - Relies on the Bearer token scheme for authorization.
+*/
 function verifyCronSecret(request: NextRequest): NextResponse | null {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
@@ -29,6 +41,19 @@ function logAutoScrapeStart() {
   });
 }
 
+/**
+ * Logs the completion of an automated scraping job with pertinent details.
+ * @example
+ * logAutoScrapeCompletion(autoScrapeResult)
+ * Automated scraping job completed successfully
+ * @param {AutoScrapeResult} result - The result object containing details of the scraping job.
+ * @returns {void} Does not return a value.
+ * @description
+ *   - Logs activity including the number of trucks processed and found, as well as any errors encountered.
+ *   - Utilizes a standardized logActivity function to record job completion.
+ *   - Converts the current timestamp to an ISO string format.
+ *   - Provides a console message indicating successful job completion.
+ */
 function logAutoScrapeCompletion(result: AutoScrapeResult) {
   logActivity({
     type: 'cron_job',
@@ -55,6 +80,19 @@ function logAutoScrapeFailure(error: unknown) {
   });
 }
 
+/**
+ * Handles a POST request to initiate an auto-scraping process and returns the result.
+ * @example
+ * handlePostRequest(request)
+ * { success: true, message: 'Auto-scraping completed successfully', data: { trucksProcessed: 10, newTrucksFound: 2, timestamp: '2023-08-23T18:25:43.511Z' } }
+ * @param {NextRequest} request - The request object containing necessary parameters and headers for processing.
+ * @returns {NextResponse} JSON response with either the success data or an error message.
+ * @description
+ *   - Validates request with a secret key before processing.
+ *   - Logs scraping start and completion along with processed results.
+ *   - Schedules follow-up tasks after successful scraping.
+ *   - Catches and logs errors with a failure response in case of any exceptions during the process.
+ */
 export async function handlePostRequest(request: NextRequest) {
   try {
     const authResponse = verifyCronSecret(request);
