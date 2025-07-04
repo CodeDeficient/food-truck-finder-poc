@@ -276,10 +276,10 @@ async function handleDuplicate(
         throw new Error(`Failed to update or create truck: ${newTruck.error}`);
       }
       return newTruck;
-    } else {
+    } 
       console.info(`Job ${jobId}: Updated existing truck: ${truck.name} (ID: ${truck.id})`);
       return truck;
-    }
+    
   } else {
     const truck = await FoodTruckService.createTruck(truckData);
     if ('error' in truck) {
