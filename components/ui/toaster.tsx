@@ -11,6 +11,19 @@ import {
 } from '@/components/ui/toast';
 import type { ToasterToast } from '@/hooks/UseToast';
 
+/**
+ * Renders a Toast notification component with safe props.
+ * @example
+ * Toaster()
+ * Displays a series of Toast notifications based on the state of useToast.
+ * @param {Object} toasts - Array of toast objects containing necessary information to render each toast.
+ * @returns {JSX.Element} A ToastProvider containing mapped Toast components.
+ * @description
+ *   - Filters toast props to ensure only predefined safe keys are spread into the Toast component.
+ *   - Uses a grid layout to organize toast title and description.
+ *   - Includes a ToastClose component for dismissing the toast.
+ *   - Provides a ToastViewport for displaying the toast notifications on-screen.
+ */
 export function Toaster() {
   const { toasts }: { toasts: ToasterToast[] } = useToast();
 

@@ -8,6 +8,24 @@ interface MenuItem {
   price_cents?: number; // Make price_cents optional
 }
 
+/**
+* Renders the card content for a food truck including its name, operating hours, popular menu items, and contact details.
+* @example
+* TruckCardContent({
+*   truck: { name: 'Tasty Truck', address: '123 Street', phone_number: '123-456-7890' },
+*   todayHours: { open: '8:00 AM', close: '5:00 PM', closed: false },
+*   popularItems: [{ name: 'Burger', price_cents: 500 }],
+* })
+* // returns JSX containing truck's card
+* @param {object} truck - The truck object containing name, address, and phone number.
+* @param {object} todayHours - An optional object specifying today's opening and closing times and whether it is closed.
+* @param {MenuItem[]} popularItems - List of popular menu items to display.
+* @returns {JSX.Element} The JSX content for rendering the truck's card.
+* @description
+*   - Uses default values for missing truck properties to ensure components render safely.
+*   - Calculates the average price of popular items and formats it to two decimal places.
+*   - Validates the existence of social media and contact information before rendering related sections.
+*/
 export function TruckCardContent({
   truck,
   todayHours,
