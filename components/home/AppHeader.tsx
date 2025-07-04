@@ -45,7 +45,7 @@ export function AppHeader({
             size="icon"
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
           >
-            {resolvedTheme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {resolvedTheme === 'dark' ? <Sun className="size-5" /> : <Moon className="size-5" />}
           </Button>
         )}
       </div>

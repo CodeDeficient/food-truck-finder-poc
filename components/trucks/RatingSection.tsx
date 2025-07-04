@@ -30,7 +30,7 @@ export function RatingSection({ averageRating, reviewCount }: Readonly<RatingSec
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
-              className={`h-4 w-4 ${
+              className={`size-4 ${
                 star <= Math.round(averageRating ?? 0)
                   ? 'text-yellow-400 fill-current'
                   : 'text-gray-300'

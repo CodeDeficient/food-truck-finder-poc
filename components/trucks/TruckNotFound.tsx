@@ -27,7 +27,7 @@ export function TruckNotFound() {
           </p>
           <Button asChild className="mt-4">
             <Link href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="size-4 mr-2" />
               Back to Map
             </Link>
           </Button>

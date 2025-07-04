@@ -19,7 +19,7 @@ export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionP
             rel="noopener noreferrer"
             className="flex items-center gap-1 px-2 py-1 bg-pink-100 text-pink-800 rounded-md text-xs hover:bg-pink-200 dark:bg-pink-900 dark:text-pink-200"
           >
-            <Globe className="h-3 w-3" />
+            <Globe className="size-3" />
             Instagram
           </a>
         )}
@@ -30,7 +30,7 @@ export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionP
             rel="noopener noreferrer"
             className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200"
           >
-            <Globe className="h-3 w-3" />
+            <Globe className="size-3" />
             Facebook
           </a>
         )}
@@ -41,7 +41,7 @@ export function SocialMediaSection({ socialMedia }: Readonly<SocialMediaSectionP
             rel="noopener noreferrer"
             className="flex items-center gap-1 px-2 py-1 bg-sky-100 text-sky-800 rounded-md text-xs hover:bg-sky-200 dark:bg-sky-900 dark:text-sky-200"
           >
-            <Globe className="h-3 w-3" />
+            <Globe className="size-3" />
             Twitter
           </a>
         )}

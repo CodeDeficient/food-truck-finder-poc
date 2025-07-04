@@ -26,7 +26,7 @@ export function TruckCardFooter({ truck }: TruckCardFooterProps) {
       <div className="flex gap-2">
         <Button asChild className="flex-1" variant="outline">
           <Link href={`/trucks/${truck.id}`}>
-            <Eye className="h-4 w-4 mr-2" />
+            <Eye className="size-4 mr-2" />
             View Details
           </Link>
         </Button>

@@ -13,7 +13,7 @@ export function LocationInfoCard({ truck }: Readonly<LocationInfoCardProps>) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <MapPin className="h-5 w-5" />
+          <MapPin className="size-5" />
           Location Information
         </CardTitle>
         <CardDescription>Current location and address details</CardDescription>

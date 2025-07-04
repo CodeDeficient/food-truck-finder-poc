@@ -27,7 +27,7 @@ export function PipelineStatisticsCards({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Scraping Jobs (Pending)</CardTitle>
-          <RefreshCcw className="h-4 w-4 text-muted-foreground" />
+          <RefreshCcw className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{scrapingJobs.pending.length}</div>
@@ -36,7 +36,7 @@ export function PipelineStatisticsCards({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Scraping Jobs (Running)</CardTitle>
-          <PlayCircle className="h-4 w-4 text-muted-foreground" />
+          <PlayCircle className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{scrapingJobs.running.length}</div>
@@ -45,7 +45,7 @@ export function PipelineStatisticsCards({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Scraping Jobs (Failed)</CardTitle>
-          <XCircle className="h-4 w-4 text-muted-foreground" />
+          <XCircle className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{scrapingJobs.failed.length}</div>
@@ -54,7 +54,7 @@ export function PipelineStatisticsCards({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Processing Queue (Failed)</CardTitle>
-          <XCircle className="h-4 w-4 text-muted-foreground" />
+          <XCircle className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{processingQueue.failed.length}</div>
