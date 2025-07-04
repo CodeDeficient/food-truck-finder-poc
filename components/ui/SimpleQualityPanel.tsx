@@ -97,7 +97,7 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
+          <Settings className="size-5" />
           Quality Management Operations
         </CardTitle>
         <CardDescription>
@@ -115,9 +115,9 @@ export const SimpleQualityPanel: React.FC<SimpleQualityPanelProps> = ({ onRefres
             variant="default"
           >
             {isRecalculating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="size-4" />
             )}
             Recalculate All Scores
           </Button>

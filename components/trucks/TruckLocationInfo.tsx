@@ -25,7 +25,7 @@ export function TruckLocationInfo({ truck }: TruckLocationInfoProps) {
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-gray-100">
-          <MapPin className="h-5 w-5" />
+          <MapPin className="size-5" />
           Location
         </CardTitle>
         <CardDescription className="dark:text-gray-400">Current location</CardDescription>

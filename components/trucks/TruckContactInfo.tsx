@@ -48,7 +48,7 @@ function ContactField({
     // Handles null, undefined, and empty string
     return (
       <div className="flex items-center gap-3 text-gray-400">
-        <Icon className="h-4 w-4" />
+        <Icon className="size-4" />
         <span className="text-sm">{unavailableText}</span>
       </div>
     );
@@ -56,7 +56,7 @@ function ContactField({
 
   return (
     <div className="flex items-center gap-3">
-      <Icon className="h-4 w-4 text-gray-500" />
+      <Icon className="size-4 text-gray-500" />
       <div>
         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</label>
         {href ? (
@@ -118,7 +118,7 @@ function SocialMediaLinks({
               rel="noopener noreferrer"
               className={`flex items-center gap-1 px-2 py-1 bg-${color}-100 text-${color}-800 rounded-md text-sm hover:bg-${color}-200 dark:bg-${color}-900 dark:text-${color}-200`}
             >
-              <Globe className="h-3 w-3" />
+              <Globe className="size-3" />
               {name}
             </a>
           );
@@ -146,7 +146,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-gray-100">
-          <Phone className="h-5 w-5" />
+          <Phone className="size-5" />
           Contact Information
         </CardTitle>
         <CardDescription className="dark:text-gray-400">Get in touch</CardDescription>
