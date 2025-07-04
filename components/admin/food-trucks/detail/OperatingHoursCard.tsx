@@ -8,6 +8,18 @@ interface OperatingHoursCardProps {
   readonly truck: FoodTruck;
 }
 
+/**
+ * Renders a card showing the operating hours of a truck.
+ * @example
+ * OperatingHoursCard({ truck: { operating_hours: { monday: { open: '09:00', close: '17:00' } } } })
+ * // Returns a card element indicating "Operating Hours" with specific hours or "Closed"/"Not specified" for each day.
+ * @param {Object} truck - An object representing the food truck, which includes an `operating_hours` property.
+ * @returns {JSX.Element} A React component that displays a card with the truck's operating hours information.
+ * @description
+ *   - Displays "Closed" if a specific day is marked as closed.
+ *   - Shows "Not specified" when the operating hours for a day are not provided.
+ *   - Utilizes the `Clock` component for visual indication of operating hours.
+ */
 export function OperatingHoursCard({ truck }: Readonly<OperatingHoursCardProps>) {
   return (
     <Card>

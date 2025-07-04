@@ -18,6 +18,19 @@ function getBadgeVariant(status: string) {
   return 'outline';
 }
 
+/**
+ * Renders a table row displaying details of a scraping job.
+ * @example
+ * ScrapingJobRow({ job })
+ * // returns a JSX element representing the job details in a table row.
+ * @param {Object} {job} - Job object containing various job details.
+ * @returns {JSX.Element} A table row element with job details.
+ * @description
+ *   - Displays the job's status using a badge whose appearance varies based on the status.
+ *   - Shows a 'Retry' button only if the job status is 'failed'.
+ *   - Formats the scheduled and completed times as locale strings.
+ *   - Default display for 'completed_at' is 'N/A' if the job is not completed.
+ */
 export function ScrapingJobRow({ job }: ScrapingJobRowProps) {
   return (
     <TableRow key={job.id}>

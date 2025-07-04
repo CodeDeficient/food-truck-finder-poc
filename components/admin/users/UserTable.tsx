@@ -23,6 +23,19 @@ interface UserTableProps {
   readonly users: UserDisplayData[];
 }
 
+/**
+ * Renders a table displaying user information including email, role, creation date, last sign-in date, and actions.
+ * @example
+ * UserTable({ users: userList })
+ * // Returns a JSX element representing a table of users
+ * @param {Object[]} users - List of user objects containing their information such as email, role, creation date, and last sign-in date.
+ * @returns {JSX.Element} A table component displaying user details.
+ * @description
+ *   - The table provides an "Edit" action for each user which links to their profile page.
+ *   - Roles are visually distinguished using a Badge component with different styles based on the role.
+ *   - The creation and last sign-in dates are formatted to a locale date string.
+ *   - If the last sign-in date is not available, it displays 'N/A'.
+ */
 export function UserTable({ users }: UserTableProps) {
   return (
     <Table>
