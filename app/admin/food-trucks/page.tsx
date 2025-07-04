@@ -15,6 +15,17 @@ import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 
 // Page header component
+/**
+ * Returns a JSX element representing the page header for the Food Truck Management administration section.
+ * @example
+ * PageHeader()
+ * <div className="flex items-center justify-between">...</div>
+ * @returns {JSX.Element} A JSX element containing the page title and "Add Food Truck" button.
+ * @description
+ *   - Utilizes Tailwind CSS classes for styling and layout.
+ *   - Renders a button linking to the "new food truck" creation page.
+ *   - Adds an icon inside the button for visual enhancement.
+ */
 function PageHeader() {
   return (
     <div className="flex items-center justify-between">
@@ -43,6 +54,18 @@ function getQualityScoreLabel(score: number) {
 }
 
 // Food truck table row component
+/**
+ * Renders a table row for displaying food truck information.
+ * @example
+ * FoodTruckTableRow({ truck })
+ * Returns a JSX element representing a table row with food truck info.
+ * @param {Object} truck - Contains information about the food truck to be displayed.
+ * @returns {JSX.Element} A table row with cells displaying food truck details like name, contact info, cuisine, etc.
+ * @description
+ *   - Displays contact info only when available; otherwise, shows a 'No contact info' message.
+ *   - Formats and shows a quality score as a percentage with an associated badge.
+ *   - Includes an "Edit" button linking to the food truck's admin page.
+ */
 function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
   const qualityScore = truck.data_quality_score ?? 0;
 
@@ -96,6 +119,19 @@ function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
 }
 
 // Food trucks table component
+/**
+ * Displays a table of food trucks with detailed information
+ * @example
+ * FoodTrucksTable({ trucks: [{ id: 1, name: 'Truck 1' }], total: 10 })
+ * // Returns a JSX element rendering the table
+ * @param {{readonly trucks: FoodTruck[], readonly total: number}} props - An object containing an array of food trucks and the total count of trucks.
+ * @returns {JSX.Element} A React component that displays a table of food trucks.
+ * @description
+ *   - Renders a table inside a card layout to manage food truck details.
+ *   - Shows various attributes like Name, Contact, and Cuisine of each food truck.
+ *   - Maps through the trucks array to create a row for each food truck using the FoodTruckTableRow component.
+ *   - Provides a descriptive header highlighting the total count of food trucks.
+ */
 function FoodTrucksTable({
   trucks,
   total,

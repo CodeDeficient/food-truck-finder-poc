@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
 import { RealtimeMetrics } from './types';
 
+/**
+ * Verifies if the requesting user has admin access.
+ * @example
+ * verifyAdminAccess(request)
+ * true
+ * @param {Request} request - The HTTP request object containing headers for authorization.
+ * @returns {Promise<boolean>} Returns a promise resolving to true if the user has admin access, otherwise false.
+ * @description
+ *   - Extracts the authorization token from the request headers.
+ *   - Checks if the user associated with the token exists and retrieves their role.
+ *   - Ensures the retrieved role is 'admin' for access confirmation.
+ */
 export async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
@@ -36,6 +48,17 @@ export async function handleGetRequest(): Promise<NextResponse> {
   });
 }
 
+/**
+ * Retrieves real-time scraping metrics from the database.
+ * @example
+ * getScrapingMetrics().then(metrics => console.log(metrics))
+ * // { scrapingJobs: {...}, dataQuality: {...}, systemHealth: {...} }
+ * @returns {Promise<RealtimeMetrics>} A promise that resolves to an object containing scraping job metrics, data quality information, and system health stats.
+ * @description
+ *   - Fetches data from ScrapingJobService and FoodTruckService to compute metrics.
+ *   - Placeholder values are used for averageScore and recentChanges in dataQuality.
+ *   - Computes the number of jobs by their status: running, completed, failed, and pending.
+ */
 async function getScrapingMetrics(): Promise<RealtimeMetrics> {
   // Fetch real scraping metrics from database
   const [allJobs, recentTrucks] = await Promise.all([

@@ -11,6 +11,18 @@ interface UseSystemAlertsLogicReturn {
   acknowledgeAlert: (alertId: string) => void;
 }
 
+/**
+ * Handles logic for system alerts based on recent events.
+ * @example
+ * useSystemAlertsLogic({ recentEvents: eventsData })
+ * // Returns an object with alerts and acknowledgeAlert function
+ * @param {Object} recentEvents - Array of recent event objects to process into alerts.
+ * @returns {Object} Object containing current alerts and a function to acknowledge them.
+ * @description
+ *   - Filters incoming events to create alerts only for those with 'warning', 'error', or 'critical' severities.
+ *   - Limits the number of processed alerts to the 5 most recent.
+ *   - Provides a method to mark alerts as acknowledged.
+ */
 export function useSystemAlertsLogic({
   recentEvents,
 }: UseSystemAlertsLogicProps): UseSystemAlertsLogicReturn {

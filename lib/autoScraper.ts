@@ -125,6 +125,18 @@ Goal: Extract structured data for food trucks (description, menu, prices, locati
 */
 
 // Helper to trigger a scraping process for a given url
+/**
+ * Initiates a web scraping process for a given target URL.
+ * @example
+ * triggerScrapingProcess('https://example.com')
+ * { success: true, jobId: '12345', message: 'Scraping job created and processing initiated for https://example.com.' }
+ * @param {string} targetUrl - The URL of the website to be scraped.
+ * @returns {Promise<TriggerScrapingProcessResult>} Result of the attempt to trigger the scraping process, including success status, job ID, and message or error.
+ * @description
+ *   - Creates a web scraping job with a priority of 5 and triggers its processing.
+ *   - Handles errors during job creation or processing gracefully.
+ *   - Uses the current timestamp to schedule the job.
+ */
 async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapingProcessResult> {
   try {
     const job = await ScrapingJobService.createJob({
@@ -150,6 +162,21 @@ async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapin
 }
 
 // Helper function to process existing truck results
+/**
+ * Processes the result of an existing truck scraping operation.
+ * @example
+ * processExistingTruckResult('http://example.com', { status: 'fresh' }, { trucksProcessed: 1, newTrucksFound: 0 }, []);
+ * // no return value, updates states and logs errors if any
+ * @param {string} url - The URL of the truck to process.
+ * @param {{ status: string; details?: string }} result - The result of the truck scraping operation, including status and optional details.
+ * @param {{ trucksProcessed: number; newTrucksFound: number }} counters - Trackers for counting processed and newly found trucks.
+ * @param {Array<{ url: string; details?: string }>} errors - A list to record any URLs that result in errors, along with optional error details.
+ * @returns {Promise<void>} Resolves when processing is complete, performing status updates.
+ * @description
+ *   - Updates the status of the URL based on the result: either processing, processed, or irrelevant.
+ *   - Pushes any error information to the errors array for further processing or logging.
+ *   - Utilizes different status handling depending on the freshness or error state of the data.
+ */
 async function processExistingTruckResult(
   url: string,
   result: { status: string; details?: string },
@@ -176,6 +203,27 @@ async function processExistingTruckResult(
 }
 
 // Helper function to process new truck results
+/**
+ * Processes the result of a new truck resource and updates the counters accordingly.
+ * @example
+ * processNewTruckResult('https://example.com/truck', { status: 'initial_scrape_triggered' }, { trucksProcessed: 5, newTrucksFound: 2 }, []);
+ * // Updates counters and changes URL status to 'processing'.
+ * @param {string} url - The URL of the new truck resource to be processed.
+ * @param {Object} result - The result object containing the status and optional details of the process.
+ * @param {string} result.status - The status of the truck processing result.
+ * @param {string} [result.details] - Optional detailed message about the result.
+ * @param {Object} counters - An object keeping count of processed trucks and newly found trucks.
+ * @param {number} counters.trucksProcessed - The current count of processed trucks.
+ * @param {number} counters.newTrucksFound - The count of newly found trucks.
+ * @param {Array<Object>} errors - A list of error objects for unsuccessful processing attempts.
+ * @param {string} errors.url - The URL of the truck resource that encountered an error.
+ * @param {string} [errors.details] - Optional error details associated with the URL.
+ * @returns {Promise<void>} This function returns nothing but performs asynchronous URL status updates and error logging.
+ * @description
+ *   - The function distinguishes between two specific statuses: 'initial_scrape_triggered' and 'error'.
+ *   - For 'initial_scrape_triggered', it updates the counters and marks the URL as 'processing'.
+ *   - For 'error', it logs the error details and marks the URL as 'irrelevant'.
+ */
 async function processNewTruckResult(
   url: string,
   result: { status: string; details?: string },
@@ -193,6 +241,18 @@ async function processNewTruckResult(
 }
 
 // Helper function to find existing truck for URL
+/**
+* Find an existing food truck based on the provided source URL.
+* @example
+* findExistingTruck('https://foodtruck.com/123')
+* { truck: { id: 1, last_scraped_at: '2023-09-16T00:00:00Z', source_urls: ['https://foodtruck.com'] } }
+* @param {string} url - The source URL used to search for an existing truck in the database.
+* @returns {Promise<{ truck?: FoodTruck; error?: string }>} An object containing either the existing truck data or an error message.
+* @description
+*   - Utilizes Supabase admin client to query the 'food_trucks' database table.
+*   - Warns in the console when a query error occurs during the database lookup.
+*   - Limits the query results to a single truck that matches the URL criteria.
+*/
 async function findExistingTruck(url: string): Promise<{ truck?: FoodTruck; error?: string }> {
   if (!supabaseAdmin) {
     return { error: 'Supabase admin client not available' };
@@ -220,6 +280,17 @@ async function findExistingTruck(url: string): Promise<{ truck?: FoodTruck; erro
   return { truck };
 }
 
+/**
+ * Initiates the autonomous scraping process and ensures default trucks data is fetched.
+ * @example
+ * ensureDefaultTrucksAreScraped()
+ * Returns a result object containing the number of trucks processed, new trucks found, and any errors encountered.
+ * @returns {Promise<AutoScrapeResult>} An object containing the results of the scraping process, including processed trucks count, new trucks discovered count, and encountered errors.
+ * @description
+ *   - Combines static default URLs with dynamically discovered URLs for scraping.
+ *   - Handles both existing and new trucks, updating counters and tracking errors.
+ *   - Logs process information and warnings for unexpected errors during execution.
+ */
 export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult> {
   console.info('AutoScraper: Starting autonomous scraping process...');
   const counters = { trucksProcessed: 0, newTrucksFound: 0 };
@@ -264,6 +335,20 @@ export async function ensureDefaultTrucksAreScraped(): Promise<AutoScrapeResult>
   };
 }
 
+/**
+* Handles the existing truck data by checking staleness and potentially triggering a re-scrape process.
+* @example
+* handleExistingTruck('https://example.com/truck', { id: '123', last_scraped_at: '2023-09-01T00:00:00Z' })
+* { url: 'https://example.com/truck', status: 'fresh', details: 'Last scraped at 2023-09-01T00:00:00Z' }
+* @param {string} url - The URL of the food truck to check for staleness.
+* @param {FoodTruck} truck - The food truck object containing its ID and last scrape date.
+* @returns {Promise<{url: string; status: string; details?: string; jobId?: string}>} Returns the status and additional detail about the scraping process.
+* @description
+*   - Only triggers the re-scraping process if the data is considered stale based on a predefined threshold.
+*   - Logs information about the current state of the truck's data freshness.
+*   - Utilizes an asynchronous operation to potentially trigger a re-scrape.
+*   - Returns an object indicating whether action was taken or not.
+*/
 async function handleExistingTruck(
   url: string,
   truck: FoodTruck,
@@ -290,6 +375,18 @@ async function handleExistingTruck(
   }
 }
 
+/**
+ * Initiates a scraping process for a new truck based on the given URL and returns the scraping status.
+ * @example
+ * handleNewTruck("https://example.com/truck-detail")
+ * // Returns: { url: "https://example.com/truck-detail", status: "initial_scrape_triggered", details: "Scraping initiated", jobId: "12345" }
+ * @param {string} url - The URL of the truck details page to be scraped.
+ * @returns {Promise<{ url: string; status: string; details?: string; jobId?: string }>} An object containing the URL, status of the scraping attempt, optional details message, and optional job ID.
+ * @description
+ *   - Uses an asynchronous function to trigger the scraping process.
+ *   - Logs an informational message when no existing truck is found for the given URL.
+ *   - Returns a status indicating whether the scrape was successfully triggered or if there was an error.
+ */
 async function handleNewTruck(
   url: string,
 ): Promise<{ url: string; status: string; details?: string; jobId?: string }> {
@@ -308,6 +405,21 @@ const GEMINI_CACHE_TTL_MS = 1000 * 60 * 60 * 6; // 6 hours
 
 const geminiCache: Record<string, { data: unknown; timestamp: number }> = {};
 
+/**
+ * Makes a call to Gemini service and caches the result to optimize performance.
+ * @example
+ * callGeminiWithCache('getData', { id: 123 }, geminiInstance)
+ * // returns the result from the Gemini service or cache
+ * @param {string} type - The type of operation to perform with Gemini.
+ * @param {unknown} input - The input data required for the Gemini operation.
+ * @param {GeminiService} gemini - The instance of GeminiService to interact with.
+ * @returns {Promise<unknown>} Returns a promise that resolves to the result of the Gemini operation.
+ * @description
+ *   - Caches the result of Gemini service calls to avoid redundant requests.
+ *   - Automatically cleans up expired cache entries based on a specified TTL.
+ *   - Checks Gemini usage limits before making API calls to prevent exceeding the daily cap.
+ *   - Constructs a unique cache key for each request using the operation type and input.
+ */
 export async function callGeminiWithCache(
   type: string,
   input: unknown,
@@ -342,6 +454,19 @@ export async function callGeminiWithCache(
 }
 
 // Helper to get URLs to scrape from both static defaults and dynamic discovery
+/**
+* Retrieves a list of URLs that are ready for scraping.
+* @example
+* getUrlsToScrape()
+* // Returns a Promise that resolves to an array of URLs
+* @param {void} - This function does not take any arguments.
+* @returns {Promise<string[]>} A promise that resolves to an array of URLs to be scraped.
+* @description
+*   - The function returns a combination of default URLs and dynamically discovered URLs.
+*   - Utilizes Supabase to fetch URLs marked with 'new' or 'processed' status.
+*   - Limits results to prevent system overload, fetching a maximum of 100 URLs.
+*   - Handles errors gracefully, logging warnings if the Supabase client is not available or if there is an error in fetching URLs.
+*/
 async function getUrlsToScrape(): Promise<string[]> {
   const urls = new Set<string>();
 
@@ -376,6 +501,20 @@ async function getUrlsToScrape(): Promise<string[]> {
 }
 
 // Helper to update discovered URL status after processing
+/**
+ * Updates the status of a discovered URL in the database.
+ * @example
+ * updateDiscoveredUrlStatus('http://example.com', 'processed', 'Page successfully processed')
+ * // Returns: void
+ * @param {string} url - The URL whose status needs updating.
+ * @param {'processing' | 'processed' | 'irrelevant'} status - The new status for the URL.
+ * @param {string} [notes] - Optional notes regarding the URL status update.
+ * @returns {Promise<void>} Resolves when the update operation is complete.
+ * @description
+ *   - Logs a warning if the Supabase admin client is not available.
+ *   - Uses Supabase to update the status and logs an error if the operation fails.
+ *   - Assumes the existence of a 'discovered_urls' table in the database.
+ */
 async function updateDiscoveredUrlStatus(
   url: string,
   status: 'processing' | 'processed' | 'irrelevant',

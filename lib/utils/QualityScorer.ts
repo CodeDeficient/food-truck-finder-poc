@@ -11,6 +11,19 @@ export type QualityCategory = {
   color: string;
 };
 
+/**
+ * Assess basic information of a FoodTruck object and adjust its score based on missing attributes.
+ * @example
+ * assessBasicInfo({name: 'Taste', description: 'Good food', cuisine_type: ['Italian'], price_range: '$$', average_rating: 4.5, review_count: 100}, [], 1.0)
+ * Returns 1.0 if the truck information is complete and correct, otherwise returns a lower score with issues noted in the issues array.
+ * @param {FoodTruck} truck - Object containing details about the food truck.
+ * @param {string[]} issues - Array to hold descriptions of any issues found in the truck's information.
+ * @param {number} currentScore - Initial score from which deductions are made based on detected issues.
+ * @returns {number} Updated score after assessing the truck's basic information.
+ * @description
+ *   - Reduces score for missing or invalid 'name', 'description', 'cuisine_type', 'price_range', 'average_rating', and 'review_count'.
+ *   - Appends issue descriptions to the 'issues' array corresponding to each attribute that fails validation.
+ */
 function assessBasicInfo(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
   if (typeof truck.name !== 'string' || truck.name.trim().length === 0) {
@@ -44,6 +57,20 @@ function assessBasicInfo(truck: FoodTruck, issues: string[], currentScore: numbe
   return score;
 }
 
+/**
+ * Evaluates the contact information of a food truck and modifies its score accordingly.
+ * @example
+ * assessContactInfo(truckInstance, [], 1.0)
+ * // returns 0.88 if all arguments are missing
+ * @param {FoodTruck} truck - An object representing a food truck with various contact attributes.
+ * @param {string[]} issues - An array to store any identified issues with contact information.
+ * @param {number} currentScore - The initial score before evaluation.
+ * @returns {number} A modified score based on the presence and validity of contact details.
+ * @description
+ *   - Reduces the score by a small percentage for each missing contact detail.
+ *   - Appends specific issue messages to the 'issues' array for each missing detail.
+ *   - Scores attribute presence in descending impact order: website, phone number, email, social media handles.
+ */
 function assessContactInfo(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
   if (typeof truck.website !== 'string' || truck.website.trim().length === 0) {
@@ -73,6 +100,20 @@ function assessContactInfo(truck: FoodTruck, issues: string[], currentScore: num
   return score;
 }
 
+/**
+ * Evaluates the quality of location data for a food truck and updates the score accordingly.
+ * @example
+ * assessLocationData(truck, issues, currentScore)
+ * // Returns a modified score based on location data analysis
+ * @param {FoodTruck} truck - The food truck object containing location details.
+ * @param {string[]} issues - Array to record any issues identified during evaluation.
+ * @param {number} currentScore - The current scoring value before assessment.
+ * @returns {number} Updated score reflecting the quality of the location data.
+ * @description
+ *   - Reduces the score if location data is missing or invalid.
+ *   - Checks the age of the location data to determine its staleness.
+ *   - Updates the issues array with specific reasons when penalizing the score.
+ */
 function assessLocationData(truck: FoodTruck, issues: string[], currentScore: number): number {
   let score = currentScore;
   if (
@@ -111,6 +152,18 @@ function assessScheduleData(truck: FoodTruck, issues: string[], currentScore: nu
   return score;
 }
 
+/**
+ * Computes the quality score of a given food truck based on multiple criteria.
+ * @example
+ * calculateQualityScore(truckInstance)
+ * { score: 3, issues: ["Missing contact information", "Incomplete schedule"] }
+ * @param {FoodTruck} truck - The food truck object to be assessed.
+ * @returns {QualityAssessment} An object containing the computed score and a list of identified issues.
+ * @description
+ *   - The score starts at 1 and is adjusted based on various assessments.
+ *   - The function ensures the score never drops below zero.
+ *   - Issues that affect the score are collected and returned for analysis.
+ */
 export function calculateQualityScore(truck: FoodTruck): QualityAssessment {
   let score = 1; // Start with a perfect score
   const issues: string[] = [];
