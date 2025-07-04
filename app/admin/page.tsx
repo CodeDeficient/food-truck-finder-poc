@@ -23,6 +23,25 @@ interface DataQualityStats {
   readonly flagged_count: number;
 }
 
+/**
+* Fetches various dashboard data metrics related to food trucks, scraping jobs, and data quality statistics.
+* @example
+* getDashboardData()
+* {
+*   totalFoodTrucks: 150,
+*   pendingVerifications: 10,
+*   pendingScrapingJobsCount: 2,
+*   runningScrapingJobsCount: 1,
+*   failedScrapingJobsCount: 3,
+*   failedProcessingQueueItemsCount: 4,
+*   dataQualityStats: { ... }
+* }
+* @returns {Object} An object containing aggregated counts and statistics for the dashboard overview.
+* @description
+*   - Uses multiple service calls to aggregate needed data.
+*   - Handles potential errors from Supabase RPC function for data quality stats.
+*   - Default values for dataQualityStats are provided to handle potential errors or empty results.
+*/
 async function getDashboardData() {
   // Fetch total food trucks and verification statuses
   const { trucks: allTrucks } = await FoodTruckService.getAllTrucks(1000, 0); // Fetch a reasonable number for overview
@@ -67,6 +86,17 @@ async function getDashboardData() {
   };
 }
 
+/**
+* Renders the admin dashboard with various metrics and cards.
+* @example
+* AdminDashboard()
+* <div className="flex flex-col gap-4">...</div>
+* @returns {JSX.Element} Returns a JSX element containing the admin dashboard.
+* @description
+*   - Fetches data asynchronously to display real-time metrics on the dashboard.
+*   - Metrics include food trucks, scraping jobs, data quality, and recent errors.
+*   - Organizes content into responsive grids for better visual structure.
+*/
 export default async function AdminDashboard() {
   const {
     totalFoodTrucks,

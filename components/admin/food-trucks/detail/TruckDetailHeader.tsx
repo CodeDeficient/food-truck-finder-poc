@@ -11,6 +11,20 @@ interface TruckDetailHeaderProps {
   readonly qualityCategory: QualityCategory;
 }
 
+/**
+ * Displays the food truck detail header with navigation and edit options
+ * @example
+ * TruckDetailHeader({ truck: sampleTruck, badgeClasses: "badge-style", qualityCategory: {label: "High"} })
+ * <div>...</div>
+ * @param {Object} truck - The truck object containing details like name and ID.
+ * @param {string} badgeClasses - CSS classes for styling the quality badge.
+ * @param {Object} qualityCategory - An object containing category details like label.
+ * @returns {JSX.Element} A header section containing navigation buttons, truck name, and quality badge.
+ * @description
+ *   - Utilizes Flexbox CSS classes for alignment and spacing.
+ *   - Provides a link to navigate back to the food trucks list.
+ *   - Includes an edit button linking to the truck's edit page.
+ */
 export function TruckDetailHeader({
   truck,
   badgeClasses,

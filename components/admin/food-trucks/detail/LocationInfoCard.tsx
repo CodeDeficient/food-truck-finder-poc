@@ -8,6 +8,18 @@ interface LocationInfoCardProps {
   };
 }
 
+/**
+ * Displays detailed information about the current location of a truck.
+ * @example
+ * LocationInfoCard({ truck: sampleTruck })
+ * <Card>...</Card>
+ * @param {LocationInfoCardProps} {truck} - Object containing truck location details.
+ * @returns {JSX.Element} A Card element containing location details.
+ * @description
+ *   - Shows address, coordinates, and last updated timestamp if available.
+ *   - Handles missing or undefined data by rendering alternative text.
+ *   - Utilizes semantic HTML elements for accessibility and clarity.
+ */
 export function LocationInfoCard({ truck }: Readonly<LocationInfoCardProps>) {
   return (
     <Card>

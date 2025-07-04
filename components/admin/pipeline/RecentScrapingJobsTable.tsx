@@ -12,6 +12,18 @@ interface RecentScrapingJobsTableProps {
   };
 }
 
+/**
+* Displays a table of recent scraping jobs in a card layout.
+* @example
+* RecentScrapingJobsTable({ scrapingJobs: [{ id: 1, name: 'Job 1' }, { id: 2, name: 'Job 2' }] })
+* <Card>...</Card>
+* @param {Readonly<RecentScrapingJobsTableProps>} {scrapingJobs} - An object containing an array of recent scraping job details.
+* @returns {JSX.Element} A card component displaying the recent scraping jobs.
+* @description
+*   - Utilizes the Card, CardHeader, CardTitle, and CardContent components to structure the display.
+*   - Embeds the ScrapingJobsTableContent component to present scraping job details.
+*   - Part of the admin pipeline interface for monitoring scraping tasks.
+*/
 export function RecentScrapingJobsTable({ scrapingJobs }: Readonly<RecentScrapingJobsTableProps>) {
   return (
     <Card>
