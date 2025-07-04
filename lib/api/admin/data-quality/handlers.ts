@@ -225,9 +225,9 @@ async function handleRecalculateAll() {
   for (const truck of trucks) {
     const success = updateSingleTruckQualityScore(truck);
     if (success) {
-      updated++;
+      updated+=1;
     } else {
-      errors++;
+      errors+=1;
     }
   }
 
