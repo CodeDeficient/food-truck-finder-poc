@@ -13,8 +13,8 @@ import { EmailFormFields } from '@/components/login/EmailFormFields';
 function LoginHeader() {
   return (
     <CardHeader className="text-center">
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-        <Shield className="h-8 w-8 text-primary" />
+      <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
+        <Shield className="size-8 text-primary" />
       </div>
       <CardTitle className="text-2xl">Admin Login</CardTitle>
       <CardDescription>Sign in to access the admin dashboard</CardDescription>
@@ -56,9 +56,9 @@ function EmailLoginForm({
       />
       <Button type="submit" disabled={loading} className="w-full" size="lg">
         {loading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <Loader2 className="mr-2 size-4 animate-spin" />
         ) : (
-          <Mail className="mr-2 h-4 w-4" />
+          <Mail className="mr-2 size-4" />
         )}
         {loading ? 'Signing in...' : 'Sign in with Email'}
       </Button>
@@ -87,9 +87,9 @@ function GoogleLoginButton({
       size="lg"
     >
       {loading ? (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2 className="mr-2 size-4 animate-spin" />
       ) : (
-        <Mail className="mr-2 h-4 w-4" />
+        <Mail className="mr-2 size-4" />
       )}
       Google
     </Button>

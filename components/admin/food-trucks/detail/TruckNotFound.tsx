@@ -10,7 +10,7 @@ export function TruckNotFound() {
       <p className="text-gray-600 mt-2">The requested food truck could not be found.</p>
       <Button asChild className="mt-4">
         <Link href="/admin/food-trucks">
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="size-4 mr-2" />
           Back to Food Trucks
         </Link>
       </Button>

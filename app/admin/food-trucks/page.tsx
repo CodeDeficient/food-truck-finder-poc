@@ -21,7 +21,7 @@ function PageHeader() {
       <h1 className="text-3xl font-bold tracking-tight">Food Truck Management</h1>
       <Button asChild>
         <Link href="/admin/food-trucks/new">
-          <PlusCircle className="h-4 w-4 mr-2" />
+          <PlusCircle className="size-4 mr-2" />
           Add Food Truck
         </Link>
       </Button>
