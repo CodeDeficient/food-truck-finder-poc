@@ -56,7 +56,7 @@ function PageHeader() {
       <h1 className="text-2xl font-bold">User Management</h1>
       <Button asChild>
         <Link href="/admin/users/new">
-          <UserPlus className="mr-2 h-4 w-4" />
+          <UserPlus className="mr-2 size-4" />
           Add New User
         </Link>
       </Button>

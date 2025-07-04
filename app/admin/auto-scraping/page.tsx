@@ -98,25 +98,25 @@ function MetricsCards({ metrics }: { readonly metrics: ScrapingMetrics }) {
         title="Total Runs"
         value={metrics.totalRuns}
         subtitle={`${metrics.successfulRuns} successful`}
-        icon={<RefreshCw className="h-4 w-4 text-muted-foreground" />}
+        icon={<RefreshCw className="size-4 text-muted-foreground" />}
       />
       <MetricCard
         title="Success Rate"
         value={`${successRate}%`}
         subtitle={`${metrics.failedRuns} failed runs`}
-        icon={<CheckCircle className="h-4 w-4 text-muted-foreground" />}
+        icon={<CheckCircle className="size-4 text-muted-foreground" />}
       />
       <MetricCard
         title="Trucks Processed"
         value={metrics.totalTrucksProcessed}
         subtitle="Total trucks processed"
-        icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+        icon={<Clock className="size-4 text-muted-foreground" />}
       />
       <MetricCard
         title="New Today"
         value={metrics.newTrucksToday}
         subtitle="New trucks found today"
-        icon={<Play className="h-4 w-4 text-muted-foreground" />}
+        icon={<Play className="size-4 text-muted-foreground" />}
       />
     </div>
   );
@@ -230,11 +230,11 @@ function DashboardHeader({
       <h1 className="text-3xl font-bold">Auto-Scraping Dashboard</h1>
       <div className="flex gap-2">
         <Button onClick={onRefresh} variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="size-4 mr-2" />
           Refresh
         </Button>
         <Button onClick={onTriggerScrape} size="sm">
-          <Play className="h-4 w-4 mr-2" />
+          <Play className="size-4 mr-2" />
           Trigger Manual Scrape
         </Button>
       </div>
@@ -324,13 +324,13 @@ function useDashboardData() {
 function getStatusIcon(status: string) {
   switch (status) {
     case 'running': {
-      return <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />;
+      return <RefreshCw className="size-4 animate-spin text-blue-500" />;
     }
     case 'error': {
-      return <AlertCircle className="h-4 w-4 text-red-500" />;
+      return <AlertCircle className="size-4 text-red-500" />;
     }
     default: {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
+      return <CheckCircle className="size-4 text-green-500" />;
     }
   }
 }
@@ -365,7 +365,7 @@ export default function AutoScrapingDashboard() {
 
       {error !== undefined && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="size-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
