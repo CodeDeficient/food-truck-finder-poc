@@ -11,8 +11,8 @@ import { supabase } from '@/lib/supabase';
 function AccessDeniedHeader() {
   return (
     <CardHeader className="text-center">
-      <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-        <Shield className="h-8 w-8 text-destructive" />
+      <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
+        <Shield className="size-8 text-destructive" />
       </div>
       <CardTitle className="text-2xl">Access Denied</CardTitle>
       <CardDescription>You don't have administrator privileges to access this area</CardDescription>
@@ -31,7 +31,7 @@ function ActionButtons({
   return (
     <div className="flex flex-col gap-2">
       <Button onClick={onGoHome} variant="default" className="w-full">
-        <Home className="mr-2 h-4 w-4" />
+        <Home className="mr-2 size-4" />
         Return to Main Site
       </Button>
       <Button
@@ -41,7 +41,7 @@ function ActionButtons({
         variant="outline"
         className="w-full"
       >
-        <LogOut className="mr-2 h-4 w-4" />
+        <LogOut className="mr-2 size-4" />
         Sign Out
       </Button>
     </div>

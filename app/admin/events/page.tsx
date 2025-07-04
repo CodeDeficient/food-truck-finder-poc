@@ -69,7 +69,7 @@ function PageHeader() {
       <h1 className="text-2xl font-bold">Event & Schedule Management</h1>
       <Button asChild>
         <Link href="/admin/events/new">
-          <PlusCircle className="mr-2 h-4 w-4" />
+          <PlusCircle className="mr-2 size-4" />
           Add New Event/Schedule
         </Link>
       </Button>
@@ -110,7 +110,7 @@ function EventsTable({ events }: { readonly events: Event[] }) {
                 <TableCell className="text-right">
                   <Button variant="outline" size="sm" asChild>
                     <Link href={`/admin/events/${event.id}`}>
-                      <Edit className="h-4 w-4" />
+                      <Edit className="size-4" />
                       <span className="sr-only">Edit</span>
                     </Link>
                   </Button>
@@ -161,7 +161,7 @@ function SchedulesTable({ schedules }: { readonly schedules: FoodTruckSchedule[]
                 <TableCell className="text-right">
                   <Button variant="outline" size="sm" asChild>
                     <Link href={`/admin/schedules/${schedule.id}`}>
-                      <Edit className="h-4 w-4" />
+                      <Edit className="size-4" />
                       <span className="sr-only">Edit</span>
                     </Link>
                   </Button>

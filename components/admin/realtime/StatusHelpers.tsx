@@ -24,16 +24,16 @@ export const getStatusColor = (status: Status): string => {
 export const getStatusIcon = (status: Status): React.ReactNode => {
   switch (status) {
     case 'healthy': {
-      return <CheckCircle className="h-4 w-4 text-green-600" />;
+      return <CheckCircle className="size-4 text-green-600" />;
     }
     case 'warning': {
-      return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      return <AlertTriangle className="size-4 text-yellow-600" />;
     }
     case 'error': {
-      return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      return <AlertTriangle className="size-4 text-red-600" />;
     }
     default: {
-      return <Clock className="h-4 w-4 text-gray-600" />;
+      return <Clock className="size-4 text-gray-600" />;
     }
   }
 };
@@ -42,10 +42,10 @@ export const getStatusIcon = (status: Status): React.ReactNode => {
 export const getTrendIcon = (trend?: string): React.ReactNode => {
   switch (trend) {
     case 'up': {
-      return <TrendingUp className="h-3 w-3 text-green-600" />;
+      return <TrendingUp className="size-3 text-green-600" />;
     }
     case 'down': {
-      return <TrendingDown className="h-3 w-3 text-red-600" />;
+      return <TrendingDown className="size-3 text-red-600" />;
     }
     default: {
       return undefined; // Explicitly return undefined when no icon is needed

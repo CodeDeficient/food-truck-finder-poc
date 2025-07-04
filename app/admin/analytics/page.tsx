@@ -69,7 +69,7 @@ function DataTrendsPlaceholder() {
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-center h-48 text-muted-foreground">
-          <BarChart3 className="h-12 w-12 mr-2" />
+          <BarChart3 className="size-12 mr-2" />
           Coming Soon: Advanced Charts & Visualizations
         </div>
       </CardContent>
