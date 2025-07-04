@@ -369,7 +369,7 @@ export class DuplicatePreventionService {
     const bestMatch = matches[0];
 
     if (bestMatch.confidence === 'high') {
-      const recommendation = bestMatch.recommendation;
+      const {recommendation} = bestMatch;
       if (recommendation === 'merge' || recommendation === 'update') {
         return recommendation;
       }
