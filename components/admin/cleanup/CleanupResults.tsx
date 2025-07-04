@@ -16,7 +16,7 @@ export function CleanupResults({ lastResult }: CleanupResultsProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5 text-green-600" />
+          <CheckCircle className="size-5 text-green-600" />
           Last Cleanup Results
         </CardTitle>
         <CardDescription>

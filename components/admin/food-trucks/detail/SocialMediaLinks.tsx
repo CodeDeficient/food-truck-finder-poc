@@ -38,7 +38,7 @@ export function SocialMediaLinks({ socialMedia }: Readonly<SocialMediaLinksProps
               rel="noopener noreferrer"
               className={`flex items-center gap-1 px-2 py-1 bg-${color}-100 text-${color}-800 rounded-md text-sm hover:bg-${color}-200`}
             >
-              <Globe className="h-3 w-3" />
+              <Globe className="size-3" />
               {name}
             </a>
           );
