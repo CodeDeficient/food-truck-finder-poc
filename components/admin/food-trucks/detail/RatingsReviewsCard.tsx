@@ -8,6 +8,18 @@ interface RatingsReviewsCardProps {
   readonly truck: FoodTruck;
 }
 
+/**
+ * This component renders a card displaying ratings and reviews for a food truck.
+ * @example
+ * RatingsReviewsCard({ truck: { average_rating: 4.5, review_count: 20 } })
+ * Returns a card component with rating stars and review count.
+ * @param {Object} truck - The truck object containing average rating and review count.
+ * @returns {JSX.Element} A card component showing customer ratings and reviews.
+ * @description
+ *   - Displays star ratings based on the average rating value from the truck object.
+ *   - Shows the number of reviews if available.
+ *   - Handles cases where there are no ratings available.
+ */
 export function RatingsReviewsCard({ truck }: RatingsReviewsCardProps) {
   return (
     <Card>

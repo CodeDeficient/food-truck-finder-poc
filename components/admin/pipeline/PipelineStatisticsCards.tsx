@@ -18,6 +18,18 @@ interface PipelineStatisticsCardsProps {
   };
 }
 
+/**
+ * Renders a grid of statistic cards for pipeline status
+ * @example
+ * PipelineStatisticsCards({ scrapingJobs: { pending: [], running: [], failed: [] }, processingQueue: { failed: [] } })
+ * <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">...</div>
+ * @param {object} {scrapingJobs, processingQueue} - Contains arrays representing the status of scraping jobs and processing queue.
+ * @returns {JSX.Element} A JSX element representing a set of status cards for the pipeline.
+ * @description
+ *   - Displays pending, running, failed scraping jobs, and failed queue items.
+ *   - Each card shows a different metric with an appropriate icon.
+ *   - Utilizes Tailwind CSS classes for styling.
+ */
 export function PipelineStatisticsCards({
   scrapingJobs,
   processingQueue,
