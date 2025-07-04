@@ -348,12 +348,12 @@ export class APIMonitor {
       const nextHour = new Date(now);
       nextHour.setHours(now.getHours() + 1, 0, 0, 0);
       return nextHour.getTime() - now.getTime();
-    } else {
+    } 
       const nextDay = new Date(now);
       nextDay.setDate(now.getDate() + 1);
       nextDay.setHours(0, 0, 0, 0);
       return nextDay.getTime() - now.getTime();
-    }
+    
   }
 
   /**

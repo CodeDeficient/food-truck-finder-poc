@@ -167,10 +167,10 @@ export class BatchCleanupService {
       const runner = operationRunners[type];
       if (runner) {
         return await runner.call(this, trucks, dryRun, operation);
-      } else {
+      } 
         operation.errors.push(`Unknown operation type: ${String(type)}`);
         return operation;
-      }
+      
     } catch (error) {
       operation.errors.push(
         `Operation failed: ${error instanceof Error ? error.message : String(error)}`,

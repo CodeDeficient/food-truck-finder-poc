@@ -131,9 +131,9 @@ export function categorizeQualityScore(score: number): QualityCategory {
     return { label: 'High', color: 'bg-green-500' };
   } else if (score >= 0.5) {
     return { label: 'Medium', color: 'bg-yellow-500' };
-  } else {
+  } 
     return { label: 'Low', color: 'bg-red-500' };
-  }
+  
 }
 
 export function formatQualityScore(score: number | null | undefined): string {
