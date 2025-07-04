@@ -1,7 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { QUALITY_COLORS } from '../dataQualityCharts';
-import { CustomTooltip } from '../dataQualityCharts';
+import { QUALITY_COLORS, CustomTooltip } from '../dataQualityCharts';
 
 interface QualityPieChartProps {
   readonly data: {

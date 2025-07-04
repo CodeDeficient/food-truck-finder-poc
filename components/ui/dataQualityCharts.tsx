@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // SOTA color scheme for data quality categories
-const QUALITY_COLORS = [
+export const QUALITY_COLORS = [
   '#22c55e', // Green for high quality (≥80%)
   '#f59e0b', // Amber for medium quality (60-79%)
   '#ef4444', // Red for low quality (<60%)
@@ -61,7 +61,7 @@ interface TooltipProps {
 *   - Utilizes optional chaining and default values for label display.
 *   - Percentage shown only if defined and not empty in the payload.
 */
-const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
+export const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
   if (active === true && payload != undefined && payload.length > 0) {
     return (
       <div

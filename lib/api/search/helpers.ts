@@ -5,7 +5,7 @@ import {
   applyTextSearchFilter,
 } from '@/lib/api/search/filters';
 import { getAndFilterFoodTrucks, sortFoodTrucksByQuality } from '@/lib/api/search/data';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 
 /**
  * Processes a search request and returns filtered and sorted food trucks based on query parameters.

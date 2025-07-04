@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { dispatchGeminiOperation, gemini } from '@/lib/gemini';
+import { GeminiResponse } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
   try {

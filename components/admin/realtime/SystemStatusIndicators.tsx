@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { SupabaseRealtimeClient } from '@/lib/supabase'; 
+import { supabaseAdmin } from '@/lib/supabase'; // Use the actual client instance
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 /**
 * Represents system status indicators in real-time
@@ -16,15 +17,33 @@ function SystemStatusIndicators() {
   const [systemStatus, setSystemStatus] = useState('UNKNOWN');
 
   useEffect(() => {
-    const subscription = SupabaseRealtimeClient.subscribe('system-status', (response: any) => {
-      if (response.status === "success") {
-        setSystemStatus(response.data.status);
-      } else {
-        console.error("Failed to retrieve system status");
-      }
-    });
+    if (!supabaseAdmin) {
+      console.warn('Supabase admin client not available for realtime subscription.');
+      return;
+    }
+    const channel: RealtimeChannel = supabaseAdmin.channel('system-status');
 
-    return () => subscription.unsubscribe();
+    channel
+      .on('broadcast', { event: 'status-update' }, (message) => {
+        // Assuming the message payload has a 'status' field
+        if (message.payload && typeof (message.payload as any).status === 'string') {
+          setSystemStatus((message.payload as any).status);
+        }
+      })
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.info('Subscribed to system-status channel!');
+        }
+        if (status === 'CHANNEL_ERROR') {
+          console.error('Error subscribing to system-status channel:', err);
+        }
+      });
+
+    return () => {
+      if (supabaseAdmin && channel) {
+        supabaseAdmin.removeChannel(channel).catch(err => console.error('Error removing channel:', err));
+      }
+    };
   }, []);
 
   return (

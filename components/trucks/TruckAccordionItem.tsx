@@ -2,7 +2,7 @@ import React from 'react';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { TruckCard } from '@/components/TruckCard';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 
 interface TruckAccordionItemProps {
   readonly truck: FoodTruck;

@@ -5,6 +5,8 @@ const globals = require('globals'); // Use require for globals
 import tseslint from 'typescript-eslint';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
+import importPlugin from 'eslint-plugin-import';
+import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import nextPlugin from '@next/eslint-plugin-next';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
@@ -100,6 +102,51 @@ export default tseslint.config(
 
   // Unicorn recommended rules
   unicorn.configs.recommended,
+
+  // Import plugin configuration
+  {
+    plugins: {
+      import: importPlugin,
+      perfectionist: perfectionistPlugin,
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true, // try to resolve '@types' even if it's not in 'main'
+          project: './tsconfig.json',
+        },
+        node: true,
+      },
+    },
+    rules: {
+      'import/no-duplicates': 'error',
+      // 'import/order': [
+      //   'warn',
+      //   {
+      //     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+      //     'newlines-between': 'always',
+      //     alphabetize: { order: 'asc', caseInsensitive: true },
+      //   },
+      // ],
+      'perfectionist/sort-imports': [
+        'warn',
+        {
+          type: 'natural',
+          order: 'asc',
+          customGroups: { // Optional: more granular control if needed
+            value: {
+              react: ['react', 'react-*'],
+              next: ['next', 'next-*'],
+            },
+          },
+          newlinesBetween: 'always',
+        },
+      ],
+      // Add specific SonarJS duplication rules if not covered by recommended, though they usually are.
+      // 'sonarjs/no-duplicate-string': ['warn', 5], // Example: detect 5+ duplicate strings
+      // 'sonarjs/no-identical-functions': 'warn', // Already in recommended
+    },
+  },
 
   // Disable sonarjs/different-types-comparison for the hooks directory
   {

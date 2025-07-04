@@ -25,7 +25,7 @@ export const supabaseAdmin = supabaseServiceKey
   : undefined;
 
 // Database types
-import { MenuCategory, MenuItem } from './types';
+import { MenuCategory, MenuItem, FoodTruckSchema } from './types';
 
 export interface FoodTruckLocation {
   lat: number;
@@ -35,8 +35,6 @@ export interface FoodTruckLocation {
 }
 
 // Re-exporting from types.ts to ensure consistency
-
-import { FoodTruckSchema } from './types';
 
 export interface FoodTruck extends FoodTruckSchema {
   id: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { type SystemAlert } from './status-helpers'; // Import SystemAlert type
+import { type SystemAlert } from '@/hooks/useRealtimeAdminEvents.types'; // Corrected import path
 import { AlertListDisplay } from './AlertListDisplay'; // Import the new component
 
 interface SystemAlertsProps {

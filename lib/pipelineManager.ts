@@ -269,7 +269,10 @@ export class PipelineManager {
     startTime: number,
   ): Promise<ProcessingResult> {
     const errors: string[] = [];
-    leconst jobsSuccessful = 0;   leconst jobsFailed = 0;   leconst trucksCreated = 0;    for (const job of jobsToProcess) {
+    let jobsSuccessful = 0;
+    let jobsFailed = 0;
+    let trucksCreated = 0;
+    for (const job of jobsToProcess) {
       try {
         console.info(`Processing job ${job.id} for URL: ${job.target_url}`);
         await processScrapingJob(job.id);
@@ -279,13 +282,16 @@ export class PipelineManager {
         );
 
         if (updatedJob?.data_collected?.truck_id != undefined) {
-          trtrucksCreated+=1        }
+          trucksCreated += 1;
+        }
 
-        jojobsSuccessful+=1      } catch (jobError) {
+        jobsSuccessful += 1;
+      } catch (jobError) {
         const errorMsg = `Job ${job.id} failed: ${jobError instanceof Error ? jobError.message : 'Unknown error'}`;
         console.warn(errorMsg);
         errors.push(errorMsg);
-        jojobsFailed+=1      }
+        jobsFailed += 1;
+      }
     }
 
     return {
