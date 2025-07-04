@@ -4,6 +4,29 @@ import { PipelineStatisticsCards } from '@/components/admin/pipeline/PipelineSta
 import { RecentScrapingJobsTable } from '@/components/admin/pipeline/RecentScrapingJobsTable';
 import { FailedProcessingQueueTable } from '@/components/admin/pipeline/FailedProcessingQueueTable';
 
+/**
+ * Retrieves the current status of all jobs in the pipeline for both scraping and processing.
+ * @example
+ * getPipelineData()
+ * {
+ *   scrapingJobs: {
+ *     pending: [...],
+ *     running: [...],
+ *     completed: [...],
+ *     failed: [...],
+ *   },
+ *   processingQueue: {
+ *     pending: [...],
+ *     processing: [...],
+ *     completed: [...],
+ *     failed: [...],
+ *   }
+ * }
+ * @returns {Object} An object containing the statuses of jobs and processing queues in the pipeline.
+ * @description
+ *   - The function organizes jobs and processing queues based on their current status into structured objects.
+ *   - Utilizes services to fetch data based on job or queue status such as 'pending', 'running', 'completed', and 'failed'.
+ */
 async function getPipelineData() {
   const pendingScrapingJobs = await ScrapingJobService.getJobsByStatus('pending');
   const runningScrapingJobs = await ScrapingJobService.getJobsByStatus('running');
@@ -31,6 +54,18 @@ async function getPipelineData() {
   };
 }
 
+/**
+ * Displays a pipeline monitoring page with data overview.
+ * @example
+ * PipelineMonitoringPage()
+ * <div>...</div> JSX Elements
+ * @returns {JSX.Element} The JSX structure for the pipeline monitoring page.
+ * @description
+ *   - Retrieves pipeline data such as scraping jobs and processing queue.
+ *   - Structures the page with statistics cards and recent/failure tables.
+ *   - Utilizes Flexbox CSS properties for layout styling.
+ *   - Components for various data visualizations are used like PipelineStatisticsCards.
+ */
 export default async function PipelineMonitoringPage() {
   const { scrapingJobs, processingQueue } = await getPipelineData();
 

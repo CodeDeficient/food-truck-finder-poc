@@ -186,6 +186,21 @@ export class APIMonitor {
   }
 
   // Helper for token alerts
+  /**
+   * Generates token usage alerts based on API usage data and predefined limits.
+   * @example
+   * generateTokenAlerts(APIServiceInstance, usageData, apiLimits, '2023-10-21T10:20:30Z')
+   * [{ service: 'exampleService', level: 'warning', message: 'Warning: exampleService token usage at 75.0%', ... }]
+   * @param {APIService} service - The API service for which the alerts are being generated.
+   * @param {APIUsageData} usage - Object containing the token usage statistics.
+   * @param {Object} limits - Configuration object specifying API limits and alert thresholds.
+   * @param {string} timestamp - The timestamp at which the alert is generated.
+   * @returns {APIUsageAlert[]} List of alerts generated based on token usage percentage compared to limits.
+   * @description
+   *   - Generates 'warning' alerts if token usage exceeds the warning threshold.
+   *   - Generates 'critical' alerts if token usage exceeds the critical threshold.
+   *   - Provides recommendations for optimizing token usage when an alert is generated.
+   */
   private static generateTokenAlerts(
     service: APIService,
     usage: APIUsageData,
@@ -234,6 +249,19 @@ export class APIMonitor {
     return alerts;
   }
 
+  /**
+   * Generates usage alerts based on the service's API usage data.
+   * @example
+   * generateAlerts(APIService.YOUR_SERVICE, apiUsageData)
+   * returns an array of APIUsageAlert objects when usage thresholds are exceeded.
+   * @param {APIService} service - The API service being monitored.
+   * @param {APIUsageData} usage - The usage data containing request and token information.
+   * @returns {APIUsageAlert[]} An array of alert objects representing warning or critical usage states.
+   * @description
+   *   - Determines alert level based on predefined thresholds in API_LIMITS.
+   *   - Generates alerts for both request and token usage.
+   *   - Updates alert history, maintaining only the last 100 alerts.
+   */
   private static generateAlerts(service: APIService, usage: APIUsageData): APIUsageAlert[] {
     const alerts: APIUsageAlert[] = [];
     const limits = API_LIMITS[service];
