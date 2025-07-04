@@ -18,6 +18,19 @@ interface UserMenuProps {
   readonly handleSignOut: () => Promise<void>;
 }
 
+/**
+ * Renders a dropdown menu for user actions including settings and logout.
+ * @example
+ * UserMenu({ user: userObject, userInitials: "AB", handleSignOut: signOutFunction })
+ * <DropdownMenu>...</DropdownMenu>
+ * @param {Readonly<UserMenuProps>} {user, userInitials, handleSignOut} - Properties used to render the user menu interface.
+ * @returns {JSX.Element} A user menu dropdown component.
+ * @description
+ *   - Fallback name display is "Admin" if the user's full name is unavailable.
+ *   - Provides a default email display as "N/A" if the user's email is unavailable.
+ *   - Handles sign-out using the `handleSignOut` method, and logs a warning if it fails.
+ *   - Utilizes Avatar components to display user's profile picture or initials.
+ */
 export function UserMenu({ user, userInitials, handleSignOut }: Readonly<UserMenuProps>) {
   return (
     <DropdownMenu>

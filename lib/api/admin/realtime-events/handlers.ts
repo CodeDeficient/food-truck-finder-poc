@@ -29,6 +29,19 @@ interface RealtimeMetrics {
   };
 }
 
+/**
+ * Verifies if the request is made by an admin user.
+ * @example
+ * verifyAdminAccess(request)
+ * false
+ * @param {NextRequest} request - The incoming request containing authorization headers.
+ * @returns {Promise<boolean>} Returns true if the user is an admin, otherwise false.
+ * @description
+ *   - Checks authorization header for a Bearer token.
+ *   - Uses Supabase client to verify the user associated with the token.
+ *   - Validates the user's role from the 'profiles' table in the Supabase database.
+ *   - Handles exceptions gracefully, returning false if any step encounters an error.
+ */
 export async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
@@ -61,6 +74,19 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
   }
 }
 
+/**
+* Handles incoming GET requests by streaming real-time admin events through Server-Sent Events.
+* @example
+* handleGetRequest(request)
+* Response object with event stream data
+* @param {NextRequest} request - Incoming request to handle and process.
+* @returns {Response} Returns a streaming Response object containing the SSE data.
+* @description
+*   - Initializes a readable stream for emitting real-time events as SSE.
+*   - Enqueues a connection event upon a new client connection.
+*   - Sets up periodic heartbeat events every 5 seconds.
+*   - Registers an abort event listener to gracefully close streams and clear intervals.
+*/
 export function handleGetRequest(request: NextRequest): Response {
   const stream = new ReadableStream({
     start(controller: ReadableStreamDefaultController<Uint8Array>) {
@@ -103,6 +129,20 @@ export function handleGetRequest(request: NextRequest): Response {
   });
 }
 
+/**
+* Sends a heartbeat event by fetching realtime metrics or logs an error alert when unsuccessful
+* @example
+* sendHeartbeatEvent(controller, encoder)
+* // No return value
+* @param {ReadableStreamDefaultController<Uint8Array>} controller - The controller used for enqueueing the event data.
+* @param {TextEncoder} encoder - The encoder used to convert the event data to a Uint8Array.
+* @returns {Promise<void>} Promise that resolves when event has been sent or error has been handled.
+* @description
+*   - Utilizes `fetchRealtimeMetrics()` to gather current system metrics.
+*   - Generates a unique event id via `generateEventId()`.
+*   - Formats the event data using `formatSSEMessage()` before enqueueing.
+*   - Handles errors by creating a system alert event if metrics fetching fails.
+*/
 async function sendHeartbeatEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder,
@@ -135,6 +175,18 @@ async function sendHeartbeatEvent(
   }
 }
 
+/**
+* Sets up a periodic monitor for data changes using provided controller and encoder.
+* @example
+* setupDataChangeMonitor(controller, encoder)
+* // returns a NodeJS.Timeout object that repeatedly monitors data changes every 10 seconds
+* @param {ReadableStreamDefaultController<Uint8Array>} controller - Controller to handle readable stream of Uint8Array.
+* @param {TextEncoder} encoder - Encoder to encode texts for processing the monitor.
+* @returns {NodeJS.Timeout} Returns a timeout object responsible for invoking data change monitoring at set intervals.
+* @description
+*   - Utilizes async operation to monitor data changes ensuring non-blocking execution.
+*   - Handles errors by logging them to the console, useful for debugging.
+*/
 function setupDataChangeMonitor(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder,
@@ -148,6 +200,18 @@ function setupDataChangeMonitor(
   }, 10_000);
 }
 
+/**
+ * Handles a POST request and performs an action based on the 'action' property in the request body.
+ * @example
+ * handlePostRequest(request)
+ * Promise<Response>
+ * @param {NextRequest} request - The incoming request object containing the POST data.
+ * @returns {Promise<Response>} A response object indicating the result of the action.
+ * @description
+ *   - Utilizes type guarding to validate the presence of the 'action' property in the request body.
+ *   - Executes different actions like 'health_check' or 'trigger_test_event' based on the 'action' value.
+ *   - Provides error handling to return appropriate response codes and error messages.
+ */
 export async function handlePostRequest(request: NextRequest): Promise<Response> {
   try {
     const body: unknown = await request.json(); // Explicitly type body as unknown
@@ -211,6 +275,21 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
   }
 }
 
+/**
+ * Fetches current scraping job metrics, data quality statistics, and system health status.
+ * @example
+ * fetchRealtimeMetrics()
+ * {
+ *   scrapingJobs: { active: 4, completed: 5, failed: 1, pending: 2 },
+ *   dataQuality: { averageScore: 85, totalTrucks: 50, recentChanges: 0 },
+ *   systemHealth: { status: 'healthy', uptime: 3600, lastUpdate: '2023-10-01T12:00:00Z' }
+ * }
+ * @returns {Promise<RealtimeMetrics>} An object containing metrics about scraping jobs, data quality, and system health.
+ * @description
+ *   - Utilizes external services ScrapingJobService and FoodTruckService to gather data.
+ *   - Provides comprehensive metrics for monitoring system health and data processing status.
+ *   - Catches errors to ensure consistent return structure even upon failure.
+ */
 async function fetchRealtimeMetrics(): Promise<RealtimeMetrics> {
   try {
     const recentJobs = await ScrapingJobService.getJobsByStatus('all');
@@ -262,6 +341,19 @@ function isScrapingJob(obj: unknown): obj is ScrapingJob {
 //   return typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj;
 // }
 
+/**
+ * Sends an update event about recent scraping jobs to a stream.
+ * @example
+ * sendScrapingUpdateEvent(controller, encoder)
+ * @param {ReadableStreamDefaultController<Uint8Array>} controller - The stream controller to enqueue the event data.
+ * @param {TextEncoder} encoder - The TextEncoder used to encode the event message.
+ * @returns {Promise<void>} Resolves when the event has been enqueued.
+ * @description
+ *   - The function retrieves all recent scraping jobs with their status.
+ *   - Filters the jobs to include only valid scraping jobs.
+ *   - Constructs an event object adhering to the expected format.
+ *   - Uses the controller to stream the encoded event to the client.
+ */
 async function sendScrapingUpdateEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder,
@@ -292,6 +384,20 @@ async function sendScrapingUpdateEvent(
   }
 }
 
+/**
+ * Sends a data quality change event if recent updates are detected.
+ * @example
+ * sendDataQualityChangeEvent(controller, encoder)
+ * // Enqueues an event to the provided controller.
+ * @param {ReadableStreamDefaultController<Uint8Array>} controller - The controller that enqueues the encoded event data.
+ * @param {TextEncoder} encoder - The encoder used to transform event data into Uint8Array format.
+ * @returns {Promise<void>} Resolves when the event is successfully handled and enqueued.
+ * @description
+ *   - Retrieves recent food truck updates from the FoodTruckService.
+ *   - Filters food trucks updated within the last minute.
+ *   - Formats a server-sent event message with the updates.
+ *   - Only enqueues the event if there are updates detected.
+ */
 async function sendDataQualityChangeEvent(
   controller: ReadableStreamDefaultController<Uint8Array>,
   encoder: TextEncoder,
@@ -346,6 +452,16 @@ function generateEventId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
+/**
+ * Performs a health check and returns the system status along with real-time metrics.
+ * @example
+ * handleHealthCheck().then(response => console.log(response));
+ * Response { "success": true, "status": "healthy", "metrics": {...}, "timestamp": "2023-03-17T12:34:56.789Z" }
+ * @returns {Promise<Response>} A Promise that resolves to a Response object containing JSON data.
+ * @description
+ *   - Utilizes real-time metrics to provide current system health information.
+ *   - Returns a JSON response formatted with specific headers and structure.
+ */
 async function handleHealthCheck(): Promise<Response> {
   const metrics = await fetchRealtimeMetrics();
   return new Response(
@@ -361,6 +477,17 @@ async function handleHealthCheck(): Promise<Response> {
   );
 }
 
+/**
+ * Returns a JSON response indicating a test event has been triggered.
+ * @example
+ * handleTriggerTestEvent()
+ * Response object with a success message.
+ * @returns {Response} JSON response containing success status, message, and timestamp.
+ * @description
+ *   - The response content type is set to 'application/json'.
+ *   - The timestamp is generated using the current date and time.
+ *   - Ensures consistent response formatting for realtime event triggers.
+ */
 function handleTriggerTestEvent(): Response {
   return new Response(
     JSON.stringify({
