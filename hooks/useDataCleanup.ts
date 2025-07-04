@@ -126,7 +126,7 @@ export function useDataCleanup() {
 
   const toggleOperation = (operation: string) => {
     setSelectedOperations((prev) =>
-      prev.includes(operation) ? prev.filter((op) => op !== operation) : [...prev, operation],
+      (prev.includes(operation) ? prev.filter((op) => op !== operation) : [...prev, operation]),
     );
   };
 
