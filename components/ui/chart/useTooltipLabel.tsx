@@ -67,8 +67,7 @@ export function useTooltipLabel({
       );
     }
 
-    if (value === undefined || value === null || value === '') {
-    }
+    if (value === undefined || value === null || value === '') { /* empty */ }
 
     return <div className={cn('font-medium', labelClassName)}>{value}</div>;
   }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
