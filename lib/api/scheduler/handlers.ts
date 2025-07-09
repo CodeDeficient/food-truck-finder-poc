@@ -172,10 +172,10 @@ export function handleExecuteTask(taskId: string) {
   if (Math.random() > 0.1) {
     // 90% success rate
     task.lastSuccess = task.lastRun;
-    undefined+=1;
+    task.successCount += 1;
     task.lastError = undefined;
   } else {
-    undefined+=1;
+    task.errorCount += 1;
     task.lastError = 'Simulated execution error';
   }
 

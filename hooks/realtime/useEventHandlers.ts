@@ -24,8 +24,8 @@ import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types'
  */
 export function useEventHandlers(
   eventFilter: ((event: RealtimeEvent) => boolean) | undefined,
-  setLastEventTime: (date: Date) => void,
-  setLatestMetrics: (metrics: RealtimeMetrics) => void,
+  setLastEventTime: React.Dispatch<React.SetStateAction<Date | undefined>>,
+  setLatestMetrics: React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>,
   setRecentEvents: React.Dispatch<React.SetStateAction<RealtimeEvent[]>>,
 ) {
   return useCallback(
@@ -41,7 +41,20 @@ export function useEventHandlers(
       switch (event.type) {
         case 'heartbeat': {
           if (event.data != undefined && typeof event.data === 'object') {
-            setLatestMetrics(event.data as unknown as RealtimeMetrics);
+            // Type guard for RealtimeMetrics
+            function isRealtimeMetrics(obj: unknown): obj is RealtimeMetrics {
+              return (
+                typeof obj === 'object' &&
+                obj !== null &&
+                'scrapingJobs' in obj &&
+                'dataQuality' in obj &&
+                'systemHealth' in obj
+              );
+            }
+
+            if (isRealtimeMetrics(event.data)) {
+              setLatestMetrics(event.data);
+            }
           }
           break;
         }

@@ -1,0 +1,28 @@
+{
+  "reporters": ["consoleFull", "json", "html"],
+  "output": "jscpd-report",
+  "minLines":5,
+  "minTokens":50,
+  "absolute": true,
+  "blame": true,
+  "ignore": [
+    "**/lib/database.types.ts",
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/*.md",
+    "**/build/**",
+    "**/docs/**",
+    "**/.clinerules/**",
+    "**/.github/**",
+    "**/.husky/**",
+    "**/.next/**",
+    "**/CodeAnt/**",
+    "**/errors/**",
+    "**/playwright-report/**",
+    "**/scripts/**",
+    "**/test-results/**",
+    "**/tests/**",
+    "**/supabase/**"
+  ],
+  "gitignore":true
+}
