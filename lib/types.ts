@@ -203,3 +203,34 @@ export interface PipelineRunResult {
   logs: string[];
   overallStatus: 'Success' | 'Error';
 }
+
+export interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  };
+  dataQuality: {
+    averageScore: number;
+    totalTrucks: number;
+    recentChanges: number;
+  };
+  systemHealth: {
+    status: 'healthy' | 'warning' | 'error';
+    uptime: number;
+    lastUpdate: string;
+  };
+}
+
+export interface TruckRating {
+  id: number;
+  title: string;
+  score: number;
+}
+
+export interface PipelineEvent {
+  type: string; // e.g., 'job_started', 'job_completed', 'data_updated'
+  payload: Record<string, unknown>; // Generic payload for event-specific data
+  timestamp: string;
+}

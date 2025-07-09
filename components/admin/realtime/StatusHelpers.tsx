@@ -30,7 +30,7 @@ export const getStatusColor = (status: Status): string => {
   }
 };
 
-// eslint-disable-next-line sonarjs/function-return-type
+ 
 /**
 * Renders a React component based on the provided status.
 * @example
@@ -61,7 +61,7 @@ export const getStatusIcon = (status: Status): React.ReactNode => {
   }
 };
 
-// eslint-disable-next-line sonarjs/function-return-type
+ 
 /**
  * Returns a trending icon based on the provided trend string.
  * @example

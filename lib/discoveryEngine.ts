@@ -411,8 +411,10 @@ export class FoodTruckDiscoveryEngine {
           discovery_timestamp: new Date().toISOString(),
         });
         if (stored.isNew === true) {
-          resundefined+=1       } else {
-          resundefined+=1       }
+          results.urls_stored += 1;
+        } else {
+          results.urls_duplicates += 1;
+        }
       } catch (error) {
         console.error(`❌ Failed to store URL ${url}:`, error);
         results.errors.push(
@@ -765,8 +767,10 @@ export class FoodTruckDiscoveryEngine {
           target_state: state,
         });
         if (stored.isNew === true) {
-          resultundefined+=1    } else {
-          resultundefined+=1    }
+          results.urls_stored += 1;
+        } else {
+          results.urls_duplicates += 1;
+        }
       } catch (error) {
         console.error(`❌ Failed to store URL ${url}:`, error);
         results.errors.push(
@@ -777,7 +781,8 @@ export class FoodTruckDiscoveryEngine {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTim{setTimeout(resolve, ms)}
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   /**
    * Store multiple discovered URLs with metadata
@@ -805,8 +810,10 @@ export class FoodTruckDiscoveryEngine {
       try {
         const stored = await this.storeDiscoveredUrl(url, discoveryMethod, metadata);
         if (stored.isNew === true) {
-          resultundefined+=1    } else {
-          resultundefined+=1    }
+          result.urls_stored += 1;
+        } else {
+          result.urls_duplicates += 1;
+        }
       } catch (error) {
         const errorMsg = `Failed to store URL ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`;
         result.errors.push(errorMsg);
