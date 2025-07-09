@@ -355,7 +355,8 @@ export class ScraperEngine {
   ): Promise<T> {
     let lastError: unknown;
 
-    for (let attempt = 1; attempt <= maxRetries; atteattempt+=1      try {
+    for (let attempt = 1; attempt <= maxRetries; attempt += 1) {
+      try {
         return await operation();
       } catch (error: unknown) {
         lastError = error;

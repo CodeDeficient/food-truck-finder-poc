@@ -9,11 +9,11 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl) {
+if (!supabaseServiceKey) {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable');
 }
 
-if (!supabaseAnonKey) {
+if (supabaseAnonKey === undefined || supabaseAnonKey === '') {
   throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable');
 }
 
@@ -129,7 +129,7 @@ export const FoodTruckService = {
         .select('*', { count: 'exact' })
         .order('updated_at', { ascending: false })
         .range(offset, offset + limit - 1);
-      if (error != undefined) throw error;
+      if (error) throw error;
       const trucks: FoodTruck[] = (data ?? []).map((t: FoodTruck) => normalizeTruckLocation(t));
       if (trucks.length === 0) return { trucks: [], total: count ?? 0 };
       const truckIds = trucks.map((t: FoodTruck) => t.id);
@@ -161,7 +161,7 @@ export const FoodTruckService = {
         .select('*')
         .eq('id', id)
         .single();
-      if (error != undefined) throw error;
+      if (error) throw error;
       if (!data) {
         return { error: "That didn't work, please try again later." };
       }
@@ -716,7 +716,7 @@ export const DataProcessingService = {
       .limit(1)
       .single();
 
-    if (error && String(error.code) !== 'PGRST116') throw error;
+    if (error !== null && String(error.code) != 'PGRST116') throw error;
     return data ?? undefined;
   },
 
@@ -793,7 +793,7 @@ export const DataQualityService = {
       .from('food_trucks')
       .select('*')
       .eq('id', truckId)
-      .single()) as { data: FoodTruck | null; error: PostgrestError | null };
+      .single()) as { data: FoodTruck | undefined; error: PostgrestError | undefined };
 
     if (fetchError) {
       handleSupabaseError(fetchError, 'updateTruckQualityScore:fetch');
@@ -887,7 +887,7 @@ export const APIUsageService = {
         .eq('usage_date', today)
         .single();
 
-      if (error && String(error.code) !== 'PGRST116') throw error;
+      if (error !== null && String(error.code) != 'PGRST116') throw error;
       return data ?? undefined;
     } catch (error: unknown) {
       console.warn('Error getting today usage:', error);

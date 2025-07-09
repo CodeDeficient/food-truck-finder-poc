@@ -106,7 +106,7 @@ export class RateLimiter {
         retryAfter: Math.ceil(config.blockDurationMs / 1000),
       };
     }
-    undefined+=1;
+    entry.count += 1;
     rateLimitStore.set(key, entry);
     return {
       allowed: true,
@@ -240,7 +240,7 @@ export class RateLimiter {
       stats.entriesByType[type] = (stats.entriesByType[type] ?? 0) + 1;
 
       if (entry.blocked) {
-        undefined+=1;
+        stats.blockedEntries += 1;
       }
     }
 

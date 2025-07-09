@@ -13,39 +13,38 @@ This comprehensive guide consolidates all linting, code quality, and related gov
 
 ## 1. Current Status & Remediation Plan (as of June 30, 2025)
 
-Based on the latest analysis, we have **42 remaining problems (0 errors, 42 warnings)** across **multiple files**.
+Based on the latest analysis, we have **188 problems** (130 errors, 58 warnings) across **multiple files**.
 
-### Recent Session Results (June 30, 2025)
+### Recent Session Results (July 6, 2025)
 
-**Major Achievement**: Successfully reduced linting issues from **59 problems (11 errors, 48 warnings)** to **42 problems (0 errors, 42 warnings)**.
+**Major Achievement**: Attempted deduplication, but introduced new linting errors.
 
-- **29% overall reduction** in linting issues
-- **100% elimination of errors** (11 → 0)
-- All critical type safety and compilation issues resolved
+**Key Issues Introduced/Re-introduced**:
 
-**Key Issues Resolved**:
-
-- ✅ Fixed `react-leaflet` "Map container is already initialized" error in React Strict Mode.
-- ✅ Invalid `await` expressions on non-Promise functions
-- ✅ Redundant optional type declarations (`prop?: T | undefined`)
-- ✅ Different types comparison logic errors
-- ✅ Unsafe assignment and argument type issues
-- ✅ Error object stringification problems
-- ✅ Unused variables and unnecessary type assertions
-- ✅ Inconsistent null/undefined usage
+- ❌ Parsing errors due to incomplete file emptying.
+- ❌ `sonarjs/no-globals-shadowing` due to `undefined+=1`.
+- ✅ `unicorn/no-empty-file` (Resolved by deleting empty file `components/trucks/TruckCardContent.tsx`).
+- ❌ `sonarjs/unused-import` and `@typescript-eslint/no-unused-vars` due to refactoring.
+- ❌ `@typescript-eslint/no-unsafe-*` errors due to type changes during refactoring.
 
 ### New Learnings from Recent Remediation
 
-- **Validate `await` Usage Against Function Return Types**: Redundant `await` keywords on non-Promise-returning functions can lead to linting errors (`@typescript-eslint/await-thenable`, `sonarjs/no-invalid-await`). Always verify that a function is `async` and returns a `Promise` before using `await` on its call. This section provides a full breakdown and a clear path forward.
-- **`@typescript-eslint/require-await`**: Functions marked `async` but containing no `await` expressions should have the `async` keyword removed and their return types updated from `Promise<NextResponse>` to `NextResponse`.
+- **Careful File Emptying**: When emptying files, ensure the entire content is replaced to avoid partial file errors.
+- **Avoid Global Shadowing**: Do not use `undefined` as a variable name or attempt to increment it, as this leads to `sonarjs/no-globals-shadowing` errors.
+- **JSCPD Output**: The `jscpd` tool's `--json` and `--output` flags may not be supported in all environments. Rely on the HTML report or console output for duplication information.
+- **Incremental Refactoring**: When performing large-scale refactoring, address linting errors incrementally and verify after each significant change to prevent a large accumulation of errors.
 
 ### Error Categorization & Certainty
 
 | Category                | Error Count | Certainty | Difficulty | Key Rules                                                     |
 | :---------------------- | :---------- | :-------- | :--------- | :------------------------------------------------------------ |
-| **Easiest & Certain**   | ~34         | 100%      | Low        | `sonarjs/unused-import`, `sonarjs/different-types-comparison` |
-| **Hardest & Uncertain** | ~54         | Low       | High       | `strict-boolean-expressions`, `max-lines-per-function`        |
-| **Moderate**            | ~81         | Medium    | Medium     | `no-unsafe-*`, `max-params`                                   |
+| **Parsing Errors**      | ~5          | 100%      | High       | `Parsing error`                                               |
+| **Empty Files**         | ~10         | 100%      | Low        | `unicorn/no-empty-file`                                       |
+| **Unused Imports/Vars** | ~8          | 100%      | Low        | `sonarjs/unused-import`, `@typescript-eslint/no-unused-vars` |
+| **`no-unsafe-*` Family**| ~11         | Medium    | Medium     | `@typescript-eslint/no-unsafe-assignment`, etc.               |
+| **Strict Boolean Expr.**| ~18         | Low       | High       | `@typescript-eslint/strict-boolean-expressions`               |
+| **Global Shadowing**    | ~4          | 100%      | Low        | `sonarjs/no-globals-shadowing`                                |
+| **Other**               | ~2          | Medium    | Medium     | `sonarjs/no-redundant-assignments`, etc.                      |
 
 ### High-Priority Hardest Errors (Manual Refactoring Required)
 
@@ -124,7 +123,7 @@ These are low-hanging fruit that we can address quickly to reduce the error coun
 
 ### Proposed Action Plan
 
-1.  **Immediate Action:** Tackle the "Easiest Errors" to quickly reduce the count from 169 to ~135.
+1.  **Immediate Action:** Tackle the "Easiest Errors" to quickly reduce the count from 123.
 2.  **Systematic Refactoring:** Begin the methodical, manual process of fixing the "Hardest Errors," starting with `max-lines-per-function` in the highest-impact files.
 3.  **Ongoing Cleanup:** Address the "Moderate" errors concurrently.
 
@@ -267,6 +266,8 @@ These are less frequent or more specific issues that can be addressed after the 
 - **Be Aware of Stale Linter Errors**: Verify errors against current code.
 - **Use `.tsx` for Files with JSX**: Ensure correct file extensions.
 - **Supabase Type Mismatches**: Be aware that `overrideTypes` may not fully resolve type errors for complex nested structures from Supabase queries (e.g., `any[]` for `string[]`). Temporary relaxation to `any[]` in interfaces may be necessary, followed by explicit data transformation.
+- **Validate `await` Usage**: Ensure `await` is only used with `async` functions that return a `Promise`. Redundant `await` on non-Promise functions can cause linting errors and unnecessary complexity.
+- **Validate `await` Usage**: Ensure `await` is only used with `async` functions that return a `Promise`. Redundant `await` on non-Promise functions can cause linting errors and unnecessary complexity.
 
 ## 4. Comprehensive Linting Prevention Framework
 
@@ -410,7 +411,7 @@ Effective multi-agent development requires clear governance and coordination pro
 
 ---
 
-**Last Updated**: June 23, 2025
+**Last Updated**: July 6, 2025
 **Estimated Resolution Effort**: Ongoing
 **Business Risk Level**: MEDIUM - Type safety issues pose runtime stability risks.
 
@@ -458,7 +459,7 @@ Our workflow for each error category will follow a strict three-step process:
 - **[x] WBS 1.1: Fix Invalid `await` Expressions (0 Errors remaining)**
 - **[x] WBS 1.2: Fix Unnecessary `async` Functions (0 Errors remaining)**
 - **[x] WBS 1.3: Remove Unused Variables (0 Errors remaining)**
-- **[x] WBS 1.4: Fix Unnecessary Type Assertion (Done - see 0e6c327d26)**
+- **[x] WBS 1.4: Fix Unnecessary Type Assertion (0 Errors remaining)**
 - **[ ] WBS 1.5: Fix Stylistic `null` Usage (2 Warnings)**
 
 ---
@@ -600,7 +601,7 @@ Specifically, I will:
 3. Add a new "Lesson Learned" about the `await` keyword and non-Promise functions.
 4. Update the date to today's date.
 
-- **[ ] WBS 1.4: Fix Unnecessary Type Assertion (1 Error)**
+- **[x] WBS 1.4: Fix Unnecessary Type Assertion (0 Errors remaining)**
 
   - **File:** `hooks/realtime/connectionManagementHelpers.ts`
   - **Rule:** `@typescript-eslint/no-unnecessary-type-assertion`
