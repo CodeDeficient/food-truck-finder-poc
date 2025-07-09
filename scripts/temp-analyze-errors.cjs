@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * ESLint Error Pattern Analyzer
  * Analyzes current ESLint errors to identify automation opportunities
@@ -13,7 +11,6 @@ class ErrorPatternAnalyzer {
     this.errorCounts = {};
     this.fileErrorCounts = {};
     this.automationCandidates = [];
-    this.errorsByRuleAndFile = {};
   }
 
   /**
@@ -21,25 +18,11 @@ class ErrorPatternAnalyzer {
    */
   getESLintResults() {
     try {
-      console.log('🔍 Running ESLint analysis...');
-      const output = execSync('npx eslint . --format json', {
-        encoding: 'utf8',
-        stdio: ['pipe', 'pipe', 'pipe'],
-        timeout: 120000,
-      });
+      console.log('🔍 Reading ESLint results from temp-lint-results.json...');
+      const output = fs.readFileSync('temp-lint-results.json', 'utf8');
       return JSON.parse(output);
     } catch (error) {
-      // Try to parse output even if ESLint failed
-      const stdout = error.stdout ? error.stdout.toString() : '';
-      if (stdout) {
-        try {
-          return JSON.parse(stdout);
-        } catch (parseError) {
-          console.error('Failed to parse ESLint output:', parseError.message);
-          return [];
-        }
-      }
-      console.error('ESLint failed:', error.message);
+      console.error('Failed to read or parse temp-lint-results.json:', error.message);
       return [];
     }
   }
@@ -59,13 +42,6 @@ class ErrorPatternAnalyzer {
           // Error (not warning)
           const ruleId = msg.ruleId || 'unknown';
           this.errorCounts[ruleId] = (this.errorCounts[ruleId] || 0) + 1;
-          if (!this.errorsByRuleAndFile[ruleId]) {
-            this.errorsByRuleAndFile[ruleId] = {};
-          }
-          if (!this.errorsByRuleAndFile[ruleId][fileName]) {
-            this.errorsByRuleAndFile[ruleId][fileName] = [];
-          }
-          this.errorsByRuleAndFile[ruleId][fileName].push(msg);
           fileErrorCount++;
         }
       });
@@ -136,7 +112,6 @@ class ErrorPatternAnalyzer {
         method: 'manual-ide-refactor',
         description:
           'RESEARCH-PROVEN UNSAFE FOR AUTOMATION: Function extraction requires human judgment. Use VS Code Extract Method only.',
-        estimatedReduction: '0%',
         automationRisk: 'HIGH',
         researchEvidence: 'Academic studies show 47% failure rate, semantic errors common',
       },
@@ -312,7 +287,6 @@ if (require.main === module) {
         timestamp: new Date().toISOString(),
         totalErrors: Object.values(analyzer.errorCounts).reduce((sum, count) => sum + count, 0),
         errorCounts: analyzer.errorCounts,
-        errorsByRuleAndFile: analyzer.errorsByRuleAndFile,
         automationCandidates: analyzer.automationCandidates,
         recommendations,
       };

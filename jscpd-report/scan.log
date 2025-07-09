@@ -1,0 +1,6 @@
+[33mwarning: json html not installed (install packages named @jscpd/json html-reporter or jscpd-json html-reporter)[39m
+[90mCannot find module 'jscpd-json html-reporter'[39m
+[90mRequire stack:[39m
+[90m- C:\Users\zabri\AppData\Roaming\npm\node_modules\jscpd\dist\jscpd.js[39m
+[90m- C:\Users\zabri\AppData\Roaming\npm\node_modules\jscpd\bin\jscpd[39m
+Duplications detection: Found [1m24[22m exact clones with [1m363[22m(0.91%) duplicated lines in [1m457[22m (7 formats) files.

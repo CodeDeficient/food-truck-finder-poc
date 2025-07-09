@@ -115,12 +115,12 @@ export class TaskScheduler {
 
           await task.execute();
 
-          undefined+=1;
+          task.successCount += 1;
           task.lastSuccess = new Date().toISOString();
 
           console.info(`Task completed successfully: ${taskId}`);
         } catch (error: unknown) {
-          undefined+=1;
+          task.errorCount += 1;
           task.lastError = error instanceof Error ? error.message : 'Unknown error';
 
           console.warn(`Task failed: ${taskId}`, error);

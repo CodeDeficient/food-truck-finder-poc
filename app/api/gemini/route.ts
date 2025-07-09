@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { dispatchGeminiOperation, gemini } from '@/lib/gemini';
+import { handleErrorResponse } from '@/lib/utils/apiHelpers';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,9 +38,7 @@ export async function POST(request: NextRequest) {
     );
     return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error('Gemini API error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleErrorResponse(error);
   }
 }
 
@@ -67,8 +66,6 @@ export async function GET(request: NextRequest) {
       ],
     });
   } catch (error: unknown) {
-    console.error('Gemini API error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleErrorResponse(error);
   }
 }

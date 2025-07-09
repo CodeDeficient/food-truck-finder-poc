@@ -50,13 +50,12 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     }
 
     const token = authHeader.slice(7);
-    const { data, error } = await supabase.auth.getUser(token);
+    const { data, error: authError } = await supabase.auth.getUser(token);
 
-    // eslint-disable-next-line sonarjs/different-types-comparison
-    if (error || data.user === null) {
+    if (authError || !data?.user) {
       return false;
     }
-    const {user} = data;
+    const user = data.user;
 
     if (!supabaseAdmin) {
       return false;
@@ -214,22 +213,28 @@ function setupDataChangeMonitor(
  */
 export async function handlePostRequest(request: NextRequest): Promise<Response> {
   try {
-    const body: unknown = await request.json(); // Explicitly type body as unknown
-    let action: string;
+    const rawBody: unknown = await request.json();
 
-    // Type guard to ensure 'body' has 'action' property and is a string
-    if (
-      typeof body === 'object' &&
-      body !== null &&
-      'action' in body &&
-      typeof (body as { action: string }).action === 'string'
-    ) {
-      action = (body as { action: string }).action;
-    } else {
+    interface PostRequestBody {
+      action: 'health_check' | 'trigger_test_event';
+    }
+
+    function isPostRequestBody(obj: unknown): obj is PostRequestBody {
+      return (
+        typeof obj === 'object' &&
+        obj !== null &&
+        'action' in obj &&
+        typeof (obj as PostRequestBody).action === 'string' &&
+        ((obj as PostRequestBody).action === 'health_check' ||
+          (obj as PostRequestBody).action === 'trigger_test_event')
+      );
+    }
+
+    if (!isPostRequestBody(rawBody)) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: "Invalid request body: 'action' property is missing or not a string.",
+          error: "Invalid request body: 'action' property is missing or not a valid action.",
         }),
         {
           status: 400,
@@ -238,7 +243,9 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
       );
     }
 
-    switch (action) {
+    const body: PostRequestBody = rawBody;
+
+    switch (body.action) {
       case 'health_check': {
         return await handleHealthCheck();
       }

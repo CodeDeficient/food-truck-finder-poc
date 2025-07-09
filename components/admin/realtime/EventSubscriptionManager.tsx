@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { SupabaseRealtimeClient } from '@/lib/supabase'; 
+import { PipelineEvent } from '@/lib/types';
 
 /**
  * Manages event subscriptions for pipeline events using Supabase.
@@ -14,18 +15,17 @@ import { SupabaseRealtimeClient } from '@/lib/supabase';
  */
 function EventSubscriptionManager() {
   useEffect(() => {
-    const subscription = SupabaseRealtimeClient.subscribe('pipeline-events', (_event: any) => {
+    const subscription = SupabaseRealtimeClient.subscribe('pipeline-events', (_event: PipelineEvent) => {
       /**
        * This is a placeholder for the complete event handling logic
        * Remove the following console.log statements and add proper event processing
        **/ 
-      console.info(`Received event: ${_event}`);
+       
+      console.info(`Received event: ${JSON.stringify(_event, null, 2)}`);
     });
 
-    return () => subscription.unsubscribe();
+    return () => subscription.unsubscribe() as void;
   }, []);
-
-  return null;
 }
 
 export default EventSubscriptionManager;

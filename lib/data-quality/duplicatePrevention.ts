@@ -200,6 +200,7 @@ export class DuplicatePreventionService {
     }
 
     for (let i = 1; i <= len1; i+=1) {
+      // eslint-disable-next-line sonarjs/no-redundant-assignments
       for (let j = 1; j <= len2; j+=1) {
         const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
         matrix[i][j] = Math.min(

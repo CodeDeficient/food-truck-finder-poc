@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { ScrapingJobService, FoodTruckService, supabase, supabaseAdmin } from '@/lib/supabase';
+import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
+
+import { verifyAdminAccess } from '@/lib/api/admin/realtime-events/handlers';
 
 /**
  * SOTA CRON Job Monitoring API
@@ -23,34 +25,6 @@ interface TruckData {
 interface TrucksResponse {
   trucks: TruckData[];
   total: number;
-}
-
-// Enhanced security check for admin API endpoints
-async function verifyAdminAccess(request: Request): Promise<boolean> {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader == undefined) return false;
-
-    const token = authHeader.replace('Bearer ', '');
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
-
-    if (error || !user) return false;
-
-    if (!supabaseAdmin) return false;
-
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    return profile?.role === 'admin';
-  } catch {
-    return false;
-  }
 }
 
 // Helper function to calculate cron schedule times
@@ -212,6 +186,7 @@ function createCronJobs(params: {
 
 export async function GET(request: Request) {
   // Verify admin access for API endpoint security
+   
   const hasAdminAccess = await verifyAdminAccess(request);
   if (!hasAdminAccess) {
     return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });

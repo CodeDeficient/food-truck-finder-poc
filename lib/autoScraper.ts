@@ -185,7 +185,7 @@ async function processExistingTruckResult(
 ): Promise<void> {
   switch (result.status) {
     case 're-scraping_triggered': {
-      undefined+=1;
+      counters.trucksProcessed += 1;
       await updateDiscoveredUrlStatus(url, 'processing', 'Re-scraping triggered due to stale data');
       break;
     }
@@ -231,8 +231,8 @@ async function processNewTruckResult(
   errors: Array<{ url: string; details?: string }>,
 ): Promise<void> {
   if (result.status === 'initial_scrape_triggered') {
-    undefined+=1;
-    undefined+=1;
+    counters.newTrucksFound += 1;
+      counters.trucksProcessed += 1;
     await updateDiscoveredUrlStatus(url, 'processing', 'Initial scraping triggered');
   } else if (result.status === 'error') {
     errors.push({ url, details: result.details });

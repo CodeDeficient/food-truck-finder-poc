@@ -48,10 +48,9 @@ export default tseslint.config(
       '**/*.config.mjs',
       '**/*.config.ts',
       // Legacy files that cause parsing errors
-      'setup-tests.cjs',
-      'setup-tests.js',
-      'test-enhanced-pipeline-api.js',
-      'test-enhanced-pipeline.js',
+      'delete-file.cjs',
+      'jscpd-report/',
+      'pretty-print-json.cjs',
       'test-pipeline-simple.js',
       'playwright.config.test.ts',
       // Quality gate reports

@@ -31,7 +31,7 @@ export function TruckCardContent({
   todayHours,
   popularItems = [],
 }: {
-  readonly truck: { name: string; address?: string; phone_number?: string };
+  readonly truck: { name: string; address?: string; phone_number?: string; social_media?: Record<string, string> };
   readonly todayHours?: { open?: string; close?: string; closed?: boolean };
   readonly popularItems: MenuItem[];
 }) {

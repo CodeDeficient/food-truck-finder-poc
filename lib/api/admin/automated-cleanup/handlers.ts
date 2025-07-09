@@ -95,14 +95,13 @@ export async function verifyAdminAccess(request: NextRequest): Promise<boolean> 
     }
 
     const token = authHeader.slice(7);
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
+    const { data, error: authError } = await supabase.auth.getUser(token);
 
-    if (error || !user) {
+    if (authError || !data?.user) {
       return false;
     }
+
+    const user = data.user;
 
     if (!supabaseAdmin) {
       return false;

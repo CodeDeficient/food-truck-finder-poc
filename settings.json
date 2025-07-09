@@ -1,0 +1,161 @@
+{
+  "theme": "Default",
+  "selectedAuthType": "oauth-personal",
+  "mcpServers": {
+    "github.com/upstash/context7-mcp": {
+      "autoApprove": [
+        "resolve-library-id",
+        "get-library-docs",
+        "tavily-search"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    },
+    "taskmaster-ai": {
+      "autoApprove": [
+        "initialize_project",
+        "models",
+        "parse_prd",
+        "get_tasks",
+        "get_task",
+        "next_task",
+        "complexity_report",
+        "set_task_status",
+        "generate",
+        "add_task",
+        "add_subtask",
+        "update",
+        "update_task",
+        "update_subtask",
+        "remove_task",
+        "remove_subtask",
+        "clear_subtasks",
+        "analyze_project_complexity",
+        "expand_task",
+        "expand_all",
+        "add_dependency",
+        "remove_dependency",
+        "validate_dependencies",
+        "fix_dependencies"
+      ],
+      "disabled": true,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "task-master-ai"
+      ]
+    },
+    "github.com/AgentDeskAI/browser-tools-mcp": {
+      "autoApprove": [
+        "getConsoleLogs",
+        "getConsoleErrors",
+        "getNetworkErrors",
+        "getNetworkLogs",
+        "takeScreenshot",
+        "getSelectedElement",
+        "wipeLogs",
+        "runAccessibilityAudit",
+        "runPerformanceAudit",
+        "runSEOAudit",
+        "runNextJSAudit",
+        "runDebuggerMode",
+        "runAuditMode",
+        "runBestPracticesAudit"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "@agentdeskai/browser-tools-mcp@latest"
+      ]
+    },
+    "github.com/tavily-ai/tavily-mcp": {
+      "autoApprove": [
+        "search",
+        "tavily-search",
+        "tavily-deep-research"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "tavily-mcp@0.2.0"
+      ],
+      "env": {
+        "TAVILY_API_KEY": "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"
+      }
+    },
+    "github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking": {
+      "autoApprove": [
+        "sequentialthinking"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+      "github.com/zcaceres/markdownify-mcp": {
+      "autoApprove": [],
+      "disabled": false,
+      "timeout": 60000,
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:/Users/zabri/OneDrive/Documents/Cline/MCP/markdownify-mcp/dist/index.js"
+      ],
+      "env": {}
+    },
+    "github.com/alexander-zuev/supabase-mcp-server": {
+      "autoApprove": [
+        "get_schemas",
+        "get_tables",
+        "get_table_schema",
+        "retrieve_migrations",
+        "retrieve_logs",
+        "execute_postgresql",
+        "send_management_api_request",
+        "get_management_api_spec",
+        "get_auth_admin_methods_spec",
+        "call_auth_admin_method",
+        "live_dangerously",
+        "confirm_destructive_operation"
+      ],
+      "disabled": true,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "C:/Users/zabri/.local/bin/supabase-mcp-server.exe",
+      "env": {
+        "QUERY_API_KEY": "qry_v1_QEEciCeym1ascF__opcfIZsX7DHt4MJNmXTVLKaStbc",
+        "SUPABASE_PROJECT_REF": "zkwliyjjkdnigizidlln",
+        "SUPABASE_DB_PASSWORD": "mtDSAzU9KWx1LOth",
+        "SUPABASE_REGION": "us-east-1",
+        "SUPABASE_ACCESS_TOKEN": "sbp_5d171fe9f9f1942e9ed7604505055c7ebdf35e2d",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inprd2xpeWpqa2RuaWdpemlkbGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODcyNzgyNywiZXhwIjoyMDY0MzAzODI3fQ.BzngfTW3rzGauk2t1zeIGfAQSX4hMAj328QYVOkPDro"
+      }
+    }
+  }
+}

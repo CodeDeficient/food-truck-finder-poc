@@ -1,23 +1,226 @@
 {
-  "timestamp": "2025-06-29T15:45:05.873Z",
-  "totalErrors": 22,
+  "timestamp": "2025-07-09T17:35:20.811Z",
+  "totalErrors": 16,
   "errorCounts": {
-    "@typescript-eslint/require-await": 1,
-    "@typescript-eslint/no-unsafe-call": 3,
-    "@typescript-eslint/no-misused-promises": 1,
-    "unknown": 1,
-    "@typescript-eslint/no-unsafe-argument": 2,
-    "max-params": 2,
-    "sonarjs/deprecation": 2,
-    "sonarjs/no-redundant-optional": 2,
-    "@typescript-eslint/await-thenable": 1,
-    "sonarjs/no-invalid-await": 1,
-    "sonarjs/different-types-comparison": 1,
-    "sonarjs/pseudo-random": 1,
-    "@typescript-eslint/no-unsafe-assignment": 3,
-    "@typescript-eslint/no-unsafe-return": 1
+    "@typescript-eslint/no-unsafe-assignment": 6,
+    "@typescript-eslint/no-unsafe-member-access": 5,
+    "@typescript-eslint/no-unsafe-call": 5
   },
-  "automationCandidates": [],
+  "errorsByRuleAndFile": {
+    "@typescript-eslint/no-unsafe-assignment": {
+      "/components/admin/dashboard/TrucksPage.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 31,
+          "column": 45,
+          "nodeType": "MemberExpression",
+          "messageId": "anyAssignment",
+          "endLine": 31,
+          "endColumn": 53
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 31,
+          "column": 62,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 31,
+          "endColumn": 67
+        }
+      ],
+      "/components/admin/realtime/EventSubscriptionManager.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 18,
+          "column": 11,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 25,
+          "endColumn": 7
+        }
+      ],
+      "/components/admin/realtime/SystemStatusIndicators.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 26,
+          "column": 11,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 43,
+          "endColumn": 7
+        }
+      ],
+      "/lib/api/admin/scraping-metrics/handlers.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 42,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 42,
+          "endColumn": 45
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 45,
+          "column": 5,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 45,
+          "endColumn": 18
+        }
+      ]
+    },
+    "@typescript-eslint/no-unsafe-member-access": {
+      "/components/admin/dashboard/TrucksPage.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .id on an `error` typed value.",
+          "line": 31,
+          "column": 51,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 31,
+          "endColumn": 53
+        }
+      ],
+      "/components/admin/realtime/EventSubscriptionManager.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .subscribe on an `error` typed value.",
+          "line": 18,
+          "column": 49,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 18,
+          "endColumn": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .unsubscribe on an `error` typed value.",
+          "line": 27,
+          "column": 31,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 27,
+          "endColumn": 42
+        }
+      ],
+      "/components/admin/realtime/SystemStatusIndicators.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .subscribe on an `error` typed value.",
+          "line": 26,
+          "column": 49,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 26,
+          "endColumn": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .unsubscribe on an `error` typed value.",
+          "line": 45,
+          "column": 31,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 45,
+          "endColumn": 42
+        }
+      ]
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "/components/admin/realtime/EventSubscriptionManager.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 18,
+          "column": 26,
+          "nodeType": "MemberExpression",
+          "messageId": "unsafeCall",
+          "endLine": 18,
+          "endColumn": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 27,
+          "column": 18,
+          "nodeType": "MemberExpression",
+          "messageId": "unsafeCall",
+          "endLine": 27,
+          "endColumn": 42
+        }
+      ],
+      "/components/admin/realtime/SystemStatusIndicators.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 26,
+          "column": 26,
+          "nodeType": "MemberExpression",
+          "messageId": "unsafeCall",
+          "endLine": 26,
+          "endColumn": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 45,
+          "column": 18,
+          "nodeType": "MemberExpression",
+          "messageId": "unsafeCall",
+          "endLine": 45,
+          "endColumn": 42
+        }
+      ],
+      "/hooks/useRealtimeAdminEvents.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 71,
+          "column": 3,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 71,
+          "endColumn": 12
+        }
+      ]
+    }
+  },
+  "automationCandidates": [
+    {
+      "ruleId": "@typescript-eslint/no-unsafe-assignment",
+      "count": 6,
+      "confidence": "MEDIUM",
+      "method": "type-annotation",
+      "description": "Add type annotations for unsafe assignments",
+      "estimatedFixes": 1,
+      "priority": 2
+    }
+  ],
   "recommendations": {
     "highConfidence": {
       "candidates": [],
@@ -25,9 +228,21 @@
       "methods": []
     },
     "mediumConfidence": {
-      "candidates": [],
-      "totalFixes": 0,
-      "methods": []
+      "candidates": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "count": 6,
+          "confidence": "MEDIUM",
+          "method": "type-annotation",
+          "description": "Add type annotations for unsafe assignments",
+          "estimatedFixes": 1,
+          "priority": 2
+        }
+      ],
+      "totalFixes": 1,
+      "methods": [
+        "type-annotation"
+      ]
     }
   }
 }

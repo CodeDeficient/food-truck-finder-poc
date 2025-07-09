@@ -24,40 +24,25 @@ export function AdminNavLinks({ isMobile = false }: Readonly<AdminNavLinksProps>
 
   const iconClassName = isMobile ? 'h-5 w-5' : 'h-4 w-4';
 
+  const navItems = [
+    { href: '/admin', icon: Home, label: 'Dashboard' },
+    { href: '/admin/food-trucks', icon: Truck, label: 'Food Truck Management' },
+    { href: '/admin/pipeline', icon: Activity, label: 'Pipeline Monitoring' },
+    { href: '/admin/auto-scraping', icon: Settings, label: 'Auto-Scraping' },
+    { href: '/admin/data-quality', icon: Settings, label: 'Data Quality' },
+    { href: '/admin/users', icon: Users, label: 'User Management' },
+    { href: '/admin/events', icon: CalendarDays, label: 'Event Management' },
+    { href: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
+  ];
+
   return (
     <>
-      <Link href="/admin" className={linkClassName}>
-        <Home className={iconClassName} />
-        Dashboard
-      </Link>
-      <Link href="/admin/food-trucks" className={linkClassName}>
-        <Truck className={iconClassName} />
-        Food Truck Management
-      </Link>
-      <Link href="/admin/pipeline" className={linkClassName}>
-        <Activity className={iconClassName} />
-        Pipeline Monitoring
-      </Link>
-      <Link href="/admin/auto-scraping" className={linkClassName}>
-        <Settings className={iconClassName} />
-        Auto-Scraping
-      </Link>
-      <Link href="/admin/data-quality" className={linkClassName}>
-        <Settings className={iconClassName} />
-        Data Quality
-      </Link>
-      <Link href="/admin/users" className={linkClassName}>
-        <Users className={iconClassName} />
-        User Management
-      </Link>
-      <Link href="/admin/events" className={linkClassName}>
-        <CalendarDays className={iconClassName} />
-        Event Management
-      </Link>
-      <Link href="/admin/analytics" className={linkClassName}>
-        <BarChart3 className={iconClassName} />
-        Analytics
-      </Link>
+      {navItems.map((item) => (
+        <Link href={item.href} className={linkClassName} key={item.href}>
+          <item.icon className={iconClassName} />
+          {item.label}
+        </Link>
+      ))}
     </>
   );
 }

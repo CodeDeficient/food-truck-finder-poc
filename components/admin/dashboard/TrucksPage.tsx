@@ -20,8 +20,8 @@ const TrucksPage = () => {
     // Placeholder: Integrate actual truck loading logic here
     setTrucks([
       // Temporary data - replace with real query
-      { id: 1, name: "Temp Truck 1" },
-      { id: 2, name: "Temp Truck 2" }
+      { id: "1", name: "Temp Truck 1", cuisine_type: ["American"], price_range: "$", data_quality_score: 0, verification_status: "pending", source_urls: [], last_scraped_at: "", current_location: { lat: 0, lng: 0, address: "", timestamp: "" }, operating_hours: { monday: { closed: true }, tuesday: { closed: true }, wednesday: { closed: true }, thursday: { closed: true }, friday: { closed: true }, saturday: { closed: true }, sunday: { closed: true } }, menu: [], contact_info: {}, social_media: {}, created_at: "", updated_at: "" } as Truck,
+      { id: "2", name: "Temp Truck 2", cuisine_type: ["Mexican"], price_range: "$", data_quality_score: 0, verification_status: "pending", source_urls: [], last_scraped_at: "", current_location: { lat: 0, lng: 0, address: "", timestamp: "" }, operating_hours: { monday: { closed: true }, tuesday: { closed: true }, wednesday: { closed: true }, thursday: { closed: true }, friday: { closed: true }, saturday: { closed: true }, sunday: { closed: true } }, menu: [], contact_info: {}, social_media: {}, created_at: "", updated_at: "" } as Truck
     ]);
   }, []);
 

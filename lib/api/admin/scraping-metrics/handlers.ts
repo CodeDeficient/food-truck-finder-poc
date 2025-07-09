@@ -17,15 +17,14 @@ import { RealtimeMetrics } from './types';
 export async function verifyAdminAccess(request: Request): Promise<boolean> {
   try {
     const authHeader = request.headers.get('authorization');
-    if (authHeader == undefined) return false;
+    if (!authHeader) return false;
 
     const token = authHeader.replace('Bearer ', '');
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
+    const { data, error: authError } = await supabase.auth.getUser(token);
 
-    if (error || !user) return false;
+    if (authError || !data?.user) return false;
+
+    const user = data.user;
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -61,10 +60,22 @@ export async function handleGetRequest(): Promise<NextResponse> {
  */
 async function getScrapingMetrics(): Promise<RealtimeMetrics> {
   // Fetch real scraping metrics from database
-  const [allJobs, recentTrucks] = await Promise.all([
+  const [allJobsResult, recentTrucksResult] = await Promise.all([
     ScrapingJobService.getAllJobs(100, 0), // Get last 100 jobs for metrics
     FoodTruckService.getAllTrucks(1000, 0), // Get trucks for processing count
   ]);
+
+  // Type guard for allJobsResult
+  const allJobs: ScrapingJob[] = Array.isArray(allJobsResult) ? allJobsResult : [];
+
+  // Type guard for recentTrucksResult
+  const recentTrucks: { trucks: FoodTruck[]; total: number; error?: string } = (
+    typeof recentTrucksResult === 'object' &&
+    'trucks' in recentTrucksResult &&
+    Array.isArray(recentTrucksResult.trucks)
+  )
+    ? (recentTrucksResult as { trucks: FoodTruck[]; total: number; error?: string })
+    : { trucks: [], total: 0 };
 
   const typedJobs = allJobs as Array<{
     status?: string;

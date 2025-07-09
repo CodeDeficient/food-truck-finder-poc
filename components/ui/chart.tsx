@@ -373,7 +373,7 @@ const ChartTooltipContent = React.forwardRef<
           indicatorProps={{
             indicator,
             hideIndicator,
-            formatter: formatter as TooltipFormatter | undefined,
+            formatter: formatter,
             nameKey,
             color,
             tooltipLabel,

@@ -1,5 +1,8 @@
-import { useRealtimeAdminEventsLogic } from './realtime/useRealtimeAdminEventsLogic';
+import { useRef } from 'react';
 import { RealtimeEvent, RealtimeMetrics } from './useRealtimeAdminEvents.types';
+import { useConnectionState } from './realtime/useConnectionState';
+import { useConnectionManagement } from './realtime/useConnectionManagement';
+import { useEventHandlers } from './realtime/useEventHandlers';
 
 /**
  * SOTA Real-time Admin Dashboard Hook
@@ -38,5 +41,52 @@ interface UseRealtimeAdminEventsReturn {
 export function useRealtimeAdminEvents(
   options: UseRealtimeAdminEventsOptions = {},
 ): UseRealtimeAdminEventsReturn {
-  return useRealtimeAdminEventsLogic(options);
+  const { autoConnect = true, reconnectInterval = 5000, maxReconnectAttempts = 10, eventFilter } = options;
+
+  const eventSourceRef = useRef<EventSource>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const isManuallyDisconnectedRef = useRef(false);
+
+  const connectionState = useConnectionState();
+  const { isConnected, isConnecting, connectionError, latestMetrics, recentEvents, connectionAttempts, lastEventTime } = connectionState;
+
+  const handleEvent = useEventHandlers(
+    eventFilter as ((event: RealtimeEvent) => boolean) | undefined,
+    setLastEventTime as React.Dispatch<React.SetStateAction<Date | undefined>>,
+    setLatestMetrics as React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>,
+    setRecentEvents as React.Dispatch<React.SetStateAction<RealtimeEvent[]>>,
+  );
+
+  const { connect, disconnect, clearEvents } = useConnectionManagement({
+    eventSourceRef,
+    reconnectTimeoutRef,
+    isManuallyDisconnectedRef,
+    connectionState,
+    handleEvent,
+    maxReconnectAttempts,
+    reconnectInterval,
+  });
+
+  // Auto-connect effect
+  useEffect(() => {
+    if (autoConnect) {
+      connect();
+    }
+    return () => {
+      disconnect();
+    };
+  }, [autoConnect, connect, disconnect]);
+
+  return {
+    isConnected,
+    isConnecting,
+    connectionError,
+    latestMetrics,
+    recentEvents,
+    connect,
+    disconnect,
+    clearEvents,
+    connectionAttempts,
+    lastEventTime,
+  };
 }

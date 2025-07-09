@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  verifyAdminAccess,
   handlePostRequest,
   handleGetStatus,
   handleGetSchedules,
@@ -8,6 +7,7 @@ import {
   handleGetPreview,
   handleGetDefault,
 } from '@/lib/api/admin/automated-cleanup/handlers';
+import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 import { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
 
 /**
@@ -22,6 +22,7 @@ import { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const hasAccess = await verifyAdminAccess(request);
     if (!hasAccess) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -62,6 +63,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const hasAccess = await verifyAdminAccess(request);
     if (!hasAccess) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -69,27 +71,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const rawBody: unknown = await request.json();
 
+    // Type guard for RequestBody
+    function isRequestBody(obj: unknown): obj is RequestBody {
+      return (
+        typeof obj === 'object' &&
+        obj !== null &&
+        'action' in obj &&
+        typeof (obj as RequestBody).action === 'string'
+      );
+    }
+
     // Validate rawBody against RequestBody type
-    if (typeof rawBody !== 'object' || rawBody == undefined) {
+    if (!isRequestBody(rawBody)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request body: not an object' },
+        { success: false, error: 'Invalid request body: does not conform to RequestBody type' },
         { status: 400 },
       );
     }
 
-    const body = rawBody as Partial<RequestBody>; // Use Partial for initial type assertion
+    const body: RequestBody = rawBody;
 
-    if (typeof body.action !== 'string') {
-      return NextResponse.json(
-        { success: false, error: 'Invalid request body: missing or invalid action' },
-        { status: 400 },
-      );
-    }
-
-    // Further validation can be added here for other properties of RequestBody if needed
-    // For now, we assume if action is present and string, it's sufficient for initial handling
-
-    return await handlePostRequest(body as RequestBody);
+    return await handlePostRequest(body);
   } catch (error: unknown) {
     console.error('Automated cleanup POST error:', error);
     return NextResponse.json(
