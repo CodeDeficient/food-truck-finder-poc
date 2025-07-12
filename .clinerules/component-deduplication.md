@@ -20,6 +20,12 @@ This rules set outlines the process for deduplicating UI components and normaliz
     ```
   - **Commit confirmation**: Once all duplicate entries are identified, replace and re-run scripts/find-duplicates to validate that no duplications exist.
 
+## SocialMediaSection Deduplication
+- 📌 Moved SocialMediaSection to components/ui/SocialMediaSection.tsx
+- 📌 Removed duplicate implementation in components/trucks/SocialMediaSection.tsx
+
+<-- 2025-07-03 - Analysis2 task complete (SocialMediaSection duplication resolved) -->
+
 ## Code pattern examples
   - **Move Card**:
     - Move `components/trucks/TruckCard.tsx` to `components/ui/TruckCard.tsx`

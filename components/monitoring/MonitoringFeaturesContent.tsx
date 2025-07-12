@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Activity, Shield, Zap, TrendingUp } from 'lucide-react';
 import { FeatureList } from './FeatureList';
 

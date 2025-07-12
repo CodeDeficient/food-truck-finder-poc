@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { AlertTriangle, CheckCircle, Clock, TrendingUp, TrendingDown } from 'lucide-react';
 
 type Status = 'healthy' | 'warning' | 'error' | 'unknown';

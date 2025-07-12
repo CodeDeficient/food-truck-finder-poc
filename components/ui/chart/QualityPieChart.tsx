@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { QUALITY_COLORS } from '../dataQualityCharts';
 import { CustomTooltip } from '../dataQualityCharts';
@@ -40,7 +40,7 @@ export function QualityPieChart({ data }: QualityPieChartProps) {
           dataKey="value"
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={(QUALITY_COLORS as string[])[index]} />
+            <Cell key={`cell-${index}`} fill={QUALITY_COLORS[index]} />
           ))}
         </Pie>
         <Tooltip content={<CustomTooltip />} />

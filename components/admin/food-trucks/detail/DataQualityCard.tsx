@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatQualityScore, type QualityCategory } from '@/lib/utils/dataQualityFormatters';
 import { QualityMetricsGrid } from './QualityMetricsGrid';

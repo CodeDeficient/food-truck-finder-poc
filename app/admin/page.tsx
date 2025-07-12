@@ -1,6 +1,8 @@
-import React from 'react';
+
+'use client';
+
+import { useFoodTrucks, DataStatusIndicator } from '@/lib/fallback/supabaseFallback';
 import {
-  FoodTruckService,
   ScrapingJobService,
   DataProcessingService,
   supabase,
@@ -10,6 +12,7 @@ import { PipelineStatusCard } from '@/components/admin/dashboard/PipelineStatusC
 import { DataQualityScoreCard } from '@/components/admin/dashboard/DataQualityScoreCard';
 import { QualityDistributionCard } from '@/components/admin/dashboard/QualityDistributionCard';
 import { RecentErrorsCard } from '@/components/admin/dashboard/RecentErrorsCard';
+import { useEffect, useState } from 'react';
 
 // Define the data quality stats type based on the database function
 interface DataQualityStats {
@@ -23,108 +26,91 @@ interface DataQualityStats {
   readonly flagged_count: number;
 }
 
-/**
-* Fetches various dashboard data metrics related to food trucks, scraping jobs, and data quality statistics.
-* @example
-* getDashboardData()
-* {
-*   totalFoodTrucks: 150,
-*   pendingVerifications: 10,
-*   pendingScrapingJobsCount: 2,
-*   runningScrapingJobsCount: 1,
-*   failedScrapingJobsCount: 3,
-*   failedProcessingQueueItemsCount: 4,
-*   dataQualityStats: { ... }
-* }
-* @returns {Object} An object containing aggregated counts and statistics for the dashboard overview.
-* @description
-*   - Uses multiple service calls to aggregate needed data.
-*   - Handles potential errors from Supabase RPC function for data quality stats.
-*   - Default values for dataQualityStats are provided to handle potential errors or empty results.
-*/
-async function getDashboardData() {
-  // Fetch total food trucks and verification statuses
-  const { trucks: allTrucks } = await FoodTruckService.getAllTrucks(1000, 0); // Fetch a reasonable number for overview
-  const totalFoodTrucks = allTrucks.length;
-  const pendingVerifications = allTrucks.filter((t) => t.verification_status === 'pending').length;
+export default function AdminDashboard() {
+  const { trucks, loading, dataStatus } = useFoodTrucks();
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
-  // Fetch pipeline status (e.g., pending scraping jobs)
-  const pendingScrapingJobs = await ScrapingJobService.getJobsByStatus('pending');
-  const runningScrapingJobs = await ScrapingJobService.getJobsByStatus('running');
-  const failedScrapingJobs = await ScrapingJobService.getJobsByStatus('failed');
+  useEffect(() => {
+    async function getDashboardData() {
+      const pendingVerifications = trucks.filter((t) => t.verification_status === 'pending').length;
 
-  // Fetch recent errors from data processing queue
-  const failedProcessingQueueItems = await DataProcessingService.getQueueByStatus('failed');
-  // Fetch data quality stats using the Supabase function
-  const { data: qualityStatsResult, error: qualityError } = await supabase
-    .rpc('get_data_quality_stats')
-    .single();
+      // Fetch pipeline status (e.g., pending scraping jobs)
+      const pendingScrapingJobs = await ScrapingJobService.getJobsByStatus('pending');
+      const runningScrapingJobs = await ScrapingJobService.getJobsByStatus('running');
+      const failedScrapingJobs = await ScrapingJobService.getJobsByStatus('failed');
 
-  if (qualityError != undefined) {
-    console.error('Error fetching data quality stats:', qualityError);
+      // Fetch recent errors from data processing queue
+      const failedProcessingQueueItems = await DataProcessingService.getQueueByStatus('failed');
+      // Fetch data quality stats using the Supabase function
+      const { data: qualityStatsResult, error: qualityError } = await supabase
+        .rpc('get_data_quality_stats')
+        .single();
+
+      if (qualityError != undefined) {
+        console.error('Error fetching data quality stats:', qualityError);
+      }
+
+      const dataQualityStats: DataQualityStats = (qualityStatsResult as DataQualityStats) ?? {
+        total_trucks: 0,
+        avg_quality_score: 0,
+        high_quality_count: 0,
+        medium_quality_count: 0,
+        low_quality_count: 0,
+        verified_count: 0,
+        pending_count: 0,
+        flagged_count: 0,
+      };
+
+      setDashboardData({
+        totalFoodTrucks: trucks.length,
+        pendingVerifications,
+        pendingScrapingJobsCount: pendingScrapingJobs.length,
+        runningScrapingJobsCount: runningScrapingJobs.length,
+        failedScrapingJobsCount: failedScrapingJobs.length,
+        failedProcessingQueueItemsCount: failedProcessingQueueItems.length,
+        dataQualityStats,
+      });
+    }
+
+    if (trucks.length > 0) {
+      getDashboardData();
+    }
+  }, [trucks]);
+
+  if (loading || !dashboardData) {
+    return <div>Loading...</div>;
   }
 
-  const dataQualityStats: DataQualityStats = (qualityStatsResult as DataQualityStats) ?? {
-    total_trucks: 0,
-    avg_quality_score: 0,
-    high_quality_count: 0,
-    medium_quality_count: 0,
-    low_quality_count: 0,
-    verified_count: 0,
-    pending_count: 0,
-    flagged_count: 0,
-  };
-
-  return {
-    totalFoodTrucks,
-    pendingVerifications,
-    pendingScrapingJobsCount: pendingScrapingJobs.length,
-    runningScrapingJobsCount: runningScrapingJobs.length,
-    failedScrapingJobsCount: failedScrapingJobs.length,
-    failedProcessingQueueItemsCount: failedProcessingQueueItems.length,
-    dataQualityStats,
-  };
-}
-
-/**
-* Renders the admin dashboard with various metrics and cards.
-* @example
-* AdminDashboard()
-* <div className="flex flex-col gap-4">...</div>
-* @returns {JSX.Element} Returns a JSX element containing the admin dashboard.
-* @description
-*   - Fetches data asynchronously to display real-time metrics on the dashboard.
-*   - Metrics include food trucks, scraping jobs, data quality, and recent errors.
-*   - Organizes content into responsive grids for better visual structure.
-*/
-export default async function AdminDashboard() {
-  const {
-    totalFoodTrucks,
-    pendingVerifications,
-    pendingScrapingJobsCount,
-    runningScrapingJobsCount,
-    failedScrapingJobsCount,
-    failedProcessingQueueItemsCount,
-    dataQualityStats,
-  } = await getDashboardData();
+  if (dataStatus.status === 'unavailable') {
+    return (
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+        <DataStatusIndicator status={dataStatus} />
+        <div className="text-center py-10">
+          <p className="text-lg text-gray-500">Food truck data is currently unavailable. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+      <DataStatusIndicator status={dataStatus} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <TotalFoodTrucksCard
-          totalFoodTrucks={totalFoodTrucks}
-          pendingVerifications={pendingVerifications}
+          totalFoodTrucks={dashboardData.totalFoodTrucks}
+          pendingVerifications={dashboardData.pendingVerifications}
         />
         <PipelineStatusCard
-          pendingScrapingJobsCount={pendingScrapingJobsCount}
-          runningScrapingJobsCount={runningScrapingJobsCount}
-          failedScrapingJobsCount={failedScrapingJobsCount}
+          pendingScrapingJobsCount={dashboardData.pendingScrapingJobsCount}
+          runningScrapingJobsCount={dashboardData.runningScrapingJobsCount}
+          failedScrapingJobsCount={dashboardData.failedScrapingJobsCount}
         />
-        <DataQualityScoreCard dataQualityStats={dataQualityStats} />
-        <QualityDistributionCard dataQualityStats={dataQualityStats} />
-        <RecentErrorsCard failedProcessingQueueItemsCount={failedProcessingQueueItemsCount} />
+        <DataQualityScoreCard dataQualityStats={dashboardData.dataQualityStats} />
+        <QualityDistributionCard dataQualityStats={dashboardData.dataQualityStats} />
+        <RecentErrorsCard failedProcessingQueueItemsCount={dashboardData.failedProcessingQueueItemsCount} />
       </div>
     </div>
   );

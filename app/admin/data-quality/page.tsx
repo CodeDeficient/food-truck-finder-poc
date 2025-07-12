@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { FoodTruckService, FoodTruck, supabase } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {

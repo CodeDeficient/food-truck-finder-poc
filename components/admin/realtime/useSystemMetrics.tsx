@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Wifi, WifiOff, Activity, Server, Database } from 'lucide-react';
 
 export interface StatusMetric {

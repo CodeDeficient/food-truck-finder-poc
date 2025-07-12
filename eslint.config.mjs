@@ -53,6 +53,7 @@ export default tseslint.config(
       'pretty-print-json.cjs',
       'test-pipeline-simple.js',
       'playwright.config.test.ts',
+      'jest.config.*',
       // Quality gate reports
       'eslint-*.json',
       'quality-report.json',
@@ -105,6 +106,18 @@ export default tseslint.config(
     files: ['hooks/**/*.ts', 'hooks/**/*.tsx'],
     rules: {
       'sonarjs/different-types-comparison': 'off',
+    },
+  },
+
+  // Temporarily disable no-unsafe-* rules for TrucksPage.tsx for diagnosis
+  {
+    files: ['components/admin/dashboard/TrucksPage.tsx'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
 

@@ -19,8 +19,8 @@ interface CronJobStatus {
   id: string;
   name: string;
   schedule: string;
-  lastRun: string | null;
-  nextRun: string | null;
+  lastRun: string | undefined;
+  nextRun: string | undefined;
   status: 'running' | 'idle' | 'error';
   lastResult?: {
     success: boolean;

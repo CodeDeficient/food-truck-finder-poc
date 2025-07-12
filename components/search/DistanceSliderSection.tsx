@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { type SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
 
 interface DistanceSliderSectionProps {

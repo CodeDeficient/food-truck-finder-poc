@@ -1,5 +1,7 @@
-import React from 'react';
-import { getFoodTruckDetails } from '@/hooks/useFoodTruckDetails';
+
+'use client';
+
+import { useFoodTrucks, DataStatusIndicator } from '@/lib/fallback/supabaseFallback';
 import { TruckDetailHeader } from '@/components/trucks/TruckDetailHeader';
 import { TruckNotFound } from '@/components/trucks/TruckNotFound';
 import { TruckBasicInfo } from '@/components/trucks/TruckBasicInfo';
@@ -14,28 +16,22 @@ interface FoodTruckDetailPageProps {
   };
 }
 
-/**
- * Renders the food truck detail page based on the provided truck ID.
- * @example
- * FoodTruckDetailPage({ params: { id: '123' } })
- * Returns the JSX for the food truck detail page or a "TruckNotFound" component if the truck doesn't exist.
- * @param {FoodTruckDetailPageProps} {params} - Contains the ID of the food truck to display details for.
- * @returns {JSX.Element} JSX element representing the detailed information of the food truck.
- * @description
- *   - Fetches truck details using the ID provided in params and handles undefined truck scenario.
- *   - Displays several components, such as TruckDetailHeader and TruckRatingsReviews, for comprehensive information.
- *   - Adapts layout for smaller screens and larger displays dynamically.
- */
-export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
-  const truck = await getFoodTruckDetails(params.id);
+export default function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
+  const { trucks, loading, dataStatus } = useFoodTrucks();
+  const truck = trucks.find(t => t.id === params.id);
 
-  if (truck == undefined) {
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!truck) {
     return <TruckNotFound />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="container mx-auto px-4 py-8">
+        <DataStatusIndicator status={dataStatus} />
         <div className="flex flex-col gap-6 max-w-4xl mx-auto">
           <TruckDetailHeader truckName={truck.name} />
 

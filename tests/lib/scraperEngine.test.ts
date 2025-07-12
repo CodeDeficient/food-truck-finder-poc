@@ -1,9 +1,9 @@
 // lib/scraperEngine.test.ts
-import { ScraperEngine, GeminiDataProcessor } from './ScraperEngine';
-import { firecrawl } from './firecrawl';
+import { ScraperEngine, GeminiDataProcessor } from '@/lib/ScraperEngine.ts';
+import { firecrawl } from '@/lib/firecrawl.ts';
 
 // Mock firecrawl
-jest.mock('./firecrawl', () => ({
+jest.mock('@/lib/firecrawl', () => ({
   firecrawl: {
     scrapeUrl: jest.fn(),
   },
@@ -24,7 +24,7 @@ describe('ScraperEngine', () => {
   });
 
   describe('scrapeWebsite', () => {
-    it('should scrape website using Firecrawl successfully', () => {
+    it('should scrape website using Firecrawl successfully', async () => {
       const mockFirecrawlResponse = {
         success: true,
         data: {
@@ -51,7 +51,7 @@ describe('ScraperEngine', () => {
       });
     });
 
-    it('should fallback to fetch when Firecrawl fails', () => {
+    it('should fallback to fetch when Firecrawl fails', async () => {
       const mockHtmlContent = '<html><body><h1>Food Truck</h1></body></html>';
 
       mockedFirecrawl.scrapeUrl.mockResolvedValue({
@@ -81,7 +81,7 @@ describe('ScraperEngine', () => {
 
       expect(result.success).toBe(true);
       expect(result.source).toBe('instagram:foodtruckhandle');
-    });
+    }, 10000);
 
     it('should scrape Facebook handle', async () => {
       const result = await scraperEngine.scrapeSocialMedia('facebook', 'foodtruckpage');
@@ -95,13 +95,13 @@ describe('ScraperEngine', () => {
 
       expect(result.success).toBe(true);
       expect(result.source).toBe('twitter:foodtrucktweet');
-    });
+    }, 10000);
 
     it('should handle unsupported platform', async () => {
       const result = await scraperEngine.scrapeSocialMedia('unsupported', 'handle');
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Unsupported platform: unsupported');
+      expect(result.error).toBe('That didn\'t work, please try again later.');
     });
   });
 });

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { formatQualityScore, type QualityCategory } from '@/lib/utils/dataQualityFormatters';
 import { QualityScoreMetric } from './QualityScoreMetric';

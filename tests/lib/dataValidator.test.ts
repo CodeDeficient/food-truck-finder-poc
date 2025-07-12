@@ -1,5 +1,5 @@
 // lib/dataValidator.test.ts
-import { DataQualityAssessor } from './ScraperEngine';
+import { DataQualityAssessor } from '../../lib/ScraperEngine';
 
 describe('DataQualityAssessor', () => {
   let assessor: DataQualityAssessor;
@@ -66,8 +66,10 @@ describe('DataQualityAssessor', () => {
 
       expect(result.score).toBeLessThan(0.5);
       expect(result.issues.length).toBeGreaterThan(0);
-      expect(result.issues).toContain('Missing location information');
-      expect(result.issues).toContain('No menu data available');
+      expect(result.issues).toContain('Missing current location data');
+      expect(result.issues).toContain('Missing contact information');
+      expect(result.issues).toContain('Missing operating hours');
+      expect(result.issues).toContain('Missing menu information');
     });
 
     it('should identify invalid phone numbers', () => {
@@ -118,7 +120,7 @@ describe('DataQualityAssessor', () => {
                 dietary_tags: [],
               },
               {
-                name: '', // Empty name
+                name: '',
                 price: 10,
                 dietary_tags: [],
               },
@@ -130,11 +132,11 @@ describe('DataQualityAssessor', () => {
 
       const result = assessor.assessTruckData(truckData);
 
-      expect(result.issues).toContain('Menu item with negative or zero price');
+      expect(result.issues).toContain('Menu item "Item with negative price" has invalid price');
       expect(result.issues).toContain('Menu item with empty name');
     });
 
-    it('should handle missing name gracefully', () => {
+    it('should handle missing name gracefully', async () => {
       const truckData = {
         name: '',
         location: {},
@@ -144,7 +146,7 @@ describe('DataQualityAssessor', () => {
 
       const result = assessor.assessTruckData(truckData);
 
-      expect(result.issues).toContain('Missing truck name');
+      expect(result.issues).toContain('Missing or empty truck name');
     });
   });
 });

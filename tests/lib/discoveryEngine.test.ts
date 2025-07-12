@@ -1,10 +1,10 @@
 // lib/discoveryEngine.test.ts
 // @ts-expect-error TS(2724): '"./discoveryEngine"' has no exported member named... Remove this comment to see the full error message
 import { DiscoveryEngine } from './discoveryEngine';
-import { supabaseAdmin } from './supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 
 // Mock dependencies
-jest.mock('./supabase', () => ({
+jest.mock('@/lib/supabase', () => ({
   supabaseAdmin: {
     from: jest.fn().mockReturnThis(),
     insert: jest.fn().mockReturnThis(),
@@ -28,7 +28,7 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('searchForFoodTrucks', () => {
-    it('should search for food trucks in a city successfully', () => {
+    it('should search for food trucks in a city successfully', async () => {
       // Mock successful Tavily API response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -71,7 +71,7 @@ describe('DiscoveryEngine', () => {
       );
     });
 
-    it('should handle API errors gracefully', () => {
+    it('should handle API errors gracefully', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
@@ -93,7 +93,7 @@ describe('DiscoveryEngine', () => {
       expect(result.errors.some((error: any) => error.includes('Network error'))).toBe(true);
     });
 
-    it('should extract URLs from search results', () => {
+    it('should extract URLs from search results', async () => {
       const mockResults = [
         {
           title: 'Food Truck Directory',
@@ -132,7 +132,7 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('crawlDirectory', () => {
-    it('should crawl a directory URL successfully', () => {
+    it('should crawl a directory URL successfully', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => ({
@@ -159,7 +159,7 @@ describe('DiscoveryEngine', () => {
       );
     });
 
-    it('should handle crawl errors', () => {
+    it('should handle crawl errors', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500,
@@ -174,7 +174,7 @@ describe('DiscoveryEngine', () => {
   });
 
   describe('runDiscovery', () => {
-    it('should run complete discovery process', () => {
+    it('should run complete discovery process', async () => {
       // Mock search results
       mockFetch
         .mockResolvedValueOnce({
@@ -240,7 +240,7 @@ describe('DiscoveryEngine', () => {
       expect(result.urls_stored).toBeGreaterThan(0);
     });
 
-    it('should handle partial failures gracefully', () => {
+    it('should handle partial failures gracefully', async () => {
       // Mock one successful search, one failed crawl
       mockFetch
         .mockResolvedValueOnce({

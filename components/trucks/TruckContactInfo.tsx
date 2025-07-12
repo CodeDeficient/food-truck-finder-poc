@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Mail, Globe } from 'lucide-react';
 import type { FoodTruck } from '@/lib/supabase';

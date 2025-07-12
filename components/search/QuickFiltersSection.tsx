@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
 import { type SearchFilters } from '../SearchFilters'; // Import SearchFilters interface

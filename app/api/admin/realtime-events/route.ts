@@ -6,7 +6,6 @@ import {
 import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 
 export async function GET(request: NextRequest): Promise<Response> {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const hasAccess = await verifyAdminAccess(request);
   if (!hasAccess) {
     return new Response('Unauthorized', { status: 401 });
@@ -31,7 +30,6 @@ export async function GET(request: NextRequest): Promise<Response> {
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const hasAccess = await verifyAdminAccess(request);
   if (!hasAccess) {
     return new Response('Unauthorized', { status: 401 });

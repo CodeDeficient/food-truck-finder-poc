@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { FoodTruck } from '@/lib/supabase';
@@ -40,7 +40,7 @@ export function TruckBasicInfo({ truck }: Readonly<TruckBasicInfoProps>) {
           </div>
         )}
 
-        {truck.cuisine_type && (
+        {truck.cuisine_type && truck.cuisine_type.length > 0 && (
           <div>
             <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Cuisine Type

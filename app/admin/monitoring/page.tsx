@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ApiMonitoringDashboard } from '@/components/monitoring/ApiMonitoringDashboard';
 import { MonitoringPageHeader } from '@/components/monitoring/MonitoringPageHeader';
 import { FeatureOverviewCards } from '@/components/monitoring/FeatureOverviewCards';

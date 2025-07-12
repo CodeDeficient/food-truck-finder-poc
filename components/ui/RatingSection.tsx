@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { TruckRating } from '@/lib/types';
 
 /**
@@ -14,7 +14,7 @@ import { TruckRating } from '@/lib/types';
  *   - Renders individual ratings dynamically within the returned JSX.
  */
 const RatingSection = ({ ratings }: { ratings: TruckRating[] }) => {
-  if (!ratings || ratings.length === 0) return <p>No ratings yet</p>;
+  if (ratings.length === 0) return <p>No ratings yet</p>;
 
   const avgScore = ratings.reduce((total, rating) => total + rating.score, 0) / ratings.length;
 

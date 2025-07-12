@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
 
-import { verifyAdminAccess } from '@/lib/api/admin/realtime-events/handlers';
+import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 
 /**
  * SOTA CRON Job Monitoring API
@@ -219,8 +219,8 @@ export async function GET(request: Request) {
       success: true,
       jobs,
     });
-  } catch (error) {
-    console.error('Error fetching cron status:', error);
+  } catch (error: unknown) {
+    console.error('Error fetching cron status:', error instanceof Error ? error.message : String(error));
     return NextResponse.json(
       {
         success: false,

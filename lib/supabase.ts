@@ -616,6 +616,7 @@ export const ScrapingJobService = {
       .eq('id', id)
       .select()
       .single();
+
     if (error) throw error;
     return data;
   },
@@ -941,7 +942,7 @@ function prepareMenuItemsForInsert(
   truckId: string,
   menuData: MenuCategory[] | unknown[] | undefined,
 ) {
-  if (!Array.isArray(menuData) || menuData.length === 0) return [];
+  if (!Array.isArray(menuData) || menuData.length === 0) return [];;
   // Explicitly filter for MenuCategory to ensure type safety
   const categories = menuData.filter(
     (category): category is MenuCategory =>
