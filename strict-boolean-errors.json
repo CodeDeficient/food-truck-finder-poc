@@ -1,0 +1,1612 @@
+[
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 27,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 27,
+    "endColumn": 19,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            954,
+            963
+          ],
+          "text": "(Boolean(hasAccess))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 68,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 68,
+    "endColumn": 19,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2176,
+            2185
+          ],
+          "text": "(Boolean(hasAccess))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 11,
+    "column": 8,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 11,
+    "endColumn": 17,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            440,
+            449
+          ],
+          "text": "(Boolean(hasAccess))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 36,
+    "column": 8,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 36,
+    "endColumn": 17,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1189,
+            1198
+          ],
+          "text": "(Boolean(hasAccess))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 26,
+    "column": 13,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 26,
+    "endColumn": 18,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            1027,
+            1032
+          ],
+          "text": "error != null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            1027,
+            1032
+          ],
+          "text": "error ?? \"\""
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1027,
+            1032
+          ],
+          "text": "Boolean(error)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 44,
+    "column": 11,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 44,
+    "endColumn": 16,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            1421,
+            1426
+          ],
+          "text": "(error != null)"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            1421,
+            1426
+          ],
+          "text": "(error ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1421,
+            1426
+          ],
+          "text": "(Boolean(error))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 43,
+    "column": 10,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 43,
+    "endColumn": 28,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2011,
+            2029
+          ],
+          "text": "(Boolean(truck.cuisine_type))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 52,
+    "column": 10,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 52,
+    "endColumn": 27,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2316,
+            2333
+          ],
+          "text": "(Boolean(truck.price_range))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected value in conditional. A boolean expression is required.",
+    "line": 50,
+    "column": 42,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorOther",
+    "endLine": 50,
+    "endColumn": 52
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 50,
+    "column": 57,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 50,
+    "endColumn": 67,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            2542,
+            2552
+          ],
+          "text": "(priceRange != null)"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            2542,
+            2552
+          ],
+          "text": "(priceRange ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2542,
+            2552
+          ],
+          "text": "(Boolean(priceRange))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 62,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 62,
+    "endColumn": 14,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            2346,
+            2350
+          ],
+          "text": "(href != null)"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            2346,
+            2350
+          ],
+          "text": "(href ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2346,
+            2350
+          ],
+          "text": "(Boolean(href))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 159,
+    "column": 17,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 159,
+    "endColumn": 42,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            6470,
+            6495
+          ],
+          "text": "(Boolean((truck.contact_info?.phone)))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 167,
+    "column": 17,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 167,
+    "endColumn": 42,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            6747,
+            6772
+          ],
+          "text": "(Boolean((truck.contact_info?.email)))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 59,
+    "column": 29,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 59,
+    "endColumn": 50,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2545,
+            2566
+          ],
+          "text": "(Boolean(truck.operating_hours))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 71,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 71,
+    "endColumn": 27,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            3022,
+            3039
+          ],
+          "text": "(Boolean(hasOperatingHours))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 17,
+    "column": 8,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 17,
+    "endColumn": 15
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.",
+    "line": 55,
+    "column": 27,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorNullableBoolean",
+    "endLine": 55,
+    "endColumn": 44,
+    "suggestions": [
+      {
+        "messageId": "conditionFixDefaultFalse",
+        "fix": {
+          "range": [
+            2150,
+            2167
+          ],
+          "text": "(todayHours.closed ?? false)"
+        },
+        "desc": "Explicitly treat nullish value the same as false (`value ?? false`)"
+      },
+      {
+        "messageId": "conditionFixCompareFalse",
+        "fix": {
+          "range": [
+            2149,
+            2167
+          ],
+          "text": "(todayHours.closed === false)"
+        },
+        "desc": "Change condition to check if false (`value === false`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 233,
+    "column": 43,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 233,
+    "endColumn": 55,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            8384,
+            8396
+          ],
+          "text": "(Boolean(item.payload))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 100,
+    "column": 23,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorObject",
+    "endLine": 100,
+    "endColumn": 33
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 26,
+    "column": 12,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 26,
+    "endColumn": 19,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            1169,
+            1177
+          ],
+          "text": "truckId == null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            1170,
+            1177
+          ],
+          "text": "(truckId ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1169,
+            1177
+          ],
+          "text": "!Boolean(truckId)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 261,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 261,
+    "endColumn": 20,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            9582,
+            9593
+          ],
+          "text": "authHeader == null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            9583,
+            9593
+          ],
+          "text": "(authHeader ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            9582,
+            9593
+          ],
+          "text": "!Boolean(authHeader)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.",
+    "line": 334,
+    "column": 7,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorNullableBoolean",
+    "endLine": 334,
+    "endColumn": 50,
+    "suggestions": [
+      {
+        "messageId": "conditionFixDefaultFalse",
+        "fix": {
+          "range": [
+            13701,
+            13744
+          ],
+          "text": "((status.supabase.authSettings?.googleEnabled) ?? false)"
+        },
+        "desc": "Explicitly treat nullish value the same as false (`value ?? false`)"
+      },
+      {
+        "messageId": "conditionFixCompareTrue",
+        "fix": {
+          "range": [
+            13701,
+            13744
+          ],
+          "text": "((status.supabase.authSettings?.googleEnabled) === true)"
+        },
+        "desc": "Change condition to check if true (`value === true`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable boolean value in conditional. Please handle the nullish case explicitly.",
+    "line": 48,
+    "column": 10,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorNullableBoolean",
+    "endLine": 48,
+    "endColumn": 43,
+    "suggestions": [
+      {
+        "messageId": "conditionFixDefaultFalse",
+        "fix": {
+          "range": [
+            1446,
+            1479
+          ],
+          "text": "((authHeader?.startsWith('Bearer ')) ?? false)"
+        },
+        "desc": "Explicitly treat nullish value the same as false (`value ?? false`)"
+      },
+      {
+        "messageId": "conditionFixCompareFalse",
+        "fix": {
+          "range": [
+            1445,
+            1479
+          ],
+          "text": "(authHeader?.startsWith('Bearer ')) === false"
+        },
+        "desc": "Change condition to check if false (`value === false`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 55,
+    "column": 23,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorObject",
+    "endLine": 55,
+    "endColumn": 33
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 414,
+    "column": 10,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 414,
+    "endColumn": 26,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            14701,
+            14717
+          ],
+          "text": "(Boolean(truck.updated_at))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 20,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 20,
+    "endColumn": 20,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            878,
+            889
+          ],
+          "text": "authHeader == null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            879,
+            889
+          ],
+          "text": "(authHeader ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            878,
+            889
+          ],
+          "text": "!Boolean(authHeader)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 25,
+    "column": 23,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorObject",
+    "endLine": 25,
+    "endColumn": 33
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 110,
+    "column": 53,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 110,
+    "endColumn": 62,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            4529,
+            4538
+          ],
+          "text": "(e.details != null)"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            4529,
+            4538
+          ],
+          "text": "(e.details ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            4529,
+            4538
+          ],
+          "text": "(Boolean(e.details))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 8,
+    "column": 8,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 8,
+    "endColumn": 21
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 192,
+    "column": 11,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 192,
+    "endColumn": 17
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 269,
+    "column": 9,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 269,
+    "endColumn": 16,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            8309,
+            8316
+          ],
+          "text": "(Boolean(updates))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 433,
+    "column": 10,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 433,
+    "endColumn": 32,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            14697,
+            14719
+          ],
+          "text": "(Boolean(truck.current_location))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 437,
+    "column": 9,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 437,
+    "endColumn": 16,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            14933,
+            14940
+          ],
+          "text": "Boolean(updates)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 519,
+    "column": 9,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 519,
+    "endColumn": 26
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 227,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 227,
+    "endColumn": 14,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7042,
+            7046
+          ],
+          "text": "(Boolean(loc1))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 227,
+    "column": 19,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 227,
+    "endColumn": 23,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7051,
+            7055
+          ],
+          "text": "(Boolean(loc2))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 233,
+    "column": 9,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 233,
+    "endColumn": 21,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7148,
+            7160
+          ],
+          "text": "(Boolean(loc1.address))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 233,
+    "column": 25,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 233,
+    "endColumn": 37,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7164,
+            7176
+          ],
+          "text": "(Boolean(loc2.address))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 239,
+    "column": 9,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 239,
+    "endColumn": 17,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7364,
+            7372
+          ],
+          "text": "(Boolean(loc1.lat))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 239,
+    "column": 21,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 239,
+    "endColumn": 29,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7376,
+            7384
+          ],
+          "text": "(Boolean(loc1.lng))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 239,
+    "column": 33,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 239,
+    "endColumn": 41,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7388,
+            7396
+          ],
+          "text": "(Boolean(loc2.lat))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 239,
+    "column": 45,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 239,
+    "endColumn": 53,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7400,
+            7408
+          ],
+          "text": "(Boolean(loc2.lng))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 280,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 280,
+    "endColumn": 18,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            8632,
+            8640
+          ],
+          "text": "(Boolean(contact1))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 280,
+    "column": 23,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 280,
+    "endColumn": 31,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            8645,
+            8653
+          ],
+          "text": "(Boolean(contact2))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 323,
+    "column": 10,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 323,
+    "endColumn": 15,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            9903,
+            9908
+          ],
+          "text": "(Boolean(menu1))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 323,
+    "column": 20,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorAny",
+    "endLine": 323,
+    "endColumn": 25,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            9913,
+            9918
+          ],
+          "text": "(Boolean(menu2))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 45,
+    "column": 7,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 45,
+    "endColumn": 17,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1997,
+            2007
+          ],
+          "text": "(Boolean(truck.name))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 223,
+    "column": 3,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 223,
+    "endColumn": 12,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            7097,
+            7106
+          ],
+          "text": "(sourceUrl != null)"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            7097,
+            7106
+          ],
+          "text": "(sourceUrl ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7097,
+            7106
+          ],
+          "text": "(Boolean(sourceUrl))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 74,
+    "column": 7,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 74,
+    "endColumn": 23,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            2564,
+            2580
+          ],
+          "text": "redirectFromPath != null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            2564,
+            2580
+          ],
+          "text": "redirectFromPath ?? \"\""
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            2564,
+            2580
+          ],
+          "text": "Boolean(redirectFromPath)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 29,
+    "column": 33,
+    "nodeType": "ChainExpression",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 29,
+    "endColumn": 60,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            1234,
+            1262
+          ],
+          "text": "((scrapeResult.data?.markdown) == null)"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            1235,
+            1262
+          ],
+          "text": "((scrapeResult.data?.markdown) ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1234,
+            1262
+          ],
+          "text": "(!Boolean((scrapeResult.data?.markdown)))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 110,
+    "column": 9,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 110,
+    "endColumn": 12
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 145,
+    "column": 10,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 145,
+    "endColumn": 24,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            6496,
+            6511
+          ],
+          "text": "job.target_url == null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            6497,
+            6511
+          ],
+          "text": "(job.target_url ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            6496,
+            6511
+          ],
+          "text": "!Boolean(job.target_url)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable number value in conditional. Please handle the nullish/zero/NaN cases explicitly.",
+    "line": 288,
+    "column": 11,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorNullableNumber",
+    "endLine": 288,
+    "endColumn": 28,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            7946,
+            7963
+          ],
+          "text": "result.retryAfter != null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultZero",
+        "fix": {
+          "range": [
+            7946,
+            7963
+          ],
+          "text": "result.retryAfter ?? 0"
+        },
+        "desc": "Explicitly treat nullish value the same as 0 (`value ?? 0`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            7946,
+            7963
+          ],
+          "text": "Boolean(result.retryAfter)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected nullable string value in conditional. Please handle the nullish/empty cases explicitly.",
+    "line": 12,
+    "column": 6,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorNullableString",
+    "endLine": 12,
+    "endColumn": 24,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCompareNullish",
+        "fix": {
+          "range": [
+            335,
+            354
+          ],
+          "text": "supabaseServiceKey == null"
+        },
+        "desc": "Change condition to check for null/undefined (`value != null`)"
+      },
+      {
+        "messageId": "conditionFixDefaultEmptyString",
+        "fix": {
+          "range": [
+            336,
+            354
+          ],
+          "text": "(supabaseServiceKey ?? \"\")"
+        },
+        "desc": "Explicitly treat nullish value the same as an empty string (`value ?? \"\"`)"
+      },
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            335,
+            354
+          ],
+          "text": "!Boolean(supabaseServiceKey)"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 96,
+    "column": 12,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorObject",
+    "endLine": 96,
+    "endColumn": 43
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 154,
+    "column": 12,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 154,
+    "endColumn": 16
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 757,
+    "column": 7,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorObject",
+    "endLine": 757,
+    "endColumn": 29
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 765,
+    "column": 7,
+    "nodeType": "MemberExpression",
+    "messageId": "conditionErrorObject",
+    "endLine": 765,
+    "endColumn": 25
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected any value in conditional. An explicit comparison or type conversion is required.",
+    "line": 40,
+    "column": 6,
+    "nodeType": "CallExpression",
+    "messageId": "conditionErrorAny",
+    "endLine": 40,
+    "endColumn": 66,
+    "suggestions": [
+      {
+        "messageId": "conditionFixCastBoolean",
+        "fix": {
+          "range": [
+            1818,
+            1878
+          ],
+          "text": "(Boolean(truck.cuisine_type.every((item) => typeof item === 'string')))"
+        },
+        "desc": "Explicitly convert value to a boolean (`Boolean(value)`)"
+      }
+    ]
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 57,
+    "column": 51,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 57,
+    "endColumn": 55
+  },
+  {
+    "ruleId": "@typescript-eslint/strict-boolean-expressions",
+    "severity": 1,
+    "message": "Unexpected object value in conditional. The condition is always true.",
+    "line": 75,
+    "column": 8,
+    "nodeType": "Identifier",
+    "messageId": "conditionErrorObject",
+    "endLine": 75,
+    "endColumn": 16
+  }
+]

@@ -1,4 +1,4 @@
-import { FoodTruckService } from '@/lib/supabase';
+import { supabaseFallback } from '@/lib/fallback/supabaseFallback';
 import type { FoodTruck } from '@/lib/supabase';
 
 export interface FoodTruckWithRatings extends FoodTruck {
@@ -6,9 +6,9 @@ export interface FoodTruckWithRatings extends FoodTruck {
   review_count?: number;
 }
 
-export async function getFoodTruckDetails(id: string): Promise<FoodTruckWithRatings | null> {
+export async function getFoodTruckDetails(id: string): Promise<FoodTruckWithRatings | undefined> {
   try {
-    const truck = await FoodTruckService.getTruckById(id);
+    const truck = await supabaseFallback.getFoodTruckById(id);
     return truck as FoodTruckWithRatings;
   } catch (error) {
     console.error('Error fetching food truck details:', error);

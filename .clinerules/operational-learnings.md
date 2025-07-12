@@ -162,7 +162,7 @@ This rule set documents key operational learnings and best practices derived fro
   - _Trigger Case_: Encountering `@typescript-eslint/await-thenable` or `sonarjs/no-invalid-await` errors.
   - _Example_: If `myFunction()` returns `void` or a non-Promise value, avoid `await myFunction();`. If `myAsyncFunction()` returns `Promise<T>`, then `await myAsyncFunction();` is appropriate.
 
-- **Rule 1.29: Validate `await` Usage Against Function Return Types**: Before using `await` on a function call, verify that the function is `async` and returns a `Promise`. Redundant `await` keywords on non-Promise-returning functions can lead to linting errors and unnecessary complexity.
+- **Rule 1.35: Validate `await` Usage Against Function Return Types**: Before using `await` on a function call, verify that the function is `async` and returns a `Promise`. Redundant `await` keywords on non-Promise-returning functions can lead to linting errors and unnecessary complexity.
 
   - _Trigger Case_: Encountering `@typescript-eslint/await-thenable` or `sonarjs/no-invalid-await` errors.
   - _Example_: If `myFunction()` returns `void` or a non-Promise value, avoid `await myFunction();`. If `myAsyncFunction()` returns `Promise<T>`, then `await myAsyncFunction();` is appropriate.

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin } from 'lucide-react';

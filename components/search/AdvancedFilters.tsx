@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { QuickFiltersSection } from './QuickFiltersSection';
 import { CuisineTypesSection } from './CuisineTypesSection';
 import { DistanceSliderSection } from './DistanceSliderSection';

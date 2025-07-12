@@ -22,7 +22,6 @@ import { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const hasAccess = await verifyAdminAccess(request);
     if (!hasAccess) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -63,7 +62,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const hasAccess = await verifyAdminAccess(request);
     if (!hasAccess) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
