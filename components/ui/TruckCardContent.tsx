@@ -52,7 +52,7 @@ export function TruckCardContent({
       {name && (
         <>
           <TruckCard title={name} avgCost={`$${avgDailyPrice}`} />
-          {todayHours && !todayHours.closed && (
+          {todayHours !== undefined && !todayHours.closed && (
             <div className="hours-display">
               <strong>Today:</strong> {todayHours.open} - {todayHours.close}
             </div>

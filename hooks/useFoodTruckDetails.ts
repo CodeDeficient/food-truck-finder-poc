@@ -6,10 +6,17 @@ export interface FoodTruckWithRatings extends FoodTruck {
   review_count?: number;
 }
 
+function isFoodTruckWithRatings(truck: FoodTruck): truck is FoodTruckWithRatings {
+  return 'average_rating' in truck && 'review_count' in truck;
+}
+
 export async function getFoodTruckDetails(id: string): Promise<FoodTruckWithRatings | undefined> {
   try {
     const truck = await supabaseFallback.getFoodTruckById(id);
-    return truck as FoodTruckWithRatings;
+    if (truck && isFoodTruckWithRatings(truck)) {
+      return truck;
+    }
+    return undefined;
   } catch (error) {
     console.error('Error fetching food truck details:', error);
     return undefined;

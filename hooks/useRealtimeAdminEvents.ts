@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { RealtimeEvent, RealtimeMetrics } from './useRealtimeAdminEvents.types';
+import { RealtimeEvent } from './useRealtimeAdminEvents.types';
+import { RealtimeMetrics } from '@/lib/types';
 import { useConnectionState } from './realtime/useConnectionState';
 import { useConnectionManagement } from './realtime/useConnectionManagement';
 import { useEventHandlers } from './realtime/useEventHandlers';
@@ -47,14 +48,24 @@ export function useRealtimeAdminEvents(
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const isManuallyDisconnectedRef = useRef(false);
 
-  const connectionState = useConnectionState();
-  const { isConnected, isConnecting, connectionError, latestMetrics, recentEvents, connectionAttempts, lastEventTime } = connectionState;
+  const {
+    isConnected,
+    isConnecting,
+    connectionError,
+    latestMetrics,
+    recentEvents,
+    connectionAttempts,
+    lastEventTime,
+    setLastEventTime,
+    setLatestMetrics,
+    setRecentEvents,
+  } = useConnectionState();
 
   const handleEvent = useEventHandlers(
-    eventFilter as ((event: RealtimeEvent) => boolean) | undefined,
-    setLastEventTime as React.Dispatch<React.SetStateAction<Date | undefined>>,
-    setLatestMetrics as React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>,
-    setRecentEvents as React.Dispatch<React.SetStateAction<RealtimeEvent[]>>,
+    eventFilter,
+    setLastEventTime,
+    setLatestMetrics,
+    setRecentEvents,
   );
 
   const { connect, disconnect, clearEvents } = useConnectionManagement({

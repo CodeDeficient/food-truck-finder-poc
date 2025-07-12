@@ -1,3 +1,5 @@
 delete-file.cjs
 jscpd-report/
 pretty-print-json.cjs
+filter-eslint-errors.cjs
+jest.setup.js

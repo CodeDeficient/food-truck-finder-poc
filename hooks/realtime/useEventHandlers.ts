@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { RealtimeEvent, RealtimeMetrics } from '../useRealtimeAdminEvents.types';
+import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import { RealtimeMetrics } from '@/lib/types';
 
 /**
  * Handles various types of realtime events, applying filters and updating state accordingly.

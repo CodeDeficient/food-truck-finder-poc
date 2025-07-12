@@ -40,12 +40,12 @@ export function TruckBasicInfo({ truck }: Readonly<TruckBasicInfoProps>) {
           </div>
         )}
 
-        {truck.cuisine_type && truck.cuisine_type.length > 0 && (
+        {Array.isArray(truck.cuisine_type) && truck.cuisine_type.length > 0 && (
           <div>
             <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Cuisine Type
             </label>
-            <p className="text-gray-900 dark:text-gray-200">{truck.cuisine_type}</p>
+            <p className="text-gray-900 dark:text-gray-200">{truck.cuisine_type.join(', ')}</p>
           </div>
         )}
 

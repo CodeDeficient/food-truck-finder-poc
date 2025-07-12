@@ -40,7 +40,7 @@ export function QualityPieChart({ data }: QualityPieChartProps) {
           dataKey="value"
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={QUALITY_COLORS[index]} />
+            <Cell key={`cell-${index}`} fill={QUALITY_COLORS[index % QUALITY_COLORS.length]} />
           ))}
         </Pie>
         <Tooltip content={<CustomTooltip />} />

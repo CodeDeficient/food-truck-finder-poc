@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FoodTruckService, FoodTruck } from '@/lib/supabase';
 
-
-
 /**
  * Handles GET requests by executing different actions based on query parameters.
  * @example
