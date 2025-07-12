@@ -56,7 +56,8 @@ function DaySchedule({ day, dayData }: Readonly<{ day: string; dayData?: DayData
  */
 export function TruckOperatingHours({ truck }: TruckOperatingHoursProps) {
   const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  const hasOperatingHours = truck.operating_hours && Object.keys(truck.operating_hours).length > 0;
+  const hasOperatingHours =
+    truck.operating_hours != undefined && Object.keys(truck.operating_hours).length > 0;
 
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">

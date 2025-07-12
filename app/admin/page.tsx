@@ -26,9 +26,19 @@ interface DataQualityStats {
   readonly flagged_count: number;
 }
 
+interface DashboardData {
+  totalFoodTrucks: number;
+  pendingVerifications: number;
+  pendingScrapingJobsCount: number;
+  runningScrapingJobsCount: number;
+  failedScrapingJobsCount: number;
+  failedProcessingQueueItemsCount: number;
+  dataQualityStats: DataQualityStats;
+}
+
 export default function AdminDashboard() {
   const { trucks, loading, dataStatus } = useFoodTrucks();
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
   useEffect(() => {
     async function getDashboardData() {

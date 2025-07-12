@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   handleGetRequest,
   handlePostRequest,
-  verifyAdminAccess,
 } from '@/lib/api/admin/data-quality/handlers';
+import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 
 export async function GET(request: NextRequest) {
   const hasAdminAccess = await verifyAdminAccess(request);

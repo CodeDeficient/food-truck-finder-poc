@@ -6,10 +6,34 @@ import { Database } from '@/lib/database.types'; // Assuming this is your Supaba
 
 
 
+import { FoodTruck } from '@/lib/types';
+
+function isFoodTruckData(obj: unknown): obj is FoodTruck {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    'name' in obj &&
+    'cuisine_type' in obj &&
+    'price_range' in obj
+  );
+}
+
 interface CachedData {
-  readonly trucks: FoodTruckData[];
+  readonly trucks: FoodTruck[];
   readonly timestamp: number;
   readonly lastSuccessfulUpdate: string;
+}
+
+function isCachedData(obj: unknown): obj is CachedData {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'trucks' in obj &&
+    Array.isArray((obj as CachedData).trucks) &&
+    'timestamp' in obj &&
+    'lastSuccessfulUpdate' in obj
+  );
 }
 
 class SupabaseFallbackManager {
@@ -33,7 +57,7 @@ class SupabaseFallbackManager {
    * Think of it as your "smart" data fetcher that adapts to different situations
    */
   public async getFoodTrucks(): Promise<{
-    readonly trucks: FoodTruckData[];
+    readonly trucks: FoodTruck[];
     readonly isFromCache: boolean;
     readonly lastUpdate: string;
     readonly status: 'fresh' | 'cached' | 'stale' | 'unavailable';
@@ -65,7 +89,7 @@ class SupabaseFallbackManager {
     }
   }
 
-  public async getFoodTruckById(id: string): Promise<FoodTruckData | undefined> {
+  public async getFoodTruckById(id: string): Promise<FoodTruck | undefined> {
     const cachedTruck = this.getCachedTruck(id);
     if (cachedTruck) {
       return cachedTruck;
@@ -82,9 +106,9 @@ class SupabaseFallbackManager {
         throw new Error(`Supabase error: ${error.message}`);
       }
 
-      if (data) {
-        this.cacheTruck(data as FoodTruckData);
-        return data as FoodTruckData;
+      if (data && isFoodTruckData(data)) {
+        this.cacheTruck(data);
+        return data;
       }
 
       return undefined;
@@ -98,7 +122,7 @@ class SupabaseFallbackManager {
    * This handles the actual Supabase communication
    * Separated so you can easily modify your existing query logic
    */
-  private async fetchFromSupabase(): Promise<FoodTruckData[]> {
+  private async fetchFromSupabase(): Promise<FoodTruck[]> {
     // The key is to set a reasonable timeout so we don't wait forever
     const { data, error } = await this.supabase
       .from('food_trucks')
@@ -109,8 +133,11 @@ class SupabaseFallbackManager {
       throw new Error(`Supabase error: ${error.message}`);
     }
 
-    // Ensure data is an array and cast it to FoodTruckData[]
-    return (data as FoodTruckData[]) ?? [];
+    // Ensure data is an array and cast it to FoodTruck[]
+    if (Array.isArray(data)) {
+      return data.filter((d): d is FoodTruck => isFoodTruckData(d));
+    }
+    return [];
   }
 
   /**
@@ -118,7 +145,7 @@ class SupabaseFallbackManager {
    * When Supabase fails, we still provide value to users
    */
   private handleFallbackScenario(): Promise<{
-    readonly trucks: FoodTruckData[];
+    readonly trucks: FoodTruck[];
     readonly isFromCache: boolean;
     readonly lastUpdate: string;
     readonly status: 'cached' | 'stale' | 'unavailable';
@@ -150,7 +177,7 @@ class SupabaseFallbackManager {
    * Stores successful data fetches for later use
    * This runs every time we successfully get data from Supabase
    */
-  private cacheData(trucks: FoodTruckData[]): void {
+  private cacheData(trucks: FoodTruck[]): void {
     const cacheData: CachedData = {
       trucks,
       timestamp: Date.now(),
@@ -159,8 +186,6 @@ class SupabaseFallbackManager {
 
     try {
       // In a browser environment, use localStorage
-      // eslint-disable-next-line sonarjs/different-types-comparison
-      // eslint-disable-next-line sonarjs/different-types-comparison
       if (globalThis.window !== undefined) {
         globalThis.window.localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheData));
       }
@@ -174,7 +199,7 @@ class SupabaseFallbackManager {
     }
   }
 
-  private cacheTruck(truck: FoodTruckData): void {
+  private cacheTruck(truck: FoodTruck): void {
     try {
       if (globalThis.window !== undefined) {
         const cacheKey = `${this.TRUCK_CACHE_KEY_PREFIX}${truck.id}`;
@@ -185,13 +210,16 @@ class SupabaseFallbackManager {
     }
   }
 
-  private getCachedTruck(id: string): FoodTruckData | undefined {
+  private getCachedTruck(id: string): FoodTruck | undefined {
     try {
       if (globalThis.window !== undefined) {
         const cacheKey = `${this.TRUCK_CACHE_KEY_PREFIX}${id}`;
         const cached = globalThis.window.localStorage.getItem(cacheKey);
         if (cached !== null) {
-          return JSON.parse(cached) as FoodTruckData;
+          const parsed = JSON.parse(cached);
+          if (isFoodTruckData(parsed)) {
+            return parsed;
+          }
         }
       }
       return undefined;
@@ -207,12 +235,13 @@ class SupabaseFallbackManager {
    */
   private getCachedData(): CachedData | undefined {
     try {
-      // eslint-disable-next-line sonarjs/different-types-comparison
-      // eslint-disable-next-line sonarjs/different-types-comparison
-      if (globalThis.window !== undefined) {
+      if (globalThis.window != undefined) {
         const cached = globalThis.window.localStorage.getItem(this.CACHE_KEY);
-        if (cached !== null) { // Explicitly check for null
-          return JSON.parse(cached) as CachedData; // Cast to CachedData
+        if (cached != null) {
+          const parsed = JSON.parse(cached);
+          if (isCachedData(parsed)) {
+            return parsed;
+          }
         }
       }
       return undefined;
@@ -230,7 +259,7 @@ export const supabaseFallback = new SupabaseFallbackManager();
 import { useState, useEffect } from 'react';
 
 export function useFoodTrucks() {
-  const [trucks, setTrucks] = useState<FoodTruckData[]>([]);
+  const [trucks, setTrucks] = useState<FoodTruck[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataStatus, setDataStatus] = useState<{
     readonly isFromCache: boolean;
@@ -272,25 +301,31 @@ export function useFoodTrucks() {
 }
 
 // Component that displays appropriate messages based on data status
-export function DataStatusIndicator({ status }: { readonly status: typeof dataStatus }) {
+export function DataStatusIndicator({
+  status,
+}: {
+  readonly status: {
+    isFromCache: boolean;
+    lastUpdate: string;
+    status: 'fresh' | 'cached' | 'stale' | 'unavailable';
+  };
+}) {
   if (status.status === 'fresh') {
-    return; // No need to show anything for fresh data
+    return null; // No need to show anything for fresh data
   }
 
   if (status.status === 'cached') {
-    const typedStatus = status as { status: 'cached'; lastUpdate: string };
     return (
       <div className="bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded">
-        Showing cached data from {typedStatus.lastUpdate}. Live data temporarily unavailable.
+        Showing cached data from {status.lastUpdate}. Live data temporarily unavailable.
       </div>
     );
   }
 
   if (status.status === 'stale') {
-    const typedStatus = status as { status: 'stale'; lastUpdate: string };
     return (
       <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-2 rounded">
-        Showing older data from {typedStatus.lastUpdate}. We're working to restore live updates.
+        Showing older data from {status.lastUpdate}. We're working to restore live updates.
       </div>
     );
   }
@@ -299,9 +334,9 @@ export function DataStatusIndicator({ status }: { readonly status: typeof dataSt
     return (
       <div className="bg-red-100 border border-red-300 text-red-800 px-4 py-2 rounded">
         Service temporarily unavailable. Please check back in a few minutes.
-      }
+      </div>
     );
   }
 
-  return;
+  return null;
 }

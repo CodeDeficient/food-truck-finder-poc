@@ -113,9 +113,9 @@ function buildMenuByTruck(menuItems: RawMenuItemFromDB[]): Record<string, RawMen
   return menuByTruck;
 }
 
-function handleSupabaseError(error: unknown, context: string) {
+function handleSupabaseError(error: PostgrestError | Error, context: string) {
   // Log technical details for developers
-  console.warn(`Error in ${context}:`, error);
+  console.warn(`Error in ${context}:`, error.message);
 }
 
 export const FoodTruckService = {
@@ -136,10 +136,13 @@ export const FoodTruckService = {
       let menuItems: RawMenuItemFromDB[] = [];
       try {
         if (truckIds.length > 0) {
-          const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> =
-            await supabase.from('menu_items').select('*').in('food_truck_id', truckIds);
+          const { data: items, error: menuError } = await supabase
+            .from('menu_items')
+            .select('*')
+            .in('food_truck_id', truckIds)
+            .returns<RawMenuItemFromDB[]>();
           if (menuError) throw new Error(menuError.message);
-          menuItems = Array.isArray(items) ? items : [];
+          menuItems = items ?? [];
         }
       } catch (menuError) {
         handleSupabaseError(menuError, 'getAllTrucks:menu_items');
@@ -166,12 +169,13 @@ export const FoodTruckService = {
         return { error: "That didn't work, please try again later." };
       }
       const truck: FoodTruck = normalizeTruckLocation(data);
-      const { data: items, error: menuError }: PostgrestResponse<RawMenuItemFromDB> = await supabase
+      const { data: items, error: menuError } = await supabase
         .from('menu_items')
         .select('*')
-        .eq('food_truck_id', id);
+        .eq('food_truck_id', id)
+        .returns<RawMenuItemFromDB[]>();
       if (menuError) throw menuError;
-      truck.menu = groupMenuItems(Array.isArray(items) ? items : []);
+      truck.menu = groupMenuItems(items ?? []);
       return truck;
     } catch (error) {
       handleSupabaseError(error, 'getTruckById');
@@ -790,11 +794,11 @@ export const DataQualityService = {
     if (!supabaseAdmin) {
       return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
-    const { data: truck, error: fetchError } = (await supabaseAdmin
+    const { data: truck, error: fetchError }: PostgrestSingleResponse<FoodTruck> = await supabaseAdmin
       .from('food_trucks')
       .select('*')
       .eq('id', truckId)
-      .single()) as { data: FoodTruck | undefined; error: PostgrestError | undefined };
+      .single();
 
     if (fetchError) {
       handleSupabaseError(fetchError, 'updateTruckQualityScore:fetch');
