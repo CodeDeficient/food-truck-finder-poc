@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Trash2, Phone, MapPin, Star, Merge } from 'lucide-react';
 

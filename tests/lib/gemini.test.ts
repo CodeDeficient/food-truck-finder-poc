@@ -1,6 +1,6 @@
 // lib/gemini.test.ts
 
-import { APIUsageService, type ApiUsage } from './supabase'; // Import ApiUsage type
+import { APIUsageService, type ApiUsage } from '../../lib/supabase'; // Import ApiUsage type
 
 // Mock @google/genai
 const mockGenerateContent = jest.fn();
@@ -13,7 +13,7 @@ jest.mock('@google/genai', () => ({
 }));
 
 // Mock APIUsageService
-jest.mock('./supabase', () => ({
+jest.mock('../../lib/supabase', () => ({
   APIUsageService: {
     trackUsage: jest.fn<Promise<ApiUsage>, [string, number, number]>(),
     getTodayUsage: jest.fn<Promise<ApiUsage | undefined>, [string]>().mockResolvedValue({
@@ -27,7 +27,7 @@ jest.mock('./supabase', () => ({
 }));
 
 // Import after mocks are set up
-import { GeminiService } from './gemini';
+import { GeminiService } from '../../lib/gemini';
 
 describe('GeminiService', () => {
   const mockApiKey = 'test-gemini-api-key';

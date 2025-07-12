@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Truck } from '@/lib/types'; // Import from actual types file
 import TruckCard from '@/components/ui/TruckCard';
+import { Truck } from '@/lib/types'; // Import from actual types file
 
 /**
 * Loads and displays a list of trucks on the dashboard.

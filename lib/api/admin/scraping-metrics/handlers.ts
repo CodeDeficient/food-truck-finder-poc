@@ -1,42 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
 import { RealtimeMetrics } from './types';
-
-/**
- * Verifies if the requesting user has admin access.
- * @example
- * verifyAdminAccess(request)
- * true
- * @param {Request} request - The HTTP request object containing headers for authorization.
- * @returns {Promise<boolean>} Returns a promise resolving to true if the user has admin access, otherwise false.
- * @description
- *   - Extracts the authorization token from the request headers.
- *   - Checks if the user associated with the token exists and retrieves their role.
- *   - Ensures the retrieved role is 'admin' for access confirmation.
- */
-export async function verifyAdminAccess(request: Request): Promise<boolean> {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) return false;
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !data?.user) return false;
-
-    const user = data.user;
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    return profile?.role === 'admin';
-  } catch {
-    return false;
-  }
-}
+import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 
 export async function handleGetRequest(): Promise<NextResponse> {
   const metrics = await getScrapingMetrics();

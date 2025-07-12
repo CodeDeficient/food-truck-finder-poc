@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Link from 'next/link';
 import { Home, Truck, Settings, Activity, Users, CalendarDays, BarChart3 } from 'lucide-react';
 

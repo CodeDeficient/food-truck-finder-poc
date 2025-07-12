@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Phone, Globe, Star } from 'lucide-react';
 
 interface ContactSectionProps {

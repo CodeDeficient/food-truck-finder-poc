@@ -1,4 +1,4 @@
-import React from 'react';
+
 import dynamic from 'next/dynamic';
 import { FoodTruck } from '@/lib/types';
 

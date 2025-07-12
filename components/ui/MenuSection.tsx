@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 interface MenuSectionProps {
   items: { name: string; price: string }[];

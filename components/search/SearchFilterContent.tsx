@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { useSearchFiltersLogic } from '@/hooks/useSearchFiltersLogic';
 import { type SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
 import { MainSearchSection } from './MainSearchSection'; // Import from new file

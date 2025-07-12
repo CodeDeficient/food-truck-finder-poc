@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { verifyAdminAccess, handleGetRequest } from '@/lib/api/admin/scraping-metrics/handlers';
+import { handleGetRequest } from '@/lib/api/admin/scraping-metrics/handlers';
+import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 
 export async function GET(request: Request): Promise<NextResponse> {
   const hasAdminAccess = await verifyAdminAccess(request);

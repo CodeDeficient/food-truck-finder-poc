@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { FoodTruck } from '@/lib/types/foodTruck';
 import { TruckAccordionContent } from './TruckAccordionContent';
 import { TruckListHeader } from './TruckListHeader'; // Import the new component
