@@ -152,22 +152,18 @@ export class ScraperEngine {
       }
 
       const returnedData: WebsiteScrapeData = {};
-      const firecrawlData = firecrawlResult.data as Record<string, unknown>;
+      if (firecrawlResult.data && typeof firecrawlResult.data === 'object') {
+        const firecrawlData = firecrawlResult.data as Record<string, unknown>;
 
-      if (
-        typeof firecrawlData.markdown === 'string' &&
-        firecrawlData.markdown !== ''
-      ) {
-        returnedData.markdown = firecrawlData.markdown;
-      }
-      if (typeof firecrawlData.html === 'string' && firecrawlData.html !== '') {
-        returnedData.html = firecrawlData.html;
-      }
-      if (
-        firecrawlData.metadata != undefined &&
-        typeof firecrawlData.metadata === 'object'
-      ) {
-        returnedData.metadata = firecrawlData.metadata as Record<string, unknown>;
+        if (typeof firecrawlData.markdown === 'string' && firecrawlData.markdown !== '') {
+          returnedData.markdown = firecrawlData.markdown;
+        }
+        if (typeof firecrawlData.html === 'string' && firecrawlData.html !== '') {
+          returnedData.html = firecrawlData.html;
+        }
+        if (firecrawlData.metadata != undefined && typeof firecrawlData.metadata === 'object') {
+          returnedData.metadata = firecrawlData.metadata as Record<string, unknown>;
+        }
       }
 
       if (
@@ -241,9 +237,10 @@ export class ScraperEngine {
         phone: '+1-555-0456',
       },
     };
+    const data: InstagramData = { posts, profile };
     return {
       success: true,
-      data: { posts, profile },
+      data,
       timestamp: new Date().toISOString(),
       source: `instagram:${handle}`,
     };
@@ -275,9 +272,10 @@ export class ScraperEngine {
         sunday: '12:00-16:00',
       },
     };
+    const data: FacebookData = { posts, page_info };
     return {
       success: true,
-      data: { posts, page_info },
+      data,
       timestamp: new Date().toISOString(),
       source: `facebook:${handle}`,
     };
@@ -304,9 +302,10 @@ export class ScraperEngine {
       location: 'San Francisco, CA',
       website: 'https://tacoparadise.com',
     };
+    const data: TwitterData = { tweets, profile };
     return {
       success: true,
-      data: { tweets, profile },
+      data,
       timestamp: new Date().toISOString(),
       source: `twitter:${handle}`,
     };

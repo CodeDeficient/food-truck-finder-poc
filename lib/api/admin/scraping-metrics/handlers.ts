@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { ScrapingJobService, FoodTruckService, supabase } from '@/lib/supabase';
-import { RealtimeMetrics } from './types';
-import { verifyAdminAccess } from '@/lib/auth/authHelpers';
+import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
+import { RealtimeMetrics, ScrapingJob, FoodTruck } from '@/lib/types';
 
 export async function handleGetRequest(): Promise<NextResponse> {
   const metrics = await getScrapingMetrics();
@@ -33,14 +32,13 @@ async function getScrapingMetrics(): Promise<RealtimeMetrics> {
   // Type guard for allJobsResult
   const allJobs: ScrapingJob[] = Array.isArray(allJobsResult) ? allJobsResult : [];
 
-  // Type guard for recentTrucksResult
-  const recentTrucks: { trucks: FoodTruck[]; total: number; error?: string } = (
+  const recentTrucks =
     typeof recentTrucksResult === 'object' &&
+    recentTrucksResult !== null &&
     'trucks' in recentTrucksResult &&
     Array.isArray(recentTrucksResult.trucks)
-  )
-    ? (recentTrucksResult as { trucks: FoodTruck[]; total: number; error?: string })
-    : { trucks: [], total: 0 };
+      ? recentTrucksResult
+      : { trucks: [], total: 0 };
 
   const typedJobs = allJobs as Array<{
     status?: string;

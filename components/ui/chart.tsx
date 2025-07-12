@@ -230,7 +230,7 @@ function ChartTooltipItem({ item, index, indicatorProps }: Readonly<ChartTooltip
     name: item.name === undefined ? undefined : String(item.name),
     dataKey,
     payload:
-      typeof item.payload === 'object' && item.payload
+      typeof item.payload === 'object' && item.payload !== null
         ? (item.payload as Record<string, unknown>)
         : undefined,
     color: typeof item.color === 'string' ? item.color : undefined,
