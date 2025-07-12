@@ -16,11 +16,11 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // SOTA color scheme for data quality categories
-const QUALITY_COLORS = [
+export const QUALITY_COLORS: readonly string[] = [
   '#22c55e', // Green for high quality (≥80%)
   '#f59e0b', // Amber for medium quality (60-79%)
   '#ef4444', // Red for low quality (<60%)
-] as const;
+];
 
 interface DataQualityStats {
   total_trucks: number;
@@ -142,7 +142,7 @@ const QualityDistributionChart: React.FC<{ qualityStats: DataQualityStats }> = (
               dataKey="value"
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={Object.values(QUALITY_COLORS)[index]} />
+                <Cell key={`cell-${index}`} fill={QUALITY_COLORS[index % QUALITY_COLORS.length]} />
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />

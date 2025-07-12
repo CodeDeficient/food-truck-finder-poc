@@ -24,11 +24,7 @@ export default function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps
     return <div>Loading...</div>;
   }
 
-  if (!truck) {
-    return <TruckNotFound />;
-  }
-
-  return (
+  return truck ? (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       <div className="container mx-auto px-4 py-8">
         <DataStatusIndicator status={dataStatus} />
@@ -49,5 +45,7 @@ export default function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps
         </div>
       </div>
     </div>
+  ) : (
+    <TruckNotFound />
   );
 }

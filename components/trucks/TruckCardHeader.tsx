@@ -47,11 +47,13 @@ export function TruckCardHeader({ truck, isOpen, popularItems, priceRange }: Tru
         <div className="flex flex-col items-end space-y-1">
           <Badge variant={isOpen ? 'default' : 'secondary'}>{isOpen ? 'Open' : 'Closed'}</Badge>
           {/* Show price range fallback if no explicit prices */}
-          {popularItems.every((item) => !item.price) && priceRange && (
-            <Badge variant="outline" className="mt-1">
-              {priceRange}
-            </Badge>
-          )}
+          {popularItems.every((item) => item.price === undefined) &&
+            priceRange !== undefined &&
+            priceRange !== '' && (
+              <Badge variant="outline" className="mt-1">
+                {priceRange}
+              </Badge>
+            )}
         </div>
       </div>
     </CardHeader>
