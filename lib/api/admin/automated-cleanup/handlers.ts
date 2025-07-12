@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
-import { supabase, supabaseAdmin } from '@/lib/supabase';
 
 interface CleanupSchedule {
   id: string;
@@ -73,51 +72,6 @@ type CleanupOperationType =
   | 'remove_placeholders'
   | 'update_quality_scores'
   | 'merge_duplicates';
-
-/**
- * Verifies if the requester has admin access based on the authorization header.
- * @example
- * verifyAdminAccess(request)
- * Returns true if user is an admin, otherwise false.
- * @param {NextRequest} request - The request object containing headers for authorization.
- * @returns {Promise<boolean>} Returns a promise resolving to true if the user has admin access, false otherwise.
- * @description
- *   - Uses Supabase for validating and retrieving user information from a token.
- *   - Assumes a 'Bearer' token structure for the authorization header.
- *   - Checks for existence of a Supabase admin client before querying for user roles.
- *   - Handles any errors silently by returning false.
- */
-export async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ') !== true) {
-      return false;
-    }
-
-    const token = authHeader.slice(7);
-    const { data, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !data?.user) {
-      return false;
-    }
-
-    const user = data.user;
-
-    if (!supabaseAdmin) {
-      return false;
-    }
-
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    return profile?.role === 'admin';
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Handles post requests by executing specific actions based on the provided body.
@@ -377,6 +331,7 @@ async function getCleanupStatus(): Promise<AutomatedCleanupStatus> {
  * @description
  *   - Schedules are defined using cron-like syntax for timing.
  *   - Both daily and weekly cleanup operations are included.
+ *   - Each schedule has a record of success and error counts from the last execution.
  *   - Each schedule has a record of success and error counts from the last execution.
  *   - Enabled status indicates if the schedule is currently active.
  */

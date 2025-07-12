@@ -152,20 +152,22 @@ export class ScraperEngine {
       }
 
       const returnedData: WebsiteScrapeData = {};
+      const firecrawlData = firecrawlResult.data as Record<string, unknown>;
+
       if (
-        typeof firecrawlResult.data.markdown === 'string' &&
-        firecrawlResult.data.markdown !== ''
+        typeof firecrawlData.markdown === 'string' &&
+        firecrawlData.markdown !== ''
       ) {
-        returnedData.markdown = firecrawlResult.data.markdown;
+        returnedData.markdown = firecrawlData.markdown;
       }
-      if (typeof firecrawlResult.data.html === 'string' && firecrawlResult.data.html !== '') {
-        returnedData.html = firecrawlResult.data.html;
+      if (typeof firecrawlData.html === 'string' && firecrawlData.html !== '') {
+        returnedData.html = firecrawlData.html;
       }
       if (
-        firecrawlResult.data.metadata != undefined &&
-        typeof firecrawlResult.data.metadata === 'object'
+        firecrawlData.metadata != undefined &&
+        typeof firecrawlData.metadata === 'object'
       ) {
-        returnedData.metadata = firecrawlResult.data.metadata as Record<string, unknown>;
+        returnedData.metadata = firecrawlData.metadata as Record<string, unknown>;
       }
 
       if (

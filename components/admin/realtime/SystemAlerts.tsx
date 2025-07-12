@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { type SystemAlert } from './status-helpers'; // Import SystemAlert type
 import { AlertListDisplay } from './AlertListDisplay'; // Import the new component
 

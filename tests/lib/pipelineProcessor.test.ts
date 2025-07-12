@@ -1,58 +1,57 @@
 // lib/pipelineProcessor.test.ts
 
-import { processScrapingJob, createOrUpdateFoodTruck } from './pipelineProcessor';
-import { ScrapingJobService, FoodTruckService } from './supabase';
-import { firecrawl } from './firecrawl';
-import { gemini } from './gemini';
+import { processScrapingJob, createOrUpdateFoodTruck } from '@/lib/pipelineProcessor';
+import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
+import { firecrawl } from '@/lib/firecrawl';
+import { gemini } from '@/lib/gemini';
 
 // Mock dependent services
-jest.mock('./supabase', () => ({
+jest.mock('@/lib/supabase', () => ({
   ScrapingJobService: {
     updateJobStatus: jest.fn(),
-    getJobsByStatus: jest.fn(),
+    getJobsByStatus: jest.fn().mockResolvedValue(Promise.resolve([mockJob])),
     incrementRetryCount: jest.fn().mockResolvedValue({ retry_count: 1, max_retries: 3 }),
   },
   FoodTruckService: {
     createTruck: jest.fn(),
+    getAllTrucks: jest.fn().mockResolvedValue({ trucks: [] }),
   },
 }));
 
-jest.mock('./firecrawl', () => ({
+jest.mock('@/lib/firecrawl', () => ({
   firecrawl: {
     scrapeFoodTruckWebsite: jest.fn(),
   },
 }));
 
-jest.mock('./gemini', () => ({
+jest.mock('@/lib/gemini', () => ({
   gemini: {
     extractFoodTruckDetailsFromMarkdown: jest.fn(),
   },
 }));
 
+const mockJob = {
+  id: 'test-job-id',
+  target_url: 'https://example-foodtruck.com',
+  job_type: 'website_auto',
+  status: 'pending' as const,
+  priority: 5,
+  scheduled_at: new Date().toISOString(),
+  retry_count: 0,
+  max_retries: 3,
+  created_at: new Date().toISOString(),
+};
+
 describe('pipelineProcessor', () => {
   beforeEach(() => {
     // Reset all mocks before each test
     jest.clearAllMocks();
+    (ScrapingJobService.updateJobStatus as jest.Mock).mockImplementation((jobId, status, updates) => {
+      return Promise.resolve({ ...mockJob, id: jobId, status, ...updates });
+    });
   });
 
-  describe('processScrapingJob', () => {
-    const mockJob = {
-      id: 'test-job-id',
-      target_url: 'https://example-foodtruck.com',
-      job_type: 'website_auto',
-      status: 'pending' as const,
-      priority: 5,
-      scheduled_at: new Date().toISOString(),
-      retry_count: 0,
-      max_retries: 3,
-      created_at: new Date().toISOString(),
-    };
-
-    beforeEach(() => {
-      (ScrapingJobService.updateJobStatus as jest.Mock).mockResolvedValue(mockJob);
-    });
-
-    it('should process a scraping job successfully', () => {
+    it('should process a scraping job successfully', async () => {
       // Mock successful firecrawl scraping
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: true,
@@ -102,7 +101,7 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should handle scraping failures', () => {
+    it('should handle scraping failures', async () => {
       // Mock failed firecrawl scraping
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: false,
@@ -117,7 +116,7 @@ describe('pipelineProcessor', () => {
       });
     });
 
-    it('should handle Gemini extraction failures', () => {
+    it('should handle Gemini extraction failures', async () => {
       // Mock successful scraping but failed Gemini extraction
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: true,
@@ -139,7 +138,7 @@ describe('pipelineProcessor', () => {
       });
     });
 
-    it('should handle missing target URL', () => {
+    it('should handle missing target URL', async () => {
       const jobWithoutUrl = { ...mockJob, target_url: undefined };
       (ScrapingJobService.updateJobStatus as jest.Mock).mockResolvedValueOnce(jobWithoutUrl);
 
@@ -150,7 +149,7 @@ describe('pipelineProcessor', () => {
       });
     });
 
-    it('should handle retry logic on failures', () => {
+    it('should handle retry logic on failures', async () => {
       // Mock scraping failure
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: false,
@@ -176,7 +175,7 @@ describe('pipelineProcessor', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should stop retrying after max retries', () => {
+    it('should stop retrying after max retries', async () => {
       // Mock scraping failure
       (firecrawl.scrapeFoodTruckWebsite as jest.Mock).mockResolvedValue({
         success: false,
@@ -267,7 +266,7 @@ describe('pipelineProcessor', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle missing name with fallback', () => {
+    it('should handle missing name with fallback', async () => {
       const dataWithoutName = { ...mockExtractedData, name: undefined };
 
       await createOrUpdateFoodTruck('job-123', dataWithoutName as any, 'https://example.com');
@@ -279,7 +278,7 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should clamp confidence score between 0 and 1', () => {
+    it('should clamp confidence score between 0 and 1', async () => {
       const dataWithHighConfidence = { ...mockExtractedData, confidence_score: 1.5 };
 
       // @ts-expect-error TS(2345): Argument of type '{ confidence_score: number; name... Remove this comment to see the full error message
@@ -325,7 +324,7 @@ describe('pipelineProcessor', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle invalid cuisine_type array', () => {
+    it('should handle invalid cuisine_type array', async () => {
       const dataWithInvalidCuisine = { ...mockExtractedData, cuisine_type: 'Mexican' as any };
 
       // @ts-expect-error TS(2345): Argument of type '{ cuisine_type: any; name: strin... Remove this comment to see the full error message
@@ -338,7 +337,7 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should handle invalid specialties array', () => {
+    it('should handle invalid specialties array', async () => {
       const dataWithInvalidSpecialties = { ...mockExtractedData, specialties: 'tacos' as any };
 
       // @ts-expect-error TS(2345): Argument of type '{ specialties: any; name: string... Remove this comment to see the full error message
@@ -351,7 +350,7 @@ describe('pipelineProcessor', () => {
       );
     });
 
-    it('should use default confidence score for invalid values', () => {
+    it('should use default confidence score for invalid values', async () => {
       const dataWithInvalidConfidence = { ...mockExtractedData, confidence_score: 'high' as any };
 
       // @ts-expect-error TS(2345): Argument of type '{ confidence_score: any; name: s... Remove this comment to see the full error message

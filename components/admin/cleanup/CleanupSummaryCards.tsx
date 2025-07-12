@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { CleanupResult } from '@/hooks/useDataCleanup';
 
 interface CleanupSummaryCardsProps {

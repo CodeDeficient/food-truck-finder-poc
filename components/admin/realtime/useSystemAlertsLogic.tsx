@@ -37,7 +37,7 @@ export function useSystemAlertsLogic({
         id: event.id,
         type: event.severity as 'warning' | 'error' | 'critical',
         message:
-          typeof event.data.message === 'string' && event.data.message !== ''
+          typeof event.data.message === 'string'
             ? event.data.message
             : 'System event occurred',
         timestamp: event.timestamp,

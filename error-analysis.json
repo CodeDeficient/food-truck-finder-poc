@@ -1,13 +1,41 @@
 {
-  "timestamp": "2025-07-09T17:35:20.811Z",
-  "totalErrors": 16,
+  "timestamp": "2025-07-12T00:12:38.358Z",
+  "totalErrors": 18,
   "errorCounts": {
     "@typescript-eslint/no-unsafe-assignment": 6,
-    "@typescript-eslint/no-unsafe-member-access": 5,
-    "@typescript-eslint/no-unsafe-call": 5
+    "@typescript-eslint/no-unsafe-call": 5,
+    "@typescript-eslint/no-unsafe-return": 1,
+    "@typescript-eslint/no-unsafe-member-access": 1,
+    "unknown": 2,
+    "sonarjs/unused-import": 2,
+    "sonarjs/no-unenclosed-multiline-block": 1
   },
   "errorsByRuleAndFile": {
     "@typescript-eslint/no-unsafe-assignment": {
+      "/app/api/admin/data-quality/route.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 9,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 9,
+          "endColumn": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 30,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 30,
+          "endColumn": 58
+        }
+      ],
       "/components/admin/dashboard/TrucksPage.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
@@ -32,54 +60,106 @@
           "endColumn": 67
         }
       ],
-      "/components/admin/realtime/EventSubscriptionManager.tsx": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 18,
-          "column": 11,
-          "nodeType": "VariableDeclarator",
-          "messageId": "anyAssignment",
-          "endLine": 25,
-          "endColumn": 7
-        }
-      ],
-      "/components/admin/realtime/SystemStatusIndicators.tsx": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 26,
-          "column": 11,
-          "nodeType": "VariableDeclarator",
-          "messageId": "anyAssignment",
-          "endLine": 43,
-          "endColumn": 7
-        }
-      ],
       "/lib/api/admin/scraping-metrics/handlers.ts": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
           "message": "Unsafe assignment of an error typed value.",
-          "line": 42,
+          "line": 7,
           "column": 9,
           "nodeType": "VariableDeclarator",
           "messageId": "anyAssignment",
-          "endLine": 42,
+          "endLine": 7,
           "endColumn": 45
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
           "message": "Unsafe assignment of an error typed value.",
-          "line": 45,
+          "line": 10,
           "column": 5,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 45,
+          "endLine": 10,
           "endColumn": 18
+        }
+      ]
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "/app/api/admin/data-quality/route.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 9,
+          "column": 32,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 9,
+          "endColumn": 49
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 30,
+          "column": 32,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 30,
+          "endColumn": 49
+        }
+      ],
+      "/app/auth/callback/route.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 38,
+          "column": 13,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 38,
+          "endColumn": 30
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 44,
+          "column": 22,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 44,
+          "endColumn": 42
+        }
+      ],
+      "/hooks/useRealtimeAdminEvents.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 71,
+          "column": 3,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 71,
+          "endColumn": 12
+        }
+      ]
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "/app/auth/callback/route.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-return",
+          "severity": 2,
+          "message": "Unsafe return of a value of type error.",
+          "line": 44,
+          "column": 9,
+          "nodeType": "ReturnStatement",
+          "messageId": "unsafeReturn",
+          "endLine": 50,
+          "endColumn": 12
         }
       ]
     },
@@ -96,116 +176,93 @@
           "endLine": 31,
           "endColumn": 53
         }
-      ],
-      "/components/admin/realtime/EventSubscriptionManager.tsx": [
+      ]
+    },
+    "unknown": {
+      "/filter-eslint-errors.cjs": [
         {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "ruleId": null,
+          "nodeType": null,
+          "fatal": true,
           "severity": 2,
-          "message": "Unsafe member access .subscribe on an `error` typed value.",
-          "line": 18,
-          "column": 49,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 18,
-          "endColumn": 58
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .unsubscribe on an `error` typed value.",
-          "line": 27,
-          "column": 31,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 27,
-          "endColumn": 42
+          "message": "Parsing error: \"parserOptions.project\" has been provided for @typescript-eslint/parser.\nThe file was not found in any of the provided project(s): filter-eslint-errors.cjs"
         }
       ],
-      "/components/admin/realtime/SystemStatusIndicators.tsx": [
+      "/lib/fallback/supabaseFallback.ts": [
         {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "ruleId": null,
+          "nodeType": null,
+          "fatal": true,
           "severity": 2,
-          "message": "Unsafe member access .subscribe on an `error` typed value.",
-          "line": 26,
-          "column": 49,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 26,
-          "endColumn": 58
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .unsubscribe on an `error` typed value.",
-          "line": 45,
-          "column": 31,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 45,
-          "endColumn": 42
+          "message": "Parsing error: '>' expected.",
+          "line": 210,
+          "column": 11
         }
       ]
     },
-    "@typescript-eslint/no-unsafe-call": {
-      "/components/admin/realtime/EventSubscriptionManager.tsx": [
+    "sonarjs/unused-import": {
+      "/lib/api/admin/scraping-metrics/handlers.ts": [
         {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "ruleId": "sonarjs/unused-import",
           "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 18,
-          "column": 26,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 18,
-          "endColumn": 58
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 27,
-          "column": 18,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 27,
-          "endColumn": 42
-        }
-      ],
-      "/components/admin/realtime/SystemStatusIndicators.tsx": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 26,
-          "column": 26,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 26,
-          "endColumn": 58
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 45,
-          "column": 18,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 45,
-          "endColumn": 42
-        }
-      ],
-      "/hooks/useRealtimeAdminEvents.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 71,
-          "column": 3,
+          "message": "Remove this unused import of 'supabase'.",
+          "line": 2,
+          "column": 48,
           "nodeType": "Identifier",
-          "messageId": "unsafeCall",
-          "endLine": 71,
-          "endColumn": 12
+          "messageId": "removeUnusedImport",
+          "endLine": 2,
+          "endColumn": 56,
+          "suggestions": [
+            {
+              "messageId": "suggestRemoveOneVariable",
+              "fix": {
+                "range": [
+                  90,
+                  100
+                ],
+                "text": ""
+              },
+              "desc": "Remove this variable import"
+            }
+          ]
+        },
+        {
+          "ruleId": "sonarjs/unused-import",
+          "severity": 2,
+          "message": "Remove this unused import of 'verifyAdminAccess'.",
+          "line": 4,
+          "column": 10,
+          "nodeType": "Identifier",
+          "messageId": "removeUnusedImport",
+          "endLine": 4,
+          "endColumn": 27,
+          "suggestions": [
+            {
+              "messageId": "suggestRemoveWholeStatement",
+              "fix": {
+                "range": [
+                  169,
+                  230
+                ],
+                "text": ""
+              },
+              "desc": "Remove this import statement"
+            }
+          ]
+        }
+      ]
+    },
+    "sonarjs/no-unenclosed-multiline-block": {
+      "/lib/supabase.ts": [
+        {
+          "ruleId": "sonarjs/no-unenclosed-multiline-block",
+          "severity": 2,
+          "message": "This statement will not be executed conditionally; only the first statement will be. The rest will execute unconditionally.",
+          "line": 945,
+          "column": 68,
+          "nodeType": "EmptyStatement",
+          "endLine": 945,
+          "endColumn": 69
         }
       ]
     }

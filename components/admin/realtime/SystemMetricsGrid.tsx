@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { StatusMetric } from './useSystemMetrics'; // Import StatusMetric type
+
+import { StatusMetric } from './useSystemMetrics.tsx'; // Import StatusMetric type
 import { getStatusColor, getStatusIcon, getTrendIcon } from './StatusHelpers'; // Import helper functions
 
 type Status = 'healthy' | 'warning' | 'error' | 'unknown';
@@ -43,7 +43,7 @@ export function SystemMetricsGrid({ metrics }: SystemMetricsGridProps) {
               {metric.value}
               {metric.unit}
             </span>
-            {getTrendIcon(metric.trend as Trend)}
+            {getTrendIcon(metric.trend)}
           </div>
         </div>
       ))}

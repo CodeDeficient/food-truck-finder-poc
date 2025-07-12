@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { FoodTruck, FoodTruckService } from '@/lib/supabase';
 import {
   categorizeQualityScore,

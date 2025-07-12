@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FoodTruckService, supabase, FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, FoodTruck } from '@/lib/supabase';
+
+
 
 /**
  * Handles GET requests by executing different actions based on query parameters.
@@ -23,7 +25,7 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
       return await handleStatsAction();
     }
     case 'assess': {
-      if (!truckId) {
+      if (!(truckId ?? '')) {
         return NextResponse.json(
           { success: false, error: 'Missing truckId for assess action' },
           { status: 400 },
@@ -241,39 +243,4 @@ async function handleRecalculateAll() {
       timestamp: new Date().toISOString(),
     },
   });
-}
-
-/**
- * Checks if the request has valid admin access.
- * @example
- * verifyAdminAccess(request)
- * true
- * @param {Request} request - The incoming request object containing headers with authorization token.
- * @returns {Promise<boolean>} Returns true if the user has admin role, otherwise false.
- * @description
- *   - Retrieves the authorization token from request headers and validates the user through Supabase.
- *   - Checks the user's role from the 'profiles' table to determine admin access.
- *   - Returns false if the authorization header is missing or the user validation fails.
- */
-export async function verifyAdminAccess(request: Request): Promise<boolean> {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) return false;
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data, error } = await supabase.auth.getUser(token);
-    const user = data?.user;
-
-    if (error || !user) return false;
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    return profile?.role === 'admin';
-  } catch {
-    return false;
-  }
 }

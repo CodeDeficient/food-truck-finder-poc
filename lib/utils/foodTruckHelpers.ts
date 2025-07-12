@@ -1,4 +1,5 @@
 import { FoodTruck, DailyOperatingHours, MenuItem } from '@/lib/types'; // Added DailyOperatingHours, PriceRange, MenuItem
+import { supabaseFallback } from '@/lib/fallback/supabaseFallback';
 
 export const getCurrentDay = () => {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -150,18 +151,8 @@ export async function loadFoodTrucksHelper(
   setLoading: (loading: boolean) => void,
 ) {
   try {
-    const response = await fetch('/api/trucks');
-    const data: unknown = await response.json();
-    if (
-      typeof data === 'object' &&
-      data != undefined &&
-      'trucks' in data &&
-      Array.isArray(data.trucks)
-    ) {
-      setTrucks(data.trucks as FoodTruck[]);
-    } else {
-      setTrucks([]);
-    }
+    const { trucks } = await supabaseFallback.getFoodTrucks();
+    setTrucks(trucks as FoodTruck[]);
   } catch (error: unknown) {
     console.error('Failed to load food trucks:', error);
   } finally {
@@ -190,20 +181,8 @@ export async function loadNearbyTrucksHelper(
   if (!userLocation) return;
 
   try {
-    const response = await fetch(
-      `/api/trucks?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=10`,
-    );
-    const data: unknown = await response.json();
-    if (
-      typeof data === 'object' &&
-      data != undefined &&
-      'trucks' in data &&
-      Array.isArray(data.trucks)
-    ) {
-      setTrucks(data.trucks as FoodTruck[]);
-    } else {
-      setTrucks([]);
-    }
+    const { trucks } = await supabaseFallback.getFoodTrucks();
+    setTrucks(trucks as FoodTruck[]);
   } catch (error: unknown) {
     console.error('Failed to load nearby trucks:', error);
   }

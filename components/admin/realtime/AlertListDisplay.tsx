@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { SystemAlertItem } from './SystemAlertItem';
 import { AlertToggleButton } from './AlertToggleButton';
 import { type SystemAlert } from '@/hooks/useSystemAlerts';

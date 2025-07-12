@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 interface FeatureItem {
   icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { FoodTruck } from '@/lib/types';
 import { MapSection } from './MapSection';
 import { TruckListSection } from './TruckListSection';

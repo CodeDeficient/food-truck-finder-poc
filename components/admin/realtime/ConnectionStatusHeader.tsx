@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Zap, RefreshCw } from 'lucide-react';

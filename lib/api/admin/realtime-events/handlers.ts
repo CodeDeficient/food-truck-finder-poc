@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { NextRequest } from 'next/server';
 import {
-  supabase,
-  supabaseAdmin,
   ScrapingJobService,
   FoodTruckService,
   type ScrapingJob,
   type FoodTruck,
 } from '@/lib/supabase';
 import { AdminEvent } from './types';
+
 
 interface RealtimeMetrics {
   scrapingJobs: {
@@ -27,50 +26,6 @@ interface RealtimeMetrics {
     uptime: number;
     lastUpdate: string;
   };
-}
-
-/**
- * Verifies if the request is made by an admin user.
- * @example
- * verifyAdminAccess(request)
- * false
- * @param {NextRequest} request - The incoming request containing authorization headers.
- * @returns {Promise<boolean>} Returns true if the user is an admin, otherwise false.
- * @description
- *   - Checks authorization header for a Bearer token.
- *   - Uses Supabase client to verify the user associated with the token.
- *   - Validates the user's role from the 'profiles' table in the Supabase database.
- *   - Handles exceptions gracefully, returning false if any step encounters an error.
- */
-export async function verifyAdminAccess(request: NextRequest): Promise<boolean> {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return false;
-    }
-
-    const token = authHeader.slice(7);
-    const { data, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !data?.user) {
-      return false;
-    }
-    const user = data.user;
-
-    if (!supabaseAdmin) {
-      return false;
-    }
-
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    return profile?.role === 'admin';
-  } catch {
-    return false;
-  }
 }
 
 /**

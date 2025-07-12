@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 import { MenuItem } from '@/lib/types'; // Import MenuItem from lib/types
 
