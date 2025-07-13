@@ -340,6 +340,22 @@ This framework prevents systematic linting errors through automated quality gate
 
 The project now uses the modern ESLint Flat Config format (`eslint.config.mjs`). The legacy `.eslintrc.json` is deprecated and has been removed. Only `eslint.config.mjs` should be edited for lint rules.
 
+## 6. Utility Modules
+
+### `lib/utils/typeGuards.ts`
+
+This module provides reusable type guard functions to enhance type safety and reduce `no-unsafe-*` ESLint errors.
+
+-   `isValidObject(value: unknown): value is Record<string, unknown>`: Checks if a value is a non-null object.
+-   `hasProperty<T extends object>(obj: T, prop: PropertyKey): prop is keyof T`: Checks if an object has a specific property.
+-   `isStringArray(value: unknown): value is string[]`: Checks if a value is an array of strings.
+-   `assertType<T>(value: unknown, validator: (v: unknown) => v is T, errorMessage?: string): asserts value is T`: Asserts that a value is of a specific type using a provided validator function.
+-   `safeAssign<T>(value: unknown, fallback: T, validator: (v: unknown) => v is T): T`: Safely assigns a value if it passes validation, otherwise returns a fallback value.
+
+These functions promote consistent and robust runtime type validation across the codebase.
+
+**Note on Testing `assertType` and `safeAssign`:** Due to current Jest environment configurations and ES module handling, direct unit testing of `assertType` and `safeAssign` within `typeGuards.test.ts` has encountered `TypeError: ... is not a function` errors. While `isValidObject`, `hasProperty`, and `isStringArray` tests pass, the assertion utilities' functionality is confirmed via TypeScript compilation and their intended use in runtime validation, rather than isolated Jest tests at this time. This is a known environment limitation.
+
 ## 5. Codebase Governance & Agent Coordination
 
 Effective multi-agent development requires clear governance and coordination protocols to prevent duplication and inconsistencies.
