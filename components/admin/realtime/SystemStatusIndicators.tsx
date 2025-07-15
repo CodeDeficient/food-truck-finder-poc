@@ -25,10 +25,11 @@ function SystemStatusIndicators() {
   const [systemStatus, setSystemStatus] = useState('UNKNOWN');
 
   useEffect(() => {
-    const subscription = supabase.realtime.channel('system-status').subscribe((status: RealtimeChannelStatus, response: unknown) => {
+    const subscription = supabase.realtime.channel('system-status').subscribe((status: RealtimeChannelStatus, payload: unknown) => {
       if (status === 'SUBSCRIBED') {
-        if (typeof response === 'object' && 'status' in response) {
-          const typedResponse = response as SystemStatusResponse;
+        const response = payload as SystemStatusResponse;
+        if (response && typeof response === 'object' && 'status' in response) {
+          const typedResponse = response;
           const responseStatus = typedResponse.status; // Extract status to a variable
 
           if (typeof responseStatus === 'string' && responseStatus === "success") {

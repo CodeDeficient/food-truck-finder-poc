@@ -21,6 +21,9 @@ interface ReconnectLogicParams extends EventSourceRefs {
   connect: () => void;
   setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
   setConnectionError: (error: string | undefined) => void;
+  setLastEventTime: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setLatestMetrics: React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>;
+  setRecentEvents: React.Dispatch<React.SetStateAction<RealtimeEvent[]>>;
 }
 
 const handleOpen = (connectionState: ConnectionStateActions) => () => {
@@ -124,13 +127,19 @@ const handleError =
 interface SetupEventSourceListenersParams {
   eventSource: EventSource;
   handleEvent: (event: RealtimeEvent) => void;
-  connectionState: ReturnType<typeof useConnectionState>;
   isManuallyDisconnectedRef: React.RefObject<boolean>;
   connectionAttempts: number;
   maxReconnectAttempts: number;
   reconnectInterval: number;
   reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
   connect: () => void;
+  setLastEventTime: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setLatestMetrics: React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>;
+  setRecentEvents: React.Dispatch<React.SetStateAction<RealtimeEvent[]>>;
+  setIsConnected: (connected: boolean) => void;
+  setIsConnecting: (connecting: boolean) => void;
+  setConnectionError: (error: string | undefined) => void;
+  setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
 }
 
 function createReconnectLogicParams(
@@ -141,6 +150,9 @@ function createReconnectLogicParams(
     ...params,
     setConnectionAttempts: connectionState.setConnectionAttempts,
     setConnectionError: connectionState.setConnectionError,
+    setLastEventTime: connectionState.setLastEventTime,
+    setLatestMetrics: connectionState.setLatestMetrics,
+    setRecentEvents: connectionState.setRecentEvents,
   };
 }
 
@@ -197,16 +209,23 @@ function addEventListeners(
 *   - Encapsulates connection state actions for seamless event handling.
 */
 export function setupEventSourceListeners(params: SetupEventSourceListenersParams) {
-  const { eventSource, connectionState } = params;
-  const { setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } =
-    connectionState;
+  const { eventSource, setIsConnected, setIsConnecting, setConnectionError, setConnectionAttempts } = params;
   const connectionActions: ConnectionStateActions = {
     setIsConnected,
     setIsConnecting,
     setConnectionError,
     setConnectionAttempts,
   };
-  const reconnectLogicParams = createReconnectLogicParams(params, connectionState);
+  const reconnectLogicParams = createReconnectLogicParams(
+    params,
+    setIsConnected,
+    setIsConnecting,
+    setConnectionError,
+    setConnectionAttempts,
+    params.setLastEventTime,
+    params.setLatestMetrics,
+    params.setRecentEvents,
+  );
 
   addEventListeners(eventSource, params, connectionActions, reconnectLogicParams);
 }

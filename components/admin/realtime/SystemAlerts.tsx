@@ -1,7 +1,7 @@
 'use client';
 
 
-import { type SystemAlert } from './status-helpers'; // Import SystemAlert type
+import { type SystemAlert } from '@/hooks/useSystemAlerts'; // Import SystemAlert type
 import { AlertListDisplay } from './AlertListDisplay'; // Import the new component
 
 interface SystemAlertsProps {

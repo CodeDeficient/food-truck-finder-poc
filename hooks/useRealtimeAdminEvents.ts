@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { RealtimeEvent } from './useRealtimeAdminEvents.types';
 import { RealtimeMetrics } from '@/lib/types';
 import { useConnectionState } from './realtime/useConnectionState';
@@ -44,41 +44,40 @@ export function useRealtimeAdminEvents(
 ): UseRealtimeAdminEventsReturn {
   const { autoConnect = true, reconnectInterval = 5000, maxReconnectAttempts = 10, eventFilter } = options;
 
-  const eventSourceRef = useRef<EventSource>();
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  // Refs for managing connection state - initialized as undefined since
+  // the EventSource and timeout will be created/assigned later
+  const eventSourceRef = useRef<EventSource | undefined>(undefined);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const isManuallyDisconnectedRef = useRef(false);
 
-  const {
-    isConnected,
-    isConnecting,
-    connectionError,
-    latestMetrics,
-    recentEvents,
-    connectionAttempts,
-    lastEventTime,
-    setLastEventTime,
-    setLatestMetrics,
-    setRecentEvents,
-  } = useConnectionState();
+  const connectionState = useConnectionState();
 
   const handleEvent = useEventHandlers(
     eventFilter,
-    setLastEventTime,
-    setLatestMetrics,
-    setRecentEvents,
+    connectionState.setLastEventTime,
+    connectionState.setLatestMetrics,
+    connectionState.setRecentEvents,
   );
 
   const { connect, disconnect, clearEvents } = useConnectionManagement({
     eventSourceRef,
     reconnectTimeoutRef,
     isManuallyDisconnectedRef,
-    connectionState,
     handleEvent,
     maxReconnectAttempts,
     reconnectInterval,
+    connectionAttempts: connectionState.connectionAttempts,
+    isConnecting: connectionState.isConnecting,
+    setLastEventTime: connectionState.setLastEventTime,
+    setLatestMetrics: connectionState.setLatestMetrics,
+    setRecentEvents: connectionState.setRecentEvents,
+    setIsConnected: connectionState.setIsConnected,
+    setIsConnecting: connectionState.setIsConnecting,
+    setConnectionError: connectionState.setConnectionError,
+    setConnectionAttempts: connectionState.setConnectionAttempts,
   });
 
-  // Auto-connect effect
+  // Auto-connect effect - now useEffect is properly imported and typed
   useEffect(() => {
     if (autoConnect) {
       connect();
@@ -89,15 +88,15 @@ export function useRealtimeAdminEvents(
   }, [autoConnect, connect, disconnect]);
 
   return {
-    isConnected,
-    isConnecting,
-    connectionError,
-    latestMetrics,
-    recentEvents,
+    isConnected: connectionState.isConnected,
+    isConnecting: connectionState.isConnecting,
+    connectionError: connectionState.connectionError,
+    latestMetrics: connectionState.latestMetrics,
+    recentEvents: connectionState.recentEvents,
     connect,
     disconnect,
     clearEvents,
-    connectionAttempts,
-    lastEventTime,
+    connectionAttempts: connectionState.connectionAttempts,
+    lastEventTime: connectionState.lastEventTime,
   };
 }

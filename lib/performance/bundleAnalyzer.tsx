@@ -134,43 +134,23 @@ export const DynamicImports = {
   // Authentication components
   LoginPage: () => import('@/app/login/page'),
 
-  // Map components (if using external map library)
-  MapDisplay: () => import('@/components/MapDisplay'),
+  // Map components - commented out until component exists
+  // MapDisplay: () => import('@/components/MapDisplay'),
 };
 
 /**
  * Optimized imports for common libraries
  */
 export const OptimizedImports = {
-  // Lucide React - only import needed icons
+  // Lucide React - use standard imports (tree-shaking handled by bundler)
   icons: {
-    // Core icons
-    Menu: () =>
-      import('lucide-react/dist/esm/icons/menu').then(
-        (mod) => (mod as { Menu: React.ComponentType }).Menu,
-      ),
-    Search: () =>
-      import('lucide-react/dist/esm/icons/search').then(
-        (mod) => (mod as { Search: React.ComponentType }).Search,
-      ),
-    User: () =>
-      import('lucide-react/dist/esm/icons/user').then(
-        (mod) => (mod as { User: React.ComponentType }).User,
-      ),
-
-    // Admin icons
-    BarChart3: () =>
-      import('lucide-react/dist/esm/icons/bar-chart-3').then(
-        (mod) => (mod as { BarChart3: React.ComponentType }).BarChart3,
-      ),
-    Settings: () =>
-      import('lucide-react/dist/esm/icons/settings').then(
-        (mod) => (mod as { Settings: React.ComponentType }).Settings,
-      ),
-    Database: () =>
-      import('lucide-react/dist/esm/icons/database').then(
-        (mod) => (mod as { Database: React.ComponentType }).Database,
-      ),
+    // Use regular lucide-react imports - modern bundlers handle tree-shaking
+    Menu: () => import('lucide-react').then((mod) => ({ Menu: mod.Menu })),
+    Search: () => import('lucide-react').then((mod) => ({ Search: mod.Search })),
+    User: () => import('lucide-react').then((mod) => ({ User: mod.User })),
+    BarChart3: () => import('lucide-react').then((mod) => ({ BarChart3: mod.BarChart3 })),
+    Settings: () => import('lucide-react').then((mod) => ({ Settings: mod.Settings })),
+    Database: () => import('lucide-react').then((mod) => ({ Database: mod.Database })),
   },
 
   // Radix UI - optimized imports
@@ -223,7 +203,7 @@ export class BundlePerformanceMonitor {
 /**
  * Code splitting helper for React components
  */
-export function createLazyComponent<T extends React.ComponentType<Record<string, unknown>>>(
+export function createLazyComponent<T extends React.ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   fallback?: React.ComponentType,
 ) {
@@ -253,7 +233,7 @@ export function createLazyComponent<T extends React.ComponentType<Record<string,
 
     return (
       <React.Suspense fallback={fallback ? React.createElement(fallback) : <div>Loading...</div>}>
-        <LazyComponent {...props} />
+        <LazyComponent {...(props as any)} />
       </React.Suspense>
     );
   };

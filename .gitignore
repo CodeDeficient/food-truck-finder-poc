@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+bfg-1.15.0.jar
+/.claude-thoughts
 
 # next.js
 /.next/

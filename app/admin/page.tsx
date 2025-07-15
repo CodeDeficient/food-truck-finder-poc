@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useFoodTrucks, DataStatusIndicator } from '@/lib/fallback/supabaseFallback';
@@ -38,26 +37,27 @@ interface DashboardData {
 
 export default function AdminDashboard() {
   const { trucks, loading, dataStatus } = useFoodTrucks();
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  // Corrected to fix 'no-useless-undefined' by removing the explicit 'undefined' argument.
+  const [dashboardData, setDashboardData] = useState<DashboardData>();
 
   useEffect(() => {
-    async function getDashboardData() {
+    const getDashboardData = async () => {
       const pendingVerifications = trucks.filter((t) => t.verification_status === 'pending').length;
 
-      // Fetch pipeline status (e.g., pending scraping jobs)
       const pendingScrapingJobs = await ScrapingJobService.getJobsByStatus('pending');
       const runningScrapingJobs = await ScrapingJobService.getJobsByStatus('running');
       const failedScrapingJobs = await ScrapingJobService.getJobsByStatus('failed');
 
-      // Fetch recent errors from data processing queue
       const failedProcessingQueueItems = await DataProcessingService.getQueueByStatus('failed');
-      // Fetch data quality stats using the Supabase function
+      
       const { data: qualityStatsResult, error: qualityError } = await supabase
         .rpc('get_data_quality_stats')
         .single();
 
-      if (qualityError != undefined) {
+      if (qualityError) {
+        // The error is logged here, but the promise rejection will be caught below.
         console.error('Error fetching data quality stats:', qualityError);
+        throw qualityError; // Re-throw to be caught by the .catch() block
       }
 
       const dataQualityStats: DataQualityStats = (qualityStatsResult as DataQualityStats) ?? {
@@ -80,10 +80,15 @@ export default function AdminDashboard() {
         failedProcessingQueueItemsCount: failedProcessingQueueItems.length,
         dataQualityStats,
       });
-    }
+    };
 
     if (trucks.length > 0) {
-      getDashboardData();
+      // Correctly handle the floating promise by wrapping the call and adding a .catch block.
+      (async () => {
+        await getDashboardData();
+      })().catch(error => {
+        console.error("An unhandled error occurred in getDashboardData:", error);
+      });
     }
   }, [trucks]);
 

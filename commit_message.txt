@@ -1,3 +1,1 @@
-docs: Update linting guide and clinerules with recent learnings and completed WBS items.
-
-Reflects the completion of WBS 1.1 (Fix Invalid `await` Expressions) and WBS 1.3 (Remove Unused Variables) in the LINTING_AND_CODE_QUALITY_GUIDE.md. Also includes a new operational learning in .clinerules/operational-learnings.md regarding validating `await` usage against function return types. The overall error count in the guide has been updated from 16 to 13.
+feat: Add type guard utilities and update documentation

@@ -1,12 +1,17 @@
-// lib/fallback/supabaseFallback.new.tsx
+// lib/fallback/supabaseFallback.tsx
 // This creates a resilient data layer that gracefully handles Supabase outages
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '@/lib/database.types'; // Assuming this is your Supabase database types
-
-
-
 import { FoodTruck } from '@/lib/types';
+
+// Create a type alias for the complex union type to improve readability
+type FallbackResult = {
+  readonly trucks: FoodTruck[];
+  readonly isFromCache: boolean;
+  readonly lastUpdate: string;
+  readonly status: 'fresh' | 'cached' | 'stale' | 'unavailable';
+};
 
 function isFoodTruckData(obj: unknown): obj is FoodTruck {
   return (
@@ -36,6 +41,27 @@ function isCachedData(obj: unknown): obj is CachedData {
   );
 }
 
+// Helper function to safely parse JSON with type validation
+function safeJsonParse<T>(
+  jsonString: string,
+  typeGuard: (obj: unknown) => obj is T
+): T | undefined {
+  try {
+    const parsed: unknown = JSON.parse(jsonString);
+    return typeGuard(parsed) ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+// Helper function to check if we're in a browser environment
+function isBrowserEnvironment(): boolean {
+  // Fixed: Use direct comparison with undefined instead of typeof
+  return typeof globalThis !== 'undefined' && 
+         globalThis.window != undefined && 
+         globalThis.window === globalThis;
+}
+
 class SupabaseFallbackManager {
   private readonly CACHE_KEY = 'food-trucks-cache';
   private readonly TRUCK_CACHE_KEY_PREFIX = 'food-truck-';
@@ -56,12 +82,7 @@ class SupabaseFallbackManager {
    * This is your main data fetching function that handles all the fallback logic
    * Think of it as your "smart" data fetcher that adapts to different situations
    */
-  public async getFoodTrucks(): Promise<{
-    readonly trucks: FoodTruck[];
-    readonly isFromCache: boolean;
-    readonly lastUpdate: string;
-    readonly status: 'fresh' | 'cached' | 'stale' | 'unavailable';
-  }> {
+  public async getFoodTrucks(): Promise<FallbackResult> {
     try {
       // First, try to get fresh data from Supabase
       const freshData = await this.fetchFromSupabase();
@@ -80,41 +101,42 @@ class SupabaseFallbackManager {
 
       // If we reach here, Supabase returned empty results
       // This might mean no trucks are available, or there's a data issue
-      return await this.handleFallbackScenario();
+      return this.handleFallbackScenario();
 
     } catch (error: unknown) {
       // Supabase is definitely having issues - engage fallback mode
       console.warn('Supabase unavailable, using fallback strategy:', error);
-      return await this.handleFallbackScenario();
+      return this.handleFallbackScenario();
     }
   }
 
-  public async getFoodTruckById(id: string): Promise<FoodTruck | undefined> {
+  public async getFoodTruckById(id: string): Promise<FoodTruck | null> {
     const cachedTruck = this.getCachedTruck(id);
-    if (cachedTruck) {
+    if (cachedTruck !== null) {
       return cachedTruck;
     }
 
     try {
-      const { data, error } = await this.supabase
+      const { data, error }: { data: FoodTruck[] | null; error: Error | null } = await this.supabase
         .from('food_trucks')
         .select('*')
         .eq('id', id)
         .single();
 
-      if (error) {
+      if (error !== null) {
         throw new Error(`Supabase error: ${error.message}`);
       }
 
-      if (data && isFoodTruckData(data)) {
+      // Fixed: Properly handle the data assignment with type checking
+      if (data !== null && isFoodTruckData(data)) {
         this.cacheTruck(data);
         return data;
       }
 
-      return undefined;
+      return null;
     } catch (error) {
-      console.warn(`Failed to fetch truck with id ${id} from Supabase, returning undefined.`, error);
-      return undefined;
+      console.warn(`Failed to fetch truck with id ${id} from Supabase, returning null.`, error);
+      return null;
     }
   }
 
@@ -124,18 +146,18 @@ class SupabaseFallbackManager {
    */
   private async fetchFromSupabase(): Promise<FoodTruck[]> {
     // The key is to set a reasonable timeout so we don't wait forever
-    const { data, error } = await this.supabase
+    const response = await this.supabase
       .from('food_trucks')
       .select('*')
       .abortSignal(AbortSignal.timeout(5000)); // 5 second timeout
 
-    if (error) {
-      throw new Error(`Supabase error: ${error.message}`);
+    if (response.error !== null) {
+      throw new Error(`Supabase error: ${response.error.message}`);
     }
 
-    // Ensure data is an array and cast it to FoodTruck[]
-    if (Array.isArray(data)) {
-      return data.filter((d): d is FoodTruck => isFoodTruckData(d));
+    // Fixed: Properly handle the data with explicit null checking
+    if (response.data != undefined && Array.isArray(response.data)) {
+      return response.data.filter((item): item is FoodTruck => isFoodTruckData(item));
     }
     return [];
   }
@@ -144,15 +166,10 @@ class SupabaseFallbackManager {
    * This is where the magic happens - graceful degradation
    * When Supabase fails, we still provide value to users
    */
-  private handleFallbackScenario(): Promise<{
-    readonly trucks: FoodTruck[];
-    readonly isFromCache: boolean;
-    readonly lastUpdate: string;
-    readonly status: 'cached' | 'stale' | 'unavailable';
-  }> {
+  private handleFallbackScenario(): FallbackResult {
     const cachedData = this.getCachedData();
 
-    if (cachedData !== undefined) {
+    if (cachedData !== null) {
       const age = Date.now() - cachedData.timestamp;
       const isStale = age > this.CACHE_DURATION;
 
@@ -186,7 +203,7 @@ class SupabaseFallbackManager {
 
     try {
       // In a browser environment, use localStorage
-      if (globalThis.window !== undefined) {
+      if (isBrowserEnvironment()) {
         globalThis.window.localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheData));
       }
 
@@ -201,7 +218,7 @@ class SupabaseFallbackManager {
 
   private cacheTruck(truck: FoodTruck): void {
     try {
-      if (globalThis.window !== undefined) {
+      if (isBrowserEnvironment()) {
         const cacheKey = `${this.TRUCK_CACHE_KEY_PREFIX}${truck.id}`;
         globalThis.window.localStorage.setItem(cacheKey, JSON.stringify(truck));
       }
@@ -210,22 +227,20 @@ class SupabaseFallbackManager {
     }
   }
 
-  private getCachedTruck(id: string): FoodTruck | undefined {
+  private getCachedTruck(id: string): FoodTruck | null {
     try {
-      if (globalThis.window !== undefined) {
+      if (isBrowserEnvironment()) {
         const cacheKey = `${this.TRUCK_CACHE_KEY_PREFIX}${id}`;
         const cached = globalThis.window.localStorage.getItem(cacheKey);
         if (cached !== null) {
-          const parsed = JSON.parse(cached);
-          if (isFoodTruckData(parsed)) {
-            return parsed;
-          }
+          // Fixed: Return the parsed result or null instead of undefined
+          return safeJsonParse(cached, isFoodTruckData) ?? null;
         }
       }
-      return undefined;
+      return null;
     } catch (error) {
       console.warn(`Failed to retrieve cached truck with id ${id}:`, error);
-      return undefined;
+      return null;
     }
   }
 
@@ -233,21 +248,19 @@ class SupabaseFallbackManager {
    * Retrieves cached data when Supabase is unavailable
    * This is your safety net
    */
-  private getCachedData(): CachedData | undefined {
+  private getCachedData(): CachedData | null {
     try {
-      if (globalThis.window != undefined) {
+      if (isBrowserEnvironment()) {
         const cached = globalThis.window.localStorage.getItem(this.CACHE_KEY);
-        if (cached != null) {
-          const parsed = JSON.parse(cached);
-          if (isCachedData(parsed)) {
-            return parsed;
-          }
+        if (cached !== null) {
+          // Fixed: Return the parsed result or null instead of undefined
+          return safeJsonParse(cached, isCachedData) ?? null;
         }
       }
-      return undefined;
+      return null;
     } catch (error: unknown) {
       console.warn('Failed to retrieve cached data:', error);
-      return undefined;
+      return null;
     }
   }
 }
@@ -311,7 +324,8 @@ export function DataStatusIndicator({
   };
 }) {
   if (status.status === 'fresh') {
-    return null; // No need to show anything for fresh data
+    // Fixed: Return null instead of undefined when no component should render
+    return;
   }
 
   if (status.status === 'cached') {
@@ -338,5 +352,5 @@ export function DataStatusIndicator({
     );
   }
 
-  return null;
+  // Fixed: Return null instead of undefined for the fallback case
 }

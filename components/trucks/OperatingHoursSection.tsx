@@ -1,6 +1,6 @@
 
 import { Clock } from 'lucide-react';
-import { DailyOperatingHours } from '@/lib/types'; // Import DailyOperatingHours
+import { DailyOperatingHours } from '@/lib/supabase/types'; // Import DailyOperatingHours
 
 interface OperatingHoursSectionProps {
   readonly todayHours: DailyOperatingHours | undefined; // Update type
