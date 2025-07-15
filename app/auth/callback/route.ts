@@ -26,15 +26,15 @@ async function handleSuccessfulAuth({
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .single() as { data: { role: string } | null };
 
-  await AuditLogger.logAuthEvent(
-    'login_success',
-    user.email,
-    user.id,
-    requestMetadata,
-    { provider: 'google', role: profile?.role },
-  );
+  await AuditLogger.logAuthEvent({
+    eventType: 'login_success',
+    userEmail: user.email,
+    userId: user.id,
+    request: requestMetadata,
+    details: { provider: 'google', role: profile?.role },
+  });
 
   RateLimiter.recordSuccess(identifier, 'auth');
 
@@ -62,13 +62,13 @@ async function handleAuthFailure(
   identifier: string,
   requestMetadata: RequestMetadata,
 ) {
-  await AuditLogger.logAuthEvent(
-    'login_failure',
-    undefined,
-    undefined,
-    requestMetadata,
-    { provider: 'google', error: error.message },
-  );
+  await AuditLogger.logAuthEvent({
+    eventType: 'login_failure',
+    userEmail: undefined,
+    userId: undefined,
+    request: requestMetadata,
+    details: { provider: 'google', error: error.message },
+  });
 }
 
 export async function GET(request: NextRequest) {

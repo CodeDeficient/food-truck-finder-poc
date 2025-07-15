@@ -2,7 +2,7 @@
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { TruckCard } from '@/components/TruckCard';
-import { FoodTruck } from '@/lib/types/foodTruck';
+import { FoodTruck } from '@/lib/types';
 
 interface TruckAccordionItemProps {
   readonly truck: FoodTruck;
@@ -40,7 +40,7 @@ export function TruckAccordionItem({
       <AccordionTrigger className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md">
         <div className="flex-1 text-left">
           <h4 className="font-medium dark:text-gray-100">{truck.name}</h4>
-          {truck.current_location?.address && (
+          {Boolean(truck.current_location?.address) && (
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">
               {truck.current_location.address}
             </p>

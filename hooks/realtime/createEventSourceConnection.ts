@@ -30,13 +30,19 @@ function handleConnectionError(
 function initializeEventSource(config: CreateConnectionConfig) {
   const {
     handleEvent,
-    connectionState,
     isManuallyDisconnectedRef,
     connectionAttempts,
     maxReconnectAttempts,
     reconnectInterval,
     reconnectTimeoutRef,
     connect,
+    setLastEventTime,
+    setLatestMetrics,
+    setRecentEvents,
+    setIsConnected,
+    setIsConnecting,
+    setConnectionError,
+    setConnectionAttempts,
   } = config;
   const eventSource = new EventSource('/api/admin/realtime-events');
 
@@ -44,13 +50,19 @@ function initializeEventSource(config: CreateConnectionConfig) {
   setupEventSourceListeners({
     eventSource,
     handleEvent,
-    connectionState,
     isManuallyDisconnectedRef,
     connectionAttempts,
     maxReconnectAttempts,
     reconnectInterval,
     reconnectTimeoutRef,
     connect,
+    setLastEventTime,
+    setLatestMetrics,
+    setRecentEvents,
+    setIsConnected,
+    setIsConnecting,
+    setConnectionError,
+    setConnectionAttempts,
   });
 
   return eventSource;
@@ -107,17 +119,23 @@ interface CreateConnectionConfig {
   reconnectInterval: number;
   reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
   handleEvent: (event: RealtimeEvent) => void;
-  connectionState: ReturnType<typeof useConnectionState>;
   connect: () => void;
+  setLastEventTime: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setLatestMetrics: React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>;
+  setRecentEvents: React.Dispatch<React.SetStateAction<RealtimeEvent[]>>;
+  setIsConnected: (connected: boolean) => void;
+  setIsConnecting: (connecting: boolean) => void;
+  setConnectionError: (error: string | undefined) => void;
+  setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
 }
 
 export function createEventSourceConnection(config: CreateConnectionConfig) {
-  const { eventSourceRef, isConnecting, connectionState, isManuallyDisconnectedRef } = config;
+  const { eventSourceRef, isConnecting, isManuallyDisconnectedRef, setIsConnecting, setConnectionError } = config;
 
   if (shouldPreventConnection(eventSourceRef, isConnecting)) {
     return;
   }
 
-  setupInitialConnectionState(connectionState, isManuallyDisconnectedRef);
+  setupInitialConnectionState(setIsConnecting, setConnectionError, isManuallyDisconnectedRef);
   establishEventSourceConnection(config);
 }

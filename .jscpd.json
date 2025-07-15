@@ -1,6 +1,6 @@
 {
   "reporters": ["consoleFull", "json", "html"],
-  "output": "jscpd-report",
+  "output": "jscpd-report/",
   "minLines":5,
   "minTokens":50,
   "absolute": true,

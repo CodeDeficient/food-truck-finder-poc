@@ -68,7 +68,10 @@ export function MapSection({
         trucks={filteredTrucks}
         userLocation={userLocation}
         onSelectTruck={setSelectedTruckId}
-        defaultCenter={userLocation ? [userLocation.lat, userLocation.lng] : [37.7749, -122.4194]}
+        defaultCenter={[
+          userLocation?.lat ?? 0,
+          userLocation?.lng ?? 0,
+        ]}
         selectedTruckLocation={getSelectedTruckLocation(selectedTruckId, filteredTrucks)}
       />
     </div>

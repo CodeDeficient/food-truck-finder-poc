@@ -1,11 +1,14 @@
 'use client';
 
 
-import { StatusMetric } from './useSystemMetrics.tsx'; // Import StatusMetric type
+import { StatusMetric } from './useSystemMetrics'; // Import StatusMetric type
 import { getStatusColor, getStatusIcon, getTrendIcon } from './StatusHelpers'; // Import helper functions
 
 type Status = 'healthy' | 'warning' | 'error' | 'unknown';
-type Trend = 'up' | 'down' | 'stable' | undefined;
+
+interface SystemMetricsGridProps {
+  readonly metrics: StatusMetric[];
+}
 
 interface SystemMetricsGridProps {
   readonly metrics: StatusMetric[];

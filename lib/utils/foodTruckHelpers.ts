@@ -152,7 +152,7 @@ export async function loadFoodTrucksHelper(
 ) {
   try {
     const { trucks } = await supabaseFallback.getFoodTrucks();
-    setTrucks(trucks as FoodTruck[]);
+    setTrucks(trucks);
   } catch (error: unknown) {
     console.error('Failed to load food trucks:', error);
   } finally {
@@ -182,7 +182,7 @@ export async function loadNearbyTrucksHelper(
 
   try {
     const { trucks } = await supabaseFallback.getFoodTrucks();
-    setTrucks(trucks as FoodTruck[]);
+    setTrucks(trucks);
   } catch (error: unknown) {
     console.error('Failed to load nearby trucks:', error);
   }

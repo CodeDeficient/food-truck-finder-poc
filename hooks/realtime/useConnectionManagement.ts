@@ -8,12 +8,18 @@ interface UseConnectionManagementOptions {
   eventSourceRef: React.RefObject<EventSource | undefined>;
   reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>;
   isManuallyDisconnectedRef: React.RefObject<boolean>;
-  connectionState: ReturnType<typeof useConnectionState>;
   handleEvent: (event: RealtimeEvent) => void;
   connectionAttempts: number;
   maxReconnectAttempts: number;
   reconnectInterval: number;
   isConnecting: boolean;
+  setLastEventTime: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  setLatestMetrics: React.Dispatch<React.SetStateAction<RealtimeMetrics | undefined>>;
+  setRecentEvents: React.Dispatch<React.SetStateAction<RealtimeEvent[]>>;
+  setIsConnected: (connected: boolean) => void;
+  setIsConnecting: (connecting: boolean) => void;
+  setConnectionError: (error: string | undefined) => void;
+  setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
 }
 
 /**
@@ -45,6 +51,9 @@ function buildConnectionConfig(options: UseConnectionManagementOptions, connect:
     handleEvent: options.handleEvent,
     connectionState: options.connectionState,
     connect,
+    setLastEventTime: options.setLastEventTime,
+    setLatestMetrics: options.setLatestMetrics,
+    setRecentEvents: options.setRecentEvents,
   };
 }
 
@@ -71,13 +80,28 @@ function buildConnectionConfig(options: UseConnectionManagementOptions, connect:
 *   - ClearEvents method resets recent events using setRecentEvents function.
 */
 export function useConnectionManagement(options: UseConnectionManagementOptions) {
-  const { connectionState } = options;
-  const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents } = connectionState;
+  const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents, setConnectionAttempts } = options;
 
   const connect = useCallback(() => {
     const config = buildConnectionConfig(options, () => connect());
     createEventSourceConnection(config);
-  }, [options]);
+  }, [
+    options.eventSourceRef,
+    options.reconnectTimeoutRef,
+    options.isManuallyDisconnectedRef,
+    options.handleEvent,
+    options.connectionAttempts,
+    options.maxReconnectAttempts,
+    options.reconnectInterval,
+    options.isConnecting,
+    options.setLastEventTime,
+    options.setLatestMetrics,
+    options.setRecentEvents,
+    options.setIsConnected,
+    options.setIsConnecting,
+    options.setConnectionError,
+    options.setConnectionAttempts,
+  ]);
 
   const disconnect = useCallback(() => {
     disconnectEventSource({
