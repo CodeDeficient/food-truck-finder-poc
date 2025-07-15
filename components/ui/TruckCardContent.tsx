@@ -1,12 +1,8 @@
 
-import TruckCard from './TruckCard';
+import { FoodTruck } from '@/lib/types'; // Import Truck interface
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 import { MenuSection, SocialMediaSection, ContactSection } from '.';
-
-interface MenuItem {
-  name: string;
-  price_cents?: number; // Make price_cents optional
-}
+import { MenuItem } from '@/lib/supabase/types';
 
 /**
 * Renders the card content for a food truck including its name, operating hours, popular menu items, and contact details.
@@ -31,28 +27,24 @@ export function TruckCardContent({
   todayHours,
   popularItems = [],
 }: {
-  readonly truck: { name: string; address?: string; phone_number?: string; social_media?: Record<string, string> };
+  readonly truck: FoodTruck; // Changed to Truck interface
   readonly todayHours?: { open?: string; close?: string; closed?: boolean };
   readonly popularItems: MenuItem[];
 }) {
   const {
     name = 'Unnamed Truck',
     social_media = {},
-    address = '', // Provide safe defaults
-    phone_number = '',
+    contact_info: { phone = '', email = '', website = '' } = {}, // Destructure from contact_info
   } = truck;
 
-  const avgDailyPrice = (
-    popularItems.reduce((acc, item) => acc + (item.price_cents ?? 0), 0) /
-    popularItems.length ?? 0
-  ).toFixed(2);
+  
 
   return (
     <main className="ui-truck-container">
       {name && (
         <>
-          <TruckCard title={name} avgCost={`$${avgDailyPrice}`} />
-          {todayHours !== undefined && !todayHours.closed && (
+          {/* Removed the problematic TruckCard import and usage here */}
+          {todayHours !== undefined && (todayHours.closed === false) && (
             <div className="hours-display">
               <strong>Today:</strong> {todayHours.open} - {todayHours.close}
             </div>
@@ -64,7 +56,7 @@ export function TruckCardContent({
         <MenuSection
           items={popularItems.map(item => ({
             name: item.name,
-            price: formatPrice(item.price_cents),
+            price: formatPrice(item.price ?? 0),
           }))}
         />
       )}
@@ -75,8 +67,8 @@ export function TruckCardContent({
       )}
 
       {/* Refactored ContactSection - handle undefined values explicitly*/}
-      {(address || phone_number) && (
-        <ContactSection address={address} phone_number={phone_number} />
+      {(phone || email || website) && (
+        <ContactSection phone_number={phone} email={email} website={website} />
       )}
     </main>
   );

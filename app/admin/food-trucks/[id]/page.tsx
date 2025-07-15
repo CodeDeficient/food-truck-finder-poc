@@ -6,7 +6,7 @@ import {
   type QualityCategory,
 } from '@/lib/utils/dataQualityFormatters';
 import { BasicInfoCard } from '@/components/admin/food-trucks/detail/BasicInfoCard';
-import { ContactInfoCard } from '@/components/admin/food-trucks/detail/ContactInfoCard';
+import ContactInfoCard from '@/components/admin/food-trucks/detail/ContactInfoCard';
 import { DataQualityCard } from '@/components/admin/food-trucks/detail/DataQualityCard';
 import { LocationInfoCard } from '@/components/admin/food-trucks/detail/LocationInfoCard';
 import { OperatingHoursCard } from '@/components/admin/food-trucks/detail/OperatingHoursCard';
@@ -34,11 +34,13 @@ interface FoodTruckDetailPageProps {
 *   - Returns a fallback component if the truck data is not found.
 */
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
-  const truck: FoodTruck | undefined = await FoodTruckService.getTruckById(params.id);
+  const truckResult: FoodTruck | { error: string } | undefined = await FoodTruckService.getTruckById(params.id);
 
-  if (truck == undefined) {
+  if (truckResult == undefined || 'error' in truckResult) {
     return <TruckNotFound />;
   }
+
+  const truck: FoodTruck = truckResult;
 
   const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score);
   const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score);
@@ -53,7 +55,7 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BasicInfoCard truck={truck} />
-        <ContactInfoCard truck={truck} />
+        <ContactInfoCard phone={truck.contact_info?.phone} email={truck.contact_info?.email} website={truck.contact_info?.website} />
         <LocationInfoCard truck={truck} />
         <OperatingHoursCard truck={truck} />
         <RatingsReviewsCard truck={truck} />

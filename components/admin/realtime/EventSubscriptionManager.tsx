@@ -52,7 +52,7 @@ function EventSubscriptionManager() {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pipeline_events' }, handleEvent)
       .subscribe((status: RealtimeChannelStatus, error?: Error) => {
         if (status === 'SUBSCRIBED') {
-          console.log('Successfully subscribed to pipeline events.');
+          console.info('Successfully subscribed to pipeline events.');
         }
         if (status === 'CHANNEL_ERROR' && error) {
           console.error('Pipeline event subscription error:', error);

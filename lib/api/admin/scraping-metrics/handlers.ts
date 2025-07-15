@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
-import { RealtimeMetrics, ScrapingJob, FoodTruck } from '@/lib/types';
+import { RealtimeMetrics, ScrapingJob } from '@/lib/types';
 
 export async function handleGetRequest(): Promise<NextResponse> {
   const metrics = await getScrapingMetrics();
@@ -34,7 +34,6 @@ async function getScrapingMetrics(): Promise<RealtimeMetrics> {
 
   const recentTrucks =
     typeof recentTrucksResult === 'object' &&
-    recentTrucksResult !== null &&
     'trucks' in recentTrucksResult &&
     Array.isArray(recentTrucksResult.trucks)
       ? recentTrucksResult

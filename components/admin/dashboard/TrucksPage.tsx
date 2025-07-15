@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import TruckCard from '@/components/ui/TruckCard';
-import { Truck } from '@/lib/types'; // Import from actual types file
+import { FoodTruck } from '@/lib/types'; // Import from actual types file
+
 
 /**
 * Loads and displays a list of trucks on the dashboard.
@@ -14,7 +15,7 @@ import { Truck } from '@/lib/types'; // Import from actual types file
 *   - Displays 'Loading trucks...' message when truck data is unavailable.
 */
 const TrucksPage = () => {
-  const [trucks, setTrucks] = useState<Truck[]>([]);
+  const [trucks, setTrucks] = useState<FoodTruck[]>([]);
 
   useEffect(() => {
     // Placeholder: Integrate actual truck loading logic here
@@ -28,7 +29,7 @@ const TrucksPage = () => {
   return (
     <div className="trucks-container">
       {trucks.length > 0 ? (
-        trucks.map(truck => <TruckCard key={truck.id} truck={truck} />)
+        trucks.map(truck => <TruckCard key={truck.id} title={truck.name} price={truck.price_range ?? ''} reviews={truck.review_count ?? 0} image_url={truck.image_url ?? '/placeholder-logo.png'} rating={truck.average_rating ?? 0} />)
       ) : (
         <p>Loading trucks...</p>
       )}

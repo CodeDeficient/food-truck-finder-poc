@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock } from 'lucide-react';
 
-import { type FoodTruck, type OperatingHours } from '@/lib/supabase';
+import { type FoodTruck, type OperatingHours } from '@/lib/supabase/types';
 
 interface OperatingHoursCardProps {
   readonly truck: FoodTruck;

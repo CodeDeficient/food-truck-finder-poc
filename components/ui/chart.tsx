@@ -120,7 +120,7 @@ function isNonEmptyArray<T>(arr: T[] | undefined): arr is T[] {
 type TooltipFormatter = (
   value: number,
   name: string,
-  item: unknown,
+  item: Payload<ValueType, NameType>,
   index: number,
   payload: Record<string, unknown>[],
 ) => React.ReactNode;

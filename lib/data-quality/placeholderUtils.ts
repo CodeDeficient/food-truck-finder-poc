@@ -46,13 +46,13 @@ export function checkForPlaceholders(truck: FoodTruck, patterns: RegExp[]): Part
     updates.name = undefined;
   }
   if (
-    truck.description !== undefined &&
+    truck.description != undefined &&
     patterns.some((pattern) => pattern.test(truck.description ?? ''))
   ) {
     updates.description = undefined;
   }
   if (
-    truck.price_range !== undefined &&
+    truck.price_range != undefined &&
     patterns.some((pattern) => pattern.test(truck.price_range ?? ''))
   ) {
     updates.price_range = undefined;

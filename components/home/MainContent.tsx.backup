@@ -1,0 +1,69 @@
+import { FoodTruck, LocationData } from '@/lib/supabase/types';
+import { MapSection } from './MapSection';
+import { TruckListSection } from './TruckListSection';
+import { formatPrice } from '@/lib/utils/foodTruckHelpers';
+import { useMemo } from 'react';
+
+interface MainContentProps {
+  readonly filteredTrucks: FoodTruck[];
+  readonly userLocation: { lat: number; lng: number } | undefined;
+  readonly selectedTruckId: string | undefined;
+  readonly setSelectedTruckId: (id: string | undefined) => void;
+  readonly isOpen: (truck: FoodTruck) => boolean;
+}
+
+/**
+ * Renders the main content area, including a map and a list of trucks.
+ * This component acts as an adapter, converting the basic userLocation prop
+ * into the richer LocationData object required by its children.
+ */
+export function MainContent({
+  filteredTrucks,
+  userLocation,
+  selectedTruckId,
+  setSelectedTruckId,
+  isOpen,
+}: MainContentProps) {
+  // Create the full LocationData object from the simpler userLocation prop.
+  // useMemo ensures this object is not recreated on every render.
+  const locationData: LocationData | undefined = useMemo(() => {
+    if (!userLocation) {
+      return;
+    }
+    return {
+      address: undefined,
+      city: undefined,
+      state: undefined,
+      landmarks: [],
+      coordinates: {
+        lat: userLocation.lat,
+        lng: userLocation.lng,
+      },
+      confidence: 0.9, // Default confidence for a direct coordinate object
+      raw_location_text: undefined,
+    };
+  }, [userLocation]);
+
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <MapSection
+            filteredTrucks={filteredTrucks}
+            userLocation={locationData} // Pass the newly created rich object
+            selectedTruckId={selectedTruckId}
+            setSelectedTruckId={setSelectedTruckId}
+          />
+          <TruckListSection
+            filteredTrucks={filteredTrucks}
+            selectedTruckId={selectedTruckId}
+            setSelectedTruckId={setSelectedTruckId}
+            isOpen={isOpen}
+            userLocation={userLocation} // Pass the original simple coordinate object
+            formatPrice={formatPrice}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
