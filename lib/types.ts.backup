@@ -1,6 +1,35 @@
 // Shared types for the Food Truck Finder application
 
-import { MenuCategory } from './supabase/types';
+export type PriceRange = '$' | '$$' | '$$$' | '$$$$' | undefined;
+
+export type DailyOperatingHours =
+  | { open: string; close: string; closed?: boolean }
+  | { closed: true }
+  | undefined;
+
+export interface OperatingHours {
+  monday: DailyOperatingHours;
+  tuesday: DailyOperatingHours;
+  wednesday: DailyOperatingHours;
+  thursday: DailyOperatingHours;
+  friday: DailyOperatingHours;
+  saturday: DailyOperatingHours;
+  sunday: DailyOperatingHours;
+  [key: string]: DailyOperatingHours; // Add index signature
+}
+
+export interface MenuCategory {
+  name: string;
+  items: MenuItem[];
+}
+
+export interface MenuItem {
+  name: string;
+  description: string | undefined;
+  price: number | string | undefined;
+  dietary_tags: string[];
+  is_popular?: boolean;
+}
 
 export interface LocationData {
   address: string | undefined;
@@ -78,8 +107,18 @@ export interface FoodTruckSchema {
   scheduled_locations: ExtractedFoodTruckDetails['scheduled_locations'];
   operating_hours: OperatingHours;
   menu: MenuCategory[];
-  contact_info: ExtractedFoodTruckDetails['contact_info'];
-  social_media: ExtractedFoodTruckDetails['social_media'];
+  contact_info: {
+    phone?: string;
+    email?: string;
+    website?: string;
+  };
+  social_media: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+    tiktok?: string;
+    yelp?: string;
+  };
   cuisine_type: string[];
   price_range: PriceRange | undefined;
   specialties: string[];

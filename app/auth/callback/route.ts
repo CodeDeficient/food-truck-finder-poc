@@ -26,7 +26,7 @@ async function handleSuccessfulAuth({
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single() as { data: { role: string } | null };
+    .single();
 
   await AuditLogger.logAuthEvent({
     eventType: 'login_success',
