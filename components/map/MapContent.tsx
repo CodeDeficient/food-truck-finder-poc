@@ -1,10 +1,11 @@
 'use client';
 
 import { MapContainer, TileLayer } from 'react-leaflet';
-import type { LatLngExpression } from 'leaflet';
+import type { LatLngExpression, Map } from 'leaflet';
 import TruckMarkers from './TruckMarkers';
 import { MapViewUpdater } from './MapViewUpdater';
 import { UserLocationMarker } from './UserLocationMarker';
+import { useEffect, useState } from 'react';
 
 interface MapContentProps {
   readonly initialMapCenter: LatLngExpression;
@@ -57,6 +58,16 @@ export function MapContent({
   onSelectTruck,
   userLocation,
 }: MapContentProps) {
+  const [map, setMap] = useState<Map | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (map) {
+        map.remove();
+      }
+    };
+  }, [map]);
+
   return (
     <MapContainer
       center={initialMapCenter}
@@ -64,6 +75,7 @@ export function MapContent({
       scrollWheelZoom={true}
       style={{ height: '100%', width: '100%' }}
       className="rounded-lg"
+      whenCreated={setMap}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
