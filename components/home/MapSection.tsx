@@ -61,7 +61,6 @@ export function MapSection({
   // Added readonly
   return (
     <div
-      key="map-container-parent"
       className="lg:col-span-2 h-80 min-h-[320px] sm:h-96 sm:min-h-[400px] dark:bg-slate-800 rounded-lg shadow"
     >
       <DynamicMap

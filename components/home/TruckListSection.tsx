@@ -1,5 +1,5 @@
 
-import { FoodTruck, LocationData } from '@/lib/supabase/types';
+import { FoodTruck } from '@/lib/supabase/types';
 import { TruckAccordionContent } from './TruckAccordionContent';
 import { TruckListHeader } from './TruckListHeader'; // Import the new component
 
@@ -8,7 +8,7 @@ interface TruckListSectionProps {
   readonly selectedTruckId: string | undefined;
   readonly setSelectedTruckId: (id: string | undefined) => void;
   readonly isOpen: (truck: FoodTruck) => boolean;
-  readonly userLocation: LocationData | undefined;
+  readonly userLocation: { lat: number; lng: number } | undefined;
   readonly formatPrice: (price: string | number) => string;
 }
 

@@ -1,16 +1,16 @@
 'use client';
 
-import { MapContainer, TileLayer } from 'react-leaflet';
-import type { LatLngExpression } from 'leaflet';
-import TruckMarkers from './TruckMarkers';
-import { MapViewUpdater } from './MapViewUpdater';
-import { UserLocationMarker } from './UserLocationMarker';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+import 'leaflet-defaulticon-compatibility';
 
-interface MapContentProps {
-  readonly initialMapCenter: LatLngExpression;
-  readonly defaultZoom?: number;
-  readonly selectedTruckLocation?: LatLngExpression;
-  readonly trucks: Array<{
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import type { LatLngExpression } from 'leaflet';
+import { useEffect, useState, useMemo } from 'react';
+import MapMarkers from './MapMarkers';
+
+interface MapDisplayProps {
+  trucks: Array<{
     id: string;
     name: string;
     current_location: {
@@ -19,50 +19,100 @@ interface MapContentProps {
       address?: string;
     };
   }>;
-  readonly onSelectTruck?: (truckId: string) => void;
-  readonly userLocation?: { lat: number; lng: number };
+  userLocation?: { lat: number; lng: number };
+  defaultCenter: LatLngExpression;
+  defaultZoom?: number;
+  onSelectTruck?: (truckId: string) => void;
+  selectedTruckLocation?: LatLngExpression;
 }
 
-/**
- * Renders a map with truck markers and user location.
- * @example
- * MapContent({
- *   initialMapCenter: { lat: 51.505, lng: -0.09 },
- *   defaultZoom: 10,
- *   selectedTruckLocation: { lat: 51.51, lng: -0.12 },
- *   trucks: [{ id: 1, location: { lat: 51.51, lng: -0.12 } }],
- *   onSelectTruck: (truck) => console.log(truck),
- *   userLocation: { lat: 51.503, lng: -0.06 },
- * })
- * Returns a MapContainer component with specified props set.
- * @param {Object} MapContentProps - Properties for configuring the map.
- * @param {Object} MapContentProps.initialMapCenter - Initial center of the map.
- * @param {number} [MapContentProps.defaultZoom=10] - Default zoom level for the map.
- * @param {Object} MapContentProps.selectedTruckLocation - Location of the selected truck.
- * @param {Array} MapContentProps.trucks - Array of truck objects to be marked on the map.
- * @param {Function} MapContentProps.onSelectTruck - Callback invoked when a truck is selected.
- * @param {Object} MapContentProps.userLocation - Location of the user on the map.
- * @returns {JSX.Element} MapContainer component configured with truck and user markers.
- * @description
- *   - Utilizes react-leaflet's MapContainer for rendering the map interface.
- *   - Adjusts zoom level if a truck location is selected.
- *   - Integrates tile layer from OpenStreetMap contributors.
- *   - Contains rounded corner styling for map container.
- */
-export function MapContent({
-  initialMapCenter,
-  defaultZoom = 10,
-  selectedTruckLocation,
+// Component to handle map view updates
+const MapViewUpdater = ({
+  center,
+  zoom,
+}: {
+  center: LatLngExpression | undefined;
+  zoom?: number;
+}) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, zoom ?? map.getZoom());
+    }
+  }, [center, zoom, map]);
+  
+  return null;
+};
+
+const MapDisplay = ({
   trucks,
-  onSelectTruck,
   userLocation,
-}: MapContentProps) {
+  defaultCenter,
+  defaultZoom = 10,
+  onSelectTruck,
+  selectedTruckLocation,
+}: MapDisplayProps) => {
+  const [isClient, setIsClient] = useState(false);
+  
+  // Ensure component only renders on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Filter trucks with valid coordinates
+  const validTrucks = useMemo(() => 
+    trucks.filter(
+      (truck) =>
+        truck.current_location != null &&
+        typeof truck.current_location.lat === 'number' &&
+        typeof truck.current_location.lng === 'number'
+    ), [trucks]
+  );
+
+  // Calculate map center based on user location or default
+  const mapCenter: LatLngExpression = useMemo(() => {
+    if (userLocation && 
+        typeof userLocation.lat === 'number' && 
+        typeof userLocation.lng === 'number') {
+      return [userLocation.lat, userLocation.lng];
+    }
+    return defaultCenter;
+  }, [userLocation, defaultCenter]);
+
+  // Show loading state until component is mounted client-side
+  if (!isClient) {
+    return (
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          minHeight: '400px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f5f5f5',
+          borderRadius: '8px',
+          border: '1px solid #e0e0e0',
+        }}
+      >
+        <div style={{ textAlign: 'center', color: '#666' }}>
+          <p>Loading map...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <MapContainer
-      center={initialMapCenter}
+      center={mapCenter}
       zoom={defaultZoom}
       scrollWheelZoom={true}
-      style={{ height: '100%', width: '100%' }}
+      style={{ 
+        height: '100%', 
+        width: '100%',
+        minHeight: '400px'
+      }}
       className="rounded-lg"
     >
       <TileLayer
@@ -73,8 +123,9 @@ export function MapContent({
         center={selectedTruckLocation}
         zoom={selectedTruckLocation ? 13 : undefined}
       />
-      <TruckMarkers trucks={trucks} onSelectTruck={onSelectTruck} />
-      <UserLocationMarker userLocation={userLocation} />
+      <MapMarkers trucks={validTrucks} userLocation={userLocation} onSelectTruck={onSelectTruck} />
     </MapContainer>
   );
-}
+};
+
+export default MapDisplay;

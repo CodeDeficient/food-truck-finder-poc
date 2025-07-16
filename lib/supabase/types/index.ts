@@ -95,15 +95,4 @@ export interface MenuItem {
   is_popular?: boolean;
 }
 
-export interface LocationData {
-  address: string | undefined;
-  city: string | undefined;
-  state: string | undefined;
-  landmarks: string[];
-  coordinates: {
-    lat: number | undefined;
-    lng: number | undefined;
-  };
-  confidence: number;
-  raw_location_text: string | undefined;
-}
+
