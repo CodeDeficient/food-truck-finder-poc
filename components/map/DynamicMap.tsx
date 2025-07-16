@@ -4,15 +4,10 @@ import dynamic from 'next/dynamic';
 import { FoodTruck } from '@/lib/types';
 import { LatLngExpression } from 'leaflet';
 
-const MapContent = dynamic(
-  () => import('@/components/map/MapContent').then((mod) => mod.MapContent),
+const MapDisplay = dynamic(
+  () => import('@/components/map/MapContent').then((mod) => mod.default),
   {
     ssr: false,
-    loading: () => (
-      <div className="h-96 flex items-center justify-center bg-gray-100 dark:bg-slate-800 rounded-lg">
-        <p>Loading map...</p>
-      </div>
-    ),
   },
 );
 
@@ -26,5 +21,5 @@ interface DynamicMapProps {
 }
 
 export default function DynamicMap(props: DynamicMapProps) {
-  return <MapContent {...props} initialMapCenter={props.defaultCenter} />;
+  return <MapDisplay {...props} />;
 }

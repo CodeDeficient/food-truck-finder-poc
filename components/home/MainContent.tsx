@@ -1,8 +1,7 @@
-import { FoodTruck, LocationData } from '@/lib/types';
+import { FoodTruck } from '@/lib/types';
 import { MapSection } from './MapSection';
 import { TruckListSection } from './TruckListSection';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
-import { useMemo } from 'react';
 
 interface MainContentProps {
   readonly filteredTrucks: FoodTruck[];
@@ -24,25 +23,7 @@ export function MainContent({
   setSelectedTruckId,
   isOpen,
 }: MainContentProps) {
-  // Create the full LocationData object from the simpler userLocation prop.
-  // useMemo ensures this object is not recreated on every render.
-  const locationData: LocationData | undefined = useMemo(() => {
-    if (!userLocation) {
-      return;
-    }
-    return {
-      address: undefined,
-      city: undefined,
-      state: undefined,
-      landmarks: [],
-      coordinates: {
-        lat: userLocation.lat,
-        lng: userLocation.lng,
-      },
-      confidence: 0.9, // Default confidence for a direct coordinate object
-      raw_location_text: undefined,
-    };
-  }, [userLocation]);
+  
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -50,7 +31,7 @@ export function MainContent({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <MapSection
             filteredTrucks={filteredTrucks}
-            userLocation={locationData} // Pass the newly created rich object
+            userLocation={userLocation}
             selectedTruckId={selectedTruckId}
             setSelectedTruckId={setSelectedTruckId}
           />

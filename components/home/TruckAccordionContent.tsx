@@ -1,14 +1,13 @@
 
 import React from 'react';
 import { FoodTruck } from '@/lib/types'; // Assuming FoodTruck type is here
-import { LocationData } from '@/lib/types'; // Assuming LocationData type is here
 
 interface TruckAccordionContentProps {
   filteredTrucks: FoodTruck[];
   selectedTruckId: string | undefined;
   setSelectedTruckId: (id: string | undefined) => void;
   isOpen: (truck: FoodTruck) => boolean;
-  userLocation: LocationData | undefined;
+  userLocation: { lat: number; lng: number } | undefined;
 }
 
 export const TruckAccordionContent: React.FC<TruckAccordionContentProps> = ({

@@ -2,6 +2,66 @@
 
 This file documents the rules, best practices, and key learnings I develop while working on this codebase. Adhering to these rules ensures consistency, quality, and alignment with project governance.
 
+## Zero-Trust Development Principles
+
+This section outlines the core principles of Zero-Trust Development, emphasizing "never trust, always verify" for all code changes.
+
+### Mandatory Validation Cycle Protocol
+
+Every task follows this mandatory sequence, which must be repeated for each file touched:
+
+1.  **Pre-Action Validation**: Verify current state before making changes.
+2.  **Action Execution**: Make the specific change with explicit documentation.
+3.  **Post-Action Verification**: Confirm the change worked and didn't break anything.
+
+### File Impact Analysis Protocol
+
+Before touching any file, you must identify all potentially affected files. Files can be affected through:
+
+-   **Direct imports**: Files that import the changed file.
+-   **Indirect dependencies**: Files that use types or functions from the changed file.
+-   **Configuration impact**: Files affected by linting rule changes.
+-   **Runtime dependencies**: Files that interact at runtime.
+
+### Repetitive Validation Cycle Enforcement
+
+The AI developer must complete these validation cycles for EVERY task, without exception:
+
+**Cycle 1: Syntax and Compilation**
+- [ ] Verify file syntax is correct.
+- [ ] Verify TypeScript compilation succeeds.
+- [ ] Verify no new compilation errors were introduced.
+
+**Cycle 2: Linting and Code Quality**
+- [ ] Verify ESLint rules pass on modified files.
+- [ ] Verify no new linting errors were introduced.
+- [ ] Verify associated files maintain linting standards.
+
+**Cycle 3: Functional Verification**
+- [ ] Verify intended functionality works as expected.
+- [ ] Verify no regressions in existing functionality.
+- [ ] Verify error handling works correctly.
+
+**Cycle 4: Integration Testing**
+- [ ] Verify imports and exports work correctly.
+- [ ] Verify no breaking changes to dependent files.
+- [ ] Verify type compatibility across boundaries.
+
+**Cycle 5: Performance and Side Effects**
+- [ ] Verify no performance degradation.
+- [ ] Verify no unintended side effects.
+- [ ] Verify memory usage remains acceptable.
+
+### Failure Response Protocol
+
+When any validation cycle fails:
+
+1.  **Immediate Stop**: Cease all forward progress.
+2.  **Rollback**: Restore to the last known good state.
+3.  **Document**: Record what failed and why.
+4.  **Re-analyze**: Determine the root cause before retrying.
+5.  **Modify Approach**: Adjust the strategy based on the failure analysis.
+
 ## **Rule Set: Linting Remediation**
 
 ### **1. Prioritization Protocol**
