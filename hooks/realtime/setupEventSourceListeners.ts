@@ -218,13 +218,15 @@ export function setupEventSourceListeners(params: SetupEventSourceListenersParam
   };
   const reconnectLogicParams = createReconnectLogicParams(
     params,
-    setIsConnected,
-    setIsConnecting,
-    setConnectionError,
-    setConnectionAttempts,
-    params.setLastEventTime,
-    params.setLatestMetrics,
-    params.setRecentEvents,
+    {
+      setIsConnected,
+      setIsConnecting,
+      setConnectionError,
+      setConnectionAttempts,
+      setLastEventTime: params.setLastEventTime,
+      setLatestMetrics: params.setLatestMetrics,
+      setRecentEvents: params.setRecentEvents,
+    }
   );
 
   addEventListeners(eventSource, params, connectionActions, reconnectLogicParams);
