@@ -1,9 +1,9 @@
 
 import { FoodTruck, FoodTruckService } from '@/lib/supabase';
+import { isFoodTruck } from '@/lib/utils/typeGuards';
 import {
   categorizeQualityScore,
   getQualityBadgeClasses,
-  type QualityCategory,
 } from '@/lib/utils/dataQualityFormatters';
 import { BasicInfoCard } from '@/components/admin/food-trucks/detail/BasicInfoCard';
 import ContactInfoCard from '@/components/admin/food-trucks/detail/ContactInfoCard';
@@ -15,9 +15,7 @@ import { TruckDetailHeader } from '@/components/admin/food-trucks/detail/TruckDe
 import { TruckNotFound } from '@/components/admin/food-trucks/detail/TruckNotFound';
 
 interface FoodTruckDetailPageProps {
-  readonly params: {
-    readonly id: string;
-  };
+  readonly params: Promise<{ id: string }>;
 }
 
 /**
@@ -34,23 +32,23 @@ interface FoodTruckDetailPageProps {
 *   - Returns a fallback component if the truck data is not found.
 */
 export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPageProps) {
-  const truckResult: FoodTruck | { error: string } | undefined = await FoodTruckService.getTruckById(params.id);
+  const resolvedParams = await params;
+  const truckResult = await FoodTruckService.getTruckById(resolvedParams.id);
 
-  if (truckResult == undefined || 'error' in truckResult) {
+  if (!isFoodTruck(truckResult)) {
     return <TruckNotFound />;
   }
 
   const truck: FoodTruck = truckResult;
 
-  const qualityCategory: QualityCategory = categorizeQualityScore(truck.data_quality_score);
-  const badgeClasses: string = getQualityBadgeClasses(truck.data_quality_score);
+  const dataQualityScore = typeof truck.data_quality_score === 'number' ? truck.data_quality_score : 0;
 
   return (
     <div className="flex flex-col gap-6">
       <TruckDetailHeader
         truck={truck}
-        badgeClasses={badgeClasses}
-        qualityCategory={qualityCategory}
+        badgeClasses={getQualityBadgeClasses(dataQualityScore)}
+        qualityCategory={categorizeQualityScore(dataQualityScore)}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -61,7 +59,8 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
         <RatingsReviewsCard truck={truck} />
       </div>
 
-      <DataQualityCard truck={truck} qualityCategory={qualityCategory} />
+      <DataQualityCard truck={truck} qualityCategory={categorizeQualityScore(dataQualityScore)} />
     </div>
   );
 }
+

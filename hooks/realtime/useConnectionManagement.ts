@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
-import { useConnectionState } from './useConnectionState';
+import { RealtimeMetrics } from '@/lib/types';
 import { createEventSourceConnection } from './createEventSourceConnection';
 import { disconnectEventSource, clearRecentEvents } from './connectionManagementHelpers';
 
@@ -49,7 +49,6 @@ function buildConnectionConfig(options: UseConnectionManagementOptions, connect:
     reconnectInterval: options.reconnectInterval,
     reconnectTimeoutRef: options.reconnectTimeoutRef,
     handleEvent: options.handleEvent,
-    connectionState: options.connectionState,
     connect,
     setLastEventTime: options.setLastEventTime,
     setLatestMetrics: options.setLatestMetrics,
@@ -80,7 +79,7 @@ function buildConnectionConfig(options: UseConnectionManagementOptions, connect:
 *   - ClearEvents method resets recent events using setRecentEvents function.
 */
 export function useConnectionManagement(options: UseConnectionManagementOptions) {
-  const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents, setConnectionAttempts } = options;
+  const { setIsConnected, setIsConnecting, setConnectionError, setRecentEvents } = options;
 
   const connect = useCallback(() => {
     const config = buildConnectionConfig(options, () => connect());
@@ -100,7 +99,7 @@ export function useConnectionManagement(options: UseConnectionManagementOptions)
     options.setIsConnected,
     options.setIsConnecting,
     options.setConnectionError,
-    options.setConnectionAttempts,
+    
   ]);
 
   const disconnect = useCallback(() => {

@@ -1,11 +1,8 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-slot'. Did you... Remove this comment to see the full error message
 import { Slot } from '@radix-ui/react-slot';
-// @ts-expect-error TS(2792): Cannot find module 'class-variance-authority'. Did... Remove this comment to see the full error message
 import { VariantProps, cva } from 'class-variance-authority';
-// @ts-expect-error TS(2792): Cannot find module 'lucide-react'. Did you mean to... Remove this comment to see the full error message
 import { PanelLeft } from 'lucide-react';
 
 import { useIsMobile } from '@/hooks/UseMobile';
@@ -16,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import Cookies from 'js-cookie';
+import * as Cookies from 'js-cookie';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar:state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -153,13 +150,15 @@ const SidebarProvider = React.forwardRef<
 );
 SidebarProvider.displayName = 'SidebarProvider';
 
+interface SidebarProps extends React.ComponentProps<'div'> {
+  side?: 'left' | 'right';
+  variant?: 'sidebar' | 'floating' | 'inset';
+  collapsible?: 'offcanvas' | 'icon' | 'none';
+}
+
 const Sidebar = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<'div'> & {
-    side?: 'left' | 'right';
-    variant?: 'sidebar' | 'floating' | 'inset';
-    collapsible?: 'offcanvas' | 'icon' | 'none';
-  }
+  SidebarProps
 >(
   (
     {
@@ -264,8 +263,7 @@ const SidebarTrigger = React.forwardRef<HTMLButtonElement, React.ComponentProps<
       <Button
         ref={ref}
         data-sidebar="trigger"
-        // @ts-expect-error TS(2322): Type '{ children: Element[]; form?: string | undef... Remove this comment to see the full error message
-        variant="ghost"
+                variant="ghost"
         size="icon"
         className={cn('h-7 w-7', className)}
         onClick={(event) => {

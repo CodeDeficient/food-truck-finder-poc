@@ -1,1442 +1,1634 @@
 {
-  "timestamp": "2025-07-14T23:50:55.229Z",
-  "totalErrors": 116,
+  "timestamp": "2025-07-17T02:15:17.598Z",
+  "totalErrors": 136,
   "errorCounts": {
-    "@typescript-eslint/no-unsafe-assignment": 31,
-    "@typescript-eslint/no-unsafe-argument": 10,
-    "@typescript-eslint/no-unsafe-member-access": 47,
-    "sonarjs/no-unused-vars": 1,
-    "sonarjs/no-dead-store": 1,
-    "@typescript-eslint/no-unsafe-call": 13,
-    "@typescript-eslint/no-unsafe-return": 4,
-    "@typescript-eslint/prefer-nullish-coalescing": 1,
-    "sonarjs/use-type-alias": 1,
-    "sonarjs/different-types-comparison": 3,
-    "sonarjs/deprecation": 2,
-    "@typescript-eslint/no-redundant-type-constituents": 2
+    "@typescript-eslint/no-unsafe-assignment": 64,
+    "@typescript-eslint/no-unsafe-argument": 26,
+    "@typescript-eslint/no-unsafe-call": 25,
+    "@typescript-eslint/no-unsafe-member-access": 15,
+    "@typescript-eslint/no-redundant-type-constituents": 4,
+    "@typescript-eslint/no-unsafe-return": 2
   },
   "errorsByRuleAndFile": {
     "@typescript-eslint/no-unsafe-assignment": {
-      "/app/api/dashboard/route.ts": [
+      "/components/admin/AdminNavLinks.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 78,
-          "column": 9,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 78,
-          "endColumn": 53
-        }
-      ],
-      "/components/TruckCard.tsx": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe array destructuring of a tuple element with an error typed value.",
-          "line": 36,
-          "column": 37,
-          "nodeType": "Identifier",
-          "messageId": "unsafeArrayPatternFromTuple",
-          "endLine": 36,
-          "endColumn": 47
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 52,
-          "column": 53,
-          "nodeType": "Identifier",
-          "messageId": "anyAssignment",
-          "endLine": 52,
-          "endColumn": 63
-        }
-      ],
-      "/components/admin/food-trucks/detail/OperatingHoursCard.tsx": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 38,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 28,
           "column": 23,
-          "nodeType": "VariableDeclarator",
-          "messageId": "anyAssignment",
-          "endLine": 38,
-          "endColumn": 85
-        }
-      ],
-      "/hooks/useRealtimeAdminEvents.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 75,
-          "column": 5,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 75,
-          "endColumn": 20
-        }
-      ],
-      "/hooks/useTruckCard.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 7,
-          "column": 9,
-          "nodeType": "VariableDeclarator",
-          "messageId": "anyAssignment",
-          "endLine": 7,
-          "endColumn": 42
+          "endLine": 28,
+          "endColumn": 33
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 12,
-          "column": 5,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 29,
+          "column": 35,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 12,
-          "endColumn": 15
-        }
-      ],
-      "/lib/api/search/filters.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 75,
-          "column": 13,
-          "nodeType": "VariableDeclarator",
-          "messageId": "anyAssignment",
-          "endLine": 75,
-          "endColumn": 56
-        }
-      ],
-      "/lib/api/test-integration/schemaMapper.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 33,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 33,
-          "endColumn": 64
+          "endLine": 29,
+          "endColumn": 46
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 35,
-          "column": 7,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 30,
+          "column": 32,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 35,
-          "endColumn": 45
+          "endLine": 30,
+          "endColumn": 46
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 36,
-          "column": 7,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 31,
+          "column": 37,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 42,
-          "endColumn": 10
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 37,
-          "column": 9,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 37,
-          "endColumn": 42
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 38,
-          "column": 9,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 38,
+          "endLine": 31,
           "endColumn": 51
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 39,
-          "column": 9,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 32,
+          "column": 36,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 40,
-          "endColumn": 100
+          "endLine": 32,
+          "endColumn": 50
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 33,
+          "column": 29,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 33,
+          "endColumn": 40
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 34,
+          "column": 30,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 34,
+          "endColumn": 48
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 35,
+          "column": 33,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 35,
+          "endColumn": 48
+        }
+      ],
+      "/components/trucks/TruckContactInfo.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 156,
+          "column": 17,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 156,
+          "endColumn": 22
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 168,
+          "column": 17,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 168,
+          "endColumn": 21
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 180,
+          "column": 17,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 180,
+          "endColumn": 22
+        }
+      ],
+      "/components/ui/NavigationMenu.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 37,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 39,
+          "endColumn": 2
+        }
+      ],
+      "/components/ui/ScrollArea.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 24,
+          "column": 1,
+          "nodeType": "AssignmentExpression",
+          "messageId": "anyAssignment",
+          "endLine": 24,
+          "endColumn": 62
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 32,
+          "column": 18,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 32,
+          "endColumn": 29
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 44,
+          "column": 1,
+          "nodeType": "AssignmentExpression",
+          "messageId": "anyAssignment",
+          "endLine": 44,
+          "endColumn": 76
+        }
+      ],
+      "/components/ui/ToggleGroup.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 26,
+          "column": 43,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 26,
+          "endColumn": 50
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
           "message": "Unsafe assignment of an error typed value.",
-          "line": 41,
-          "column": 9,
+          "line": 26,
+          "column": 52,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 41,
-          "endColumn": 46
+          "endLine": 26,
+          "endColumn": 56
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
           "message": "Unsafe assignment of an error typed value.",
           "line": 47,
-          "column": 5,
-          "nodeType": "Property",
+          "column": 7,
+          "nodeType": "VariableDeclarator",
           "messageId": "anyAssignment",
           "endLine": 47,
-          "endColumn": 56
-        }
-      ],
-      "/lib/data-quality/duplicatePrevention.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 427,
-          "column": 7,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 427,
-          "endColumn": 60
+          "endColumn": 26
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
           "message": "Unsafe assignment of an error typed value.",
-          "line": 433,
-          "column": 7,
+          "line": 60,
+          "column": 11,
           "nodeType": "Property",
           "messageId": "anyAssignment",
-          "endLine": 433,
-          "endColumn": 72
-        }
-      ],
-      "/lib/fallback/supabaseFallback.tsx": [
+          "endLine": 60,
+          "endColumn": 46
+        },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe array destructuring of a tuple element with an `any` value.",
-          "line": 99,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 61,
+          "column": 11,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 61,
+          "endColumn": 29
+        }
+      ],
+      "/components/ui/alert.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 6,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 20,
+          "endColumn": 2
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 28,
+          "column": 61,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 28,
+          "endColumn": 68
+        }
+      ],
+      "/components/ui/badge.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 6,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 23,
+          "endColumn": 2
+        }
+      ],
+      "/components/ui/breadcrumb.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 42,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 42,
+          "endColumn": 45
+        }
+      ],
+      "/components/ui/button.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 7,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 31,
+          "endColumn": 2
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 41,
+          "column": 11,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 41,
+          "endColumn": 43
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 43,
+          "column": 44,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 43,
+          "endColumn": 51
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 43,
+          "column": 53,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 43,
+          "endColumn": 57
+        }
+      ],
+      "/components/ui/carousel.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 201,
+          "column": 18,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 201,
+          "endColumn": 25
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 202,
           "column": 15,
           "nodeType": "Identifier",
-          "messageId": "unsafeArrayPatternFromTuple",
-          "endLine": 99,
+          "messageId": "anyAssignment",
+          "endLine": 202,
           "endColumn": 19
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an `any` value.",
-          "line": 219,
-          "column": 17,
-          "nodeType": "VariableDeclarator",
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 230,
+          "column": 18,
+          "nodeType": "Identifier",
           "messageId": "anyAssignment",
-          "endLine": 219,
-          "endColumn": 44
+          "endLine": 230,
+          "endColumn": 25
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an `any` value.",
-          "line": 241,
-          "column": 17,
-          "nodeType": "VariableDeclarator",
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 231,
+          "column": 15,
+          "nodeType": "Identifier",
           "messageId": "anyAssignment",
-          "endLine": 241,
-          "endColumn": 44
+          "endLine": 231,
+          "endColumn": 19
         }
       ],
-      "/lib/pipeline/pipelineHelpers.ts": [
+      "/components/ui/label.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 74,
-          "column": 5,
-          "nodeType": "Property",
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 9,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
           "messageId": "anyAssignment",
-          "endLine": 74,
-          "endColumn": 72
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 75,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 75,
-          "endColumn": 74
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 76,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 76,
-          "endColumn": 78
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 77,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 77,
-          "endColumn": 76
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 78,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 78,
-          "endColumn": 72
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 79,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 79,
-          "endColumn": 76
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 80,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 80,
-          "endColumn": 72
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of type `MenuCategory[]` to a variable of type `MenuCategory[]`.",
-          "line": 142,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "unsafeAssignment",
-          "endLine": 142,
-          "endColumn": 46
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "severity": 2,
-          "message": "Unsafe assignment of an error typed value.",
-          "line": 148,
-          "column": 5,
-          "nodeType": "Property",
-          "messageId": "anyAssignment",
-          "endLine": 148,
-          "endColumn": 61
+          "endLine": 11,
+          "endColumn": 2
         }
       ],
-      "/lib/utils/foodTruckHelpers.ts": [
+      "/components/ui/separator.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 14,
+          "column": 17,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 14,
+          "endColumn": 27
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 15,
+          "column": 18,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 15,
+          "endColumn": 29
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 24,
+          "column": 1,
+          "nodeType": "AssignmentExpression",
+          "messageId": "anyAssignment",
+          "endLine": 24,
+          "endColumn": 60
+        }
+      ],
+      "/components/ui/sheet.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 34,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 51,
+          "endColumn": 2
+        },
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
           "severity": 2,
           "message": "Unsafe assignment of an error typed value.",
-          "line": 207,
+          "line": 64,
+          "column": 69,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 64,
+          "endColumn": 73
+        }
+      ],
+      "/components/ui/sidebar.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 420,
           "column": 9,
           "nodeType": "VariableDeclarator",
           "messageId": "anyAssignment",
-          "endLine": 207,
-          "endColumn": 47
+          "endLine": 420,
+          "endColumn": 38
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 441,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 441,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 496,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 516,
+          "endColumn": 2
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 538,
+          "column": 11,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 538,
+          "endColumn": 43
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 545,
+          "column": 20,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 545,
+          "endColumn": 24
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 546,
+          "column": 22,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 546,
+          "endColumn": 30
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 547,
+          "column": 51,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 547,
+          "endColumn": 58
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 547,
+          "column": 60,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 547,
+          "endColumn": 64
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 584,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 584,
+          "endColumn": 41
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 694,
+          "column": 9,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 694,
+          "endColumn": 36
+        }
+      ],
+      "/components/ui/toast.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 30,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 44,
+          "endColumn": 2
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 55,
+          "column": 37,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 55,
+          "endColumn": 44
+        }
+      ],
+      "/components/ui/toaster.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 33,
+          "column": 15,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 33,
+          "endColumn": 67
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 48,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "anyAssignment",
+          "endLine": 48,
+          "endColumn": 25
+        }
+      ],
+      "/components/ui/toggle.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 9,
+          "column": 7,
+          "nodeType": "VariableDeclarator",
+          "messageId": "anyAssignment",
+          "endLine": 28,
+          "endColumn": 2
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 38,
+          "column": 36,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 38,
+          "endColumn": 43
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an error typed value.",
+          "line": 38,
+          "column": 45,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 38,
+          "endColumn": 49
+        }
+      ],
+      "/hooks/UseToast.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe spread of an `any` value in an array.",
+          "line": 79,
+          "column": 19,
+          "nodeType": "SpreadElement",
+          "messageId": "unsafeArraySpread",
+          "endLine": 79,
+          "endColumn": 34
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 212,
+          "column": 7,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 212,
+          "endColumn": 30
+        }
+      ],
+      "/lib/performance/bundleAnalyzer.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 148,
+          "column": 57,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 148,
+          "endColumn": 71
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 149,
+          "column": 59,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 149,
+          "endColumn": 77
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 150,
+          "column": 57,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 150,
+          "endColumn": 71
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 151,
+          "column": 62,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 151,
+          "endColumn": 86
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 152,
+          "column": 61,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 152,
+          "endColumn": 83
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 153,
+          "column": 61,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 153,
+          "endColumn": 83
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-assignment",
+          "severity": 2,
+          "message": "Unsafe assignment of an `any` value.",
+          "line": 158,
+          "column": 67,
+          "nodeType": "Property",
+          "messageId": "anyAssignment",
+          "endLine": 158,
+          "endColumn": 81
         }
       ]
     },
     "@typescript-eslint/no-unsafe-argument": {
-      "/components/admin/food-trucks/detail/OperatingHoursCard.tsx": [
+      "/components/ui/AlertDialog.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `{}`.",
-          "line": 34,
-          "column": 60,
-          "nodeType": "MemberExpression",
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 89,
+          "column": 56,
+          "nodeType": "CallExpression",
           "messageId": "unsafeArgument",
-          "endLine": 34,
-          "endColumn": 81
+          "endLine": 89,
+          "endColumn": 72
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 99,
+          "column": 19,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 99,
+          "endColumn": 57
         }
       ],
-      "/components/trucks/TruckOperatingHours.tsx": [
+      "/components/ui/NavigationMenu.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `{}`.",
-          "line": 60,
-          "column": 55,
-          "nodeType": "MemberExpression",
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 47,
+          "column": 19,
+          "nodeType": "CallExpression",
           "messageId": "unsafeArgument",
-          "endLine": 60,
+          "endLine": 47,
+          "endColumn": 47
+        }
+      ],
+      "/components/ui/ScrollArea.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 14,
+          "column": 47,
+          "nodeType": "Identifier",
+          "messageId": "unsafeArgument",
+          "endLine": 14,
+          "endColumn": 56
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 37,
+          "column": 7,
+          "nodeType": "Identifier",
+          "messageId": "unsafeArgument",
+          "endLine": 37,
+          "endColumn": 16
+        }
+      ],
+      "/components/ui/ToggleGroup.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type error typed assigned to a parameter of type `ClassValue`.",
+          "line": 29,
+          "column": 65,
+          "nodeType": "Identifier",
+          "messageId": "unsafeArgument",
+          "endLine": 29,
+          "endColumn": 74
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 59,
+          "column": 9,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 62,
+          "endColumn": 11
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type error typed assigned to a parameter of type `ClassValue`.",
+          "line": 63,
+          "column": 9,
+          "nodeType": "Identifier",
+          "messageId": "unsafeArgument",
+          "endLine": 63,
+          "endColumn": 18
+        }
+      ],
+      "/components/ui/alert.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 28,
+          "column": 45,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 28,
+          "endColumn": 71
+        }
+      ],
+      "/components/ui/badge.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 32,
+          "column": 30,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 32,
+          "endColumn": 56
+        }
+      ],
+      "/components/ui/button.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 43,
+          "column": 27,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 43,
+          "endColumn": 71
+        }
+      ],
+      "/components/ui/calendar.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 35,
+          "column": 11,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 35,
+          "endColumn": 49
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 46,
+          "column": 11,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 46,
+          "endColumn": 47
+        }
+      ],
+      "/components/ui/label.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 19,
+          "column": 48,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 19,
+          "endColumn": 63
+        }
+      ],
+      "/components/ui/pagination.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 50,
+          "column": 7,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 53,
+          "endColumn": 9
+        }
+      ],
+      "/components/ui/separator.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 19,
+          "column": 7,
+          "nodeType": "Identifier",
+          "messageId": "unsafeArgument",
+          "endLine": 19,
+          "endColumn": 16
+        }
+      ],
+      "/components/ui/sheet.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 64,
+          "column": 53,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 64,
           "endColumn": 76
         }
       ],
-      "/hooks/useTruckCard.ts": [
+      "/components/ui/sidebar.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `FoodTruck`.",
-          "line": 5,
-          "column": 40,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 378,
+          "column": 54,
           "nodeType": "Identifier",
           "messageId": "unsafeArgument",
-          "endLine": 5,
-          "endColumn": 45
+          "endLine": 378,
+          "endColumn": 63
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `FoodTruck`.",
-          "line": 6,
-          "column": 36,
-          "nodeType": "Identifier",
-          "messageId": "unsafeArgument",
-          "endLine": 6,
-          "endColumn": 41
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-argument",
-          "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `FoodTruck`.",
-          "line": 7,
-          "column": 36,
-          "nodeType": "Identifier",
-          "messageId": "unsafeArgument",
-          "endLine": 7,
-          "endColumn": 41
-        }
-      ],
-      "/lib/api/search/filters.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-argument",
-          "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `string`.",
-          "line": 78,
-          "column": 40,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 547,
+          "column": 23,
           "nodeType": "CallExpression",
           "messageId": "unsafeArgument",
-          "endLine": 78,
+          "endLine": 547,
           "endColumn": 67
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `string`.",
-          "line": 79,
-          "column": 41,
-          "nodeType": "CallExpression",
+          "message": "Unsafe argument of type error typed assigned to a parameter of type `ClassValue`.",
+          "line": 547,
+          "column": 69,
+          "nodeType": "Identifier",
           "messageId": "unsafeArgument",
-          "endLine": 79,
-          "endColumn": 69
+          "endLine": 547,
+          "endColumn": 78
         }
       ],
-      "/lib/data-quality/placeholderUtils.ts": [
+      "/components/ui/toast.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 55,
+          "column": 21,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 55,
+          "endColumn": 47
+        }
+      ],
+      "/components/ui/toaster.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type error typed assigned to a parameter of type `ArrayLike<unknown> | { [s: string]: unknown; }`.",
+          "line": 36,
+          "column": 26,
+          "nodeType": "Identifier",
+          "messageId": "unsafeArgument",
+          "endLine": 36,
+          "endColumn": 31
+        }
+      ],
+      "/components/ui/toggle.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type `any` assigned to a parameter of type `ClassValue`.",
+          "line": 38,
+          "column": 19,
+          "nodeType": "CallExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 38,
+          "endColumn": 63
+        }
+      ],
+      "/hooks/UseToast.ts": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
           "message": "Unsafe argument of type error typed assigned to a parameter of type `string`.",
-          "line": 56,
-          "column": 45,
-          "nodeType": "LogicalExpression",
+          "line": 106,
+          "column": 24,
+          "nodeType": "MemberExpression",
           "messageId": "unsafeArgument",
-          "endLine": 56,
-          "endColumn": 68
-        }
-      ],
-      "/lib/utils/foodTruckHelpers.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-argument",
-          "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `string`.",
-          "line": 222,
-          "column": 38,
-          "nodeType": "CallExpression",
-          "messageId": "unsafeArgument",
-          "endLine": 222,
-          "endColumn": 65
+          "endLine": 106,
+          "endColumn": 32
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-argument",
           "severity": 2,
-          "message": "Unsafe argument of type error typed assigned to a parameter of type `string`.",
-          "line": 223,
+          "message": "Unsafe argument of type error typed assigned to a parameter of type `string | undefined`.",
+          "line": 169,
+          "column": 40,
+          "nodeType": "MemberExpression",
+          "messageId": "unsafeArgument",
+          "endLine": 169,
+          "endColumn": 54
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-argument",
+          "severity": 2,
+          "message": "Unsafe argument of type error typed assigned to a parameter of type `string | undefined`.",
+          "line": 172,
           "column": 39,
-          "nodeType": "CallExpression",
+          "nodeType": "MemberExpression",
           "messageId": "unsafeArgument",
-          "endLine": 223,
-          "endColumn": 67
+          "endLine": 172,
+          "endColumn": 53
+        }
+      ]
+    },
+    "@typescript-eslint/no-unsafe-call": {
+      "/components/ui/AlertDialog.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 89,
+          "column": 56,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 89,
+          "endColumn": 70
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 99,
+          "column": 19,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 99,
+          "endColumn": 33
+        }
+      ],
+      "/components/ui/NavigationMenu.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 37,
+          "column": 36,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 37,
+          "endColumn": 39
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 47,
+          "column": 19,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 47,
+          "endColumn": 45
+        }
+      ],
+      "/components/ui/ToggleGroup.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 59,
+          "column": 9,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 59,
+          "endColumn": 23
+        }
+      ],
+      "/components/ui/alert.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 6,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 6,
+          "endColumn": 26
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 28,
+          "column": 45,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 28,
+          "endColumn": 58
+        }
+      ],
+      "/components/ui/badge.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 6,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 6,
+          "endColumn": 26
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 32,
+          "column": 30,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 32,
+          "endColumn": 43
+        }
+      ],
+      "/components/ui/button.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 7,
+          "column": 24,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 7,
+          "endColumn": 27
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 43,
+          "column": 27,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 43,
+          "endColumn": 41
+        }
+      ],
+      "/components/ui/calendar.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 35,
+          "column": 11,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 35,
+          "endColumn": 25
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 46,
+          "column": 11,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 46,
+          "endColumn": 25
+        }
+      ],
+      "/components/ui/label.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 9,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 9,
+          "endColumn": 26
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 19,
+          "column": 48,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 19,
+          "endColumn": 61
+        }
+      ],
+      "/components/ui/pagination.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 50,
+          "column": 7,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 50,
+          "endColumn": 21
+        }
+      ],
+      "/components/ui/sheet.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 34,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 34,
+          "endColumn": 26
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 64,
+          "column": 53,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 64,
+          "endColumn": 66
+        }
+      ],
+      "/components/ui/sidebar.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `error` type typed value.",
+          "line": 83,
+          "column": 9,
+          "nodeType": "MemberExpression",
+          "messageId": "unsafeCall",
+          "endLine": 83,
+          "endColumn": 20
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 496,
+          "column": 35,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 496,
+          "endColumn": 38
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 547,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 547,
+          "endColumn": 48
+        }
+      ],
+      "/components/ui/toast.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 30,
+          "column": 23,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 30,
+          "endColumn": 26
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 55,
+          "column": 21,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 55,
+          "endColumn": 34
+        }
+      ],
+      "/components/ui/toggle.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 9,
+          "column": 24,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 9,
+          "endColumn": 27
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-call",
+          "severity": 2,
+          "message": "Unsafe call of a(n) `any` typed value.",
+          "line": 38,
+          "column": 19,
+          "nodeType": "Identifier",
+          "messageId": "unsafeCall",
+          "endLine": 38,
+          "endColumn": 33
         }
       ]
     },
     "@typescript-eslint/no-unsafe-member-access": {
-      "/components/admin/food-trucks/detail/OperatingHoursCard.tsx": [
+      "/components/ui/ScrollArea.tsx": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-member-access",
           "severity": 2,
-          "message": "Unsafe member access [day as keyof OperatingHours] on an `error` typed value.",
-          "line": 38,
-          "column": 57,
-          "nodeType": "TSAsExpression",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 38,
-          "endColumn": 84
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .closed on an `error` typed value.",
-          "line": 45,
-          "column": 36,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 45,
-          "endColumn": 42
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 49,
-          "column": 34,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 49,
-          "endColumn": 38
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 50,
-          "column": 33,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 50,
-          "endColumn": 37
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 51,
-          "column": 34,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 51,
-          "endColumn": 39
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 52,
-          "column": 33,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 52,
-          "endColumn": 38
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 56,
-          "column": 38,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 56,
-          "endColumn": 42
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 56,
-          "column": 55,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 56,
-          "endColumn": 60
-        }
-      ],
-      "/components/trucks/TruckOperatingHours.tsx": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access [day as keyof typeof truck.operating_hours] on an `error` typed value.",
-          "line": 75,
-          "column": 55,
-          "nodeType": "TSAsExpression",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 75,
-          "endColumn": 96
-        }
-      ],
-      "/lib/api/search/filters.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .items on an `error` typed value.",
+          "message": "Unsafe member access .Root on an `any` value.",
           "line": 24,
-          "column": 20,
+          "column": 46,
           "nodeType": "Identifier",
           "messageId": "unsafeMemberExpression",
           "endLine": 24,
-          "endColumn": 25
+          "endColumn": 50
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-member-access",
           "severity": 2,
-          "message": "Unsafe member access .name on an `error` typed value.",
-          "line": 26,
-          "column": 20,
+          "message": "Unsafe member access .ScrollAreaScrollbar on an `any` value.",
+          "line": 44,
+          "column": 45,
           "nodeType": "Identifier",
           "messageId": "unsafeMemberExpression",
-          "endLine": 26,
-          "endColumn": 24
+          "endLine": 44,
+          "endColumn": 64
+        }
+      ],
+      "/components/ui/separator.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .Root on an `any` value.",
+          "line": 24,
+          "column": 44,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 24,
+          "endColumn": 48
+        }
+      ],
+      "/hooks/UseToast.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .id on an `error` typed value.",
+          "line": 84,
+          "column": 38,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 84,
+          "endColumn": 40
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-member-access",
           "severity": 2,
-          "message": "Unsafe member access .includes on an `error` typed value.",
-          "line": 26,
-          "column": 39,
+          "message": "Unsafe member access .id on an `error` typed value.",
+          "line": 84,
+          "column": 51,
           "nodeType": "Identifier",
           "messageId": "unsafeMemberExpression",
-          "endLine": 26,
-          "endColumn": 47
+          "endLine": 84,
+          "endColumn": 53
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-member-access",
           "severity": 2,
-          "message": "Unsafe member access .description on an `error` typed value.",
-          "line": 27,
-          "column": 21,
+          "message": "Unsafe member access .id on an `error` typed value.",
+          "line": 106,
+          "column": 30,
           "nodeType": "Identifier",
           "messageId": "unsafeMemberExpression",
-          "endLine": 27,
+          "endLine": 106,
           "endColumn": 32
         },
         {
           "ruleId": "@typescript-eslint/no-unsafe-member-access",
           "severity": 2,
-          "message": "Unsafe member access .includes on an `error` typed value.",
-          "line": 27,
-          "column": 48,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 27,
-          "endColumn": 56
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .name on an `error` typed value.",
-          "line": 40,
-          "column": 18,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 40,
-          "endColumn": 22
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .includes on an `error` typed value.",
-          "line": 40,
-          "column": 37,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 40,
-          "endColumn": 45
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access [currentDay] on an `error` typed value.",
-          "line": 75,
-          "column": 45,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 75,
-          "endColumn": 55
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .closed on an `error` typed value.",
-          "line": 76,
-          "column": 27,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 76,
-          "endColumn": 33
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 78,
-          "column": 46,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 78,
-          "endColumn": 50
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 79,
-          "column": 47,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 79,
-          "endColumn": 52
-        }
-      ],
-      "/lib/api/test-integration/schemaMapper.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .name on an `error` typed value.",
-          "line": 35,
-          "column": 22,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 35,
-          "endColumn": 26
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .items on an `error` typed value.",
-          "line": 36,
-          "column": 24,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 36,
-          "endColumn": 29
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .map on an `error` typed value.",
-          "line": 36,
-          "column": 37,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 36,
-          "endColumn": 40
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .name on an `error` typed value.",
-          "line": 37,
-          "column": 20,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 37,
-          "endColumn": 24
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .description on an `error` typed value.",
-          "line": 38,
-          "column": 27,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 38,
-          "endColumn": 38
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .price on an `error` typed value.",
-          "line": 40,
-          "column": 23,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 40,
-          "endColumn": 28
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .price on an `error` typed value.",
-          "line": 40,
-          "column": 57,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 40,
-          "endColumn": 62
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .price on an `error` typed value.",
-          "line": 40,
-          "column": 83,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 40,
-          "endColumn": 88
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .dietary_tags on an `error` typed value.",
-          "line": 41,
-          "column": 28,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 41,
-          "endColumn": 40
-        }
-      ],
-      "/lib/performance/databaseCache.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access [currentDay as keyof typeof truck.operating_hours] on an `error` typed value.",
-          "line": 154,
-          "column": 13,
-          "nodeType": "TSAsExpression",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 154,
-          "endColumn": 61
-        }
-      ],
-      "/lib/pipeline/pipelineHelpers.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .monday on an `error` typed value.",
-          "line": 74,
-          "column": 37,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 74,
-          "endColumn": 43
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .tuesday on an `error` typed value.",
-          "line": 75,
-          "column": 38,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 75,
-          "endColumn": 45
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .wednesday on an `error` typed value.",
-          "line": 76,
-          "column": 40,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 76,
-          "endColumn": 49
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .thursday on an `error` typed value.",
-          "line": 77,
-          "column": 39,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 77,
-          "endColumn": 47
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .friday on an `error` typed value.",
-          "line": 78,
-          "column": 37,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 78,
-          "endColumn": 43
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .saturday on an `error` typed value.",
-          "line": 79,
-          "column": 39,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 79,
-          "endColumn": 47
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .sunday on an `error` typed value.",
-          "line": 80,
-          "column": 37,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 80,
-          "endColumn": 43
-        }
-      ],
-      "/lib/utils/foodTruckHelpers.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .closed on an `error` typed value.",
-          "line": 36,
-          "column": 23,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 36,
-          "endColumn": 29
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 39,
-          "column": 45,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 39,
-          "endColumn": 49
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 44,
-          "column": 46,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 44,
-          "endColumn": 51
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access [today] on an `error` typed value.",
-          "line": 94,
-          "column": 34,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 94,
-          "endColumn": 39
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access [today] on an `error` typed value.",
-          "line": 207,
-          "column": 41,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 207,
-          "endColumn": 46
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .closed on an `error` typed value.",
-          "line": 212,
-          "column": 11,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 212,
-          "endColumn": 17
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 213,
-          "column": 11,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 213,
-          "endColumn": 15
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 214,
-          "column": 11,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 214,
-          "endColumn": 16
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .open on an `error` typed value.",
-          "line": 222,
-          "column": 44,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 222,
-          "endColumn": 48
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-member-access",
-          "severity": 2,
-          "message": "Unsafe member access .close on an `error` typed value.",
-          "line": 223,
-          "column": 45,
-          "nodeType": "Identifier",
-          "messageId": "unsafeMemberExpression",
-          "endLine": 223,
-          "endColumn": 50
-        }
-      ]
-    },
-    "sonarjs/no-unused-vars": {
-      "/components/ui/TruckCardContent.tsx": [
-        {
-          "ruleId": "sonarjs/no-unused-vars",
-          "severity": 2,
-          "message": "Remove the declaration of the unused 'avgDailyPrice' variable.",
-          "line": 40,
-          "column": 9,
-          "nodeType": "Identifier",
-          "messageId": "unusedVariable",
-          "endLine": 40,
-          "endColumn": 22
-        }
-      ]
-    },
-    "sonarjs/no-dead-store": {
-      "/components/ui/TruckCardContent.tsx": [
-        {
-          "ruleId": "sonarjs/no-dead-store",
-          "severity": 2,
-          "message": "Remove this useless assignment to variable \"avgDailyPrice\".",
-          "line": 40,
-          "column": 9,
-          "nodeType": null,
-          "messageId": "removeAssignment",
-          "endLine": 40,
-          "endColumn": 22
-        }
-      ]
-    },
-    "@typescript-eslint/no-unsafe-call": {
-      "/hooks/useRealtimeAdminEvents.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 82,
-          "column": 3,
-          "nodeType": "Identifier",
-          "messageId": "unsafeCall",
-          "endLine": 82,
-          "endColumn": 12
-        }
-      ],
-      "/lib/api/search/filters.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 24,
-          "column": 11,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 24,
-          "endColumn": 31
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 26,
-          "column": 15,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 26,
-          "endColumn": 47
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 26,
-          "column": 15,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 26,
-          "endColumn": 36
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 27,
-          "column": 16,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 27,
-          "endColumn": 56
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 27,
-          "column": 16,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 27,
-          "endColumn": 45
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 40,
-          "column": 9,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 40,
-          "endColumn": 45
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 40,
-          "column": 9,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 40,
-          "endColumn": 34
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 78,
-          "column": 40,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 78,
-          "endColumn": 58
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 79,
-          "column": 41,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 79,
-          "endColumn": 60
-        }
-      ],
-      "/lib/api/test-integration/schemaMapper.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 36,
-          "column": 14,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 36,
-          "endColumn": 40
-        }
-      ],
-      "/lib/utils/foodTruckHelpers.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 222,
-          "column": 38,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 222,
-          "endColumn": 56
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-call",
-          "severity": 2,
-          "message": "Unsafe call of a(n) `error` type typed value.",
-          "line": 223,
-          "column": 39,
-          "nodeType": "MemberExpression",
-          "messageId": "unsafeCall",
-          "endLine": 223,
-          "endColumn": 58
-        }
-      ]
-    },
-    "@typescript-eslint/no-unsafe-return": {
-      "/lib/api/search/filters.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-return",
-          "severity": 2,
-          "message": "Unsafe return of a value of type error.",
-          "line": 26,
-          "column": 15,
-          "nodeType": "LogicalExpression",
-          "messageId": "unsafeReturn",
-          "endLine": 27,
-          "endColumn": 87
-        }
-      ],
-      "/lib/gemini.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-return",
-          "severity": 2,
-          "message": "Unsafe return of a value of type `any[]`.",
-          "line": 55,
-          "column": 7,
-          "nodeType": "ReturnStatement",
-          "messageId": "unsafeReturn",
-          "endLine": 55,
-          "endColumn": 36
-        },
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-return",
-          "severity": 2,
-          "message": "Unsafe return of a value of type error.",
-          "line": 89,
-          "column": 7,
-          "nodeType": "CallExpression",
-          "messageId": "unsafeReturn",
-          "endLine": 89,
-          "endColumn": 53
-        }
-      ],
-      "/lib/utils/foodTruckHelpers.ts": [
-        {
-          "ruleId": "@typescript-eslint/no-unsafe-return",
-          "severity": 2,
-          "message": "Unsafe return of a value of type error.",
-          "line": 94,
-          "column": 3,
-          "nodeType": "ReturnStatement",
-          "messageId": "unsafeReturn",
-          "endLine": 94,
-          "endColumn": 41
-        }
-      ]
-    },
-    "@typescript-eslint/prefer-nullish-coalescing": {
-      "/lib/api/search/filters.ts": [
-        {
-          "ruleId": "@typescript-eslint/prefer-nullish-coalescing",
-          "severity": 2,
-          "message": "Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator.",
-          "line": 26,
-          "column": 69,
-          "nodeType": "Punctuator",
-          "messageId": "preferNullishOverOr",
-          "endLine": 26,
-          "endColumn": 71,
-          "suggestions": [
-            {
-              "messageId": "suggestNullish",
-              "data": {
-                "equals": ""
-              },
-              "fix": {
-                "range": [
-                  1453,
-                  1455
-                ],
-                "text": "??"
-              },
-              "desc": "Fix to nullish coalescing operator (`??`)."
-            }
-          ]
-        }
-      ]
-    },
-    "sonarjs/use-type-alias": {
-      "/lib/fallback/supabaseFallback.tsx": [
-        {
-          "ruleId": "sonarjs/use-type-alias",
-          "severity": 2,
-          "message": "Replace this union type with a type alias.",
-          "line": 63,
-          "column": 22,
-          "nodeType": null,
-          "endLine": 63,
-          "endColumn": 66
-        }
-      ]
-    },
-    "sonarjs/different-types-comparison": {
-      "/lib/fallback/supabaseFallback.tsx": [
-        {
-          "ruleId": "sonarjs/different-types-comparison",
-          "severity": 2,
-          "message": "Remove this \"!==\" check; it will always be true. Did you mean to use \"!=\"?",
-          "line": 189,
-          "column": 29,
-          "nodeType": null,
-          "endLine": 189,
-          "endColumn": 32,
-          "suggestions": [
-            {
-              "desc": "Replace \"!==\" with \"!=\"",
-              "fix": {
-                "range": [
-                  5528,
-                  5531
-                ],
-                "text": "!="
-              }
-            }
-          ]
-        },
-        {
-          "ruleId": "sonarjs/different-types-comparison",
-          "severity": 2,
-          "message": "Remove this \"!==\" check; it will always be true. Did you mean to use \"!=\"?",
-          "line": 204,
-          "column": 29,
-          "nodeType": null,
-          "endLine": 204,
-          "endColumn": 32,
-          "suggestions": [
-            {
-              "desc": "Replace \"!==\" with \"!=\"",
-              "fix": {
-                "range": [
-                  6110,
-                  6113
-                ],
-                "text": "!="
-              }
-            }
-          ]
-        },
-        {
-          "ruleId": "sonarjs/different-types-comparison",
-          "severity": 2,
-          "message": "Remove this \"!==\" check; it will always be true. Did you mean to use \"!=\"?",
-          "line": 215,
-          "column": 29,
-          "nodeType": null,
-          "endLine": 215,
-          "endColumn": 32,
-          "suggestions": [
-            {
-              "desc": "Replace \"!==\" with \"!=\"",
-              "fix": {
-                "range": [
-                  6492,
-                  6495
-                ],
-                "text": "!="
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "sonarjs/deprecation": {
-      "/lib/supabase/services/foodTruckService.ts": [
-        {
-          "ruleId": "sonarjs/deprecation",
-          "severity": 2,
-          "message": "'(): PostgrestTransformBuilder<any, any, RawMenuItemFromDB[], \"menu_items\", unknown>' is deprecated.",
-          "line": 29,
-          "column": 14,
-          "nodeType": null,
-          "messageId": "deprecation",
-          "endLine": 29,
-          "endColumn": 21
-        },
-        {
-          "ruleId": "sonarjs/deprecation",
-          "severity": 2,
-          "message": "'(): PostgrestTransformBuilder<any, any, RawMenuItemFromDB[], \"menu_items\", unknown>' is deprecated.",
-          "line": 62,
+          "message": "Unsafe member access .id on an `error` typed value.",
+          "line": 113,
           "column": 10,
-          "nodeType": null,
-          "messageId": "deprecation",
-          "endLine": 62,
-          "endColumn": 17
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 113,
+          "endColumn": 12
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .id on an `error` typed value.",
+          "line": 144,
+          "column": 42,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 144,
+          "endColumn": 44
+        }
+      ],
+      "/lib/performance/bundleAnalyzer.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .Menu on an `any` value.",
+          "line": 148,
+          "column": 67,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 148,
+          "endColumn": 71
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .Search on an `any` value.",
+          "line": 149,
+          "column": 71,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 149,
+          "endColumn": 77
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .User on an `any` value.",
+          "line": 150,
+          "column": 67,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 150,
+          "endColumn": 71
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .BarChart3 on an `any` value.",
+          "line": 151,
+          "column": 77,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 151,
+          "endColumn": 86
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .Settings on an `any` value.",
+          "line": 152,
+          "column": 75,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 152,
+          "endColumn": 83
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .Database on an `any` value.",
+          "line": 153,
+          "column": 75,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 153,
+          "endColumn": 83
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-member-access",
+          "severity": 2,
+          "message": "Unsafe member access .Slot on an `any` value.",
+          "line": 158,
+          "column": 77,
+          "nodeType": "Identifier",
+          "messageId": "unsafeMemberExpression",
+          "endLine": 158,
+          "endColumn": 81
         }
       ]
     },
     "@typescript-eslint/no-redundant-type-constituents": {
-      "/lib/types.ts": [
+      "/components/ui/ToggleGroup.tsx": [
         {
           "ruleId": "@typescript-eslint/no-redundant-type-constituents",
           "severity": 2,
-          "message": "'PriceRange' is an 'error' type that acts as 'any' and overrides all other types in this union type.",
-          "line": 24,
-          "column": 16,
+          "message": "'VariantProps' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.",
+          "line": 23,
+          "column": 5,
           "nodeType": "TSTypeReference",
           "messageId": "errorTypeOverrides",
-          "endLine": 24,
-          "endColumn": 26
+          "endLine": 23,
+          "endColumn": 40
         },
         {
           "ruleId": "@typescript-eslint/no-redundant-type-constituents",
           "severity": 2,
-          "message": "'PriceRange' is an 'error' type that acts as 'any' and overrides all other types in this union type.",
-          "line": 84,
-          "column": 16,
+          "message": "'VariantProps' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.",
+          "line": 43,
+          "column": 5,
           "nodeType": "TSTypeReference",
           "messageId": "errorTypeOverrides",
+          "endLine": 43,
+          "endColumn": 40
+        }
+      ],
+      "/components/ui/sidebar.tsx": [
+        {
+          "ruleId": "@typescript-eslint/no-redundant-type-constituents",
+          "severity": 2,
+          "message": "'VariantProps' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.",
+          "line": 524,
+          "column": 7,
+          "nodeType": "TSTypeReference",
+          "messageId": "errorTypeOverrides",
+          "endLine": 524,
+          "endColumn": 53
+        }
+      ],
+      "/hooks/UseToast.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-redundant-type-constituents",
+          "severity": 2,
+          "message": "'ToastComponentProps' is an 'error' type that acts as 'any' and overrides all other types in this intersection type.",
+          "line": 11,
+          "column": 28,
+          "nodeType": "TSTypeReference",
+          "messageId": "errorTypeOverrides",
+          "endLine": 11,
+          "endColumn": 47
+        }
+      ]
+    },
+    "@typescript-eslint/no-unsafe-return": {
+      "/hooks/UseToast.ts": [
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-return",
+          "severity": 2,
+          "message": "Unsafe return of a value of type error.",
+          "line": 84,
+          "column": 36,
+          "nodeType": "ConditionalExpression",
+          "messageId": "unsafeReturn",
           "endLine": 84,
-          "endColumn": 26
+          "endColumn": 78
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unsafe-return",
+          "severity": 2,
+          "message": "Unsafe return of a value of type error.",
+          "line": 113,
+          "column": 8,
+          "nodeType": "ConditionalExpression",
+          "messageId": "unsafeReturn",
+          "endLine": 118,
+          "endColumn": 12
         }
       ]
     }
@@ -1444,12 +1636,12 @@
   "automationCandidates": [
     {
       "ruleId": "@typescript-eslint/no-unsafe-assignment",
-      "count": 31,
+      "count": 64,
       "confidence": "MEDIUM",
       "method": "type-annotation",
       "description": "Add type annotations for unsafe assignments",
-      "estimatedFixes": 9,
-      "priority": 18
+      "estimatedFixes": 19,
+      "priority": 38
     }
   ],
   "recommendations": {
@@ -1462,15 +1654,15 @@
       "candidates": [
         {
           "ruleId": "@typescript-eslint/no-unsafe-assignment",
-          "count": 31,
+          "count": 64,
           "confidence": "MEDIUM",
           "method": "type-annotation",
           "description": "Add type annotations for unsafe assignments",
-          "estimatedFixes": 9,
-          "priority": 18
+          "estimatedFixes": 19,
+          "priority": 38
         }
       ],
-      "totalFixes": 9,
+      "totalFixes": 19,
       "methods": [
         "type-annotation"
       ]

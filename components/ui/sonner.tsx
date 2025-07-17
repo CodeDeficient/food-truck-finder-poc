@@ -1,13 +1,11 @@
 'use client';
 
-// @ts-expect-error TS(2792): Cannot find module 'next-themes'. Did you mean to ... Remove this comment to see the full error message
+import * as React from 'react';
+import { Toaster as SonnerToaster } from 'sonner';
 import { useTheme } from 'next-themes';
-import { Toaster as Sonner } from 'sonner';
 
-// @ts-expect-error TS(2456): Type alias 'ToasterProps' circularly references it... Remove this comment to see the full error message
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+type ToasterProps = React.ComponentProps<typeof SonnerToaster>;
 
-// @ts-expect-error TS(7022): 'Toaster' implicitly has type 'any' because it doe... Remove this comment to see the full error message
 /**
  * Renders a Sonner toast notification with a customizable theme and style.
  * @example
@@ -25,7 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
 
   return (
-    <Sonner
+    <SonnerToaster
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       toastOptions={{
