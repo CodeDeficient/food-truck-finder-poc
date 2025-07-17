@@ -113,7 +113,9 @@ export class TaskScheduler {
           console.info(`Executing task: ${taskId}`);
           task.lastRun = new Date().toISOString();
 
-          await task.execute();
+            void (async () => {
+              await task.execute();
+            })();
 
           task.successCount += 1;
           task.lastSuccess = new Date().toISOString();
