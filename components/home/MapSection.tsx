@@ -1,15 +1,17 @@
-
 import dynamic from 'next/dynamic';
 import { FoodTruck } from '@/lib/types';
 
-const DynamicMap = dynamic(() => import('@/components/map/DynamicMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-96 flex items-center justify-center bg-gray-100 dark:bg-slate-800 rounded-lg">
-      <p>Loading map...</p>
-    </div>
-  ),
-});
+const DynamicMapComponent = dynamic(
+  () => import('@/components/map/MapComponent').then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div style={{ height: '400px', background: '#f0f0f0' }}>
+        <p>Loading map...</p>
+      </div>
+    ),
+  }
+);
 
 // Helper function to get selected truck location
 function getSelectedTruckLocation(
@@ -63,7 +65,7 @@ export function MapSection({
     <div
       className="lg:col-span-2 h-80 min-h-[320px] sm:h-96 sm:min-h-[400px] dark:bg-slate-800 rounded-lg shadow"
     >
-      <DynamicMap
+      <DynamicMapComponent
         trucks={filteredTrucks}
         userLocation={userLocation}
         onSelectTruck={setSelectedTruckId}

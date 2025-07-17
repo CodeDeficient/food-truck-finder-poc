@@ -35,8 +35,7 @@ const nextConfig = {
       'lucide-react',
       'recharts',
     ],
-    // Enable SWC minification for better performance
-    swcMinify: true,
+    
   },
   // Bundle optimization
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

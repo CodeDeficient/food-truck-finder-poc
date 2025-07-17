@@ -1,7 +1,24 @@
 import React from 'react';
 import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  };
+  dataQuality: {
+    averageScore: number;
+    totalTrucks: number;
+    recentChanges: number;
+  };
+  systemHealth: {
+    status: 'healthy' | 'warning' | 'error';
+    uptime: number;
+    lastUpdate: string;
+  };
+}
 import { setupEventSourceAuth } from '../useRealtimeAdminEventsHelpers';
-import { useConnectionState } from './useConnectionState';
 import { setupEventSourceListeners } from './setupEventSourceListeners';
 
 function handleConnectionError(
@@ -69,10 +86,10 @@ function initializeEventSource(config: CreateConnectionConfig) {
 }
 
 function setupInitialConnectionState(
-  connectionState: ReturnType<typeof useConnectionState>,
+  setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>,
+  setConnectionError: React.Dispatch<React.SetStateAction<string | undefined>>,
   isManuallyDisconnectedRef: React.RefObject<boolean>,
 ) {
-  const { setIsConnecting, setConnectionError } = connectionState;
   setIsConnecting(true);
   setConnectionError(undefined);
   isManuallyDisconnectedRef.current = false;
