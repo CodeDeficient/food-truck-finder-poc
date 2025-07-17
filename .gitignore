@@ -84,3 +84,4 @@ app/auth/callback/route-baseline.json
 components/map/DebugOverlay.tsx
 errors/mapcontainer-already-initialized.md
 test-lint.ts
+/errors/

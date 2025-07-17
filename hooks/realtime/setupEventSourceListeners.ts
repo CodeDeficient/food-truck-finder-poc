@@ -1,6 +1,24 @@
-import React from 'react';
+import * as React from 'react';
 import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
-import { useConnectionState } from './useConnectionState';
+
+interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  };
+  dataQuality: {
+    averageScore: number;
+    totalTrucks: number;
+    recentChanges: number;
+  };
+  systemHealth: {
+    status: 'healthy' | 'warning' | 'error';
+    uptime: number;
+    lastUpdate: string;
+  };
+}
 
 interface ConnectionStateActions {
   setIsConnected: (connected: boolean) => void;
@@ -15,6 +33,8 @@ interface EventSourceRefs {
 }
 
 interface ReconnectLogicParams extends EventSourceRefs {
+  eventSource: EventSource;
+  handleEvent: (event: RealtimeEvent) => void;
   connectionAttempts: number;
   maxReconnectAttempts: number;
   reconnectInterval: number;
@@ -143,16 +163,22 @@ interface SetupEventSourceListenersParams {
 }
 
 function createReconnectLogicParams(
-  params: Omit<SetupEventSourceListenersParams, 'eventSource' | 'handleEvent' | 'connectionState'>,
-  connectionState: ReturnType<typeof useConnectionState>,
+  params: SetupEventSourceListenersParams,
 ): ReconnectLogicParams {
   return {
-    ...params,
-    setConnectionAttempts: connectionState.setConnectionAttempts,
-    setConnectionError: connectionState.setConnectionError,
-    setLastEventTime: connectionState.setLastEventTime,
-    setLatestMetrics: connectionState.setLatestMetrics,
-    setRecentEvents: connectionState.setRecentEvents,
+    eventSource: params.eventSource,
+    handleEvent: params.handleEvent,
+    isManuallyDisconnectedRef: params.isManuallyDisconnectedRef,
+    connectionAttempts: params.connectionAttempts,
+    maxReconnectAttempts: params.maxReconnectAttempts,
+    reconnectInterval: params.reconnectInterval,
+    reconnectTimeoutRef: params.reconnectTimeoutRef,
+    connect: params.connect,
+    setLastEventTime: params.setLastEventTime,
+    setLatestMetrics: params.setLatestMetrics,
+    setRecentEvents: params.setRecentEvents,
+    setConnectionAttempts: params.setConnectionAttempts,
+    setConnectionError: params.setConnectionError,
   };
 }
 
@@ -216,16 +242,7 @@ export function setupEventSourceListeners(params: SetupEventSourceListenersParam
     setConnectionError,
     setConnectionAttempts,
   };
-  const reconnectLogicParams = createReconnectLogicParams(
-    params,
-    setIsConnected,
-    setIsConnecting,
-    setConnectionError,
-    setConnectionAttempts,
-    params.setLastEventTime,
-    params.setLatestMetrics,
-    params.setRecentEvents,
-  );
+  const reconnectLogicParams = createReconnectLogicParams(params);
 
   addEventListeners(eventSource, params, connectionActions, reconnectLogicParams);
 }

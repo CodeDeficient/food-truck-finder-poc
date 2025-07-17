@@ -7,15 +7,21 @@ import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { toggleVariants } from '@/components/ui/toggle';
 
-const ToggleGroupContext = React.createContext<VariantProps<typeof toggleVariants>>({
+type ToggleGroupContextType = {
+  size?: 'default' | 'sm' | 'lg';
+  variant?: 'default' | 'outline';
+};
+
+const ToggleGroupContext = React.createContext<ToggleGroupContextType>({
   size: 'default',
   variant: 'default',
 });
 
+interface ToggleGroupProps extends React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root>, VariantProps<typeof toggleVariants> {}
+
 const ToggleGroup = React.forwardRef<
   HTMLDivElement,
-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
-    VariantProps<typeof toggleVariants>
+  ToggleGroupProps
 >(({ className, variant, size, children, ...props }, ref) => {
   return (
     <ToggleGroupContext.Provider value={{ variant, size }}>
@@ -32,10 +38,11 @@ const ToggleGroup = React.forwardRef<
 
 ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;
 
+interface ToggleGroupItemProps extends React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, VariantProps<typeof toggleVariants> {}
+
 const ToggleGroupItem = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
-    VariantProps<typeof toggleVariants>
+  ToggleGroupItemProps
 >(({ className, children, variant, size, ...props }, ref) => {
   const context = React.useContext(ToggleGroupContext);
   // Refactor to avoid nested ternary and use explicit length check

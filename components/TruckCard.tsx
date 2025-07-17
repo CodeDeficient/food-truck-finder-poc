@@ -38,7 +38,7 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-              {truck.current_location?.address && (
+              {truck.current_location?.address != undefined && (
                 <CardDescription className="flex items-center mt-1 dark:text-gray-400">
                   <MapPin className="size-4 mr-1" />
                   {truck.current_location.address}
@@ -47,6 +47,7 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
             </div>
             <div className="flex flex-col items-end space-y-1">
               <Badge variant={isOpen ? 'default' : 'secondary'}>{isOpen ? 'Open' : 'Closed'}</Badge>
+              {/* Show price range fallback if no explicit prices */}
               {popularItems.every((item) => item.price === undefined) &&
                 priceRange !== undefined &&
                 priceRange !== '' && (
@@ -80,11 +81,11 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
           )}
 
           {Object.keys(social_media).length > 0 && (typeof social_media === 'object')&& (
-            <SocialMediaSection social_media={social_media} />
+            <SocialMediaSection socialMedia={social_media} />
           )}
 
           {(phone || email || website) && (
-            <ContactSection phone_number={phone} email={email} website={website} />
+            <ContactSection contactInfo={{ phone, website }} />
           )}
         </main>
       </CardContent>
