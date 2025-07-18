@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { dispatchGeminiOperation, gemini } from '@/lib/gemini';
 import { handleErrorResponse } from '@/lib/utils/apiHelpers';
 
-import { GeminiResponse } from '@/lib/types';
+import type { GeminiResponse } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
   try {

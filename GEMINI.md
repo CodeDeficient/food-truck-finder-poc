@@ -58,6 +58,7 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
 
 - **Rule 2.1:** All significant actions, analyses, and status changes must be logged in `🚨_LINTING_REMEDIATION_COMMAND_CENTER_🚨.md`. This is the central coordination point.
 - **Rule 2.2:** Any new, broadly applicable learning or operational standard must be codified and added to this `.clinerules` file.
+- **Rule 2.3:** All complex tasks must be broken down into a detailed Work Breakdown Structure (WBS) following the guidelines in `.clinerules/wbs-task-breakdown.md`.
 
 ### Rule Set: Code Style
 

@@ -1,5 +1,5 @@
 import { supabase, supabaseAdmin } from '../client';
-import { ApiUsage } from '../types';
+import type { ApiUsage } from '../types';
 import { type PostgrestResponse, type PostgrestSingleResponse, type PostgrestError } from '@supabase/supabase-js';
 
 export const APIUsageService = {
@@ -14,12 +14,15 @@ export const APIUsageService = {
       const {
         data: existing,
         error: existingError,
-      }: { data: ApiUsage | undefined; error: PostgrestError | null } = await supabaseAdmin
+      } = await supabaseAdmin
         .from('api_usage')
         .select('*')
         .eq('service_name', serviceName)
         .eq('usage_date', today)
-        .single();
+        .single() as unknown as {
+        data: ApiUsage | undefined;
+        error: PostgrestError | null;
+      };
 
       if (existingError && existingError.code !== 'PGRST116') throw existingError;
 

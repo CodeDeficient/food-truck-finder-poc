@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FoodTruck } from '@/lib/types'; // Assuming FoodTruck type is here
+import type { FoodTruck } from '@/lib/types'; // Assuming FoodTruck type is here
 
 interface TruckAccordionContentProps {
   filteredTrucks: FoodTruck[];

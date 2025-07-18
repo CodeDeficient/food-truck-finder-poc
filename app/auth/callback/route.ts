@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { RateLimiter, getClientIdentifier } from '@/lib/security/rateLimiter';
 import { AuditLogger } from '@/lib/security/auditLogger';
-import { User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 
 interface RequestMetadata {
   ip: string;

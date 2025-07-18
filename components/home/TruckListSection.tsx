@@ -1,5 +1,5 @@
 
-import { FoodTruck } from '@/lib/supabase/types';
+import type { FoodTruck } from '@/lib/supabase/types';
 import { TruckAccordionContent } from './TruckAccordionContent';
 import { TruckListHeader } from './TruckListHeader'; // Import the new component
 

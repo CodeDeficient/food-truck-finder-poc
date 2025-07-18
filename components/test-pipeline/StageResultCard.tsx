@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { StageResult } from '@/lib/types';
+import type { StageResult } from '@/lib/types';
 import { StageResultDetails } from './StageResultDetails';
 
 interface StageResultCardProps {

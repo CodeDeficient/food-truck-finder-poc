@@ -1,5 +1,5 @@
 
-import { FoodTruckService, FoodTruck, supabase } from '@/lib/supabase';
+import { FoodTruckService, supabase, type FoodTruck } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -51,7 +51,7 @@ function PageHeader() {
     <div className="flex items-center justify-between">
       <h1 className="text-3xl font-bold tracking-tight">Data Quality Management</h1>
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" asChild>
+        <Button asChild>
           <Link href="/admin/data-quality/reports">
             <BarChart3 className="size-4 mr-2" />
             View Reports
@@ -154,7 +154,7 @@ function FoodTruckQualityRow({ truck }: { readonly truck: FoodTruck }) {
           : new Date(truck.last_scraped_at).toLocaleDateString()}
       </TableCell>
       <TableCell className="text-right">
-        <Button variant="outline" size="sm" asChild>
+        <Button asChild>
           <Link href={`/admin/food-trucks/${truck.id}`}>
             <Edit className="size-4 mr-2" />
             Review

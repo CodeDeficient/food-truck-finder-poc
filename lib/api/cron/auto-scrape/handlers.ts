@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { autoScraper } from '@/lib/autoScraper';
 import { scheduler } from '@/lib/scheduler';
 import { logActivity } from '@/lib/activityLogger';
-import { AutoScrapeResult } from './types';
+import type { AutoScrapeResult } from './types';
 
 /**
 * Verifies the cron secret authorization header against a stored environment variable.
@@ -29,7 +29,7 @@ function verifyCronSecret(request: NextRequest): NextResponse | null {
     console.error('Unauthorized cron attempt:', authHeader);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  return undefined;
+  return null;
 }
 
 function logAutoScrapeStart() {

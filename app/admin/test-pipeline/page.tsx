@@ -40,8 +40,8 @@ Recommended Approach: Sub-domain or separate route within the existing Next.js a
 */
 
 import * as React from 'react';
-import { useState, FormEvent } from 'react';
-import { StageResult, TestPipelineResults } from '@/lib/types';
+import { useState, type FormEvent } from 'react';
+import type { StageResult, TestPipelineResults } from '@/lib/types';
 import { StageResultCard } from '@/components/test-pipeline/StageResultCard';
 import { TestPipelineForm } from '@/components/test-pipeline/TestPipelineForm';
 import { ErrorDisplay } from '@/components/test-pipeline/ErrorDisplay';

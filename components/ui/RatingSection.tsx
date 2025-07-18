@@ -1,5 +1,5 @@
 
-import { TruckRating } from '@/lib/types';
+import type { TruckRating } from '@/lib/types';
 
 /**
  * Displays truck ratings and calculates average score.

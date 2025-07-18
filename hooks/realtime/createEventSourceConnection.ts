@@ -1,5 +1,5 @@
 import React from 'react';
-import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
 interface RealtimeMetrics {
   scrapingJobs: {
     active: number;
@@ -23,8 +23,8 @@ import { setupEventSourceListeners } from './setupEventSourceListeners';
 
 function handleConnectionError(
   error: unknown,
-  setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>,
-  setConnectionError: React.Dispatch<React.SetStateAction<string | undefined>>,
+  setIsConnecting: (connecting: boolean) => void,
+  setConnectionError: (error: string | undefined) => void,
 ) {
   console.error('Failed to establish real-time connection:', error);
   setIsConnecting(false);
@@ -86,8 +86,8 @@ function initializeEventSource(config: CreateConnectionConfig) {
 }
 
 function setupInitialConnectionState(
-  setIsConnecting: React.Dispatch<React.SetStateAction<boolean>>,
-  setConnectionError: React.Dispatch<React.SetStateAction<string | undefined>>,
+  setIsConnecting: (connecting: boolean) => void,
+  setConnectionError: (error: string | undefined) => void,
   isManuallyDisconnectedRef: React.RefObject<boolean>,
 ) {
   setIsConnecting(true);
@@ -144,6 +144,10 @@ interface CreateConnectionConfig {
   setIsConnecting: (connecting: boolean) => void;
   setConnectionError: (error: string | undefined) => void;
   setConnectionAttempts: (attempts: number | ((prev: number) => number)) => void;
+  connectionState: {
+    setIsConnecting: (connecting: boolean) => void;
+    setConnectionError: (error: string | undefined) => void;
+  };
 }
 
 export function createEventSourceConnection(config: CreateConnectionConfig) {

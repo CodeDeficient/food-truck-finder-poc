@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { supabase } from '@/lib/supabase'; 
-import { PipelineEvent } from '@/lib/types';
+import type { PipelineEvent } from '@/lib/types';
 
 /**
  * Manages event subscriptions for pipeline events using Supabase.

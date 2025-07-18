@@ -1,5 +1,5 @@
 
-import { CleanupResult } from '@/hooks/useDataCleanup';
+import type { CleanupResult } from '@/hooks/useDataCleanup';
 
 interface CleanupSummaryCardsProps {
   readonly lastResult: CleanupResult;

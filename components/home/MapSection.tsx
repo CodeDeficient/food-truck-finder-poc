@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import { FoodTruck } from '@/lib/types';
+import type { FoodTruck } from '@/lib/types';
 
 const DynamicMapComponent = dynamic(
   () => import('@/components/map/MapComponent').then((mod) => mod.default),

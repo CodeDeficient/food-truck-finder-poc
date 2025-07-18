@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TruckCard from '@/components/ui/TruckCard';
-import { FoodTruck } from '@/lib/types'; // Import from actual types file
+import type { FoodTruck } from '@/lib/types'; // Import from actual types file
 
 
 /**

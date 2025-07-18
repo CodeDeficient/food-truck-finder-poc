@@ -227,7 +227,6 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
   - _Trigger Case_: Encountering `@typescript-eslint/await-thenable` or `sonarjs/no-invalid-await` errors.
   - _Example_: If `myFunction()` returns `void` or a non-Promise value, avoid `await myFunction();`. If `myAsyncFunction()` returns `Promise<T>`, then `await myAsyncFunction();` is appropriate.
 
-- **Rule 1.35: Validate `await` Usage Against Function Return Types**: Before using `await` on a function call, verify that the function is `async` and returns a `Promise`. Redundant `await` keywords on non-Promise-returning functions can lead to linting errors and unnecessary complexity.
+- **Rule 1.36: Never Merge with Build Errors**: Do not merge to main or deploy if the build is failing. All build errors must be resolved before merging.
 
-  - _Trigger Case_: Encountering `@typescript-eslint/await-thenable` or `sonarjs/no-invalid-await` errors.
-  - _Example_: If `myFunction()` returns `void` or a non-Promise value, avoid `await myFunction();`. If `myAsyncFunction()` returns `Promise<T>`, then `await myAsyncFunction();` is appropriate.
+- **Rule 1.37: Adopt a 'Global View' for TypeScript Debugging**: To avoid the inefficient cycle of fixing one build error at a time, use `npx tsc --noEmit` to get a comprehensive list of all TypeScript errors across the project before starting to fix them. This provides a complete picture of the work required and prevents rework.

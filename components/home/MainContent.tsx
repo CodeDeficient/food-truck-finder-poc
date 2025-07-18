@@ -1,4 +1,4 @@
-import { FoodTruck } from '@/lib/types';
+import type { FoodTruck } from '@/lib/types';
 import { MapSection } from './MapSection';
 import { TruckListSection } from './TruckListSection';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';

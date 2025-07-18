@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
-import { CleanupResult } from '@/hooks/useDataCleanup';
+import type { CleanupResult } from '@/hooks/useDataCleanup';
 import { CleanupOperationDetails } from './CleanupOperationDetails';
 import { CleanupSummaryCards } from './CleanupSummaryCards'; // Import the new component
 

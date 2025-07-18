@@ -234,7 +234,7 @@ export const DataQualityService = {
       return { updatedCount: 0, errors: [error.message] };
     }
 
-    const trucks: FoodTruck[] = data ?? [];
+const trucks = (data as FoodTruck[]) ?? [];
 
     const updates = trucks.map((truck: FoodTruck) => {
       const { score } = calculateQualityScore(truck);

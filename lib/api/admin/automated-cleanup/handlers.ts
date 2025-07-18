@@ -88,6 +88,38 @@ type CleanupOperationType =
  *   - Uses async functions to perform operations, ensuring asynchronous behavior.
  *   - Returns JSON responses compliant with NextResponse standards.
  */
+function isRunScheduledOptions(obj: any): obj is RunScheduledOptions {
+  return typeof obj.scheduleId === "string";
+}
+
+function isRunImmediateOptions(obj: any): obj is RunImmediateOptions {
+  return (
+    (obj.operations === undefined || Array.isArray(obj.operations)) &&
+    (obj.batchSize === undefined || typeof obj.batchSize === "number") &&
+    (obj.dryRun === undefined || typeof obj.dryRun === "boolean")
+  );
+}
+
+function isScheduleCleanupOptions(obj: any): obj is ScheduleCleanupOptions {
+  return (
+    typeof obj.name === "string" &&
+    Array.isArray(obj.operations) &&
+    typeof obj.schedule === "string" &&
+    (obj.enabled === undefined || typeof obj.enabled === "boolean")
+  );
+}
+
+function isUpdateScheduleOptions(obj: any): obj is UpdateScheduleOptions {
+  return (
+    typeof obj.scheduleId === "string" &&
+    typeof obj.updates === "object"
+  );
+}
+
+function isDeleteScheduleOptions(obj: any): obj is DeleteScheduleOptions {
+  return typeof obj.scheduleId === "string";
+}
+
 export async function handlePostRequest(body: {
   action: string;
   options?: Record<string, unknown>;
@@ -96,22 +128,34 @@ export async function handlePostRequest(body: {
 
   switch (action) {
     case 'run_scheduled': {
+      if (!isRunScheduledOptions(options)) {
+        return NextResponse.json({ success: false, error: 'Invalid options for run_scheduled' }, { status: 400 });
+      }
       return await handleRunScheduled(options);
     }
     case 'run_immediate': {
+      if (!isRunImmediateOptions(options)) {
+        return NextResponse.json({ success: false, error: 'Invalid options for run_immediate' }, { status: 400 });
+      }
       return await handleRunImmediate(options);
     }
     case 'schedule_cleanup': {
+      if (!isScheduleCleanupOptions(options)) {
+        return NextResponse.json({ success: false, error: 'Invalid options for schedule_cleanup' }, { status: 400 });
+      }
       return await handleScheduleCleanup(options);
     }
     case 'update_schedule': {
+      if (!isUpdateScheduleOptions(options)) {
+        return NextResponse.json({ success: false, error: 'Invalid options for update_schedule' }, { status: 400 });
+      }
       return await handleUpdateSchedule(options);
     }
     case 'delete_schedule': {
+      if (!isDeleteScheduleOptions(options)) {
+        return NextResponse.json({ success: false, error: 'Invalid options for delete_schedule' }, { status: 400 });
+      }
       return await handleDeleteSchedule(options);
-    }
-    case 'analyze_duplicates': {
-      return await handleAnalyzeDuplicates(options);
     }
     default: {
       return NextResponse.json(
@@ -194,8 +238,8 @@ export async function handleGetDefault(): Promise<NextResponse> {
   });
 }
 
-export async function handleRunScheduled(options: Record<string, unknown>): Promise<NextResponse> {
-  const { scheduleId } = options as RunScheduledOptions;
+export async function handleRunScheduled(options: RunScheduledOptions): Promise<NextResponse> {
+  const { scheduleId } = options;
   const result = await runScheduledCleanup(scheduleId);
   return NextResponse.json({
     success: true,
@@ -217,7 +261,7 @@ export async function handleRunScheduled(options: Record<string, unknown>): Prom
 *   - Utilizes `BatchCleanupService` for executing the cleanup logic.
 *   - Operation results are logged with `logCleanupOperation` for tracking purposes.
 */
-export async function handleRunImmediate(options: Record<string, unknown>): Promise<NextResponse> {
+export async function handleRunImmediate(options: RunImmediateOptions): Promise<NextResponse> {
   const {
     operations = [
       'remove_placeholders',
@@ -227,7 +271,7 @@ export async function handleRunImmediate(options: Record<string, unknown>): Prom
     ],
     batchSize = 50,
     dryRun = false,
-  } = options as RunImmediateOptions;
+  } = options;
 
   const result = await BatchCleanupService.runFullCleanup({
     operations: operations as CleanupOperationType[],
@@ -235,7 +279,7 @@ export async function handleRunImmediate(options: Record<string, unknown>): Prom
     dryRun,
   });
 
-  await logCleanupOperation('immediate', result, options);
+  await logCleanupOperation('immediate', result as unknown as Record<string, unknown>, options as unknown as Record<string, unknown>);
 
   return NextResponse.json({
     success: true,
@@ -246,9 +290,9 @@ export async function handleRunImmediate(options: Record<string, unknown>): Prom
 }
 
 export async function handleScheduleCleanup(
-  options: Record<string, unknown>,
+  options: ScheduleCleanupOptions,
 ): Promise<NextResponse> {
-  const { name, operations, schedule, enabled = true } = options as ScheduleCleanupOptions;
+  const { name, operations, schedule, enabled = true } = options;
   const scheduleResult = await createCleanupSchedule(name, operations, schedule, enabled);
   return NextResponse.json({
     success: true,
@@ -258,9 +302,9 @@ export async function handleScheduleCleanup(
 }
 
 export async function handleUpdateSchedule(
-  options: Record<string, unknown>,
+  options: UpdateScheduleOptions,
 ): Promise<NextResponse> {
-  const { scheduleId, updates } = options as UpdateScheduleOptions;
+  const { scheduleId, updates } = options;
   const updateResult = await updateCleanupSchedule(scheduleId, updates);
   return NextResponse.json({
     success: true,
@@ -270,9 +314,9 @@ export async function handleUpdateSchedule(
 }
 
 export async function handleDeleteSchedule(
-  options: Record<string, unknown>,
+  options: DeleteScheduleOptions,
 ): Promise<NextResponse> {
-  const { scheduleId } = options as DeleteScheduleOptions;
+  const { scheduleId } = options;
   const deleteResult = await deleteCleanupSchedule(scheduleId);
   return NextResponse.json({
     success: true,
@@ -452,9 +496,9 @@ async function runScheduledCleanup(scheduleId: string): Promise<Record<string, u
     dryRun: false,
   });
 
-  await logCleanupOperation('scheduled', result, { scheduleId });
+  await logCleanupOperation('scheduled', result as unknown as Record<string, unknown>, { scheduleId });
 
-  return result as Record<string, unknown>;
+return result as unknown as Record<string, unknown>;
 }
 
 interface ScheduleCreateResult {

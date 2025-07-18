@@ -33,7 +33,7 @@ export function TruckDetailHeader({
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
+        <Button asChild>
           <Link href="/admin/food-trucks">
             <ArrowLeft className="size-4 mr-2" />
             Back

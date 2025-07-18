@@ -1,7 +1,7 @@
 'use client';
 
 
-import { StatusMetric } from './useSystemMetrics'; // Import StatusMetric type
+import type { StatusMetric } from './useSystemMetrics'; // Import StatusMetric type
 import { getStatusColor, getStatusIcon, getTrendIcon } from './StatusHelpers'; // Import helper functions
 
 type Status = 'healthy' | 'warning' | 'error' | 'unknown';

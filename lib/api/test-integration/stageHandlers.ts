@@ -2,11 +2,11 @@ import { firecrawl } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
 import { FoodTruckService } from '@/lib/supabase';
 import {
-  ExtractedFoodTruckDetails,
-  FirecrawlOutputData,
-  GeminiResponse,
-  StageResult,
-  FoodTruckSchema,
+  type ExtractedFoodTruckDetails,
+  type FirecrawlOutputData,
+  type GeminiResponse,
+  type StageResult,
+  type FoodTruckSchema,
 } from '@/lib/types';
 import { mapExtractedDataToTruckSchema } from './schemaMapper';
 

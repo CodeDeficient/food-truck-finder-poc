@@ -1,4 +1,4 @@
-import { SchedulerTask } from './types';
+import type { SchedulerTask } from './types';
 
 export let schedulerInstance: { started: string } | undefined;
 export const schedulerTasks: SchedulerTask[] = [

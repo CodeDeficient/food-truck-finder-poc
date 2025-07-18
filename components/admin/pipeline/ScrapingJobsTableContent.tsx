@@ -1,6 +1,6 @@
 
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrapingJob } from '@/lib/supabase';
+import type { ScrapingJob } from '@/lib/supabase';
 import { ScrapingJobRow } from './ScrapingJobRow';
 
 interface ScrapingJobsTableContentProps {

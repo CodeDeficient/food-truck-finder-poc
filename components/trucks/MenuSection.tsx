@@ -1,6 +1,6 @@
 
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
-import { MenuItem } from '@/lib/supabase/types'; // Import MenuItem from lib/types
+import type { MenuItem } from '@/lib/supabase/types'; // Import MenuItem from lib/types
 
 interface MenuSectionProps {
   readonly popularItems: MenuItem[]; // Use the imported MenuItem type

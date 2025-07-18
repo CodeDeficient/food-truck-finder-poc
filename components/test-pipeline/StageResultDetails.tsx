@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Textarea } from '@/components/ui/textarea';
-import { StageResult } from '@/lib/types';
+import type { StageResult } from '@/lib/types';
 
 interface StageResultDetailsProps {
   readonly result: StageResult;

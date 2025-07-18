@@ -8,7 +8,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import type { LatLngExpression } from 'leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
-import { FoodTruck } from '@/lib/types';
+import type { FoodTruck } from '@/lib/types';
 
 interface MapComponentProps {
   readonly trucks: FoodTruck[];

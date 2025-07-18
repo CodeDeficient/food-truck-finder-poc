@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuditLogger, SecurityEvent } from '@/lib/security/auditLogger';
+import { AuditLogger, type SecurityEvent } from '@/lib/security/auditLogger';
 import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
 
 interface RequestMetadata {
@@ -234,7 +234,7 @@ export async function protectAdminRoutes(
       res,
       requestMetadata,
       user,
-      profile: profile ?? undefined,
+profile: profile ?? null,
       profileQueryError: profileQueryError ?? undefined,
     });
   }

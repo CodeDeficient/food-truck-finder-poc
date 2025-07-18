@@ -8,7 +8,7 @@ import {
   handleStopScheduler,
   handleUpdateTask,
 } from '@/lib/api/scheduler/handlers';
-import { PostRequestBody, PutRequestBody } from '@/lib/api/scheduler/types';
+import type { PostRequestBody, PutRequestBody } from '@/lib/api/scheduler/types';
 
 export function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

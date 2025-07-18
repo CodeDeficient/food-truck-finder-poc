@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { ChartConfig } from '../chart';
-import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+import type { ChartConfig } from '../chart';
+import type { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 
 import { getPayloadConfigFromPayload } from './getPayloadConfigFromPayload';
 

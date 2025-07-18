@@ -1,4 +1,4 @@
-import { ChartConfig } from '../chart';
+import type { ChartConfig } from '../chart';
 
 // Helper to extract item config from a payload.
 /**

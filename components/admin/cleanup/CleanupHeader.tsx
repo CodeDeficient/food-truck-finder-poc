@@ -45,11 +45,11 @@ export function CleanupHeader({
         </p>
       </div>
       <div className="flex gap-2">
-        <Button variant="outline" onClick={onPreview} disabled={isRunning}>
+        <Button onClick={onPreview} disabled={isRunning}>
           <Eye className="size-4 mr-2" />
           Preview Changes
         </Button>
-        <Button variant="outline" onClick={onDryRun} disabled={isRunning}>
+        <Button onClick={onDryRun} disabled={isRunning}>
           <RefreshCw className={`size-4 mr-2 ${isRunning ? 'animate-spin' : ''}`} />
           Dry Run
         </Button>

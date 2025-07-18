@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { WebVitalMetric } from './types';
+import type { WebVitalMetric } from './types';
 
 /**
  * Get Web Vitals Analytics Data

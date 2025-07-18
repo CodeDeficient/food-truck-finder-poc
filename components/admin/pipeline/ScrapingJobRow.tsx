@@ -1,14 +1,13 @@
-
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ScrapingJob } from '@/lib/supabase';
+import type { ScrapingJob } from '@/lib/supabase';
 
 interface ScrapingJobRowProps {
   readonly job: ScrapingJob;
 }
 
-function getBadgeVariant(status: string) {
+function getBadgeVariant(status: string): 'default' | 'destructive' | 'outline' {
   if (status === 'completed') {
     return 'default';
   }
@@ -49,11 +48,11 @@ export function ScrapingJobRow({ job }: ScrapingJobRowProps) {
       </TableCell>
       <TableCell className="text-right">
         {job.status === 'failed' && (
-          <Button variant="outline" size="sm" className="mr-2">
+          <Button variant="outline" size="sm" className="mr-2" type="button">
             Retry
           </Button>
         )}
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" type="button">
           View Logs
         </Button>
       </TableCell>

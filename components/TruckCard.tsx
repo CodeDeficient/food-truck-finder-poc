@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardFooter, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FoodTruck } from '@/lib/types';
+import type { FoodTruck } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 import { Eye, MapPin } from 'lucide-react';

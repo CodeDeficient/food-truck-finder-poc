@@ -1,5 +1,5 @@
 // Extracted helpers from useRealtimeAdminEvents.ts for MLPF compliance
-import { RealtimeEvent } from './useRealtimeAdminEvents.types';
+import type { RealtimeEvent } from './useRealtimeAdminEvents.types';
 
 // Utility function for parsing event data
 export function parseEventData(eventData: string, eventType: string): RealtimeEvent | undefined {

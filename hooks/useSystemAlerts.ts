@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { RealtimeEvent } from './useRealtimeAdminEvents.types';
+import type { RealtimeEvent } from './useRealtimeAdminEvents.types';
 
 export interface SystemAlert {
   id: string;

@@ -1,5 +1,5 @@
 import { supabase, supabaseAdmin } from '../client';
-import { ScrapingJob } from '../types';
+import type { ScrapingJob } from '../types';
 import { type PostgrestResponse, type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export const ScrapingJobService = {

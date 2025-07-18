@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
-import { RealtimeMetrics } from '@/lib/types';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import type { RealtimeMetrics } from '@/lib/types';
 
 /**
  * Handles various types of realtime events, applying filters and updating state accordingly.
@@ -43,7 +43,7 @@ export function useEventHandlers(
         case 'heartbeat': {
           if (event.data != undefined && typeof event.data === 'object') {
             // Type guard for RealtimeMetrics
-            function isRealtimeMetrics(obj: unknown): obj is RealtimeMetrics {
+            const isRealtimeMetrics = (obj: unknown): obj is RealtimeMetrics => {
               return (
                 typeof obj === 'object' &&
                 obj !== null &&
@@ -51,7 +51,7 @@ export function useEventHandlers(
                 'dataQuality' in obj &&
                 'systemHealth' in obj
               );
-            }
+            };
 
             if (isRealtimeMetrics(event.data)) {
               setLatestMetrics(event.data);

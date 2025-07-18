@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrapingJob } from '@/lib/supabase';
+import type { ScrapingJob } from '@/lib/supabase';
 import { ScrapingJobsTableContent } from './ScrapingJobsTableContent';
 
 interface RecentScrapingJobsTableProps {

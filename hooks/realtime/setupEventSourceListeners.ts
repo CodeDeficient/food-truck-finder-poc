@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
 
 interface RealtimeMetrics {
   scrapingJobs: {

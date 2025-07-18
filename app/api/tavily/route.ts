@@ -1,11 +1,11 @@
 // app/api/tavily/route.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import {
   performTavilyCrawl,
   performTavilyMap,
   performTavilySearch,
 } from '@/lib/api/tavily/handlers';
-import { TavilyRequestBody } from '@/lib/api/tavily/types';
+import type { TavilyRequestBody } from '@/lib/api/tavily/types';
 
 export async function POST(request: NextRequest) {
   try {
