@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { StageResult, TestPipelineResults } from '@/lib/types';
+import type { StageResult, TestPipelineResults } from '@/lib/types';
 
 interface TestResultsDisplayProps {
   readonly results?: TestPipelineResults;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FoodTruckService, FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
 
 /**
  * Handles GET requests by executing different actions based on query parameters.
@@ -23,7 +23,7 @@ export async function handleGetRequest(request: NextRequest): Promise<NextRespon
       return await handleStatsAction();
     }
     case 'assess': {
-      if (!(truckId ?? '')) {
+      if (!truckId) {
         return NextResponse.json(
           { success: false, error: 'Missing truckId for assess action' },
           { status: 400 },

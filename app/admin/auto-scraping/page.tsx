@@ -310,11 +310,11 @@ function DashboardHeader({
     <div className="flex items-center justify-between">
       <h1 className="text-3xl font-bold">Auto-Scraping Dashboard</h1>
       <div className="flex gap-2">
-        <Button onClick={onRefresh} variant="outline" size="sm">
+        <Button onClick={onRefresh}>
           <RefreshCw className="size-4 mr-2" />
           Refresh
         </Button>
-        <Button onClick={onTriggerScrape} size="sm">
+        <Button onClick={onTriggerScrape}>
           <Play className="size-4 mr-2" />
           Trigger Manual Scrape
         </Button>
@@ -505,7 +505,7 @@ export default function AutoScrapingDashboard() {
       />
 
       {error !== undefined && (
-        <Alert variant="destructive">
+        <Alert>
           <AlertCircle className="size-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>

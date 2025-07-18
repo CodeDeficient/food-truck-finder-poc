@@ -24,19 +24,6 @@ const nextConfig = {
   },
   // Enable React Strict Mode for better development experience
   reactStrictMode: true,
-  // Enable experimental features for performance
-  experimental: {
-    // Enable optimized package imports for better tree shaking
-    optimizePackageImports: [
-      '@radix-ui/react-icons',
-      '@radix-ui/react-dropdown-menu',
-      '@radix-ui/react-dialog',
-      '@radix-ui/react-slot',
-      'lucide-react',
-      'recharts',
-    ],
-    
-  },
   // Bundle optimization
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Optimize bundle splitting

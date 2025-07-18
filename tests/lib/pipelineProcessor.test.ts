@@ -196,8 +196,7 @@ describe('pipelineProcessor', () => {
 
       consoleSpy.mockRestore();
     });
-  });
-
+  
   describe('createOrUpdateFoodTruck', () => {
     const mockExtractedData = {
       name: 'Test Food Truck',

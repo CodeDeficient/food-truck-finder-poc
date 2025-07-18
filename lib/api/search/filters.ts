@@ -1,4 +1,4 @@
-import { MenuCategory, MenuItem, OperatingHours, type FoodTruck } from '@/lib/types';
+import type { MenuCategory, MenuItem, OperatingHours, FoodTruck } from '@/lib/types';
 
 /**
 * Filters an array of FoodTruck objects based on a given search query.

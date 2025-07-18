@@ -1,14 +1,14 @@
-import { firecrawl, FirecrawlResponse } from '@/lib/firecrawl';
+import { firecrawl, type FirecrawlResponse } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
 import {
   FoodTruckService,
   ScrapingJobService,
   DataProcessingService,
-  FoodTruck,
-  ScrapingJob,
-  DataProcessingQueue,
+  type FoodTruck,
+  type ScrapingJob,
+  type DataProcessingQueue,
 } from '@/lib/supabase';
-import { GeminiResponse, MenuCategory } from '@/lib/types';
+import type { GeminiResponse, MenuCategory } from '@/lib/types';
 
 // Helper function to test Firecrawl scraping
 interface FirecrawlTestResult {

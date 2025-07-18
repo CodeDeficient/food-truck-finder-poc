@@ -101,7 +101,7 @@ export interface FirecrawlOutputData {
 
 export interface FoodTruckSchema {
   name: string;
-  description: string;
+  description: string | undefined;
   current_location: {
     lat: number;
     lng: number;
@@ -188,6 +188,24 @@ export interface PipelineRunResult {
   supabase?: StageResult;
   logs: string[];
   overallStatus: 'Success' | 'Error';
+}
+
+export interface ScrapingJob {
+  id: string;
+  job_type: string;
+  target_url?: string;
+  target_handle?: string;
+  platform?: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  priority: number;
+  scheduled_at: string;
+  started_at?: string;
+  completed_at?: string;
+  data_collected?: Record<string, unknown>;
+  errors?: string[];
+  retry_count: number;
+  max_retries: number;
+  created_at: string;
 }
 
 export interface RealtimeMetrics {

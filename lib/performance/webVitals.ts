@@ -3,7 +3,7 @@
  * Tracks LCP, FID, CLS, FCP, and TTFB metrics for performance optimization
  */
 
-import { getCLS, getFCP, getFID, getLCP, getTTFB, Metric } from 'web-vitals';
+import { getCLS, getFCP, getFID, getLCP, getTTFB, type Metric } from 'web-vitals';
 
 // Performance thresholds based on Google's Core Web Vitals standards
 export const PERFORMANCE_THRESHOLDS = {
@@ -142,7 +142,7 @@ export function getPerformanceMetrics(): {
 
     if (metricData.length === 0) {
       summary[name] = {
-        latest: undefined,
+        latest: null,
         average: 0,
         rating: 'no-data',
         count: 0,
@@ -152,7 +152,7 @@ export function getPerformanceMetrics(): {
       const average = metricData.reduce((sum, m) => sum + m.value, 0) / metricData.length;
 
       summary[name] = {
-        latest: latest?.value ?? undefined,
+        latest: latest?.value ?? null,
         average: Math.round(average),
         rating: getRating(name, average),
         count: metricData.length,

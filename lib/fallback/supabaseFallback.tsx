@@ -2,8 +2,8 @@
 // This creates a resilient data layer that gracefully handles Supabase outages
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@/lib/database.types'; // Assuming this is your Supabase database types
-import { FoodTruck } from '@/lib/types';
+import type { Database } from '@/lib/database.types'; // Assuming this is your Supabase database types
+import type { FoodTruck } from '@/lib/types';
 
 // Create a type alias for the complex union type to improve readability
 type FallbackResult = {

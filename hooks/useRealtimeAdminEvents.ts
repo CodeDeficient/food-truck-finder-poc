@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
-import { RealtimeEvent } from './useRealtimeAdminEvents.types';
-import { RealtimeMetrics } from '@/lib/types';
+import type { RealtimeEvent } from './useRealtimeAdminEvents.types';
+import type { RealtimeMetrics } from '@/lib/types';
 import { useConnectionState } from './realtime/useConnectionState';
 import { useConnectionManagement } from './realtime/useConnectionManagement';
 import { useEventHandlers } from './realtime/useEventHandlers';

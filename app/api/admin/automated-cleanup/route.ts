@@ -8,7 +8,7 @@ import {
   handleGetDefault,
 } from '@/lib/api/admin/automated-cleanup/handlers';
 import { verifyAdminAccess } from '@/lib/auth/authHelpers';
-import { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
+import type { RequestBody } from '@/lib/api/admin/automated-cleanup/types';
 
 /**
  * SOTA Automated Data Cleanup API
@@ -69,16 +69,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const rawBody: unknown = await request.json();
 
-    // Type guard for RequestBody
-    function isRequestBody(obj: unknown): obj is RequestBody {
-      return (
-        typeof obj === 'object' &&
-        obj !== null &&
-        'action' in obj &&
-        typeof (obj as RequestBody).action === 'string'
-      );
-    }
-
     // Validate rawBody against RequestBody type
     if (!isRequestBody(rawBody)) {
       return NextResponse.json(
@@ -101,4 +91,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 500 },
     );
   }
+}
+
+// Type guard for RequestBody
+function isRequestBody(obj: unknown): obj is RequestBody {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'action' in obj &&
+    typeof (obj as RequestBody).action === 'string'
+  );
 }

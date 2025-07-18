@@ -2,7 +2,7 @@
 
 
 import { Badge } from '@/components/ui/badge';
-import { type SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
+import type { SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
 
 interface CuisineTypesSectionProps {
   readonly filters: SearchFilters;

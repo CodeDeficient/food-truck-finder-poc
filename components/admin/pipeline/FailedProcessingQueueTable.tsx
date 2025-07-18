@@ -10,8 +10,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DataProcessingQueue } from '@/lib/supabase';
+import type { DataProcessingQueue } from '@/lib/supabase';
 
+// Force re-evaluation of types
 interface FailedProcessingQueueTableProps {
   readonly processingQueue: {
     pending: DataProcessingQueue[];
@@ -64,7 +65,7 @@ export function FailedProcessingQueueTable({ processingQueue }: FailedProcessing
                 </TableCell>
                 <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" type="button">
                     View Details
                   </Button>
                 </TableCell>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { BatchCleanupService, CleanupOperation } from '@/lib/data-quality/batchCleanup';
+import { BatchCleanupService, type CleanupOperation } from '@/lib/data-quality/batchCleanup';
 import { DuplicatePreventionService } from '@/lib/data-quality/duplicatePrevention';
 
 export interface DataCleanupRequestBody {

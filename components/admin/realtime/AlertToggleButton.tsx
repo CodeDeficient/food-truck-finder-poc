@@ -29,7 +29,7 @@ export function AlertToggleButton({
   if (alertsLength <= 3) return;
 
   return (
-    <Button variant="outline" size="sm" className="mt-2" onClick={onToggleDetails}>
+    <Button variant="outline" size="sm" className="mt-2" onClick={onToggleDetails} type="button">
       {showDetails ? 'Hide' : 'Show'} {alertsLength - 3} more alerts
     </Button>
   );

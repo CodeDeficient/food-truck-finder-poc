@@ -6,7 +6,7 @@ import {
   type ScrapingJob,
   type FoodTruck,
 } from '@/lib/supabase';
-import { AdminEvent } from './types';
+import type { AdminEvent } from './types';
 
 
 interface RealtimeMetrics {
@@ -174,7 +174,7 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
       action: 'health_check' | 'trigger_test_event';
     }
 
-    function isPostRequestBody(obj: unknown): obj is PostRequestBody {
+    const isPostRequestBody = (obj: unknown): obj is PostRequestBody => {
       return (
         typeof obj === 'object' &&
         obj !== null &&
@@ -183,7 +183,7 @@ export async function handlePostRequest(request: NextRequest): Promise<Response>
         ((obj as PostRequestBody).action === 'health_check' ||
           (obj as PostRequestBody).action === 'trigger_test_event')
       );
-    }
+    };
 
     if (!isPostRequestBody(rawBody)) {
       return new Response(

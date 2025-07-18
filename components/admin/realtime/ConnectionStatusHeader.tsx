@@ -56,6 +56,7 @@ export function ConnectionStatusHeader({
             size="sm"
             onClick={isConnected ? disconnect : connect}
             disabled={isConnecting}
+            type="button"
           >
             <RefreshCw className={`size-4 mr-2 ${isConnecting ? 'animate-spin' : ''}`} />
             {(() => {

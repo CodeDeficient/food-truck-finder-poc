@@ -1,5 +1,5 @@
-import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '../types';
-import { ScrapingJobService, FoodTruckService, FoodTruck } from '../supabase';
+import type { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '../types';
+import { ScrapingJobService, FoodTruckService, type FoodTruck } from '../supabase';
 import { DuplicatePreventionService } from '../data-quality/duplicatePrevention';
 
 // Helper function to validate input and prepare basic data
@@ -421,7 +421,7 @@ function isRawMenuCategory(obj: unknown): obj is RawMenuCategory {
   return (
     typeof obj === 'object' &&
     obj != undefined &&
-    ('category' in obj ?? 'name' in obj ?? 'items' in obj)
+    ('category' in obj || 'name' in obj || 'items' in obj)
   );
 }
 
@@ -430,7 +430,7 @@ function isRawMenuItem(obj: unknown): obj is RawMenuItem {
   return (
     typeof obj === 'object' &&
     obj != undefined &&
-    ('name' in obj ?? 'description' in obj ?? 'price' in obj ?? 'dietary_tags' in obj)
+    ('name' in obj || 'description' in obj || 'price' in obj || 'dietary_tags' in obj)
   );
 }
 

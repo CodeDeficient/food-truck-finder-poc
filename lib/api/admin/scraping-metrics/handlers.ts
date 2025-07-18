@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
-import { RealtimeMetrics, ScrapingJob } from '@/lib/types';
+import type { RealtimeMetrics, ScrapingJob } from '@/lib/types';
 
 export async function handleGetRequest(): Promise<NextResponse> {
   const metrics = await getScrapingMetrics();

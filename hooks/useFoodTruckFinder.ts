@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FoodTruck } from '@/lib/types';
+import type { FoodTruck } from '@/lib/types';
 import {
   getUserLocationHelper,
   loadFoodTrucksHelper,

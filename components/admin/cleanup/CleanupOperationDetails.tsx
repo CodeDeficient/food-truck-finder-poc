@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-import { CleanupResult } from '@/hooks/useDataCleanup';
+import type { CleanupResult } from '@/hooks/useDataCleanup';
 import { operationConfig } from './OperationSelector';
 
 interface CleanupOperationDetailsProps {
@@ -47,7 +47,7 @@ export function CleanupOperationDetails({ operations }: CleanupOperationDetailsP
           )}
 
           {operation.errors.length > 0 && (
-            <Alert variant="destructive" className="mt-2">
+            <Alert className="mt-2">
               <AlertTriangle className="size-4" />
               <AlertTitle>Errors ({operation.errors.length})</AlertTitle>
               <AlertDescription>

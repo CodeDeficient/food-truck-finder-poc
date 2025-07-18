@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   handlePostRequest,
   handleGetRequest,
-  DataCleanupRequestBody,
+  type DataCleanupRequestBody,
 } from '@/lib/api/admin/data-cleanup/handlers';
 
 export async function POST(request: NextRequest) {

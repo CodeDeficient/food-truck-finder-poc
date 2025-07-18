@@ -66,7 +66,7 @@ function EmailLoginForm({
         setPassword={setPassword}
         loading={loading}
       />
-      <Button type="submit" disabled={loading} className="w-full" size="lg">
+      <Button type="submit" disabled={loading} className="w-full">
         {loading ? (
           <Loader2 className="mr-2 size-4 animate-spin" />
         ) : (
@@ -108,9 +108,7 @@ function GoogleLoginButton({
         });
       }}
       disabled={loading}
-      variant="outline"
       className="w-full"
-      size="lg"
     >
       {loading ? (
         <Loader2 className="mr-2 size-4 animate-spin" />
@@ -190,7 +188,7 @@ export default function LoginPage() {
         <LoginHeader />
         <CardContent className="space-y-4">
           {error != undefined && error.length > 0 && (
-            <Alert variant="destructive">
+            <Alert>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}

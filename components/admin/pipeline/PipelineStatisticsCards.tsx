@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RefreshCcw, PlayCircle, XCircle } from 'lucide-react';
-import { ScrapingJob, DataProcessingQueue } from '@/lib/supabase';
+import type { ScrapingJob, DataProcessingQueue } from '@/lib/supabase';
 
 interface PipelineStatisticsCardsProps {
   readonly scrapingJobs: {

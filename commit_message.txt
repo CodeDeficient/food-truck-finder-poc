@@ -1,1 +1,0 @@
-feat: Add type guard utilities and update documentation

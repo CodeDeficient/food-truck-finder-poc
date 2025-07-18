@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
-import { type SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
+import type { SearchFilters } from '../SearchFilters'; // Import SearchFilters interface
 
 interface QuickFiltersSectionProps {
   readonly filters: SearchFilters;

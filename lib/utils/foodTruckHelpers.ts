@@ -1,4 +1,4 @@
-import { FoodTruck, DailyOperatingHours, MenuItem } from '@/lib/types'; // Added DailyOperatingHours, PriceRange, MenuItem
+import type { FoodTruck, DailyOperatingHours, MenuItem } from '@/lib/types';
 import { supabaseFallback } from '@/lib/fallback/supabaseFallback';
 
 export const getCurrentDay = () => {

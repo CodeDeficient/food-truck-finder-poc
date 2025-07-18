@@ -1,7 +1,7 @@
 import { firecrawl } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';
 import { ScrapingJobService } from '@/lib/supabase';
-import { ExtractedFoodTruckDetails } from '../types';
+import type { ExtractedFoodTruckDetails } from '../types';
 import {
   validateInputAndPrepare,
   buildTruckDataSchema,

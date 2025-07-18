@@ -302,7 +302,9 @@ export const SecurityMonitor = {
     try {
       // Check recent failed login attempts
       const recentEvents = await AuditLogger.getRecentSecurityEvents(1, 'warning');
-      const failedLogins = recentEvents.filter();
+      const failedLogins = recentEvents.filter((event) => 
+        event.event_type === 'login_failed' && event.user_id === userId
+      );
 
       if (failedLogins.length > 5) {
         reasons.push('Multiple failed login attempts');

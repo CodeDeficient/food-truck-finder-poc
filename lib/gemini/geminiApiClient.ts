@@ -1,7 +1,6 @@
-// @ts-expect-error TS(2792): Cannot find module '@google/genai'. Did you mean t... Remove this comment to see the full error message
 import { GoogleGenAI } from '@google/genai';
 import { APIUsageService } from '../supabase';
-import { GeminiResponse } from '../types';
+import type { GeminiResponse } from '../types';
 
 export interface GeminiApiConfig {
   temperature?: number;
@@ -102,6 +101,13 @@ export class GeminiApiClient {
     }
 
     try {
+if (!response.data) {
+        return {
+          success: false,
+          error: 'No data received from Gemini API',
+          tokensUsed: response.tokensUsed,
+        };
+      }
       const parsedData = parser(response.data);
       return {
         success: true,
@@ -110,11 +116,11 @@ export class GeminiApiClient {
       };
     } catch (parseError: unknown) {
       console.warn('Gemini json parsing error:', parseError);
-      console.warn('Problematic Gemini raw response text:', response.data.trim());
+      console.warn('Problematic Gemini raw response text:', response.data?.trim() ?? 'No data');
 
       return {
         success: false,
-        error: `Failed to parse Gemini response: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${response.data.trim().slice(0, 200)}...`,
+        error: `Failed to parse Gemini response: ${parseError instanceof Error ? parseError.message : String(parseError)}. Response text: ${response.data?.trim().slice(0, 200) ?? 'No data'}...`,
         tokensUsed: response.tokensUsed,
       };
     }

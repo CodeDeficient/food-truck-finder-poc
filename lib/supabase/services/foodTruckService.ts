@@ -1,5 +1,5 @@
 import { supabase, supabaseAdmin } from '../client';
-import { FoodTruck, RawMenuItemFromDB } from '../types';
+import type { FoodTruck, RawMenuItemFromDB } from '../types';
 import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils';
 import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils';
 import { type PostgrestResponse, type PostgrestSingleResponse } from '@supabase/supabase-js';
