@@ -1,5 +1,5 @@
 import { supabaseAdmin } from '../client';
-import { FoodTruck } from '../types';
+import type { FoodTruck } from '../types';
 import { handleSupabaseError } from '../utils';
 import { type PostgrestSingleResponse } from '@supabase/supabase-js';
 

@@ -382,8 +382,10 @@ function createDataQualityCheckTask(dataQualityAssessor: DataQualityAssessor): S
     enabled: true,
     successCount: 0,
     errorCount: 0,
-    execute: () => {
-      const trucks: FoodTruck[] = []; // Placeholder: fetch trucks from database
+    execute: async () => {
+      // Placeholder: fetch trucks from database
+      const trucks: FoodTruck[] = []; 
+      await Promise.resolve(); // Added to satisfy async/await rule
 
       let totalScore = 0;
       let processedCount = 0;

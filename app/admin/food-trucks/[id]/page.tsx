@@ -1,5 +1,5 @@
 
-import { FoodTruck, FoodTruckService } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
 import { isFoodTruck } from '@/lib/utils/typeGuards';
 import {
   categorizeQualityScore,
@@ -63,4 +63,3 @@ export default async function FoodTruckDetailPage({ params }: FoodTruckDetailPag
     </div>
   );
 }
-

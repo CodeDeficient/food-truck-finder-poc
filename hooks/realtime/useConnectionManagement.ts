@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
-import { RealtimeMetrics } from '@/lib/types';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import type { RealtimeMetrics } from '@/lib/types';
 import { createEventSourceConnection } from './createEventSourceConnection';
 import { disconnectEventSource, clearRecentEvents } from './connectionManagementHelpers';
 
@@ -53,6 +53,14 @@ function buildConnectionConfig(options: UseConnectionManagementOptions, connect:
     setLastEventTime: options.setLastEventTime,
     setLatestMetrics: options.setLatestMetrics,
     setRecentEvents: options.setRecentEvents,
+    setIsConnected: options.setIsConnected,
+    setIsConnecting: options.setIsConnecting,
+    setConnectionError: options.setConnectionError,
+    setConnectionAttempts: options.setConnectionAttempts,
+    connectionState: {
+      setIsConnecting: options.setIsConnecting,
+      setConnectionError: options.setConnectionError,
+    },
   };
 }
 

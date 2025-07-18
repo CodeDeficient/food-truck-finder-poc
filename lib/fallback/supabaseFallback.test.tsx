@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import '@testing-library/jest-dom';
 
 describe('Supabase Fallback', () => {
-  let supabaseFallback, useFoodTrucks;
+  let supabaseFallback: any, useFoodTrucks: any;
   const mockTrucks = [{ id: '1', name: 'test truck' }];
 
   beforeEach(async () => {
@@ -21,7 +22,7 @@ describe('Supabase Fallback', () => {
     return (
       <div>
         <div data-testid="status">{dataStatus.status}</div>
-        {trucks.map(truck => (
+        {trucks.map((truck: { id: string; name: string }) => (
           <div key={truck.id}>{truck.name}</div>
         ))}
       </div>
@@ -92,7 +93,7 @@ describe('Supabase Fallback', () => {
     });
   });
 
-  it('should return unavailable status when supabase is down and no cache is available', async (). => {
+  it('should return unavailable status when supabase is down and no cache is available', async () => {
     // Mock the supabase client to simulate an error
     supabaseFallback.supabase.from = jest.fn().mockReturnValue({
       select: jest.fn().mockReturnValue({

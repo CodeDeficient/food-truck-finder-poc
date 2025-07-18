@@ -1,5 +1,5 @@
 import { handleFirecrawlStage, handleGeminiStage, handleSupabaseStage } from './stageHandlers';
-import { ExtractedFoodTruckDetails, StageResult, PipelineRunResult } from '@/lib/types';
+import type { ExtractedFoodTruckDetails, StageResult, PipelineRunResult } from '@/lib/types';
 
 // Helper function to handle stage errors and return a consistent error object
 function handleStageErrorAndReturn(

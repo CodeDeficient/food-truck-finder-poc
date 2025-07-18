@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
-import { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import type { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 import { cn } from '@/lib/utils';
 import { useTooltipLabel } from './chart/useTooltipLabel';
@@ -122,7 +122,7 @@ type TooltipFormatter = (
   name: string,
   item: Payload<ValueType, NameType>,
   index: number,
-  payload: Record<string, unknown>[],
+  payload: Payload<ValueType, NameType>[],
 ) => React.ReactNode;
 type TooltipItemData = {
   name?: string;
@@ -180,7 +180,7 @@ function ChartTooltipIndicatorAndContent(props: Readonly<ChartTooltipIndicatorAn
         itemConfig={itemConfig}
       />
       <TooltipItemContent
-        formatter={formatter}
+        formatter={formatter as any}
         itemData={itemData}
         item={item}
         index={index}

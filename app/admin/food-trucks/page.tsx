@@ -1,5 +1,5 @@
 
-import { FoodTruckService, FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -110,7 +110,7 @@ function FoodTruckTableRow({ truck }: { readonly truck: FoodTruck }) {
           : new Date(truck.last_scraped_at).toLocaleDateString()}
       </TableCell>
       <TableCell className="text-right">
-        <Button variant="outline" size="sm" asChild>
+        <Button asChild>
           <Link href={`/admin/food-trucks/${truck.id}`}>Edit</Link>
         </Button>
       </TableCell>

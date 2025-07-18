@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
-import { RealtimeMetrics } from '@/lib/types';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import type { RealtimeMetrics } from '@/lib/types';
 
 /**
  * Provides state management for a real-time connection within a component.

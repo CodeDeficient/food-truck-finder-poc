@@ -1,4 +1,4 @@
-import { TestPipelineResults } from '@/lib/types';
+import type { TestPipelineResults } from '@/lib/types';
 
 interface SubmitTestPipelineArgs {
   useRawText: boolean;

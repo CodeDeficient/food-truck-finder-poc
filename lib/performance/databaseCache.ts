@@ -72,7 +72,7 @@ export const CachedFoodTruckService = {
       console.info(`CachedFoodTruckService: Cache miss - fetching truck ${id} from database`);
       const result = await FoodTruckService.getTruckById(id);
       if ('error' in result) {
-        return undefined;
+return null;
       }
       return result as FoodTruck;
     },

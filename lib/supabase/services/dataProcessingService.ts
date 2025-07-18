@@ -1,5 +1,5 @@
 import { supabase, supabaseAdmin } from '../client';
-import { DataProcessingQueue } from '../types';
+import type { DataProcessingQueue } from '../types';
 import { type PostgrestResponse, type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export const DataProcessingService = {

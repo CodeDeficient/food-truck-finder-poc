@@ -47,7 +47,7 @@ function ActionButtons({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <Button onClick={onGoHome} variant="default" className="w-full">
+      <Button onClick={onGoHome} className="w-full">
         <Home className="mr-2 size-4" />
         Return to Main Site
       </Button>
@@ -55,7 +55,6 @@ function ActionButtons({
         onClick={() => {
           onSignOut().catch((error: unknown) => console.warn('Sign out failed:', error));
         }}
-        variant="outline"
         className="w-full"
       >
         <LogOut className="mr-2 size-4" />

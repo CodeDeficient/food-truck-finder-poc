@@ -5,7 +5,7 @@ import {
   handleScrapeOperation,
   handleSearchOperation,
 } from '@/lib/api/firecrawl/handlers';
-import { FirecrawlRequestBody } from '@/lib/api/firecrawl/types';
+import type { FirecrawlRequestBody } from '@/lib/api/firecrawl/types';
 
 export async function POST(request: NextRequest) {
   try {

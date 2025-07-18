@@ -1,6 +1,6 @@
 import { type PostgrestError } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../client';
-import { FoodTruck, FoodTruckLocation, MenuCategory, MenuItem } from '../types';
+import type { FoodTruck, FoodTruckLocation, MenuCategory, MenuItem } from '../types';
 
 import { isMenuItem } from './typeGuards';
 

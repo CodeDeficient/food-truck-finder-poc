@@ -1,4 +1,4 @@
-import { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
 
 // NOTE: React.MutableRefObject is flagged as deprecated by some linters, but is still the standard type for refs created by useRef in React 18+.
 // See: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/66808

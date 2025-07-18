@@ -1,4 +1,4 @@
-import { FoodTruckSchema } from '../../types';
+import type { FoodTruckSchema } from '../../types';
 
 export interface FoodTruckLocation {
   lat: number;

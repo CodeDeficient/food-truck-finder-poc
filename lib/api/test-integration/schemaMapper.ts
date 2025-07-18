@@ -1,4 +1,4 @@
-import { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '@/lib/types';
+import type { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '@/lib/types';
 
 export function mapExtractedDataToTruckSchema(
   extractedData: ExtractedFoodTruckDetails,

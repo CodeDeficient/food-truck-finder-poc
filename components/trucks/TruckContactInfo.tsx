@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Mail, Globe } from 'lucide-react';
+import * as React from 'react';
 import type { FoodTruck } from '@/lib/supabase';
 
 interface TruckContactInfoProps {
@@ -153,7 +154,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
       </CardHeader>
       <CardContent className="space-y-4">
         <ContactField
-          icon={Phone}
+          icon={Phone as React.ComponentType<{ className?: string }>}
           label="Phone"
           value={truck.contact_info?.phone}
           href={
@@ -165,7 +166,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
         />
 
         <ContactField
-          icon={Mail}
+          icon={Mail as React.ComponentType<{ className?: string }>}
           label="Email"
           value={truck.contact_info?.email}
           href={
@@ -177,7 +178,7 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
         />
 
         <ContactField
-          icon={Globe}
+          icon={Globe as React.ComponentType<{ className?: string }>}
           label="Website"
           value={truck.contact_info?.website}
           href={truck.contact_info?.website}

@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-tooltip'. Did ... Remove this comment to see the full error message
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
 import { cn } from '@/lib/utils';

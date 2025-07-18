@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-// @ts-expect-error TS(2792): Cannot find module '@radix-ui/react-tabs'. Did you... Remove this comment to see the full error message
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 
 import { cn } from '@/lib/utils';

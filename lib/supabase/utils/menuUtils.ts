@@ -1,4 +1,4 @@
-import { MenuItem, MenuCategory, RawMenuItemFromDB, FoodTruck } from '../types';
+import type { MenuItem, MenuCategory, RawMenuItemFromDB, FoodTruck } from '../types';
 import { isMenuCategory, isMenuItem } from './typeGuards';
 import { supabaseAdmin } from '../client';
 import { handleSupabaseError } from './index';

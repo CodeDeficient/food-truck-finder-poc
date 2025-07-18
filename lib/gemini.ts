@@ -5,13 +5,13 @@ import { PromptTemplates } from './gemini/promptTemplates';
 import { GeminiResponseParser } from './gemini/responseParser';
 
 import {
-  MenuCategory,
-  LocationData,
-  OperatingHours,
-  SentimentAnalysisResult,
-  EnhancedFoodTruckData,
-  ExtractedFoodTruckDetails,
-  GeminiResponse,
+  type MenuCategory,
+  type LocationData,
+  type OperatingHours,
+  type SentimentAnalysisResult,
+  type EnhancedFoodTruckData,
+  type ExtractedFoodTruckDetails,
+  type GeminiResponse,
 } from './types';
 
 export class GeminiService {

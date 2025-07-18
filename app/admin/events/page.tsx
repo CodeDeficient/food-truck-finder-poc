@@ -142,7 +142,7 @@ function EventsTable({ events }: { readonly events: Event[] }) {
                 <TableCell>{event.location}</TableCell>
                 <TableCell>{event.description}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm" asChild>
+                  <Button asChild>
                     <Link href={`/admin/events/${event.id}`}>
                       <Edit className="size-4" />
                       <span className="sr-only">Edit</span>
@@ -206,7 +206,7 @@ function SchedulesTable({ schedules }: { readonly schedules: FoodTruckSchedule[]
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm" asChild>
+                  <Button asChild>
                     <Link href={`/admin/schedules/${schedule.id}`}>
                       <Edit className="size-4" />
                       <span className="sr-only">Edit</span>

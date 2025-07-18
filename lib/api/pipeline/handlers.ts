@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ScrapingJobService } from '@/lib/supabase';
-import { PipelineRequestBody } from './types';
+import type { PipelineRequestBody } from './types';
 
 /**
  * Handles a legacy scraping request and creates a scraping job.

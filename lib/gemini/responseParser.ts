@@ -1,10 +1,10 @@
 import {
-  MenuCategory,
-  LocationData,
-  OperatingHours,
-  SentimentAnalysisResult,
-  EnhancedFoodTruckData,
-  ExtractedFoodTruckDetails,
+  type MenuCategory,
+  type LocationData,
+  type OperatingHours,
+  type SentimentAnalysisResult,
+  type EnhancedFoodTruckData,
+  type ExtractedFoodTruckDetails,
 } from '../types';
 
 export const GeminiResponseParser = {

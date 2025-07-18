@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LogOut } from 'lucide-react';
-import { User } from '@supabase/supabase-js'; // Import User type
+import type { User } from '@supabase/supabase-js'; // Import User type
 
 interface UserMenuProps {
   readonly user: User | undefined;
