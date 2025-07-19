@@ -336,6 +336,7 @@ All documentation is professionally organized in our **[Documentation Hub](docs/
 | Document | Purpose |
 |----------|----------|
 | **[📚 Documentation Hub](docs/README.md)** | Complete documentation index |
+| **[📝 Development Journey](docs/blog/README.md)** | Self-taught developer story |
 | **[🔒 Zero Trust Protocol](docs/ZERO_TRUST_VERIFICATION_PROTOCOL.md)** | Development quality gates |
 | **[📡 API Documentation](docs/API_DOCUMENTATION.md)** | Complete API reference |
 | **[🚀 Launch Readiness](CONSOLIDATED_LAUNCH_READINESS_PLAN.md)** | Production deployment guide |

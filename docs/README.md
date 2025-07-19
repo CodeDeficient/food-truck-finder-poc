@@ -9,6 +9,7 @@ Welcome to the comprehensive documentation center for the **Food Truck Finder** 
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | **[Main README](../README.md)** | Project overview & setup | All developers |
+| **[Development Journey Blog](blog/README.md)** | Self-taught developer story | Portfolio visitors, recruiters |
 | **[Launch Readiness Plan](../CONSOLIDATED_LAUNCH_READINESS_PLAN.md)** | Deployment checklist | DevOps, PM |
 | **[API Documentation](API_DOCUMENTATION.md)** | Complete API reference | Frontend & Backend devs |
 | **[Zero Trust Protocol](ZERO_TRUST_VERIFICATION_PROTOCOL.md)** | Development quality gates | All developers |
