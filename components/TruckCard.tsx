@@ -7,10 +7,11 @@ import type { FoodTruck } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
 import { Eye, MapPin } from 'lucide-react';
-import Link from 'next/link';
 import { MenuSection } from '@/components/ui/MenuSection';
 import { SocialMediaSection } from '@/components/ui/SocialMediaSection';
 import { ContactSection } from '@/components/ui/ContactSection';
+import { TruckDetailsModal } from '@/components/TruckDetailsModal';
+import { useState } from 'react';
 
 interface TruckCardProps {
   readonly truck: FoodTruck;
@@ -21,12 +22,22 @@ interface TruckCardProps {
 }
 
 export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: TruckCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { popularItems, priceRange, todayHours } = useTruckCard(truck);
   const {
     name = 'Unnamed Truck',
     social_media = {},
     contact_info: { phone = '', email = '', website = '' } = {},
   } = truck;
+
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <Card
@@ -91,11 +102,13 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
       </CardContent>
       <CardFooter>
         <div className="flex gap-2 w-full">
-          <Button asChild className="flex-1" variant="outline">
-            <Link href={`/trucks/${truck.id}`}>
-              <Eye className="size-4 mr-2" />
-              View Details
-            </Link>
+          <Button 
+            className="flex-1" 
+            variant="neon" 
+            onClick={handleViewDetails}
+          >
+            <Eye className="size-4 mr-2" />
+            View Details
           </Button>
           {truck.verification_status === 'verified' && (
             <Button className="flex-1" variant="default" disabled>
@@ -104,6 +117,13 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
           )}
         </div>
       </CardFooter>
+      
+      <TruckDetailsModal
+        truck={truck}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        isTruckOpen={isOpen}
+      />
     </Card>
   );
 }
