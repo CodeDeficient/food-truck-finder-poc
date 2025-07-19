@@ -45,10 +45,30 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Create the `public.authorize` SQL function in Supabase. This function will be the central point for checking user permissions in all RLS policies.
     - **CCR:** C:5, C:8, R:6
     - **Verification:** The `authorize` function is created and returns the expected boolean values when tested with different roles and permissions in the Supabase SQL Editor.
+    - **[ ] 2.1.4.1: Draft `authorize` Function SQL**
+      - **Guidance:** Write the initial SQL for the function based on the architecture defined in `docs/AUTH_ARCHITECTURE.md`.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The SQL code is written and passes a syntax check.
+    - **[ ] 2.1.4.2: Test `authorize` Function with Mock JWTs**
+      - **Guidance:** In the Supabase SQL Editor, use the `set_config` command to simulate JWTs with different roles (`admin`, `authenticated`) and test the function's output against various permissions.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** The function returns `true` for authorized roles and `false` for unauthorized roles.
   - **[ ] 2.1.5: Refactor RLS Policies to Use `authorize` Function**
     - **Guidance:** Update all existing RLS policies on tables like `trucks`, `events`, etc., to use the new `authorize` function instead of direct role checks.
     - **CCR:** C:6, C:7, R:7
     - **Verification:** RLS policies are updated, and data access rules are correctly enforced for different user roles.
+    - **[ ] 2.1.5.1: Refactor `trucks` Table RLS**
+      - **Guidance:** Update the RLS policies for the `trucks` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The policies are updated and tested.
+    - **[ ] 2.1.5.2: Refactor `events` Table RLS**
+      - **Guidance:** Update the RLS policies for the `events` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The policies are updated and tested.
+    - **[ ] 2.1.5.3: Refactor `menu_items` Table RLS**
+      - **Guidance:** Update the RLS policies for the `menu_items` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The policies are updated and tested.
   - **[ ] 2.1.6: Configure Firebase and Supabase Integration**
     - **Guidance:** Follow the steps in `docs/AUTH_ARCHITECTURE.md` to add the Firebase Project ID as a trusted JWT issuer in the Supabase dashboard.
     - **CCR:** C:3, C:9, R:4
@@ -57,6 +77,14 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Deploy a `beforeUserCreated` blocking function in Firebase to assign a default `authenticated` role to new users.
     - **CCR:** C:6, C:7, R:6
     - **Verification:** New users created via Firebase Auth have the `role: 'authenticated'` custom claim in their JWT.
+    - **[ ] 2.1.7.1: Write Cloud Function Code**
+      - **Guidance:** Write the Node.js code for the `beforeUserCreated` function.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The code is written and passes linting.
+    - **[ ] 2.1.7.2: Deploy and Test Cloud Function**
+      - **Guidance:** Deploy the function to Firebase and test the user creation flow.
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** A new test user is created, and their JWT is inspected to confirm the custom claim.
   - **[ ] 2.1.8: Manually Assign Admin Role in Firebase**
     - **Guidance:** Using the Firebase Admin SDK in a secure, one-off script, assign the `admin` role to the designated admin user's Firebase UID.
     - **CCR:** C:3, C:9, R:5
@@ -74,6 +102,18 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** Locate the GitHub repository for "AI Red Teaming with MCP" and research how to set it up. The goal is to proactively identify security vulnerabilities in the codebase, especially before implementing payment features.
   - **CCR:** C:8, C:5, R:7
   - **Verification:** A new document, `docs/SECURITY_PLAN.md`, is created, outlining the plan for red teaming, including setup instructions and a schedule for running scans.
+    - **[ ] 2.2.1: Locate and Analyze Red Teaming Repository**
+      - **Guidance:** Find the specified GitHub repository and analyze its README and documentation to understand its capabilities and setup process.
+      - **CCR:** C:4, C:6, R:3
+      - **Verification:** The repository is located and a summary of its features is added to `docs/SECURITY_PLAN.md`.
+    - **[ ] 2.2.2: Document Setup and Configuration**
+      - **Guidance:** Detail the step-by-step process for installing, configuring, and running the AI Red Teaming tool against our codebase.
+      - **CCR:** C:4, C:6, R:4
+      - **Verification:** The setup instructions are clearly documented in `docs/SECURITY_PLAN.md`.
+    - **[ ] 2.2.3: Define Red Teaming Schedule and Scope**
+      - **Guidance:** Outline a schedule for running the red teaming scans (e.g., before major releases, on a quarterly basis) and define the initial scope of the scans.
+      - **CCR:** C:3, C:7, R:4
+      - **Verification:** The schedule and scope are documented in `docs/SECURITY_PLAN.md`.
 
 ---
 
@@ -83,6 +123,14 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** The automated scraping process is the lifeblood of this app. We need to confirm the Vercel CRON job that triggers the scraping is running correctly and on schedule.
   - **CCR:** C:6, C:7, R:8
   - **Verification:** Vercel logs show the CRON job executing successfully at the expected intervals. The "last scraped at" timestamps in the database are updated as expected.
+    - **[ ] 3.1.5: Manually Trigger CRON Jobs for Testing**
+      - **Guidance:** Instead of waiting for the scheduled time, use `curl` or a similar tool to send a POST request with the `CRON_SECRET` to the `/api/cron/auto-scrape` and `/api/cron/quality-check` endpoints to test them on demand.
+      - **CCR:** C:3, C:8, R:4
+      - **Verification:** The manual requests trigger the jobs, and the expected logs and database changes occur.
+    - **[ ] 3.1.6: Monitor Production CRON Job Execution**
+      - **Guidance:** After deploying the changes, monitor the Vercel logs for the first few scheduled runs at 8:00 AM EST to confirm they are executing automatically.
+      - **CCR:** C:2, C:8, R:3
+      - **Verification:** The jobs run successfully without manual intervention.
   - **[ ] 3.1.1: Research CRON Job Configuration**
     - **Guidance:** Review `vercel.json` to identify all configured CRON jobs, their paths, and their schedules.
     - **CCR:** C:1, C:10, R:0
@@ -118,10 +166,30 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Modify the scraping and processing logic (`lib/pipelineProcessor.ts`) to include the new classification step.
     - **CCR:** C:8, C:7, R:7
     - **Verification:** New scrapes correctly categorize entities.
+    - **[ ] 3.2.2.1: Implement URL Pattern Analysis**
+      - **Guidance:** Add logic to the `pipelineProcessor` to check for keywords in the URL.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The function correctly classifies URLs based on predefined patterns.
+    - **[ ] 3.2.2.2: Implement On-Page Keyword Analysis**
+      - **Guidance:** Add logic to extract and analyze keywords from `<h1>`, `<h2>`, and `<title>` tags.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The function correctly classifies pages based on on-page keywords.
+    - **[ ] 3.2.2.3: Implement Gemini API Fallback**
+      - **Guidance:** Integrate the Gemini API call as a fallback for when the heuristic methods are not confident.
+      - **CCR:** C:5, C:8, R:6
+      - **Verification:** The Gemini API is called when needed and returns the correct classification.
   - **[ ] 3.2.3: Create Schema for Events and Directories**
     - **Guidance:** Update the Supabase schema to include tables for `events` and `source_directories`.
     - **CCR:** C:5, C:9, R:4
     - **Verification:** The new tables exist in Supabase.
+    - **[ ] 3.2.3.1: Draft SQL for New Tables**
+      - **Guidance:** Write the `CREATE TABLE` statements for the `events` and `source_directories` tables.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The SQL is syntactically correct.
+    - **[ ] 3.2.3.2: Apply Schema Changes via Migration**
+      - **Guidance:** Create a new Supabase migration file with the SQL for the new tables and apply it.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The new tables are visible in the Supabase dashboard.
 
 - **[ ] 3.3: Implement Geocoding for Addresses**
   - **Guidance:** Some trucks will only have a physical address. We need a process to convert these addresses into latitude and longitude to display them on the map.
@@ -135,6 +203,22 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Add a step in the pipeline that checks if GPS coordinates are missing and, if so, calls the chosen geocoding service to populate them.
     - **CCR:** C:7, C:8, R:6
     - **Verification:** The `latitude` and `longitude` columns in the `trucks` table are populated for address-only entries after a scrape.
+    - **[ ] 3.3.2.1: Enable PostGIS Extensions in Supabase**
+      - **Guidance:** Run the `CREATE EXTENSION` commands for `postgis` and `postgis_tiger_geocoder` in the Supabase SQL Editor.
+      - **CCR:** C:2, C:9, R:3
+      - **Verification:** The extensions are successfully enabled.
+    - **[ ] 3.3.2.2: Create Geocoding Trigger Function**
+      - **Guidance:** Write and apply the SQL for the trigger function that will automatically geocode addresses.
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** The function is created in Supabase.
+    - **[ ] 3.3.2.3: Attach Trigger to `food_trucks` Table**
+      - **Guidance:** Write and apply the `CREATE TRIGGER` SQL statement.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The trigger is attached to the table and fires on `INSERT` or `UPDATE`.
+    - **[ ] 3.3.2.4: Implement Nominatim Fallback Logic**
+      - **Guidance:** In `lib/pipelineProcessor.ts`, add the logic to call the Nominatim API if the database geocoding fails.
+      - **CCR:** C:5, C:8, R:5
+      - **Verification:** The fallback logic is implemented and correctly updates the database.
 
 - **[ ] 3.4: Define and Refine Data Quality Score**
   - **Guidance:** The current quality score is ambiguous. We need to define the specific metrics, weights, and thresholds that contribute to the score.
@@ -148,6 +232,14 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Update the backend script that calculates the quality scores based on the new formula.
     - **CCR:** C:6, C:8, R:5
     - **Verification:** The scores are recalculated and updated in the database.
+    - **[ ] 3.4.2.1: Refactor `DataQualityService`**
+      - **Guidance:** Update the `calculateQualityScore` method in `lib/utils/QualityScorer.ts` to use the new weighted system from `docs/DATA_QUALITY_GUIDE.md`.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The method correctly calculates scores based on the new logic.
+    - **[ ] 3.4.2.2: Update `quality-check` CRON Job**
+      - **Guidance:** Ensure the `quality-check` CRON job correctly calls the updated `DataQualityService` and stores the new scores.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The CRON job runs successfully and updates the `quality_score` column in the `food_trucks` table.
 
 ---
 
@@ -165,6 +257,18 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Modify `app/globals.css`, `tailwind.config.ts`, and core UI components in `components/ui/` to use more `border-radius`, new color schemes, and other modern styling.
     - **CCR:** C:7, C:8, R:5
     - **Verification:** Components like Cards, Buttons, and Badges have a new, rounded look.
+    - **[ ] 4.1.2.1: Install and Configure `glasscn-ui`**
+      - **Guidance:** Add the `glasscn-ui` package and update `tailwind.config.ts` and `globals.css` as per the library's documentation.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The library is installed and configured without errors.
+    - **[ ] 4.1.2.2: Refactor `Card` Component**
+      - **Guidance:** Update the `Card` component in `components/ui/` to use the `glass` variant from `glasscn-ui`.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The `Card` component now has a glassmorphism effect.
+    - **[ ] 4.1.2.3: Refactor `Button` Component**
+      - **Guidance:** Update the `Button` component to incorporate neon glow effects on hover and focus, using custom styles in `globals.css`.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The `Button` component has the desired neon effect.
 
 - **[ ] 4.2: Improve "View Details" Experience**
   - **Guidance:** Clicking "View Details" should not navigate to a new page. It should display the information on the same page, using a modal, accordion, or similar non-disruptive UI pattern.
@@ -204,6 +308,22 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Add a "favorite" button to `TruckCard`. Create a new table in Supabase to store user favorites (`user_id`, `truck_id`). Display favorited trucks in the user portal.
     - **CCR:** C:7, C:8, R:6
     - **Verification:** Users can favorite and unfavorite trucks, and the list appears in their portal.
+    - **[ ] 4.4.2.1: Create `user_favorites` Table**
+      - **Guidance:** Write and apply a Supabase migration to create the `user_favorites` table with `user_id` and `truck_id` columns.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The table is created in Supabase.
+    - **[ ] 4.4.2.2: Implement "Favorite" Button UI**
+      - **Guidance:** Add a "favorite" button to the `TruckCard` component, with logic to handle the visual state (favorited/not favorited).
+      - **CCR:** C:4, C:9, R:3
+      - **Verification:** The button appears and changes state on click.
+    - **[ ] 4.4.2.3: Implement Favorite/Unfavorite Logic**
+      - **Guidance:** Create the client-side and server-side logic to add/remove entries from the `user_favorites` table when the button is clicked.
+      - **CCR:** C:5, C:8, R:5
+      - **Verification:** Clicking the button correctly updates the database.
+    - **[ ] 4.4.2.4: Display Favorites in User Portal**
+      - **Guidance:** Create a new component to fetch and display the user's favorited trucks in their portal.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** The user's favorites are correctly displayed.
 
 ---
 
@@ -217,10 +337,26 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Review the data fetching code for each panel on the admin dashboard (`app/admin/page.tsx` and its components). Check if some panels are using cached data or different query filters.
     - **CCR:** C:6, C:7, R:6
     - **Verification:** The root cause of the discrepancy is identified and documented.
+    - **[ ] 5.1.1.1: Analyze `TrucksPage` Component**
+      - **Guidance:** Examine the data fetching in `components/admin/dashboard/TrucksPage.tsx`.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The data fetching logic is understood and documented.
+    - **[ ] 5.1.1.2: Analyze Data Quality Components**
+      - **Guidance:** Examine the data fetching in `app/admin/data-quality/page.tsx` and its child components.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The data fetching logic is understood and documented.
   - **[ ] 5.1.2: Unify Data Source or Refetching Strategy**
     - **Guidance:** Refactor the dashboard to use a single, consistent data source (e.g., a React context or a unified hook) or ensure all panels refetch data on a consistent trigger.
     - **CCR:** C:7, C:8, R:7
     - **Verification:** The fix is implemented and all panels update in sync.
+    - **[ ] 5.1.2.1: Implement TanStack Query**
+      - **Guidance:** Integrate TanStack Query (React Query) for server state management to ensure data is fetched and cached consistently across all components.
+      - **CCR:** C:5, C:8, R:6
+      - **Verification:** TanStack Query is set up and used for data fetching in the admin dashboard.
+    - **[ ] 5.1.2.2: Refactor Components to Use `useQuery`**
+      - **Guidance:** Replace the existing `useEffect`-based data fetching with the `useQuery` hook from TanStack Query.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** All admin dashboard components use `useQuery` for data fetching.
 
 - **[ ] 5.2: Improve Auto-Scraping Page**
   - **Guidance:** The auto-scraping page is vague. It needs to provide more useful information about scraping status and history.
@@ -256,11 +392,26 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** Research methods for wrapping the Next.js web app into a mobile app for the Google Play Store, prioritizing cost-effective solutions.
   - **CCR:** C:7, C:5, R:6
   - **Verification:** A document, `docs/MOBILE_DEPLOYMENT_PLAN.md`, is created, comparing technologies like Progressive Web Apps (PWA), Capacitor, and others.
-
+    - **[ ] 6.1.1: Research PWA Conversion**
+      - **Guidance:** Investigate the steps required to make the Next.js app a fully-featured Progressive Web App.
+      - **CCR:** C:4, C:7, R:4
+      - **Verification:** The PWA conversion process is documented.
+    - **[ ] 6.1.2: Research Capacitor Conversion**
+      - **Guidance:** Investigate the steps required to wrap the app with Capacitor.
+      - **CCR:** C:4, C:7, R:5
+      - **Verification:** The Capacitor conversion process is documented.
 - **[ ] 6.2: Plan for Payment Integration**
   - **Guidance:** Research and plan for the integration of a payment provider for food truck owner subscriptions. The preference is for Polar over Stripe.
   - **CCR:** C:6, C:6, R:8
   - **Verification:** A document, `docs/PAYMENT_INTEGRATION_PLAN.md`, is created, outlining the chosen provider, the required data schema changes, and the implementation steps.
+    - **[ ] 6.2.1: Research Polar Payments**
+      - **Guidance:** Investigate the Polar Payments API, pricing, and integration with Next.js.
+      - **CCR:** C:4, C:7, R:5
+      - **Verification:** The research is documented in `docs/PAYMENT_INTEGRATION_PLAN.md`.
+    - **[ ] 6.2.2: Design Subscription Schema**
+      - **Guidance:** Design the necessary Supabase tables to manage user subscriptions, plans, and payment statuses.
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** The schema is documented in `docs/PAYMENT_INTEGRATION_PLAN.md`.
 
 ---
 
@@ -287,3 +438,15 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** The advisor has identified a large number of unused indexes across various tables (`api_usage`, `discovered_directories`, `discovered_urls`, `food_trucks`, `scraping_jobs`). These should be reviewed and dropped to save space and reduce maintenance overhead.
     - **CCR:** C:5, C:8, R:5
     - **Verification:** The unused indexes are removed, and application functionality remains unaffected.
+    - **[ ] 7.2.2.1: Analyze Index Usage**
+      - **Guidance:** Use the `pg_stat_user_indexes` view in Supabase to confirm that the identified indexes have zero or very low usage.
+      - **CCR:** C:3, C:8, R:3
+      - **Verification:** The analysis confirms the advisor's findings.
+    - **[ ] 7.2.2.2: Draft `DROP INDEX` Statements**
+      - **Guidance:** Write the `DROP INDEX` statements for the confirmed unused indexes.
+      - **CCR:** C:2, C:9, R:4
+      - **Verification:** The SQL is syntactically correct.
+    - **[ ] 7.2.2.3: Apply Index Deletions via Migration**
+      - **Guidance:** Create a new Supabase migration file with the `DROP INDEX` statements and apply it.
+      - **CCR:** C:3, C:9, R:5
+      - **Verification:** The indexes are removed from the database.
