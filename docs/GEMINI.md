@@ -67,6 +67,22 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
     - **Rule 1.1:** New functions cannot exceed 50 lines.
     - **Rule 1.2:** This rule is enforced by the `max-lines-per-function` linting rule.
 
+## Supabase Operational Notes
+
+### Brief overview
+This section documents key operational learnings and best practices derived from recent interactions with Supabase, focusing on improving the reliability and efficiency of database migrations and administration.
+
+### Development Workflow
+- **Rule 1.1: Prioritize Manual SQL Execution:** When Supabase CLI (`db push`, `db pull`) or MCP tools consistently fail due to environmental issues (e.g., Docker dependency, authentication errors), the primary fallback is to generate a manual SQL script. This script should be executed directly in the Supabase dashboard's SQL Editor to ensure reliable schema changes.
+- **Rule 1.2: Verify All Schema Changes with SQL Queries:** After applying any schema changes (manually or via tooling), always run `SELECT` queries against the appropriate `pg_` catalog tables (`pg_indexes`, `pg_policies`, etc.) to verify that the changes have been applied correctly. Do not assume success.
+- **Rule 1.3: Incremental and Idempotent Migrations:** All migration scripts, whether manual or file-based, should be written to be idempotent (i.e., safe to run multiple times). Use `IF NOT EXISTS` for table/index/extension creation and `IF EXISTS` for dropping objects. This prevents errors when re-running scripts.
+- **Rule 1.4: Resolve Migration History Mismatches Methodically:** If the Supabase CLI reports a migration history mismatch, follow this specific sequence:
+  1.  Delete all local migration files in `supabase/migrations`.
+  2.  Run `npx supabase migration repair` with the `--status reverted` flag for all migrations listed in the error message.
+  3.  Run `npx supabase db pull` to generate a clean, consolidated schema file.
+  4.  Re-create any new, pending migrations with fresh timestamps.
+- **Rule 1.5: Refer to `.clinerules/supabase-best-practices.md`:** For a more detailed and comprehensive set of rules and best practices, refer to the `.clinerules/supabase-best-practices.md` file.
+
 ## Code Duplication Detection
 
 ### SocialMediaSection Deduplication

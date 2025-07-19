@@ -146,6 +146,9 @@ export interface FoodTruck extends FoodTruckSchema {
   id: string;
   created_at: string;
   updated_at: string;
+  last_updated_at?: string; // Alternative field name for compatibility
+  user_id?: string; // References auth.users(id)
+  state?: string; // US state abbreviation (2 chars)
   is_active?: boolean;
   image_url?: string;
   average_rating?: number;
