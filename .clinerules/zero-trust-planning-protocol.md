@@ -49,9 +49,9 @@ The following workflow must be adhered to for every task defined in the WBS.
     - Run `npx tsc --noEmit` and `npx eslint .` to ensure no new errors were introduced.
 - **Protocol:** If PoAV fails, **STOP**. Do not proceed. Re-evaluate the plan, revert the change if necessary, and return to Step 1.
 
-### Step 5: Document & Commit
-- **Action:** Once a logical block of atomic tasks is complete and fully verified, commit the changes with a descriptive message that references the WBS task number(s).
-- **Goal:** Maintain a clean, verifiable, and well-documented project history.
+### Step 5: Document & Commit (Create Checkpoint)
+- **Action:** Once a logical block of atomic tasks that constitutes a major WBS item is complete and fully verified, commit the changes with a descriptive message that references the WBS task number(s). This commit serves as a safe checkpoint before proceeding to the next major task.
+- **Goal:** Maintain a clean, verifiable, and well-documented project history, with clear checkpoints that facilitate safe rollbacks.
 
 ## 5. Rule Integration
 This protocol is now a core operational guideline. It supersedes any previous, less rigorous planning methods. All future actions will be governed by this document.
