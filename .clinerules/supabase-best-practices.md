@@ -27,3 +27,14 @@ This rule set documents key operational learnings and best practices derived fro
   4.  Re-create any new, pending migrations with fresh timestamps.
 
   - _Trigger Case_: When `npx supabase db push` or `npx supabase db pull` fails with a history mismatch error.
+
+- **Rule 1.5: Mandatory RLS for User-Specific Data:** For any new table that contains a foreign key to `auth.users` or any user-identifying column (e.g., `user_id`), Row Level Security (RLS) must be enabled immediately after table creation. A policy must be implemented to ensure users can only access their own data, typically by checking `auth.uid() = user_id`.
+
+  - _Trigger Case_: Creation of any table containing user-specific, non-public data.
+  - _Example_:
+    ```sql
+    -- After creating a 'profiles' table with a 'user_id' column
+    ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+    CREATE POLICY "Users can view their own profile"
+    ON public.profiles FOR SELECT
+    USING ( auth.uid() = user_id );

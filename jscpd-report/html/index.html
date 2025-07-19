@@ -1,0 +1,473 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Copy/Paste Detector Report</title><link href="styles/tailwind.css" rel="stylesheet"><link href="styles/prism.css" rel="stylesheet"></head><body class="bg-gray-100"><header class="bg-white shadow py-4"><div class="container mx-auto px-4"><h1 class="text-3xl font-semibold text-gray-800">jscpd - copy/paste report</h1></div></header><main class="container mx-auto my-8 p-4 bg-white shadow rounded"><section class="mb-8" id="dashboard"><h2 class="text-2xl font-semibold text-gray-700 mb-4">Dashboard</h2><div class="grid grid-cols-4 gap-4"><div class="bg-blue-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-blue-800 mb-2">Total Files</h3><span class="text-4xl font-bold text-blue-800">455</span></div><div class="bg-green-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-green-800 mb-2">Total Lines of Code</h3><span class="text-4xl font-bold text-green-800">40592</span></div><div class="bg-yellow-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-yellow-800 mb-2">Number of Clones</h3><span class="text-4xl font-bold text-yellow-800">37</span></div><div class="bg-red-200 p-4 rounded text-center"><h3 class="text-lg font-semibold text-red-800 mb-2">Duplicated Lines</h3><span class="text-4xl font-bold text-red-800">464 (1.14%)</span></div></div></section><section class="mb-8" id="formats"><h2 class="text-2xl font-semibold text-gray-700 mb-4">Formats with Duplications</h2><table class="w-full table-auto"><thead><tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"><th class="py-3 px-6 text-left">Format</th><th class="py-3 px-6 text-left">Files</th><th class="py-3 px-6 text-left">Lines</th><th class="py-3 px-6 text-left">Clones</th><th class="py-3 px-6 text-left">Duplicated Lines</th><th class="py-3 px-6 text-left">Duplicated Tokens</th></tr></thead><tbody><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#typescript-clones">typescript</a></td><td class="py-3 px-6">124</td><td class="py-3 px-6">19038</td><td class="py-3 px-6">24</td><td class="py-3 px-6">280</td><td class="py-3 px-6">2969</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#tsx-clones">tsx</a></td><td class="py-3 px-6">181</td><td class="py-3 px-6">14756</td><td class="py-3 px-6">12</td><td class="py-3 px-6">166</td><td class="py-3 px-6">1233</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#javascript-clones">javascript</a></td><td class="py-3 px-6">140</td><td class="py-3 px-6">5786</td><td class="py-3 px-6">1</td><td class="py-3 px-6">18</td><td class="py-3 px-6">116</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#css-clones">css</a></td><td class="py-3 px-6">1</td><td class="py-3 px-6">93</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#markup-clones">markup</a></td><td class="py-3 px-6">1</td><td class="py-3 px-6">23</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#markdown-clones">markdown</a></td><td class="py-3 px-6">1</td><td class="py-3 px-6">10</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#json-clones">json</a></td><td class="py-3 px-6">6</td><td class="py-3 px-6">372</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td></tr><tr class="bg-white border-b border-gray-200 text-gray-800 text-sm"><td class="py-3 px-6"><a class="text-blue-600 hover:underline" href="#sql-clones">sql</a></td><td class="py-3 px-6">1</td><td class="py-3 px-6">514</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td><td class="py-3 px-6">0</td></tr></tbody></table></section><section class="mb-8" id="txt-clones"><a name="typescript-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">typescript</h2><div class="divide-y divide-gray-200 border-b-2"><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/api/admin/realtime-events/route.ts (Line 41:30 - Line 54:2), C:/AI/food-truck-finder-poc/app/api/admin/realtime-events/route.ts (Line 17:29 - Line 30:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn0" onclick="toggleCodeBlock('cloneGroup0', 'expandBtn0', 'collapseBtn0')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn0" onclick="toggleCodeBlock('cloneGroup0', 'expandBtn0', 'collapseBtn0')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup0"><code class="language-typescript text-sm text-gray-800">, error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
+}</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/api/trucks/route.ts (Line 110:2 - Line 118:2), C:/AI/food-truck-finder-poc/lib/api/test-integration/helpers.ts (Line 106:2 - Line 114:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn2" onclick="toggleCodeBlock('cloneGroup2', 'expandBtn2', 'collapseBtn2')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn2" onclick="toggleCodeBlock('cloneGroup2', 'expandBtn2', 'collapseBtn2')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup2"><code class="language-typescript text-sm text-gray-800">{
+      monday: { closed: true },
+      tuesday: { closed: true },
+      wednesday: { closed: true },
+      thursday: { closed: true },
+      friday: { closed: true },
+      saturday: { closed: true },
+      sunday: { closed: true },
+    })</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/api/trucks/route.ts (Line 170:29 - Line 179:2), C:/AI/food-truck-finder-poc/app/api/trucks/route.ts (Line 152:29 - Line 161:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn3" onclick="toggleCodeBlock('cloneGroup3', 'expandBtn3', 'collapseBtn3')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn3" onclick="toggleCodeBlock('cloneGroup3', 'expandBtn3', 'collapseBtn3')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup3"><code class="language-typescript text-sm text-gray-800">, error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 });
+    }
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 },
+    );
+  }
+}</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/api/autonomous-discovery/route.ts (Line 20:47 - Line 42:2), C:/AI/food-truck-finder-poc/app/api/enhanced-pipeline/route.ts (Line 21:62 - Line 43:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn4" onclick="toggleCodeBlock('cloneGroup4', 'expandBtn4', 'collapseBtn4')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn4" onclick="toggleCodeBlock('cloneGroup4', 'expandBtn4', 'collapseBtn4')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup4"><code class="language-typescript text-sm text-gray-800">,
+        },
+      },
+    },
+    { status: 410 },
+  ); // 410 Gone - Resource no longer available
+}
+
+export function GET() {
+  return NextResponse.json(
+    {
+      status: 'DEPRECATED',
+      message: 'This endpoint has been consolidated into /api/pipeline',
+      migration: {
+        newEndpoint: '/api/pipeline',
+        documentation: 'See /api/pipeline for current API documentation',
+        deprecationDate: '2024-12-09',
+        removalDate: '2025-01-01',
+      },
+    },
+    { status: 410 },
+  );
+}</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/utils/foodTruckHelpers.ts (Line 221:2 - Line 226:6), C:/AI/food-truck-finder-poc/lib/api/search/filters.ts (Line 76:6 - Line 81:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn9" onclick="toggleCodeBlock('cloneGroup9', 'expandBtn9', 'collapseBtn9')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn9" onclick="toggleCodeBlock('cloneGroup9', 'expandBtn9', 'collapseBtn9')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup9"><code class="language-typescript text-sm text-gray-800">;
+    const openTime = Number.parseInt(hours.open.replace(':', ''), 10);
+    const closeTime = Number.parseInt(hours.close.replace(':', ''), 10);
+
+    return currentTime &gt;= openTime &amp;&amp; currentTime &lt;= closeTime;
+  } catch</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/utils/apiHelpers.ts (Line 6:2 - Line 15:7), C:/AI/food-truck-finder-poc/app/api/trucks/route.ts (Line 153:2 - Line 161:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn10" onclick="toggleCodeBlock('cloneGroup10', 'expandBtn10', 'collapseBtn10')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn10" onclick="toggleCodeBlock('cloneGroup10', 'expandBtn10', 'collapseBtn10')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup10"><code class="language-typescript text-sm text-gray-800">ZodError) {
+    return NextResponse.json({ error: error.errors }, { status: 400 });
+  }
+  return NextResponse.json(
+    { error: error instanceof Error ? error.message : String(error) },
+    { status: 500 },
+  );
+}
+
+export</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/schemas/truck.ts (Line 74:2 - Line 80:2), C:/AI/food-truck-finder-poc/app/api/trucks/route.ts (Line 127:2 - Line 135:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn11" onclick="toggleCodeBlock('cloneGroup11', 'expandBtn11', 'collapseBtn11')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn11" onclick="toggleCodeBlock('cloneGroup11', 'expandBtn11', 'collapseBtn11')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup11"><code class="language-typescript text-sm text-gray-800">z.object({
+  instagram: z.string().optional(),
+  facebook: z.string().optional(),
+  twitter: z.string().optional(),
+  tiktok: z.string().optional(),
+  yelp: z.string().optional(),
+});</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/schemas/truck.ts (Line 83:2 - Line 90:2), C:/AI/food-truck-finder-poc/app/api/trucks/route.ts (Line 64:7 - Line 71:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn12" onclick="toggleCodeBlock('cloneGroup12', 'expandBtn12', 'collapseBtn12')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn12" onclick="toggleCodeBlock('cloneGroup12', 'expandBtn12', 'collapseBtn12')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup12"><code class="language-typescript text-sm text-gray-800">z.object({
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zip_code: z.string().optional(),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
+  timestamp: z.string(),</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/data-quality/duplicatePrevention.ts (Line 259:3 - Line 275:6), C:/AI/food-truck-finder-poc/lib/performance/databaseCache.ts (Line 276:7 - Line 290:9)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn17" onclick="toggleCodeBlock('cloneGroup17', 'expandBtn17', 'collapseBtn17')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn17" onclick="toggleCodeBlock('cloneGroup17', 'expandBtn17', 'collapseBtn17')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup17"><code class="language-typescript text-sm text-gray-800">): number {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  /**
+   * Calculate contact similarity
+   */</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/hooks/realtime/setupEventSourceListeners.ts (Line 2:34 - Line 23:10), C:/AI/food-truck-finder-poc/lib/api/admin/realtime-events/handlers.ts (Line 9:10 - Line 43:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn18" onclick="toggleCodeBlock('cloneGroup18', 'expandBtn18', 'collapseBtn18')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn18" onclick="toggleCodeBlock('cloneGroup18', 'expandBtn18', 'collapseBtn18')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup18"><code class="language-typescript text-sm text-gray-800">;
+
+interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  };
+  dataQuality: {
+    averageScore: number;
+    totalTrucks: number;
+    recentChanges: number;
+  };
+  systemHealth: {
+    status: 'healthy' | 'warning' | 'error';
+    uptime: number;
+    lastUpdate: string;
+  };
+}
+
+interface</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/hooks/realtime/setupEventSourceListeners.ts (Line 24:3 - Line 30:10), C:/AI/food-truck-finder-poc/hooks/realtime/useConnectionManagement.ts (Line 19:3 - Line 41:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn19" onclick="toggleCodeBlock('cloneGroup19', 'expandBtn19', 'collapseBtn19')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn19" onclick="toggleCodeBlock('cloneGroup19', 'expandBtn19', 'collapseBtn19')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup19"><code class="language-typescript text-sm text-gray-800">setIsConnected: (connected: boolean) =&gt; void;
+  setIsConnecting: (connecting: boolean) =&gt; void;
+  setConnectionError: (error: string | undefined) =&gt; void;
+  setConnectionAttempts: (attempts: number | ((prev: number) =&gt; number)) =&gt; void;
+}
+
+interface</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/hooks/realtime/setupEventSourceListeners.ts (Line 155:5 - Line 165:9), C:/AI/food-truck-finder-poc/hooks/realtime/useConnectionManagement.ts (Line 15:8 - Line 41:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn20" onclick="toggleCodeBlock('cloneGroup20', 'expandBtn20', 'collapseBtn20')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn20" onclick="toggleCodeBlock('cloneGroup20', 'expandBtn20', 'collapseBtn20')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup20"><code class="language-typescript text-sm text-gray-800">;
+  setLastEventTime: React.Dispatch&lt;React.SetStateAction&lt;Date | undefined&gt;&gt;;
+  setLatestMetrics: React.Dispatch&lt;React.SetStateAction&lt;RealtimeMetrics | undefined&gt;&gt;;
+  setRecentEvents: React.Dispatch&lt;React.SetStateAction&lt;RealtimeEvent[]&gt;&gt;;
+  setIsConnected: (connected: boolean) =&gt; void;
+  setIsConnecting: (connecting: boolean) =&gt; void;
+  setConnectionError: (error: string | undefined) =&gt; void;
+  setConnectionAttempts: (attempts: number | ((prev: number) =&gt; number)) =&gt; void;
+}
+
+function</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/hooks/realtime/createEventSourceConnection.ts (Line 1:2 - Line 21:7), C:/AI/food-truck-finder-poc/hooks/realtime/setupEventSourceListeners.ts (Line 1:2 - Line 43:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn21" onclick="toggleCodeBlock('cloneGroup21', 'expandBtn21', 'collapseBtn21')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn21" onclick="toggleCodeBlock('cloneGroup21', 'expandBtn21', 'collapseBtn21')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup21"><code class="language-typescript text-sm text-gray-800">React from 'react';
+import type { RealtimeEvent } from '../useRealtimeAdminEvents.types';
+interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  };
+  dataQuality: {
+    averageScore: number;
+    totalTrucks: number;
+    recentChanges: number;
+  };
+  systemHealth: {
+    status: 'healthy' | 'warning' | 'error';
+    uptime: number;
+    lastUpdate: string;
+  };
+}
+import</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/hooks/realtime/createEventSourceConnection.ts (Line 138:5 - Line 147:16), C:/AI/food-truck-finder-poc/hooks/realtime/setupEventSourceListeners.ts (Line 154:2 - Line 23:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn22" onclick="toggleCodeBlock('cloneGroup22', 'expandBtn22', 'collapseBtn22')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn22" onclick="toggleCodeBlock('cloneGroup22', 'expandBtn22', 'collapseBtn22')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup22"><code class="language-typescript text-sm text-gray-800">;
+  connect: () =&gt; void;
+  setLastEventTime: React.Dispatch&lt;React.SetStateAction&lt;Date | undefined&gt;&gt;;
+  setLatestMetrics: React.Dispatch&lt;React.SetStateAction&lt;RealtimeMetrics | undefined&gt;&gt;;
+  setRecentEvents: React.Dispatch&lt;React.SetStateAction&lt;RealtimeEvent[]&gt;&gt;;
+  setIsConnected: (connected: boolean) =&gt; void;
+  setIsConnecting: (connecting: boolean) =&gt; void;
+  setConnectionError: (error: string | undefined) =&gt; void;
+  setConnectionAttempts: (attempts: number | ((prev: number) =&gt; number)) =&gt; void;
+  connectionState</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/types.ts (Line 68:3 - Line 79:16), C:/AI/food-truck-finder-poc/lib/mappers/uprootedVeganMapper.ts (Line 43:3 - Line 55:18)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn26" onclick="toggleCodeBlock('cloneGroup26', 'expandBtn26', 'collapseBtn26')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn26" onclick="toggleCodeBlock('cloneGroup26', 'expandBtn26', 'collapseBtn26')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup26"><code class="language-typescript text-sm text-gray-800">scheduled_locations?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    zip_code?: string;
+    lat?: number;
+    lng?: number;
+    timestamp: string;
+    start_time: string;
+    end_time: string;
+  }[];
+  operating_hours</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/types.ts (Line 111:22 - Line 126:13), C:/AI/food-truck-finder-poc/lib/types.ts (Line 78:2 - Line 93:11)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn27" onclick="toggleCodeBlock('cloneGroup27', 'expandBtn27', 'collapseBtn27')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn27" onclick="toggleCodeBlock('cloneGroup27', 'expandBtn27', 'collapseBtn27')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup27"><code class="language-typescript text-sm text-gray-800">];
+  operating_hours: OperatingHours;
+  menu: MenuCategory[];
+  contact_info: {
+    phone?: string;
+    email?: string;
+    website?: string;
+  };
+  social_media: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+    tiktok?: string;
+    yelp?: string;
+  };
+  cuisine_type</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/types.ts (Line 214:2 - Line 233:7), C:/AI/food-truck-finder-poc/lib/api/admin/realtime-events/handlers.ts (Line 12:1 - Line 43:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn28" onclick="toggleCodeBlock('cloneGroup28', 'expandBtn28', 'collapseBtn28')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn28" onclick="toggleCodeBlock('cloneGroup28', 'expandBtn28', 'collapseBtn28')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup28"><code class="language-typescript text-sm text-gray-800">interface RealtimeMetrics {
+  scrapingJobs: {
+    active: number;
+    completed: number;
+    failed: number;
+    pending: number;
+  };
+  dataQuality: {
+    averageScore: number;
+    totalTrucks: number;
+    recentChanges: number;
+  };
+  systemHealth: {
+    status: 'healthy' | 'warning' | 'error';
+    uptime: number;
+    lastUpdate: string;
+  };
+}
+
+export</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/ScraperEngine.ts (Line 793:8 - Line 799:36), C:/AI/food-truck-finder-poc/lib/ScraperEngine.ts (Line 758:8 - Line 764:32)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn29" onclick="toggleCodeBlock('cloneGroup29', 'expandBtn29', 'collapseBtn29')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn29" onclick="toggleCodeBlock('cloneGroup29', 'expandBtn29', 'collapseBtn29')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup29"><code class="language-typescript text-sm text-gray-800">;
+
+      const response = await this.makeGeminiRequest(prompt);
+      this.updateUsageCounters(1, prompt.length + response.length);
+      const parsed: unknown = JSON.parse(response);
+      if (parsed == undefined || typeof parsed !== 'object') {
+        throw new Error('Invalid Gemini sentiment response'</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/firecrawl.ts (Line 235:2 - Line 247:17), C:/AI/food-truck-finder-poc/lib/firecrawl.ts (Line 152:2 - Line 164:18)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn30" onclick="toggleCodeBlock('cloneGroup30', 'expandBtn30', 'collapseBtn30')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn30" onclick="toggleCodeBlock('cloneGroup30', 'expandBtn30', 'collapseBtn30')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup30"><code class="language-typescript text-sm text-gray-800">,
+        }),
+      });
+
+      const data: unknown = await response.json();
+
+      if (!response.ok) {
+        const errorData = data as { error?: string };
+        throw new Error(errorData.error ?? `HTTP ${response.status}`);
+      }
+
+      this.setCacheResult(cacheKey, data);
+      return data as CrawlJobResponse</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/firecrawl.ts (Line 281:2 - Line 292:20), C:/AI/food-truck-finder-poc/lib/firecrawl.ts (Line 153:2 - Line 164:18)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn31" onclick="toggleCodeBlock('cloneGroup31', 'expandBtn31', 'collapseBtn31')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn31" onclick="toggleCodeBlock('cloneGroup31', 'expandBtn31', 'collapseBtn31')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup31"><code class="language-typescript text-sm text-gray-800">,
+      });
+
+      const data: unknown = await response.json();
+
+      if (!response.ok) {
+        const errorData = data as { error?: string };
+        throw new Error(errorData.error ?? `HTTP ${response.status}`);
+      }
+
+      this.setCacheResult(cacheKey, data);
+      return data as CrawlStatusResponse</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/discoveryEngine.ts (Line 374:14 - Line 389:65), C:/AI/food-truck-finder-poc/lib/discoveryEngine.ts (Line 294:13 - Line 309:56)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn32" onclick="toggleCodeBlock('cloneGroup32', 'expandBtn32', 'collapseBtn32')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn32" onclick="toggleCodeBlock('cloneGroup32', 'expandBtn32', 'collapseBtn32')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup32"><code class="language-typescript text-sm text-gray-800">) {
+        if (typeof result === 'object' &amp;&amp; result !== null &amp;&amp; 'url' in result) {
+          const resultUrl = (result as { url?: string }).url;
+          if (
+            resultUrl != undefined &amp;&amp;
+            typeof resultUrl === 'string' &amp;&amp;
+            (await this.isFoodTruckUrl(resultUrl))
+          ) {
+            discoveredUrls.add(resultUrl);
+          }
+        }
+      }
+    }
+  }
+
+  // Helper method to store discovered URLs from discovery process</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/discoveryEngine.ts (Line 644:2 - Line 652:8), C:/AI/food-truck-finder-poc/lib/discoveryEngine.ts (Line 347:15 - Line 354:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn33" onclick="toggleCodeBlock('cloneGroup33', 'expandBtn33', 'collapseBtn33')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn33" onclick="toggleCodeBlock('cloneGroup33', 'expandBtn33', 'collapseBtn33')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup33"><code class="language-typescript text-sm text-gray-800">);
+    } catch (error) {
+      console.error(`❌ Location search failed for ${city}:`, error);
+      results.errors.push(
+        `Location search failed for ${city}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    }
+
+    console</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/discoveryEngine.ts (Line 767:6 - Line 783:8), C:/AI/food-truck-finder-poc/lib/discoveryEngine.ts (Line 411:2 - Line 439:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn34" onclick="toggleCodeBlock('cloneGroup34', 'expandBtn34', 'collapseBtn34')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn34" onclick="toggleCodeBlock('cloneGroup34', 'expandBtn34', 'collapseBtn34')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup34"><code class="language-typescript text-sm text-gray-800">,
+        });
+        if (stored.isNew === true) {
+          results.urls_stored += 1;
+        } else {
+          results.urls_duplicates += 1;
+        }
+      } catch (error) {
+        console.error(`❌ Failed to store URL ${url}:`, error);
+        results.errors.push(
+          `Failed to store URL ${url}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+      }
+    }
+  }
+
+  private</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/autoScraper.ts (Line 227:22 - Line 233:3), C:/AI/food-truck-finder-poc/lib/autoScraper.ts (Line 180:27 - Line 186:7)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn35" onclick="toggleCodeBlock('cloneGroup35', 'expandBtn35', 'collapseBtn35')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn35" onclick="toggleCodeBlock('cloneGroup35', 'expandBtn35', 'collapseBtn35')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup35"><code class="language-typescript text-sm text-gray-800">(
+  url: string,
+  result: { status: string; details?: string },
+  counters: { trucksProcessed: number; newTrucksFound: number },
+  errors: Array&lt;{ url: string; details?: string }&gt;,
+): Promise&lt;void&gt; {
+  if</code></pre></div><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="tsx-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">tsx</h2><div class="divide-y divide-gray-200 border-b-2"><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/components/admin/realtime/RealtimeStatusDisplay.tsx (Line 98:5 - Line 156:4), C:/AI/food-truck-finder-poc/components/admin/realtime/RealtimeStatusDisplay.tsx (Line 12:10 - Line 60:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn1" onclick="toggleCodeBlock('cloneGroup1', 'expandBtn1', 'collapseBtn1')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn1" onclick="toggleCodeBlock('cloneGroup1', 'expandBtn1', 'collapseBtn1')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup1"><code class="language-tsx text-sm text-gray-800">;
+  readonly systemMetrics: StatusMetric[];
+  readonly scrapingJobs:
+    | {
+        active: number;
+        completed: number;
+        failed: number;
+        pending: number;
+      }
+    | undefined;
+  readonly alerts: SystemAlert[];
+  readonly showDetails: boolean;
+  readonly onToggleDetails: () =&gt; void;
+  readonly onAcknowledgeAlert: (alertId: string) =&gt; void;
+  readonly recentEventsCount: number;
+  readonly onClearEvents: () =&gt; void;
+}
+
+/**
+ * Displays the realtime status of a connection with various metrics and controls.
+ * @example
+ * RealtimeStatusDisplay({
+ *   isConnected: false,
+ *   isConnecting: true,
+ *   connectionError: &quot;Timeout&quot;,
+ *   lastEventTime: 1638349200000,
+ *   connect: () =&gt; {},
+ *   disconnect: () =&gt; {},
+ *   systemMetrics: {},
+ *   scrapingJobs: [],
+ *   alerts: [],
+ *   showDetails: false,
+ *   onToggleDetails: () =&gt; {},
+ *   onAcknowledgeAlert: () =&gt; {},
+ *   recentEventsCount: 5,
+ *   onClearEvents: () =&gt; {}
+ * })
+ * &lt;div&gt;...&lt;/div&gt;
+ * @param {Object} props - Props object containing configuration for the display.
+ * @param {boolean} props.isConnected - Connection status, true if currently connected.
+ * @param {boolean} props.isConnecting - Connection initiation status, true if attempting to connect.
+ * @param {string} props.connectionError - Description of the last encountered connection error.
+ * @param {number} props.lastEventTime - Unix timestamp of the last event occurrence.
+ * @param {function} props.connect - Function to initiate a connection.
+ * @param {function} props.disconnect - Function to terminate the connection.
+ * @param {Object} props.systemMetrics - Metrics data related to the system.
+ * @param {Array} props.scrapingJobs - List of ongoing or past scraping jobs.
+ * @param {Array} props.alerts - Array of alerts that have been triggered.
+ * @param {boolean} props.showDetails - Flag to show detailed status information.
+ * @param {function} props.onToggleDetails - Callback function to toggle detailed view.
+ * @param {function} props.onAcknowledgeAlert - Function to acknowledge a specific alert.
+ * @param {number} props.recentEventsCount - Count of recent events to display.
+ * @param {function} props.onClearEvents - Callback function to clear the list of events.
+ * @returns {JSX.Element} React component rendering the realtime status card.
+ * @description
+ *   - Utilizes conditional styling to indicate connection status through border color.
+ *   - Last event time is formatted and passed as a Date object.
+ *   - Component structure comprises a header for status and a content section for metrics and actions.
+ */</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/admin/events/page.tsx (Line 2:2 - Line 14:2), C:/AI/food-truck-finder-poc/app/admin/food-trucks/page.tsx (Line 2:2 - Line 14:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn5" onclick="toggleCodeBlock('cloneGroup5', 'expandBtn5', 'collapseBtn5')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn5" onclick="toggleCodeBlock('cloneGroup5', 'expandBtn5', 'collapseBtn5')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup5"><code class="language-tsx text-sm text-gray-800">} from '@/lib/supabase';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { PlusCircle,</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/admin/events/page.tsx (Line 207:17 - Line 225:7), C:/AI/food-truck-finder-poc/app/admin/events/page.tsx (Line 143:2 - Line 161:29)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn6" onclick="toggleCodeBlock('cloneGroup6', 'expandBtn6', 'collapseBtn6')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn6" onclick="toggleCodeBlock('cloneGroup6', 'expandBtn6', 'collapseBtn6')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup6"><code class="language-tsx text-sm text-gray-800">&lt;/TableCell&gt;
+                &lt;TableCell className=&quot;text-right&quot;&gt;
+                  &lt;Button asChild&gt;
+                    &lt;Link href={`/admin/schedules/${schedule.id}`}&gt;
+                      &lt;Edit className=&quot;size-4&quot; /&gt;
+                      &lt;span className=&quot;sr-only&quot;&gt;Edit&lt;/span&gt;
+                    &lt;/Link&gt;
+                  &lt;/Button&gt;
+                &lt;/TableCell&gt;
+              &lt;/TableRow&gt;
+            ))}
+          &lt;/TableBody&gt;
+        &lt;/Table&gt;
+      &lt;/CardContent&gt;
+    &lt;/Card&gt;
+  );
+}
+
+export</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/admin/data-quality/page.tsx (Line 2:9 - Line 14:5), C:/AI/food-truck-finder-poc/app/admin/food-trucks/page.tsx (Line 2:17 - Line 14:11)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn7" onclick="toggleCodeBlock('cloneGroup7', 'expandBtn7', 'collapseBtn7')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn7" onclick="toggleCodeBlock('cloneGroup7', 'expandBtn7', 'collapseBtn7')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup7"><code class="language-tsx text-sm text-gray-800">, type FoodTruck } from '@/lib/supabase';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Edit</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/app/admin/data-quality/page.tsx (Line 149:6 - Line 159:2), C:/AI/food-truck-finder-poc/app/admin/food-trucks/page.tsx (Line 105:4 - Line 114:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn8" onclick="toggleCodeBlock('cloneGroup8', 'expandBtn8', 'collapseBtn8')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn8" onclick="toggleCodeBlock('cloneGroup8', 'expandBtn8', 'collapseBtn8')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup8"><code class="language-tsx text-sm text-gray-800">&gt;
+      &lt;/TableCell&gt;
+      &lt;TableCell&gt;
+        {truck.last_scraped_at == undefined
+          ? 'N/A'
+          : new Date(truck.last_scraped_at).toLocaleDateString()}
+      &lt;/TableCell&gt;
+      &lt;TableCell className=&quot;text-right&quot;&gt;
+        &lt;Button asChild&gt;
+          &lt;Link href={`/admin/food-trucks/${truck.id}`}&gt;
+            &lt;</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 72:77 - Line 80:42), C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 48:57 - Line 56:26)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn13" onclick="toggleCodeBlock('cloneGroup13', 'expandBtn13', 'collapseBtn13')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn13" onclick="toggleCodeBlock('cloneGroup13', 'expandBtn13', 'collapseBtn13')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup13"><code class="language-tsx text-sm text-gray-800">, async () =&gt; {
+    // Mock the supabase client to simulate an error
+    supabaseFallback.supabase.from = jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        abortSignal: jest.fn().mockRejectedValue(new Error('Supabase error')),
+      }),
+    });
+
+    // Pre-populate the cache with stale data</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 84:5 - Line 91:8), C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 60:2 - Line 67:9)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn14" onclick="toggleCodeBlock('cloneGroup14', 'expandBtn14', 'collapseBtn14')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn14" onclick="toggleCodeBlock('cloneGroup14', 'expandBtn14', 'collapseBtn14')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup14"><code class="language-tsx text-sm text-gray-800">).toLocaleString(),
+    };
+    window.localStorage.setItem('food-trucks-cache', JSON.stringify(cachedData));
+
+    render(&lt;TestComponent /&gt;);
+
+    await waitFor(() =&gt; {
+      expect(screen.getByTestId('status')).toHaveTextContent('stale'</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 96:83 - Line 104:9), C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 48:57 - Line 56:26)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn15" onclick="toggleCodeBlock('cloneGroup15', 'expandBtn15', 'collapseBtn15')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn15" onclick="toggleCodeBlock('cloneGroup15', 'expandBtn15', 'collapseBtn15')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup15"><code class="language-tsx text-sm text-gray-800">, async () =&gt; {
+    // Mock the supabase client to simulate an error
+    supabaseFallback.supabase.from = jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        abortSignal: jest.fn().mockRejectedValue(new Error('Supabase error')),
+      }),
+    });
+
+    function</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 104:25 - Line 110:7), C:/AI/food-truck-finder-poc/lib/fallback/supabaseFallback.test.tsx (Line 19:14 - Line 25:4)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn16" onclick="toggleCodeBlock('cloneGroup16', 'expandBtn16', 'collapseBtn16')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn16" onclick="toggleCodeBlock('cloneGroup16', 'expandBtn16', 'collapseBtn16')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup16"><code class="language-tsx text-sm text-gray-800">() {
+      const { trucks, loading, dataStatus } = useFoodTrucks();
+      if (loading) return &lt;div&gt;Loading...&lt;/div&gt;;
+      return (
+        &lt;div&gt;
+          &lt;div data-testid=&quot;status&quot;&gt;{dataStatus.status}&lt;/div&gt;
+          {trucks.length</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/components/monitoring/FeatureList.tsx (Line 31:17 - Line 38:6), C:/AI/food-truck-finder-poc/app/admin/data-cleanup/page.tsx (Line 154:2 - Line 161:5)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn23" onclick="toggleCodeBlock('cloneGroup23', 'expandBtn23', 'collapseBtn23')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn23" onclick="toggleCodeBlock('cloneGroup23', 'expandBtn23', 'collapseBtn23')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup23"><code class="language-tsx text-sm text-gray-800">) {
+  return (
+    &lt;div className=&quot;space-y-3&quot;&gt;
+      &lt;h4 className=&quot;font-semibold text-sm&quot;&gt;{title}&lt;/h4&gt;
+      &lt;ul className=&quot;space-y-2 text-sm text-muted-foreground&quot;&gt;
+        {items.map((item, index) =&gt; (
+          &lt;li key={index} className=&quot;flex items-center gap-2&quot;&gt;
+            {React</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/components/map/MapComponent.tsx (Line 28:2 - Line 36:2), C:/AI/food-truck-finder-poc/components/map/MapViewUpdater.tsx (Line 10:2 - Line 18:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn24" onclick="toggleCodeBlock('cloneGroup24', 'expandBtn24', 'collapseBtn24')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn24" onclick="toggleCodeBlock('cloneGroup24', 'expandBtn24', 'collapseBtn24')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup24"><code class="language-tsx text-sm text-gray-800">{
+  const map = useMap();
+  useEffect(() =&gt; {
+    if (center) {
+      map.flyTo(center, zoom ?? map.getZoom());
+    }
+  }, [center, zoom, map]);
+  return &lt;&gt;&lt;/&gt;;
+}</code></pre></div><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/components/map/MapComponent.tsx (Line 108:4 - Line 120:3), C:/AI/food-truck-finder-poc/components/map/TruckMarkers.tsx (Line 54:2 - Line 66:3)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn25" onclick="toggleCodeBlock('cloneGroup25', 'expandBtn25', 'collapseBtn25')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn25" onclick="toggleCodeBlock('cloneGroup25', 'expandBtn25', 'collapseBtn25')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup25"><code class="language-tsx text-sm text-gray-800">]}
+          icon={foodTruckIcon}
+          eventHandlers={{
+            click: () =&gt; {
+              if (onSelectTruck) {
+                onSelectTruck(truck.id);
+              }
+            },
+          }}
+        &gt;
+          &lt;Popup&gt;
+            &lt;h4 className=&quot;font-bold&quot;&gt;{truck.name}&lt;/h4&gt;
+            {truck.current_location.address &amp;&amp;</code></pre></div><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="javascript-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">javascript</h2><div class="divide-y divide-gray-200 border-b-2"><div class="py-4"><p class="text-gray-600">C:/AI/food-truck-finder-poc/eslint.config.mjs (Line 230:24 - Line 248:65), C:/AI/food-truck-finder-poc/eslint.config.mjs (Line 205:33 - Line 222:2)</p><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2" id="expandBtn36" onclick="toggleCodeBlock('cloneGroup36', 'expandBtn36', 'collapseBtn36')">Show code</button><button class="bg-gray-500 text-white px-1 py-0.5 text-xs rounded focus:outline-none ml-2 hidden" id="collapseBtn36" onclick="toggleCodeBlock('cloneGroup36', 'expandBtn36', 'collapseBtn36')">Hide code</button><pre class="bg-gray-100 border border-gray-200 p-4 rounded mt-2 hidden" id="cloneGroup36"><code class="language-javascript text-sm text-gray-800">],
+    rules: {
+      '@typescript-eslint/no-unsafe-argument': 'off',
+    },
+  },
+
+  {
+    files: ['hooks/realtime/**/*.ts', 'hooks/realtime/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
+    },
+  },
+
+  // 8. Prettier - must be last to override other formatting rules</code></pre></div><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="css-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">css</h2><div class="divide-y divide-gray-200 border-b-2"><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="markup-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">markup</h2><div class="divide-y divide-gray-200 border-b-2"><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="markdown-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">markdown</h2><div class="divide-y divide-gray-200 border-b-2"><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="json-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">json</h2><div class="divide-y divide-gray-200 border-b-2"><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div><a name="sql-clones"></a><h2 class="text-2xl font-semibold text-gray-700 mb-4">sql</h2><div class="divide-y divide-gray-200 border-b-2"><!-- Add more clone groups for .txt format as needed         // Add more clone groups for .txt format as needed--></div></section><!-- Add more sections for other formats and clone groups as needed--></main><footer class="bg-white shadow mt-8 py-4"><div class="container mx-auto px-4 text-center"><p class="text-sm text-gray-600">This report is generated by jscpd, an open-source copy/paste detector.</p><p class="text-sm text-gray-600">jscpd is licensed under the MIT License.</p><a class="text-blue-500 text-sm" href="https://github.com/kucherenko/jscpd" target="_blank" rel="noopener noreferrer">View jscpd on GitHub</a></div></footer><script src="js/prism.js"></script><script>function toggleCodeBlock(codeBlockId, expandBtnId, collapseBtnId) {
+  const codeBlock = document.getElementById(codeBlockId);
+  const expandBtn = document.getElementById(expandBtnId);
+  const collapseBtn = document.getElementById(collapseBtnId);
+
+  codeBlock.classList.toggle('hidden');
+  expandBtn.classList.toggle('hidden');
+  collapseBtn.classList.toggle('hidden');
+}</script></body></html>

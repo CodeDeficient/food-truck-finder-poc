@@ -24,8 +24,9 @@ All tasks must be broken down into a detailed WBS document before execution begi
 - **[ ] Impact Analysis:**
     - **Associated Files:** List all files that will be directly modified.
     - **Affected Files:** List all files that could be indirectly impacted (e.g., through imports, type dependencies).
+    - **Security Impact:** Analyze potential security risks introduced by the change. This includes, but is not limited to: data exposure, injection vulnerabilities, insecure direct object references, and permission escalations. For any new table with user-specific data, confirm that RLS is planned.
 - **[ ] Fallback/Workaround Strategy:** Define a clear contingency plan if the primary approach fails.
-- **[ ] Verification Steps:** Provide explicit commands or procedures to verify the task's successful completion.
+- **[ ] Verification Steps:** Provide explicit commands or procedures to verify the task's successful completion. This must include a step to verify that the security considerations have been met.
 
 ## 4. Execution Workflow
 The following workflow must be adhered to for every task defined in the WBS.
