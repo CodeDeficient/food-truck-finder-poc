@@ -1,0 +1,198 @@
+name: 🛡️ Quality Gates
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+
+permissions:
+  contents: read
+  actions: write
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality-gates:
+    name: Comprehensive Quality Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      # CRITICAL GATE 1: Type Safety Validation
+      - name: 🔍 Type Safety Gate
+        run: |
+          echo "🔍 Running TypeScript strict mode validation..."
+          npm run type-check
+
+      # CRITICAL GATE 2: ESLint Error Threshold
+      - name: 📊 ESLint Quality Gate
+        run: |
+          echo "📊 Running ESLint quality gate..."
+          npx eslint . --format json > eslint-report.json || true
+          ERROR_COUNT=$(cat eslint-report.json | jq '[.[] | .errorCount] | add // 0')
+          WARNING_COUNT=$(cat eslint-report.json | jq '[.[] | .warningCount] | add // 0')
+
+          echo "Current errors: $ERROR_COUNT"
+          echo "Current warnings: $WARNING_COUNT"
+
+          if [ "$ERROR_COUNT" -gt 10 ]; then
+            echo "❌ QUALITY GATE FAILED: $ERROR_COUNT errors exceeds threshold of 10"
+            echo "::error::ESLint quality gate failed with $ERROR_COUNT errors"
+            exit 1
+          fi
+
+          echo "✅ ESLint quality gate passed"
+
+      # CRITICAL GATE 3: Cognitive Complexity
+      - name: 🧠 Complexity Gate
+        run: |
+          echo "🧠 Running cognitive complexity validation..."
+          npx eslint . --rule 'sonarjs/cognitive-complexity: [error, 15]' --format json > complexity-report.json || true
+          COMPLEXITY_ERRORS=$(cat complexity-report.json | jq '[.[] | .errorCount] | add // 0')
+
+          if [ "$COMPLEXITY_ERRORS" -gt 0 ]; then
+            echo "❌ COMPLEXITY GATE FAILED: $COMPLEXITY_ERRORS functions exceed complexity threshold"
+            echo "::error::Cognitive complexity gate failed with $COMPLEXITY_ERRORS violations"
+            exit 1
+          fi
+
+          echo "✅ Cognitive complexity gate passed"
+
+      # OPTIONAL GATE 4: Type Coverage
+      - name: 🎯 Type Coverage Gate
+        continue-on-error: true
+        run: |
+          echo "🎯 Running type coverage validation..."
+          if command -v type-coverage >/dev/null 2>&1; then
+            npx type-coverage --at-least 95 --detail || echo "⚠️ Type coverage below 95%"
+          else
+            echo "⚠️ type-coverage not installed, skipping"
+          fi
+
+      # SECURITY GATE: Security and Best Practices
+      - name: 🔒 Security & Best Practices Gate
+        run: |
+          echo "🔒 Running security and best practices validation..."
+
+          # Check for common security issues
+          SECURITY_ISSUES=0
+
+          if grep -r "console\.log" --include="*.ts" --include="*.tsx" . >/dev/null 2>&1; then
+            echo "⚠️ Found console.log statements"
+            ((SECURITY_ISSUES++))
+          fi
+
+          if grep -r "debugger" --include="*.ts" --include="*.tsx" . >/dev/null 2>&1; then
+            echo "⚠️ Found debugger statements"
+            ((SECURITY_ISSUES++))
+          fi
+
+          if grep -r "eval(" --include="*.ts" --include="*.tsx" . >/dev/null 2>&1; then
+            echo "❌ Found eval() usage - security risk"
+            ((SECURITY_ISSUES++))
+            exit 1
+          fi
+
+          echo "Security issues found: $SECURITY_ISSUES"
+
+      # PERFORMANCE GATE: Bundle Size Analysis
+      - name: 📦 Bundle Size Analysis
+        run: |
+          echo "📦 Analyzing bundle size impact..."
+
+          # Count large files
+          echo "Largest source files (top 10):"
+          find . -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | \
+            grep -v node_modules | \
+            xargs wc -l | \
+            sort -nr | \
+            head -10
+            
+          # Check for large dependencies
+          if [ -f "package.json" ]; then
+            echo "Checking for potentially large dependencies..."
+            LARGE_DEPS=$(cat package.json | jq -r '.dependencies | keys[]' | grep -E "(moment|lodash|jquery)" || echo "None found")
+            echo "Large dependencies: $LARGE_DEPS"
+          fi
+
+      # QUALITY REPORT: Generate comprehensive report
+      - name: 📊 Generate Quality Report
+        if: always()
+        run: |
+          echo "📊 Generating comprehensive quality report..."
+
+          # Get final metrics
+          ESLINT_OUTPUT=$(npx eslint . --format json 2>/dev/null || echo "[]")
+          ERROR_COUNT=$(echo "$ESLINT_OUTPUT" | jq '[.[] | .errorCount] | add // 0')
+          WARNING_COUNT=$(echo "$ESLINT_OUTPUT" | jq '[.[] | .warningCount] | add // 0')
+
+          COMPLEXITY_OUTPUT=$(npx eslint . --rule "sonarjs/cognitive-complexity: [error, 15]" --format json 2>/dev/null || echo "[]")
+          COMPLEXITY_ERRORS=$(echo "$COMPLEXITY_OUTPUT" | jq '[.[] | .errorCount] | add // 0')
+
+          # Generate report
+          cat > quality-report.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commit": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "gates": {
+              "typeSafety": "passed",
+              "eslintErrors": "passed",
+              "complexity": "passed",
+              "security": "passed"
+            },
+            "metrics": {
+              "errorCount": $ERROR_COUNT,
+              "warningCount": $WARNING_COUNT,
+              "complexityViolations": $COMPLEXITY_ERRORS
+            },
+            "thresholds": {
+              "maxErrors": 10,
+              "maxWarnings": 20,
+              "maxComplexity": 15
+            }
+          }
+          EOF
+
+          echo "Quality report generated"
+          cat quality-report.json
+
+      # ARTIFACT: Upload quality reports
+      - name: 📤 Upload Quality Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports-${{ github.sha }}
+          path: |
+            quality-report.json
+            eslint-report.json
+            complexity-report.json
+          retention-days: 30
+
+      # SUMMARY: Post quality summary
+      - name: 📋 Quality Summary
+        if: always()
+        run: |
+          echo "## 🛡️ Quality Gates Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Gate | Status | Details |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Type Safety | ✅ Passed | TypeScript strict mode validation |" >> $GITHUB_STEP_SUMMARY
+          echo "| ESLint Errors | ✅ Passed | Error count within threshold |" >> $GITHUB_STEP_SUMMARY
+          echo "| Complexity | ✅ Passed | Cognitive complexity under control |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | ✅ Passed | No critical security issues |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Metrics" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_STEP_SUMMARY

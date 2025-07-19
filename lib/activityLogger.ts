@@ -5,11 +5,24 @@ interface ActivityLogEntry {
   timestamp?: string;
 }
 
+/**
+* Logs an activity entry with a timestamp and unique ID.
+* @example
+* logActivity({ action: 'user_login', username: 'johndoe' })
+* undefined
+* @param {ActivityLogEntry} entry - The activity entry to be logged.
+* @returns {void} No return value.
+* @description
+*   - If `timestamp` is not provided in the entry, the current ISO timestamp is used.
+*   - A unique ID is generated and added to the log entry.
+*   - Logs activity data to the console in a structured format.
+*   - Intended for development, but can be extended for production use with database or monitoring integration.
+*/
 export function logActivity(entry: ActivityLogEntry): void {
   try {
     const logEntry = {
       ...entry,
-      timestamp: entry.timestamp || new Date().toISOString(),
+      timestamp: entry.timestamp ?? new Date().toISOString(),
       id: generateId(),
     };
 
@@ -41,6 +54,6 @@ export function getActivityLogs(_type?: string, _limit: number = 50): ActivityLo
 
 function generateId(): string {
   // Using crypto.randomUUID() would be better for production, but Math.random() is acceptable for logging IDs
-  // eslint-disable-next-line sonarjs/pseudo-random
+  // eslint-disable-next-line sonarjs/pseudo-random -- Math.random is acceptable for non-security-critical logging IDs.
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }

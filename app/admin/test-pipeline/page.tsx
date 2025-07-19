@@ -39,21 +39,56 @@ Recommended Approach: Sub-domain or separate route within the existing Next.js a
 - Deployment: Can be deployed as part of the main app or as a separate Next.js app if stricter separation is needed in the future.
 */
 
-import { useState, FormEvent } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // If you want to use tabs for results
-import {
-  StageResult,
-  TestPipelineResults,
-  // FirecrawlOutputData, // Already imported via StageResult's data union if needed directly
-  // ExtractedFoodTruckDetails, // Already imported via StageResult's data union
-  // FoodTruckSchema // Already imported via StageResult's data union
-} from '@/lib/types';
+import * as React from 'react';
+import { useState, type FormEvent } from 'react';
+import type { StageResult, TestPipelineResults } from '@/lib/types';
+import { StageResultCard } from '@/components/test-pipeline/StageResultCard';
+import { TestPipelineForm } from '@/components/test-pipeline/TestPipelineForm';
+import { ErrorDisplay } from '@/components/test-pipeline/ErrorDisplay';
+import { TestResultsDisplay } from '@/components/test-pipeline/TestResultsDisplay';
+import { submitTestPipeline } from '@/components/test-pipeline/TestPipelineSubmitHandler';
+
+interface HandleTestPipelineSubmitParams {
+  useRawText: boolean;
+  url: string;
+  rawText: string;
+  isDryRun: boolean;
+  setIsLoading: (loading: boolean) => void;
+  setResults: (results: TestPipelineResults | undefined) => void;
+  setError: (error: string | undefined) => void;
+}
+
+// Helper function extracted from TestPipelinePage to handle form submission
+async function handleTestPipelineSubmit(
+  event: FormEvent<HTMLFormElement>,
+  params: HandleTestPipelineSubmitParams,
+) {
+  event.preventDefault();
+  params.setIsLoading(true);
+  params.setResults(undefined);
+  params.setError(undefined);
+
+  try {
+    const data = await submitTestPipeline({
+      useRawText: params.useRawText,
+      url: params.url,
+      rawText: params.rawText,
+      isDryRun: params.isDryRun,
+    });
+    params.setResults(data);
+  } catch (error_) {
+    const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';
+    params.setError(errorMessage);
+    params.setResults({ error: errorMessage });
+  } finally {
+    params.setIsLoading(false);
+  }
+}
+
+// Helper function to render stage results
+function renderStageResultHelper(stageName: string, result?: StageResult) {
+  return <StageResultCard stageName={stageName} result={result} />;
+}
 
 export default function TestPipelinePage() {
   const [url, setUrl] = useState<string>('');
@@ -64,246 +99,34 @@ export default function TestPipelinePage() {
   const [results, setResults] = useState<TestPipelineResults | undefined>();
   const [error, setError] = useState<string | undefined>();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setResults(undefined);
-    setError(undefined);
-
-    const payload = {
-      url: useRawText ? undefined : url,
-      rawText: useRawText ? rawText : undefined,
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    void handleTestPipelineSubmit(event, {
+      useRawText,
+      url,
+      rawText,
       isDryRun,
-    };
-    try {
-      const response = await fetch('/api/test-pipeline-run', {
-        method: 'post',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = (await response.json()) as TestPipelineResults;
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Test run failed');
-      }
-      setResults(data);
-    } catch (error_) {
-      const errorMessage = error_ instanceof Error ? error_.message : 'An unknown error occurred';
-      setError(errorMessage);
-      setResults({ error: errorMessage });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const renderStageResult = (stageName: string, result?: StageResult) => {
-    if (!result) return;
-    return (
-      <Card className="mt-4">
-        <CardHeader>
-          <CardTitle>{stageName}</CardTitle>
-          <CardDescription>
-            Status:{' '}
-            <span className={result.status === 'Success' ? 'text-green-500' : 'text-red-500'}>
-              {result.status}
-            </span>
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {result.error && (
-            <p className="text-red-500">
-              <strong>Error:</strong> {result.error}
-            </p>
-          )}
-          {result.details && (
-            <p>
-              <strong>Details:</strong> {result.details}
-            </p>
-          )}
-          {result.prompt && (
-            <div>
-              <strong>Prompt:</strong>
-              <Textarea
-                readOnly
-                value={result.prompt}
-                className="mt-1 h-32 bg-gray-50 dark:bg-slate-700"
-              />
-            </div>
-          )}
-          {result.rawContent && (
-            <div>
-              <strong>Raw Content (Firecrawl):</strong>
-              <Textarea
-                readOnly
-                value={result.rawContent}
-                className="mt-1 h-48 bg-gray-50 dark:bg-slate-700"
-              />
-            </div>
-          )}
-          {result.data && (
-            <div className="mt-2">
-              <strong>Data Output:</strong>{' '}
-              <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
-                {/* eslint-disable-next-line unicorn/no-null */}
-                {JSON.stringify(result.data, null, 2)}
-              </pre>
-            </div>
-          )}
-          {result.preparedData && (
-            <div className="mt-2">
-              <strong>Data Prepared for Supabase:</strong>{' '}
-              <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
-                {/* eslint-disable-next-line unicorn/no-null */}
-                {JSON.stringify(result.preparedData, null, 2)}
-              </pre>
-            </div>
-          )}
-          {result.recordId && (
-            <p>
-              <strong>Supabase Record id:</strong> {result.recordId}
-            </p>
-          )}
-          {result.tokensUsed !== undefined && (
-            <p>
-              <strong>Gemini Tokens Used:</strong> {result.tokensUsed}
-            </p>
-          )}
-          {result.metadata && (
-            <div>
-              <strong>Metadata (Firecrawl):</strong>{' '}
-              <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-700 rounded-md overflow-x-auto text-sm">
-                {/* eslint-disable-next-line unicorn/no-null */}
-                {JSON.stringify(result.metadata, null, 2)}
-              </pre>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    );
+      setIsLoading,
+      setResults,
+      setError,
+    });
   };
 
   return (
     <div className="container mx-auto p-4">
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Test Data Pipeline</CardTitle>
-          <CardDescription>
-            Use this page to test the data scraping and processing pipeline with a specific url or
-            raw text.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={(e) => {
-              void handleSubmit(e);
-            }}
-            className="space-y-6"
-          >
-            <div>
-              <Label htmlFor="url-input">url to Scrape</Label>
-              <Input
-                id="url-input"
-                type="url"
-                placeholder="https://example.com"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={useRawText || isLoading}
-                className="mt-1"
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="use-raw-text-checkbox"
-                checked={useRawText}
-                onCheckedChange={(checked) => setUseRawText(Boolean(checked))}
-                disabled={isLoading}
-              />
-              <Label htmlFor="use-raw-text-checkbox">Use Raw Text Input Instead</Label>
-            </div>
-
-            <div>
-              <Label htmlFor="raw-text-input">Raw Text (Markdown/html)</Label>
-              <Textarea
-                id="raw-text-input"
-                placeholder="Paste Markdown or html content here..."
-                value={rawText}
-                onChange={(e) => setRawText(e.target.value)}
-                disabled={!useRawText || isLoading}
-                className="mt-1 h-40"
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="dry-run-checkbox"
-                checked={isDryRun}
-                onCheckedChange={(checked) => setIsDryRun(Boolean(checked))}
-                disabled={isLoading}
-              />
-              <Label htmlFor="dry-run-checkbox">Dry Run (Do not save to Supabase)</Label>
-            </div>
-
-            <Button type="submit" disabled={isLoading || (useRawText ? !rawText : !url)}>
-              {isLoading ? 'Testing...' : 'Run Test'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      {error && (
-        <Card className="border-red-500">
-          <CardHeader>
-            <CardTitle className="text-red-600">Test Failed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{error}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {results && !results.error && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Results</CardTitle>
-            {results.overallStatus && (
-              <CardDescription>Overall Status: {results.overallStatus}</CardDescription>
-            )}
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="firecrawl" className="w-full">
-              <TabsList>
-                <TabsTrigger value="firecrawl" disabled={!results.firecrawl}>
-                  Firecrawl
-                </TabsTrigger>
-                <TabsTrigger value="gemini" disabled={!results.gemini}>
-                  Gemini
-                </TabsTrigger>
-                <TabsTrigger value="supabase" disabled={!results.supabase}>
-                  Supabase
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="firecrawl">
-                {renderStageResult('Firecrawl Stage', results.firecrawl)}
-              </TabsContent>
-              <TabsContent value="gemini">
-                {renderStageResult('Gemini Processing Stage', results.gemini)}
-              </TabsContent>
-              <TabsContent value="supabase">
-                {renderStageResult('Supabase Interaction Stage', results.supabase)}
-              </TabsContent>
-            </Tabs>
-            {results.logs && results.logs.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Logs:</h3>
-                <pre className="mt-1 p-2 bg-gray-100 dark:bg-slate-800 rounded-md overflow-x-auto text-sm">
-                  {results.logs.join('\n')}
-                </pre>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      <TestPipelineForm
+        url={url}
+        setUrl={setUrl}
+        rawText={rawText}
+        setRawText={setRawText}
+        useRawText={useRawText}
+        setUseRawText={setUseRawText}
+        isDryRun={isDryRun}
+        setIsDryRun={setIsDryRun}
+        isLoading={isLoading}
+        onSubmit={handleSubmit}
+      />
+      <ErrorDisplay error={error} />
+      <TestResultsDisplay results={results} renderStageResult={renderStageResultHelper} />
     </div>
   );
 }

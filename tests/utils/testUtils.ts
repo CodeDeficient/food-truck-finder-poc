@@ -1,4 +1,5 @@
 // tests/utils/testUtils.ts
+// TODO: Ensure '@supabase/supabase-js' is installed and available for type imports.
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../../lib/supabase';
 import type { FoodTruck } from '../../lib/types';

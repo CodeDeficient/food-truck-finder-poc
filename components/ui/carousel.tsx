@@ -40,27 +40,30 @@ function useCarousel() {
   return context;
 }
 
-const Carousel = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & CarouselProps
->(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
-  const [carouselRef, api] = useEmblaCarousel(
-    {
-      ...opts,
-      axis: orientation === 'horizontal' ? 'x' : 'y',
-    },
-    plugins,
-  );
+/**
+ * Initializes and manages carousel control state and key events.
+ * @example
+ * const carouselControl = createCarouselControl(api, setApi);
+ * carouselControl.scrollPrev(); // Scrolls to the previous item in the carousel.
+ * @param {CarouselApi | undefined} api - Carousel API for performing scroll actions.
+ * @param {((api: CarouselApi) => void) | undefined} setApi - Callback to set the current Carousel API instance.
+ * @returns {object} Returns an object containing functions to scroll prev/next, check scroll state, and handle key events.
+ * @description
+ *   - Utilizes React hooks to manage state and handle side effects associated with the carousel operations.
+ *   - Ensures the carousel API is bound and initialized properly through useEffect hooks.
+ *   - Listens and responds to carousel-specific events like 'reInit' and 'select' to update scroll state.
+ */
+const useCarouselHandlers = (
+  api: CarouselApi | undefined,
+  setApi: ((api: CarouselApi) => void) | undefined,
+) => {
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) {
-      return;
-    }
-
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
+  const onSelect = React.useCallback((currentApi: CarouselApi) => {
+    if (!currentApi) return;
+    setCanScrollPrev(currentApi.canScrollPrev());
+    setCanScrollNext(currentApi.canScrollNext());
   }, []);
 
   const scrollPrev = React.useCallback(() => {
@@ -85,32 +88,43 @@ const Carousel = React.forwardRef<
   );
 
   React.useEffect(() => {
-    if (!api || !setApi) {
-      return;
-    }
-
+    if (!api || !setApi) return;
     setApi(api);
   }, [api, setApi]);
 
   React.useEffect(() => {
-    if (!api) {
-      return;
-    }
-
+    if (!api) return;
     onSelect(api);
     api.on('reInit', onSelect);
     api.on('select', onSelect);
-
     return () => {
       api?.off('select', onSelect);
     };
   }, [api, onSelect]);
 
+  return { scrollPrev, scrollNext, canScrollPrev, canScrollNext, handleKeyDown };
+};
+
+const Carousel = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & CarouselProps
+>(({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
+  const [carouselRef, api] = useEmblaCarousel(
+    {
+      ...opts,
+      axis: orientation === 'horizontal' ? 'x' : 'y',
+    },
+    plugins,
+  );
+
+  const { scrollPrev, scrollNext, canScrollPrev, canScrollNext, handleKeyDown } =
+    useCarouselHandlers(api, setApi);
+
   return (
     <CarouselContext.Provider
       value={{
         carouselRef,
-        api: api,
+        api: api!, // Asserting as non-null as per original logic, but should be handled carefully
         opts,
         orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
         scrollPrev,
@@ -177,14 +191,13 @@ const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
 CarouselItem.displayName = 'CarouselItem';
 
 const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
-  ({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+  ({ className, ...props }, ref) => {
+    // Removed ts-expect-error
     const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
     return (
       <Button
         ref={ref}
-        variant={variant}
-        size={size}
         className={cn(
           'absolute  h-8 w-8 rounded-full',
           orientation === 'horizontal'
@@ -196,7 +209,7 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
         onClick={scrollPrev}
         {...props}
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="size-4" />
         <span className="sr-only">Previous slide</span>
       </Button>
     );
@@ -205,14 +218,13 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
 CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
-  ({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+  ({ className, ...props }, ref) => {
+    // Removed ts-expect-error
     const { orientation, scrollNext, canScrollNext } = useCarousel();
 
     return (
       <Button
         ref={ref}
-        variant={variant}
-        size={size}
         className={cn(
           'absolute h-8 w-8 rounded-full',
           orientation === 'horizontal'
@@ -224,7 +236,7 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<ty
         onClick={scrollNext}
         {...props}
       >
-        <ArrowRight className="h-4 w-4" />
+        <ArrowRight className="size-4" />
         <span className="sr-only">Next slide</span>
       </Button>
     );
