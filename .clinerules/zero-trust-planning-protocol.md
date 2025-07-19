@@ -19,6 +19,7 @@ All tasks must be broken down into a detailed WBS document before execution begi
     - **Clarity (C):** How well is the task understood?
     - **Risk (R):** What is the potential for unintended side effects?
 - **[ ] Fractal Breakdown:** No task with a CCR rating greater than 4 in any category is considered "atomic." It must be broken down further until all sub-tasks are at or below CCR 4.
+- **[ ] CCR Enhancement/Reduction:** Any task with a Complexity of 5 or higher, a Risk of 5 or higher, or a Clarity of 4 or lower must undergo a dedicated research and breakdown phase to reduce its CCR ratings before implementation begins.
 - **[ ] Detailed Guidance:** Each task must include specific, actionable implementation steps.
 - **[ ] Impact Analysis:**
     - **Associated Files:** List all files that will be directly modified.
