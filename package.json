@@ -73,6 +73,9 @@
     "analytics:revenue": "node scripts/analyze-revenue-metrics.js",
     "analytics:conversion": "node scripts/track-trial-conversions.js",
     "analytics:engagement": "node scripts/measure-owner-engagement.js",
+    "onboard:uprooted": "npx tsx --env-file=.env.local scripts/onboard-uprooted-vegan.ts",
+    "add:uprooted-truck": "npx tsx --env-file=.env.local scripts/add-uprooted-vegan-cuisine.ts",
+    "add:uprooted-events": "npx tsx --env-file=.env.local scripts/add-uprooted-events.ts",
     "features:unlock": "node scripts/unlock-premium-features.js",
     "features:restrict": "node scripts/restrict-expired-features.js",
     "marketing:campaigns": "node scripts/run-marketing-campaigns.js",
@@ -172,7 +175,7 @@
     "@types/tailwindcss": "^3.0.11",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.34.0",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-formatter-compact": "^8.40.0",
@@ -190,6 +193,7 @@
     "tailwindcss": "^3.4.17",
     "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "type-coverage": "^2.29.1",
     "typescript-eslint": "^8.36.0"
   }
