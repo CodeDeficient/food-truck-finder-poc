@@ -1,24 +1,43 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Food truck body -->
-  <rect x="4" y="12" width="20" height="12" rx="2" fill="#FF6B35" stroke="#D63031" stroke-width="1"/>
+  <defs>
+    <!-- Neon glow filters -->
+    <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f1e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
   
-  <!-- Food truck cab -->
-  <rect x="2" y="8" width="8" height="8" rx="1" fill="#FF6B35" stroke="#D63031" stroke-width="1"/>
+  <!-- Dark body with gradient -->
+  <rect x="4" y="12" width="20" height="12" rx="3" fill="url(#bodyGradient)" stroke="#ff0040" stroke-width="1.5" filter="url(#neonGlow)"/>
   
-  <!-- Windows -->
-  <rect x="3" y="9" width="6" height="4" rx="0.5" fill="#74B9FF"/>
-  <rect x="12" y="13" width="4" height="3" rx="0.5" fill="#74B9FF"/>
-  <rect x="18" y="13" width="4" height="3" rx="0.5" fill="#74B9FF"/>
+  <!-- Cab with rounded corners -->
+  <rect x="2" y="8" width="8" height="8" rx="2" fill="url(#bodyGradient)" stroke="#ff0040" stroke-width="1.5" filter="url(#neonGlow)"/>
   
-  <!-- Wheels -->
-  <circle cx="8" cy="26" r="3" fill="#2D3436" stroke="#636E72" stroke-width="1"/>
-  <circle cx="20" cy="26" r="3" fill="#2D3436" stroke="#636E72" stroke-width="1"/>
-  <circle cx="8" cy="26" r="1.5" fill="#DDD"/>
-  <circle cx="20" cy="26" r="1.5" fill="#DDD"/>
+  <!-- Neon accent windows -->
+  <rect x="3" y="9" width="6" height="4" rx="1" fill="#00ffff" opacity="0.3" stroke="#00ffff" stroke-width="1" filter="url(#neonGlow)"/>
+  <rect x="12" y="13" width="4" height="3" rx="0.5" fill="#00ffff" opacity="0.3" stroke="#00ffff" stroke-width="1" filter="url(#neonGlow)"/>
+  <rect x="18" y="13" width="4" height="3" rx="0.5" fill="#00ffff" opacity="0.3" stroke="#00ffff" stroke-width="1" filter="url(#neonGlow)"/>
   
-  <!-- Food service window -->
-  <rect x="14" y="18" width="6" height="4" rx="0.5" fill="#FDCB6E" stroke="#E17055" stroke-width="1"/>
+  <!-- Glowing wheels -->
+  <circle cx="8" cy="26" r="3" fill="#1a1a2e" stroke="#ff0040" stroke-width="1.5" filter="url(#neonGlow)"/>
+  <circle cx="20" cy="26" r="3" fill="#1a1a2e" stroke="#ff0040" stroke-width="1.5" filter="url(#neonGlow)"/>
+  <circle cx="8" cy="26" r="1" fill="#00ffff" filter="url(#neonGlow)"/>
+  <circle cx="20" cy="26" r="1" fill="#00ffff" filter="url(#neonGlow)"/>
   
-  <!-- Awning -->
-  <path d="M12 18 L22 18 L24 22 L10 22 Z" fill="#00B894" stroke="#00A085" stroke-width="1"/>
+  <!-- Neon service window -->
+  <rect x="13" y="17" width="8" height="5" rx="1" fill="#ff0040" opacity="0.2" stroke="#ff0040" stroke-width="1.5" filter="url(#neonGlow)"/>
+  
+  <!-- Cyber awning -->
+  <path d="M11 17 L23 17 L25 21 L9 21 Z" fill="none" stroke="#ff0040" stroke-width="2" filter="url(#neonGlow)"/>
+  
+  <!-- Additional neon details -->
+  <line x1="6" y1="15" x2="22" y2="15" stroke="#00ffff" stroke-width="1" opacity="0.7" filter="url(#neonGlow)"/>
+  <line x1="6" y1="21" x2="22" y2="21" stroke="#00ffff" stroke-width="1" opacity="0.7" filter="url(#neonGlow)"/>
 </svg>
