@@ -1,3 +1,103 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 8%;
+    --foreground: 210 40% 98%;
+    --card: 210 20% 12%;
+    --card-foreground: 210 40% 98%;
+    --popover: 210 20% 12%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 0 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 210 40% 16%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 0 84% 50%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 0 100% 50%;
+    --radius: 0.75rem;
+    
+    /* Custom Cyber-Diner theme variables */
+    --neon-red: #ff0040;
+    --neon-red-glow: #ff0040;
+    --neon-blue: #00ffff;
+    --cyber-dark: #0a0a0f;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(210 30% 6%) 100%);
+  }
+}
+
+@layer components {
+  /* Glassmorphism utilities */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--glass-border);
+  }
+  
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Neon effects */
+  .neon-text {
+    color: var(--neon-red);
+    text-shadow: 
+      0 0 5px var(--neon-red-glow),
+      0 0 10px var(--neon-red-glow),
+      0 0 20px var(--neon-red-glow);
+  }
+  
+  .neon-border {
+    border: 1px solid var(--neon-red);
+    box-shadow: 
+      0 0 5px var(--neon-red-glow),
+      inset 0 0 5px var(--neon-red-glow);
+  }
+  
+  .neon-glow {
+    box-shadow: 
+      0 0 10px var(--neon-red-glow),
+      0 0 20px var(--neon-red-glow),
+      0 0 40px var(--neon-red-glow);
+  }
+  
+  /* Hover effects */
+  .hover-neon {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-neon:hover {
+    color: var(--neon-red);
+    text-shadow: 0 0 10px var(--neon-red-glow);
+    transform: translateY(-1px);
+  }
+  
+  /* Rounded modern styling */
+  .rounded-modern {
+    border-radius: 1rem;
+  }
+  
+  .rounded-modern-lg {
+    border-radius: 1.5rem;
+  }
+}

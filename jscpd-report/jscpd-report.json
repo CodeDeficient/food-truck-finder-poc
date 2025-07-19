@@ -1,6 +1,6 @@
 {
   "statistics": {
-    "detectionDate": "2025-07-19T18:45:32.919Z",
+    "detectionDate": "2025-07-19T19:26:48.705Z",
     "formats": {
       "typescript": {
         "sources": {
@@ -560,11 +560,11 @@
             "lines": 178,
             "tokens": 2546,
             "sources": 1,
-            "clones": 6,
-            "duplicatedLines": 48,
-            "duplicatedTokens": 646,
-            "percentage": 26.97,
-            "percentageTokens": 25.37,
+            "clones": 18,
+            "duplicatedLines": 96,
+            "duplicatedTokens": 1678,
+            "percentage": 53.93,
+            "percentageTokens": 65.91,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -905,14 +905,14 @@
             "newClones": 0
           },
           "C:/AI/food-truck-finder-poc/lib/mappers/uprootedVeganMapper.ts": {
-            "lines": 276,
-            "tokens": 2355,
+            "lines": 281,
+            "tokens": 2372,
             "sources": 1,
             "clones": 1,
             "duplicatedLines": 11,
             "duplicatedTokens": 93,
-            "percentage": 3.99,
-            "percentageTokens": 3.95,
+            "percentage": 3.91,
+            "percentageTokens": 3.92,
             "newDuplicatedLines": 0,
             "newClones": 0
           },
@@ -991,6 +991,18 @@
           "C:/AI/food-truck-finder-poc/lib/data-quality/batchCleanup.ts": {
             "lines": 713,
             "tokens": 5261,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "C:/AI/food-truck-finder-poc/lib/data/placeholderTrucks.ts": {
+            "lines": 3,
+            "tokens": 494,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -1480,6 +1492,18 @@
             "newDuplicatedLines": 0,
             "newClones": 0
           },
+          "C:/AI/food-truck-finder-poc/paths.d.ts": {
+            "lines": 2,
+            "tokens": 21,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
           "C:/AI/food-truck-finder-poc/next-env.d.ts": {
             "lines": 4,
             "tokens": 11,
@@ -1494,14 +1518,14 @@
           }
         },
         "total": {
-          "lines": 19038,
-          "tokens": 152321,
-          "sources": 124,
-          "clones": 24,
-          "duplicatedLines": 280,
-          "duplicatedTokens": 2969,
-          "percentage": 1.47,
-          "percentageTokens": 1.95,
+          "lines": 19048,
+          "tokens": 152853,
+          "sources": 126,
+          "clones": 30,
+          "duplicatedLines": 304,
+          "duplicatedTokens": 3485,
+          "percentage": 1.6,
+          "percentageTokens": 2.28,
           "newDuplicatedLines": 0,
           "newClones": 0
         }
@@ -3668,6 +3692,18 @@
             "newDuplicatedLines": 0,
             "newClones": 0
           },
+          "C:/AI/food-truck-finder-poc/app/loading.tsx": {
+            "lines": 2,
+            "tokens": 16,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
           "C:/AI/food-truck-finder-poc/app/layout.tsx": {
             "lines": 36,
             "tokens": 290,
@@ -3682,9 +3718,9 @@
           }
         },
         "total": {
-          "lines": 14756,
-          "tokens": 110949,
-          "sources": 181,
+          "lines": 14758,
+          "tokens": 110965,
+          "sources": 182,
           "clones": 12,
           "duplicatedLines": 166,
           "duplicatedTokens": 1233,
@@ -3783,6 +3819,18 @@
           "C:/AI/food-truck-finder-poc/app/admin/food-trucks/[id]/page.tsx": {
             "lines": 13,
             "tokens": 157,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "C:/AI/food-truck-finder-poc/jscpd-report/html/js/prism.js": {
+            "lines": 15,
+            "tokens": 4580,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -5378,20 +5426,32 @@
           }
         },
         "total": {
-          "lines": 5786,
-          "tokens": 44127,
-          "sources": 140,
+          "lines": 5801,
+          "tokens": 48707,
+          "sources": 141,
           "clones": 1,
           "duplicatedLines": 18,
           "duplicatedTokens": 116,
           "percentage": 0.31,
-          "percentageTokens": 0.26,
+          "percentageTokens": 0.24,
           "newDuplicatedLines": 0,
           "newClones": 0
         }
       },
       "css": {
         "sources": {
+          "C:/AI/food-truck-finder-poc/jscpd-report/html/styles/prism.css": {
+            "lines": 7,
+            "tokens": 232,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
           "C:/AI/food-truck-finder-poc/styles/globals.css": {
             "lines": 93,
             "tokens": 913,
@@ -5403,12 +5463,24 @@
             "percentageTokens": 0,
             "newDuplicatedLines": 0,
             "newClones": 0
+          },
+          "C:/AI/food-truck-finder-poc/app/globals.css": {
+            "lines": 2,
+            "tokens": 12,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
           }
         },
         "total": {
-          "lines": 93,
-          "tokens": 913,
-          "sources": 1,
+          "lines": 102,
+          "tokens": 1157,
+          "sources": 3,
           "clones": 0,
           "duplicatedLines": 0,
           "duplicatedTokens": 0,
@@ -5420,6 +5492,18 @@
       },
       "markup": {
         "sources": {
+          "C:/AI/food-truck-finder-poc/jscpd-report/html/index.html": {
+            "lines": 472,
+            "tokens": 11759,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 228,
+            "percentage": 2.97,
+            "percentageTokens": 1.94,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
           "C:/AI/food-truck-finder-poc/public/food-truck-icon.svg": {
             "lines": 23,
             "tokens": 533,
@@ -5434,23 +5518,23 @@
           }
         },
         "total": {
-          "lines": 23,
-          "tokens": 533,
-          "sources": 1,
-          "clones": 0,
-          "duplicatedLines": 0,
-          "duplicatedTokens": 0,
-          "percentage": 0,
-          "percentageTokens": 0,
+          "lines": 495,
+          "tokens": 12292,
+          "sources": 2,
+          "clones": 1,
+          "duplicatedLines": 7,
+          "duplicatedTokens": 114,
+          "percentage": 1.41,
+          "percentageTokens": 0.93,
           "newDuplicatedLines": 0,
           "newClones": 0
         }
       },
-      "markdown": {
+      "json": {
         "sources": {
-          "C:/AI/food-truck-finder-poc/.vercel/README.txt": {
-            "lines": 10,
-            "tokens": 182,
+          "C:/AI/food-truck-finder-poc/.vscode/extensions.json": {
+            "lines": 2,
+            "tokens": 12,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -5459,23 +5543,7 @@
             "percentageTokens": 0,
             "newDuplicatedLines": 0,
             "newClones": 0
-          }
-        },
-        "total": {
-          "lines": 10,
-          "tokens": 182,
-          "sources": 1,
-          "clones": 0,
-          "duplicatedLines": 0,
-          "duplicatedTokens": 0,
-          "percentage": 0,
-          "percentageTokens": 0,
-          "newDuplicatedLines": 0,
-          "newClones": 0
-        }
-      },
-      "json": {
-        "sources": {
+          },
           "C:/AI/food-truck-finder-poc/vercel.json": {
             "lines": 11,
             "tokens": 50,
@@ -5550,9 +5618,37 @@
           }
         },
         "total": {
-          "lines": 372,
-          "tokens": 2666,
-          "sources": 6,
+          "lines": 374,
+          "tokens": 2678,
+          "sources": 7,
+          "clones": 0,
+          "duplicatedLines": 0,
+          "duplicatedTokens": 0,
+          "percentage": 0,
+          "percentageTokens": 0,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      },
+      "markdown": {
+        "sources": {
+          "C:/AI/food-truck-finder-poc/.vercel/README.txt": {
+            "lines": 10,
+            "tokens": 182,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 10,
+          "tokens": 182,
+          "sources": 1,
           "clones": 0,
           "duplicatedLines": 0,
           "duplicatedTokens": 0,
@@ -5592,14 +5688,14 @@
       }
     },
     "total": {
-      "lines": 40592,
-      "tokens": 316594,
-      "sources": 455,
-      "clones": 37,
-      "duplicatedLines": 464,
-      "duplicatedTokens": 4318,
-      "percentage": 1.14,
-      "percentageTokens": 1.36,
+      "lines": 41102,
+      "tokens": 333737,
+      "sources": 463,
+      "clones": 44,
+      "duplicatedLines": 495,
+      "duplicatedTokens": 4948,
+      "percentage": 1.2,
+      "percentageTokens": 1.48,
       "newDuplicatedLines": 0,
       "newClones": 0
     }
@@ -6497,6 +6593,606 @@
             "date": "2025-07-04 17:47:41 +0000",
             "line": "60",
             "rev": "7d056b7a"
+          }
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 5,
+      "fragment": ": z\r\n        .object({ open: z.string(), close: z.string(), closed: z.boolean() })\r\n        .or(z.object({ closed: z.literal(true) }))\r\n        .default({ closed: true }),\r\n      wednesday",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 84,
+        "end": 88,
+        "startLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1065
+        },
+        "endLoc": {
+          "line": 88,
+          "column": 10,
+          "position": 1151
+        },
+        "blame": {
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
+          },
+          "85": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "85",
+            "rev": "ce057682"
+          },
+          "86": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "86",
+            "rev": "ce057682"
+          },
+          "87": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "87",
+            "rev": "ce057682"
+          },
+          "88": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "88",
+            "rev": "ce057682"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 80,
+        "end": 84,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 978
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1064
+        },
+        "blame": {
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "80",
+            "rev": "ce057682"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "81",
+            "rev": "ce057682"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "82",
+            "rev": "ce057682"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "83",
+            "rev": "ce057682"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
+          }
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 5,
+      "fragment": ": z\r\n        .object({ open: z.string(), close: z.string(), closed: z.boolean() })\r\n        .or(z.object({ closed: z.literal(true) }))\r\n        .default({ closed: true }),\r\n      thursday",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 88,
+        "end": 92,
+        "startLoc": {
+          "line": 88,
+          "column": 10,
+          "position": 1152
+        },
+        "endLoc": {
+          "line": 92,
+          "column": 9,
+          "position": 1238
+        },
+        "blame": {
+          "88": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "88",
+            "rev": "ce057682"
+          },
+          "89": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "89",
+            "rev": "ce057682"
+          },
+          "90": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "90",
+            "rev": "ce057682"
+          },
+          "91": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "91",
+            "rev": "ce057682"
+          },
+          "92": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "92",
+            "rev": "ce057682"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 80,
+        "end": 84,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 978
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1064
+        },
+        "blame": {
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "80",
+            "rev": "ce057682"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "81",
+            "rev": "ce057682"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "82",
+            "rev": "ce057682"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "83",
+            "rev": "ce057682"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
+          }
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 5,
+      "fragment": ": z\r\n        .object({ open: z.string(), close: z.string(), closed: z.boolean() })\r\n        .or(z.object({ closed: z.literal(true) }))\r\n        .default({ closed: true }),\r\n      friday",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 92,
+        "end": 96,
+        "startLoc": {
+          "line": 92,
+          "column": 9,
+          "position": 1239
+        },
+        "endLoc": {
+          "line": 96,
+          "column": 7,
+          "position": 1325
+        },
+        "blame": {
+          "92": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "92",
+            "rev": "ce057682"
+          },
+          "93": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "93",
+            "rev": "ce057682"
+          },
+          "94": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "94",
+            "rev": "ce057682"
+          },
+          "95": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "95",
+            "rev": "ce057682"
+          },
+          "96": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "96",
+            "rev": "ce057682"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 80,
+        "end": 84,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 978
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1064
+        },
+        "blame": {
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "80",
+            "rev": "ce057682"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "81",
+            "rev": "ce057682"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "82",
+            "rev": "ce057682"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "83",
+            "rev": "ce057682"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
+          }
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 5,
+      "fragment": ": z\r\n        .object({ open: z.string(), close: z.string(), closed: z.boolean() })\r\n        .or(z.object({ closed: z.literal(true) }))\r\n        .default({ closed: true }),\r\n      saturday",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 96,
+        "end": 100,
+        "startLoc": {
+          "line": 96,
+          "column": 7,
+          "position": 1326
+        },
+        "endLoc": {
+          "line": 100,
+          "column": 9,
+          "position": 1412
+        },
+        "blame": {
+          "96": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "96",
+            "rev": "ce057682"
+          },
+          "97": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "97",
+            "rev": "ce057682"
+          },
+          "98": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "98",
+            "rev": "ce057682"
+          },
+          "99": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "99",
+            "rev": "ce057682"
+          },
+          "100": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "100",
+            "rev": "ce057682"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 80,
+        "end": 84,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 978
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1064
+        },
+        "blame": {
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "80",
+            "rev": "ce057682"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "81",
+            "rev": "ce057682"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "82",
+            "rev": "ce057682"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "83",
+            "rev": "ce057682"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
+          }
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 5,
+      "fragment": ": z\r\n        .object({ open: z.string(), close: z.string(), closed: z.boolean() })\r\n        .or(z.object({ closed: z.literal(true) }))\r\n        .default({ closed: true }),\r\n      sunday",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 100,
+        "end": 104,
+        "startLoc": {
+          "line": 100,
+          "column": 9,
+          "position": 1413
+        },
+        "endLoc": {
+          "line": 104,
+          "column": 7,
+          "position": 1499
+        },
+        "blame": {
+          "100": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "100",
+            "rev": "ce057682"
+          },
+          "101": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "101",
+            "rev": "ce057682"
+          },
+          "102": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "102",
+            "rev": "ce057682"
+          },
+          "103": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "103",
+            "rev": "ce057682"
+          },
+          "104": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "104",
+            "rev": "ce057682"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 80,
+        "end": 84,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 978
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1064
+        },
+        "blame": {
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "80",
+            "rev": "ce057682"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "81",
+            "rev": "ce057682"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "82",
+            "rev": "ce057682"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "83",
+            "rev": "ce057682"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
+          }
+        }
+      }
+    },
+    {
+      "format": "typescript",
+      "lines": 5,
+      "fragment": ": z\r\n        .object({ open: z.string(), close: z.string(), closed: z.boolean() })\r\n        .or(z.object({ closed: z.literal(true) }))\r\n        .default({ closed: true }),\r\n    }",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 104,
+        "end": 108,
+        "startLoc": {
+          "line": 104,
+          "column": 7,
+          "position": 1500
+        },
+        "endLoc": {
+          "line": 108,
+          "column": 2,
+          "position": 1586
+        },
+        "blame": {
+          "104": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "104",
+            "rev": "ce057682"
+          },
+          "105": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "105",
+            "rev": "ce057682"
+          },
+          "106": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "106",
+            "rev": "ce057682"
+          },
+          "107": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "107",
+            "rev": "ce057682"
+          },
+          "108": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "108",
+            "rev": "ce057682"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/app/api/trucks/route.ts",
+        "start": 80,
+        "end": 84,
+        "startLoc": {
+          "line": 80,
+          "column": 7,
+          "position": 978
+        },
+        "endLoc": {
+          "line": 84,
+          "column": 8,
+          "position": 1064
+        },
+        "blame": {
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "80",
+            "rev": "ce057682"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "81",
+            "rev": "ce057682"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "82",
+            "rev": "ce057682"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "83",
+            "rev": "ce057682"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-06-06 12:37:17 -0400",
+            "line": "84",
+            "rev": "ce057682"
           }
         }
       }
@@ -9278,6 +9974,142 @@
       }
     },
     {
+      "format": "markup",
+      "lines": 8,
+      "fragment": "setLastEventTime: React.Dispatch&lt;React.SetStateAction&lt;Date | undefined&gt;&gt;;\r\n  setLatestMetrics: React.Dispatch&lt;React.SetStateAction&lt;RealtimeMetrics | undefined&gt;&gt;;\r\n  setRecentEvents: React.Dispatch&lt;React.SetStateAction&lt;RealtimeEvent[]&gt;&gt;;\r\n  setIsConnected: (connected: boolean) =&gt; void;\r\n  setIsConnecting: (connecting: boolean) =&gt; void;\r\n  setConnectionError: (error: string | undefined) =&gt; void;\r\n  setConnectionAttempts: (attempts: number | ((prev: number) =&gt; number)) =&gt; void;\r\n  connectionState",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/jscpd-report/html/index.html",
+        "start": 155,
+        "end": 162,
+        "startLoc": {
+          "line": 155,
+          "column": 3,
+          "position": 4869
+        },
+        "endLoc": {
+          "line": 162,
+          "column": 16,
+          "position": 4983
+        },
+        "blame": {
+          "155": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "155",
+            "rev": "fc2e8a16"
+          },
+          "156": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "156",
+            "rev": "fc2e8a16"
+          },
+          "157": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "157",
+            "rev": "fc2e8a16"
+          },
+          "158": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "158",
+            "rev": "fc2e8a16"
+          },
+          "159": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "159",
+            "rev": "fc2e8a16"
+          },
+          "160": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "160",
+            "rev": "fc2e8a16"
+          },
+          "161": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "161",
+            "rev": "fc2e8a16"
+          },
+          "162": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "162",
+            "rev": "fc2e8a16"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/jscpd-report/html/index.html",
+        "start": 124,
+        "end": 131,
+        "startLoc": {
+          "line": 124,
+          "column": 3,
+          "position": 4294
+        },
+        "endLoc": {
+          "line": 131,
+          "column": 2,
+          "position": 4407
+        },
+        "blame": {
+          "124": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "124",
+            "rev": "fc2e8a16"
+          },
+          "125": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "125",
+            "rev": "fc2e8a16"
+          },
+          "126": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "126",
+            "rev": "fc2e8a16"
+          },
+          "127": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "127",
+            "rev": "fc2e8a16"
+          },
+          "128": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "128",
+            "rev": "fc2e8a16"
+          },
+          "129": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "129",
+            "rev": "fc2e8a16"
+          },
+          "130": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "130",
+            "rev": "fc2e8a16"
+          },
+          "131": {
+            "author": "CodeDeficient",
+            "date": "2025-07-19 14:52:23 -0400",
+            "line": "131",
+            "rev": "fc2e8a16"
+          }
+        }
+      }
+    },
+    {
       "format": "typescript",
       "lines": 22,
       "fragment": ";\r\n\r\ninterface RealtimeMetrics {\r\n  scrapingJobs: {\r\n    active: number;\r\n    completed: number;\r\n    failed: number;\r\n    pending: number;\r\n  };\r\n  dataQuality: {\r\n    averageScore: number;\r\n    totalTrucks: number;\r\n    recentChanges: number;\r\n  };\r\n  systemHealth: {\r\n    status: 'healthy' | 'warning' | 'error';\r\n    uptime: number;\r\n    lastUpdate: string;\r\n  };\r\n}\r\n\r\ninterface",
@@ -11260,79 +12092,79 @@
         },
         "blame": {
           "43": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "43",
             "rev": "039aaa02"
           },
           "44": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "44",
             "rev": "039aaa02"
           },
           "45": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "45",
             "rev": "039aaa02"
           },
           "46": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "46",
             "rev": "039aaa02"
           },
           "47": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "47",
             "rev": "039aaa02"
           },
           "48": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "48",
             "rev": "039aaa02"
           },
           "49": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "49",
             "rev": "039aaa02"
           },
           "50": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "50",
             "rev": "039aaa02"
           },
           "51": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "51",
             "rev": "039aaa02"
           },
           "52": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "52",
             "rev": "039aaa02"
           },
           "53": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "53",
             "rev": "039aaa02"
           },
           "54": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "54",
             "rev": "039aaa02"
           },
           "55": {
-            "author": "CodeDeficient    ",
+            "author": "CodeDeficient",
             "date": "2025-07-19 13:12:00 -0400",
             "line": "55",
             "rev": "039aaa02"
