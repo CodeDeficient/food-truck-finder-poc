@@ -1,6 +1,9 @@
+'use client';
 
 import React from 'react';
-import type { FoodTruck } from '@/lib/types'; // Assuming FoodTruck type is here
+import { Accordion } from '@/components/ui/accordion';
+import { TruckAccordionItem } from '@/components/trucks/TruckAccordionItem';
+import type { FoodTruck } from '@/lib/types';
 
 interface TruckAccordionContentProps {
   filteredTrucks: FoodTruck[];
@@ -12,16 +15,38 @@ interface TruckAccordionContentProps {
 
 export const TruckAccordionContent: React.FC<TruckAccordionContentProps> = ({
   filteredTrucks,
+  selectedTruckId,
+  setSelectedTruckId,
+  isOpen,
+  userLocation,
 }) => {
+  if (filteredTrucks.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+        <p>No food trucks found in your area.</p>
+        <p className="text-sm mt-2">Try expanding your search radius or check back later!</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      {/* This is a placeholder component. Actual accordion content will go here. */}
+    <Accordion 
+      type="single" 
+      collapsible 
+      value={selectedTruckId}
+      onValueChange={(value) => setSelectedTruckId(value || undefined)}
+      className="space-y-2"
+    >
       {filteredTrucks.map((truck) => (
-        <div key={truck.id}>
-          <h3>{truck.name}</h3>
-          {/* Add more truck details here */}
-        </div>
+        <TruckAccordionItem
+          key={truck.id}
+          truck={truck}
+          selectedTruckId={selectedTruckId}
+          setSelectedTruckId={setSelectedTruckId}
+          isOpen={isOpen}
+          userLocation={userLocation}
+        />
       ))}
-    </div>
+    </Accordion>
   );
 };
