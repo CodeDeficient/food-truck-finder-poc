@@ -127,10 +127,10 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** Some trucks will only have a physical address. We need a process to convert these addresses into latitude and longitude to display them on the map.
   - **CCR:** C:7, C:8, R:6
   - **Verification:** Trucks with only an address are visible on the map in the correct location.
-  - **[ ] 3.3.1: Research Geocoding Services**
+  - **[x] 3.3.1: Research Geocoding Services**
     - **Guidance:** Evaluate free and open-source geocoding services. Options could include Nominatim (OpenStreetMap), or a free tier of a commercial service. Check Supabase for built-in PostGIS functions that might help.
     - **CCR:** C:5, C:7, R:5
-    - **Verification:** A service is chosen and documented.
+    - **Verification:** A service is chosen and documented in `docs/DATA_PIPELINE_ARCHITECTURE.md`.
   - **[ ] 3.3.2: Integrate Geocoding into Data Pipeline**
     - **Guidance:** Add a step in the pipeline that checks if GPS coordinates are missing and, if so, calls the chosen geocoding service to populate them.
     - **CCR:** C:7, C:8, R:6
