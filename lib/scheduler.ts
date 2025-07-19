@@ -106,9 +106,12 @@ export class TaskScheduler {
     }
 
     // Calculate interval in milliseconds
-    const intervalMs = task.intervalMinutes * 60 * 1000; // Schedule the task
+    const intervalMs = task.intervalMinutes * 60 * 1000;
+    
+    // Schedule the task with proper async wrapper
     const interval = setInterval(() => {
-      void (async () => {
+      // Use void to indicate we're not handling the promise
+      void (async (): Promise<void> => {
         try {
           console.info(`Executing task: ${taskId}`);
           task.lastRun = new Date().toISOString();
