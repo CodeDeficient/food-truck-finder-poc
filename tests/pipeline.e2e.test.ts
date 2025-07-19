@@ -1,3 +1,4 @@
+// @ts-expect-error TS(2792): Cannot find module '@playwright/test'. Did you mea... Remove this comment to see the full error message
 import { test, expect } from '@playwright/test';
 import { cleanupTestData, setupTestData } from './utils/testSetup';
 
@@ -12,7 +13,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     await cleanupTestData();
   });
 
-  test('should handle pipeline initiation endpoint', async ({ request }) => {
+  test('should handle pipeline initiation endpoint', async ({ request }: any) => {
     // Test that the endpoint responds correctly
     const response = await request.get('/api/auto-scrape-initiate');
 
@@ -26,7 +27,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     }
   });
 
-  test('should handle test pipeline endpoint', async ({ request }) => {
+  test('should handle test pipeline endpoint', async ({ request }: any) => {
     // Test the test pipeline endpoint
     const response = await request.post('/api/test-pipeline-run', {
       data: {
@@ -38,7 +39,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     // Should respond without throwing errors
     expect(response.status()).toBeLessThan(500);
   });
-  test('should handle integration test endpoint', async ({ request }) => {
+  test('should handle integration test endpoint', async ({ request }: any) => {
     // Test the integration endpoint
     const response = await request.get('/api/test-integration');
 
@@ -53,7 +54,7 @@ test.describe('Autonomous Discovery and Ingestion Pipeline', () => {
     }
   });
 
-  test('should validate pipeline error handling', async ({ request }) => {
+  test('should validate pipeline error handling', async ({ request }: any) => {
     // Test pipeline with invalid data
     const response = await request.post('/api/test-pipeline-run', {
       data: {

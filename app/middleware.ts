@@ -1,39 +1,30 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
+import { protectAdminRoutes } from '@/lib/middleware/middlewareHelpers';
 
+/**
+ * Handles requests and applies specific middleware logic.
+ * @example
+ * middleware(req)
+ * NextResponse object
+ * @param {NextRequest} req - The incoming request object containing headers and other request details.
+ * @returns {Promise<NextResponse>} Returns a NextResponse object after processing the middleware logic.
+ * @description
+ *   - Extracts request metadata, including IP, user agent, URL, and method from request headers.
+ *   - Applies admin route protection if the request URL pathname starts with '/admin'.
+ */
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  const supabase = createSupabaseMiddlewareClient(req, res);
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const requestMetadata = {
+    ip: req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown',
+    userAgent: req.headers.get('user-agent') ?? 'unknown',
+    url: req.nextUrl.pathname,
+    method: req.method,
+  };
 
-  // Protect admin routes
   if (req.nextUrl.pathname.startsWith('/admin')) {
-    if (userError || !user) {
-      // Redirect unauthenticated users to login
-      const redirectUrl = req.nextUrl.clone();
-      redirectUrl.pathname = '/login';
-      redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname);
-      return NextResponse.redirect(redirectUrl);
-    }
-
-    // Check for admin role (assuming 'profiles' table with 'role' column)
-    const { data: profile, error: profileQueryError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profileQueryError || profile?.role !== 'admin') {
-      // Redirect non-admin users to access denied page
-      const redirectUrl = req.nextUrl.clone();
-      redirectUrl.pathname = '/access-denied';
-      return NextResponse.redirect(redirectUrl);
-    }
+    return await protectAdminRoutes(req, res, requestMetadata);
   }
 
   return res;

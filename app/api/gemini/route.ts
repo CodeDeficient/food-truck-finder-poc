@@ -1,12 +1,21 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { gemini } from '@/lib/gemini';
+import { dispatchGeminiOperation, gemini } from '@/lib/gemini';
+import { handleErrorResponse } from '@/lib/utils/apiHelpers';
+
+import type { GeminiResponse } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as { type?: string; data?: unknown };
     const { type, data } = body;
 
-    if (!type || !data || typeof type !== 'string' || typeof data !== 'string') {
+    if (
+      type === undefined ||
+      type === '' ||
+      data === undefined ||
+      typeof type !== 'string' ||
+      typeof data !== 'string'
+    ) {
       return NextResponse.json(
         { error: 'Type must be a string and data must be a string' },
         { status: 400 },
@@ -25,37 +34,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let result;
-    switch (type) {
-      case 'menu': {
-        result = await gemini.processMenuData(data);
-        break;
-      }
-      case 'location': {
-        result = await gemini.extractLocationFromText(data);
-        break;
-      }
-      case 'hours': {
-        result = await gemini.standardizeOperatingHours(data);
-        break;
-      }
-      case 'sentiment': {
-        result = await gemini.analyzeSentiment(data);
-        break;
-      }
-      case 'enhance': {
-        result = await gemini.enhanceFoodTruckData(data);
-        break;
-      }
-      default: {
-        return NextResponse.json({ error: 'Invalid processing type' }, { status: 400 });
-      }
-    }
+    const result: GeminiResponse<unknown> = await dispatchGeminiOperation(
+      type as 'menu' | 'location' | 'hours' | 'sentiment' | 'enhance',
+      data,
+    );
     return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error('Gemini API error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleErrorResponse(error);
   }
 }
 
@@ -83,8 +68,6 @@ export async function GET(request: NextRequest) {
       ],
     });
   } catch (error: unknown) {
-    console.error('Gemini API error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleErrorResponse(error);
   }
 }

@@ -1,7 +1,7 @@
 // lib/pipelineManager.ts
 // Unified Pipeline Manager - Consolidates all pipeline operations
 
-import { ScrapingJobService } from './supabase';
+import { ScrapingJobService, type ScrapingJob } from './supabase';
 import { discoveryEngine } from './discoveryEngine';
 import { processScrapingJob } from './pipelineProcessor';
 import { ensureDefaultTrucksAreScraped } from './autoScraper';
@@ -93,76 +93,96 @@ export class PipelineManager {
 
     try {
       console.info(`🚀 PipelineManager: Starting ${config.type} pipeline...`);
+      const result = await this.executePipelineType(config);
+      return this.createSuccessResult(config, result, startTime);
+    } catch (error) {
+      return this.createErrorResult(config, error, startTime);
+    }
+  }
 
-      let result: unknown;
-
-      switch (config.type) {
-        case 'discovery': {
-          result = await this.runDiscovery({
-            cities: config.params.targetCities || [],
-            maxUrls: config.params.maxUrls || 50,
-            searchTerms: ['food truck', 'food cart', 'mobile food'],
-          });
-          break;
-        }
-
-        case 'processing': {
-          result = await this.processJobs({
-            maxJobs: config.params.maxUrlsToProcess || 20,
-            priority: config.params.priority || 5,
-            retryFailedJobs: config.params.retryFailedJobs || false,
-          });
-          break;
-        }
-
-        case 'full': {
-          result = await this.runFullPipeline(config);
-          break;
-        }
-
-        case 'maintenance': {
-          result = await this.runMaintenance();
-          break;
-        }
-
-        default: {
-          throw new Error(`Unknown pipeline type: ${String(config.type)}`);
-        }
+  /**
+   * Execute the specific pipeline type
+   */
+  private async executePipelineType(config: PipelineConfig): Promise<unknown> {
+    switch (config.type) {
+      case 'discovery': {
+        return await this.runDiscovery({
+          cities: config.params.targetCities ?? [],
+          maxUrls: config.params.maxUrls ?? 50,
+          searchTerms: ['food truck', 'food cart', 'mobile food'],
+        });
       }
 
-      const duration = Date.now() - startTime;
+      case 'processing': {
+        return await this.processJobs({
+          maxJobs: config.params.maxUrlsToProcess ?? 20,
+          priority: config.params.priority ?? 5,
+          retryFailedJobs: config.params.retryFailedJobs ?? false,
+        });
+      }
 
-      return {
-        success: true,
-        type: config.type,
-        phase: 'completed',
-        summary: {
-          ...(typeof result === 'object' && result !== null
-            ? (result as Record<string, unknown>)
-            : {}),
-          duration,
-        },
-        details: result,
-        timestamp: new Date().toISOString(),
-      };
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      console.error(`❌ PipelineManager: ${config.type} pipeline failed:`, error);
+      case 'full': {
+        return await this.runFullPipeline(config);
+      }
 
-      return {
-        success: false,
-        type: config.type,
-        phase: 'failed',
-        summary: {
-          errors: 1,
-          duration,
-        },
-        details: {
-          error: error instanceof Error ? error.message : 'Unknown error',
-        },
-        timestamp: new Date().toISOString(),
-      };
+      case 'maintenance': {
+        return await this.runMaintenance();
+      }
+
+      default: {
+        throw new Error(`Unknown pipeline type: ${String(config.type)}`);
+      }
     }
+  }
+
+  /**
+   * Create success result
+   */
+  private createSuccessResult(
+    config: PipelineConfig,
+    result: unknown,
+    startTime: number,
+  ): PipelineResult {
+    const duration = Date.now() - startTime;
+    return {
+      success: true,
+      type: config.type,
+      phase: 'completed',
+      summary: {
+        ...(typeof result === 'object' && result !== null
+          ? (result as Record<string, unknown>)
+          : {}),
+        duration,
+      },
+      details: result,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Create error result
+   */
+  private createErrorResult(
+    config: PipelineConfig,
+    error: unknown,
+    startTime: number,
+  ): PipelineResult {
+    const duration = Date.now() - startTime;
+    console.error(`❌ PipelineManager: ${config.type} pipeline failed:`, error);
+
+    return {
+      success: false,
+      type: config.type,
+      phase: 'failed',
+      summary: {
+        errors: 1,
+        duration,
+      },
+      details: {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      timestamp: new Date().toISOString(),
+    };
   }
   /**
    * Run URL discovery using Tavily search
@@ -207,83 +227,98 @@ export class PipelineManager {
    */
   async processJobs(options: ProcessingOptions): Promise<ProcessingResult> {
     const startTime = Date.now();
-    const errors: string[] = [];
 
     try {
       console.info(`⚙️ PipelineManager: Processing up to ${options.maxJobs} jobs...`);
 
-      // Get pending jobs
       const pendingJobs = await ScrapingJobService.getJobsByStatus('pending');
-      if (!pendingJobs || pendingJobs.length === 0) {
-        console.info('No pending jobs to process');
-        return {
-          success: true,
-          jobsProcessed: 0,
-          jobsSuccessful: 0,
-          jobsFailed: 0,
-          trucksCreated: 0,
-          errors: [],
-          duration: Date.now() - startTime,
-        };
+      if (pendingJobs == undefined || pendingJobs.length === 0) {
+        return this.createEmptyProcessingResult(startTime);
       }
 
-      // Process jobs up to maxJobs limit
       const jobsToProcess = pendingJobs.slice(0, options.maxJobs);
-      let jobsSuccessful = 0;
-      let jobsFailed = 0;
-      let trucksCreated = 0;
+      const results = await this.processJobBatch(jobsToProcess, startTime);
 
-      for (const job of jobsToProcess) {
-        try {
-          console.info(`Processing job ${job.id} for URL: ${job.target_url}`);
-
-          // Process the job
-          await processScrapingJob(job.id);
-
-          // Check if job resulted in truck creation
-          const updatedJob = await ScrapingJobService.getJobsByStatus('completed').then((jobs) =>
-            jobs?.find((j) => j.id === job.id),
-          );
-
-          if (updatedJob?.data_collected?.truck_id) {
-            trucksCreated++;
-          }
-
-          jobsSuccessful++;
-        } catch (jobError) {
-          const errorMsg = `Job ${job.id} failed: ${jobError instanceof Error ? jobError.message : 'Unknown error'}`;
-          console.warn(errorMsg);
-          errors.push(errorMsg);
-          jobsFailed++;
-        }
-      }
-
-      const duration = Date.now() - startTime;
-
-      return {
-        success: jobsFailed === 0,
-        jobsProcessed: jobsToProcess.length,
-        jobsSuccessful,
-        jobsFailed,
-        trucksCreated,
-        errors,
-        duration,
-      };
+      return results;
     } catch (error) {
-      const duration = Date.now() - startTime;
-      const errorMsg = error instanceof Error ? error.message : 'Unknown processing error';
-      console.error('❌ PipelineManager: Job processing failed:', error);
-
-      return {
-        success: false,
-        jobsProcessed: 0,
-        jobsSuccessful: 0,
-        jobsFailed: 0,
-        trucksCreated: 0,
-        errors: [errorMsg],
-        duration,
-      };
+      return this.createProcessingErrorResult(error, startTime);
     }
+  }
+
+  /**
+   * Create empty processing result when no jobs available
+   */
+  private createEmptyProcessingResult(startTime: number): ProcessingResult {
+    console.info('No pending jobs to process');
+    return {
+      success: true,
+      jobsProcessed: 0,
+      jobsSuccessful: 0,
+      jobsFailed: 0,
+      trucksCreated: 0,
+      errors: [],
+      duration: Date.now() - startTime,
+    };
+  }
+
+  /**
+   * Process a batch of jobs
+   */
+  private async processJobBatch(
+    jobsToProcess: ScrapingJob[],
+    startTime: number,
+  ): Promise<ProcessingResult> {
+    const errors: string[] = [];
+    let jobsSuccessful = 0;
+    let jobsFailed = 0;
+    let trucksCreated = 0;
+    for (const job of jobsToProcess) {
+      try {
+        console.info(`Processing job ${job.id} for URL: ${job.target_url}`);
+        await processScrapingJob(job.id);
+
+        const updatedJob = await ScrapingJobService.getJobsByStatus('completed').then((jobs) =>
+          jobs?.find((j) => j.id === job.id),
+        );
+
+        if (updatedJob?.data_collected?.truck_id != undefined) {
+          trucksCreated += 1;        }
+
+        jobsSuccessful += 1;      } catch (jobError) {
+        const errorMsg = `Job ${job.id} failed: ${jobError instanceof Error ? jobError.message : 'Unknown error'}`;
+        console.warn(errorMsg);
+        errors.push(errorMsg);
+        jobsFailed += 1;      }
+    }
+
+    return {
+      success: jobsFailed === 0,
+      jobsProcessed: jobsToProcess.length,
+      jobsSuccessful,
+      jobsFailed,
+      trucksCreated,
+      errors,
+      duration: Date.now() - startTime,
+    };
+  }
+
+  /**
+   * Create processing error result
+   */
+  private createProcessingErrorResult(error: unknown, startTime: number): ProcessingResult {
+    const duration = Date.now() - startTime;
+    const errorMsg = error instanceof Error ? error.message : 'Unknown processing error';
+    console.error('❌ PipelineManager: Job processing failed:', error);
+
+    return {
+      success: false,
+      jobsProcessed: 0,
+      jobsSuccessful: 0,
+      jobsFailed: 0,
+      trucksCreated: 0,
+      errors: [errorMsg],
+      duration,
+    };
   }
 
   /**
@@ -299,29 +334,29 @@ export class PipelineManager {
     };
 
     // Step 1: Discovery (unless skipped)
-    if (!config.params.skipDiscovery) {
+    if (config.params.skipDiscovery !== true) {
       results.discovery = await this.runDiscovery({
-        cities: config.params.targetCities || ['Charleston', 'Columbia', 'Greenville'],
-        maxUrls: config.params.maxUrls || 50,
+        cities: config.params.targetCities ?? ['Charleston', 'Columbia', 'Greenville'],
+        maxUrls: config.params.maxUrls ?? 50,
         searchTerms: ['food truck', 'food cart', 'mobile food'],
       });
     }
 
     // Step 2: Processing
     results.processing = await this.processJobs({
-      maxJobs: config.params.maxUrlsToProcess || 20,
-      priority: config.params.priority || 5,
-      retryFailedJobs: config.params.retryFailedJobs || false,
+      maxJobs: config.params.maxUrlsToProcess ?? 20,
+      priority: config.params.priority ?? 5,
+      retryFailedJobs: config.params.retryFailedJobs ?? false,
     });
 
     // Combine results
     return {
-      urlsDiscovered: results.discovery?.urlsDiscovered || 0,
-      urlsStored: results.discovery?.urlsStored || 0,
-      urlsDuplicate: results.discovery?.urlsDuplicate || 0,
-      jobsProcessed: results.processing?.jobsProcessed || 0,
-      trucksCreated: results.processing?.trucksCreated || 0,
-      errors: [...(results.discovery?.errors || []), ...(results.processing?.errors || [])],
+      urlsDiscovered: results.discovery?.urlsDiscovered ?? 0,
+      urlsStored: results.discovery?.urlsStored ?? 0,
+      urlsDuplicate: results.discovery?.urlsDuplicate ?? 0,
+      jobsProcessed: results.processing?.jobsProcessed ?? 0,
+      trucksCreated: results.processing?.trucksCreated ?? 0,
+      errors: [...(results.discovery?.errors ?? []), ...(results.processing?.errors ?? [])],
     };
   }
 
@@ -343,7 +378,7 @@ export class PipelineManager {
         success: result.errors.length === 0,
         trucksProcessed: result.trucksProcessed,
         newTrucksFound: result.newTrucksFound,
-        errors: result.errors.map((e) => e.url + ': ' + (e.details || 'Unknown error')),
+        errors: result.errors.map((e) => e.url + ': ' + (e.details ?? 'Unknown error')),
         duration,
       };
     } catch (error) {
