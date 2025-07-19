@@ -1,23 +1,16 @@
 import { NextResponse } from 'next/server';
+import { handleGetRequest } from '@/lib/api/admin/scraping-metrics/handlers';
+import { verifyAdminAccess } from '@/lib/auth/authHelpers';
 
-export function GET() {
+export async function GET(request: Request): Promise<NextResponse> {
+  const hasAdminAccess = await verifyAdminAccess(request);
+  if (!hasAdminAccess) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
+  }
+
   try {
-    // Mock data for scraping metrics
-    // In a real implementation, this would fetch from your database
-    const metrics = {
-      totalRuns: 24,
-      successfulRuns: 22,
-      failedRuns: 2,
-      averageRunTime: 45, // seconds
-      totalTrucksProcessed: 1080,
-      newTrucksToday: 7,
-    };
-
-    return NextResponse.json({
-      success: true,
-      metrics,
-    });
-  } catch (error) {
+    return await handleGetRequest();
+  } catch (error: unknown) {
     console.error('Error fetching scraping metrics:', error);
     return NextResponse.json(
       {
