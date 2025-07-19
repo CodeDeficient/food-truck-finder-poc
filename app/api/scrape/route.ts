@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       scheduled_at: new Date().toISOString(),
     });
 
-    if (!job) {
+    if (job == undefined) {
       // This case handles if createJob returns null without throwing.
       console.error('Scraping job creation returned null unexpectedly.');
       return NextResponse.json(
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   const status = searchParams.get('status');
 
   try {
-    if (jobId) {
+    if (jobId !== null && jobId !== '') {
       // Get specific job status
       const jobs = await ScrapingJobService.getJobsByStatus('all');
       const job = jobs?.find((j) => j.id === jobId);
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get jobs by status
-    const jobs = await ScrapingJobService.getJobsByStatus(status || 'pending');
+    const jobs = await ScrapingJobService.getJobsByStatus(status ?? 'pending');
 
     return NextResponse.json({
       jobs,

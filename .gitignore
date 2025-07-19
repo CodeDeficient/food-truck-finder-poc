@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+bfg-1.15.0.jar
 
 # next.js
 /.next/
@@ -18,6 +19,10 @@ yarn-error.log*
 
 # env files
 .env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -25,3 +30,58 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Prevent duplicate ESLint config files
+.eslintrc.js
+
+# IDE / Editor specific
+.vscode/
+.idea/
+*.swp
+*~
+
+# AI Assistant / Tooling
+.claude-thoughts/
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+**/*.ts.backup
+**/*.tsx.backup
+
+# Log files
+*.log
+logs/
+
+# Test reports
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Local artifacts
+*.patch
+*.diff
+
+# JSON analysis/baseline files
+*-baseline.json
+comparison-logic-baseline.json
+eslint-config-baseline.json
+lib/supabase-baseline.json
+lib/types-baseline.json
+lint-results.json
+lint-results-focused.json
+lint-analysis.json
+error-analysis.json
+strict-boolean-errors.json
+app/admin/page-baseline.json
+app/auth/callback/route-baseline.json
+
+# Specific files to ignore
+components/map/DebugOverlay.tsx
+errors/mapcontainer-already-initialized.md
+test-lint.ts
+/errors/

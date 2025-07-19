@@ -6,56 +6,52 @@ import {
   APIUsageService,
 } from '@/lib/supabase';
 
+async function handleDashboardSectionRequest(section: string | null) {
+  switch (section) {
+    case 'overview': {
+      return NextResponse.json(await getDashboardOverview());
+    }
+    case 'scraping': {
+      return NextResponse.json(await getScrapingStatus());
+    }
+    case 'processing': {
+      return NextResponse.json(await getProcessingStatus());
+    }
+    case 'quality': {
+      return NextResponse.json(await getDataQualityStatus());
+    }
+    case 'usage': {
+      return NextResponse.json(await getAPIUsageStatus());
+    }
+    default: {
+      const [overview, scraping, processing, quality, usage] = await Promise.allSettled([
+        getDashboardOverview(),
+        getScrapingStatus(),
+        getProcessingStatus(),
+        getDataQualityStatus(),
+        getAPIUsageStatus(),
+      ]);
+
+      return NextResponse.json({
+        overview: overview.status === 'fulfilled' ? overview.value : getDefaultOverview(),
+        scraping: scraping.status === 'fulfilled' ? scraping.value : getDefaultScraping(),
+        processing: processing.status === 'fulfilled' ? processing.value : getDefaultProcessing(),
+        quality: quality.status === 'fulfilled' ? quality.value : getDefaultQuality(),
+        usage: usage.status === 'fulfilled' ? usage.value : getDefaultUsage(),
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const section = searchParams.get('section');
 
   try {
-    switch (section) {
-      case 'overview': {
-        return NextResponse.json(await getDashboardOverview());
-      }
-
-      case 'scraping': {
-        return NextResponse.json(await getScrapingStatus());
-      }
-
-      case 'processing': {
-        return NextResponse.json(await getProcessingStatus());
-      }
-
-      case 'quality': {
-        return NextResponse.json(await getDataQualityStatus());
-      }
-
-      case 'usage': {
-        return NextResponse.json(await getAPIUsageStatus());
-      }
-
-      default: {
-        // Return complete dashboard data with error handling
-        const [overview, scraping, processing, quality, usage] = await Promise.allSettled([
-          getDashboardOverview(),
-          getScrapingStatus(),
-          getProcessingStatus(),
-          getDataQualityStatus(),
-          getAPIUsageStatus(),
-        ]);
-
-        return NextResponse.json({
-          overview: overview.status === 'fulfilled' ? overview.value : getDefaultOverview(),
-          scraping: scraping.status === 'fulfilled' ? scraping.value : getDefaultScraping(),
-          processing: processing.status === 'fulfilled' ? processing.value : getDefaultProcessing(),
-          quality: quality.status === 'fulfilled' ? quality.value : getDefaultQuality(),
-          usage: usage.status === 'fulfilled' ? usage.value : getDefaultUsage(),
-          timestamp: new Date().toISOString(),
-        });
-      }
-    }
+    return await handleDashboardSectionRequest(section);
   } catch (error) {
     console.error('Dashboard API error:', error);
-
-    // Return fallback data instead of error
     return NextResponse.json({
       overview: getDefaultOverview(),
       scraping: getDefaultScraping(),
@@ -78,12 +74,12 @@ async function getDashboardOverview() {
       recentTrucks: trucks.slice(0, 5).map((truck) => ({
         id: truck.id,
         name: truck.name,
-        location: truck.current_location || { address: 'Unknown location' },
-        operating_hours: truck.operating_hours || {},
-        menu: truck.menu || [],
-        contact: truck.contact_info || {},
+        location: truck.current_location ?? { address: 'Unknown location' },
+        operating_hours: truck.operating_hours ?? {},
+        menu: truck.menu ?? [],
+        contact: truck.contact_info ?? {},
         last_updated: truck.updated_at,
-        data_quality_score: truck.data_quality_score || 0,
+        data_quality_score: truck.data_quality_score ?? 0,
       })),
       averageQuality: qualityStats.avg_quality_score,
       verifiedTrucks: qualityStats.verified_count,
@@ -107,7 +103,7 @@ async function getScrapingStatus() {
 
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const recentCompleted = completedJobs.filter(
-      (job) => job.completed_at && job.completed_at > yesterday,
+      (job) => job.completed_at != undefined && job.completed_at > yesterday,
     );
     const recentFailed = failedJobs.filter((job) => job.created_at > yesterday);
     const totalRecent = recentCompleted.length + recentFailed.length;
@@ -141,11 +137,11 @@ async function getProcessingStatus() {
       pending: pendingQueue.length,
       processing: processingQueue.length,
       completedToday: completedQueue.filter(
-        (item) => item.processed_at && item.processed_at > yesterday,
+        (item) => item.processed_at != undefined && item.processed_at > yesterday,
       ).length,
       failedToday: failedQueue.filter((item) => item.created_at > yesterday).length,
       totalTokensUsed: completedQueue.reduce(
-        (sum, item) => sum + (item.gemini_tokens_used || 0),
+        (sum, item) => sum + (item.gemini_tokens_used ?? 0),
         0,
       ),
     };
@@ -179,24 +175,24 @@ async function getAPIUsageStatus() {
     return {
       gemini: {
         requests: {
-          used: geminiUsage?.requests_count || 0,
+          used: geminiUsage?.requests_count ?? 0,
           limit: geminiLimits.requests,
-          remaining: geminiLimits.requests - (geminiUsage?.requests_count || 0),
-          percentage: ((geminiUsage?.requests_count || 0) / geminiLimits.requests) * 100,
+          remaining: geminiLimits.requests - (geminiUsage?.requests_count ?? 0),
+          percentage: ((geminiUsage?.requests_count ?? 0) / geminiLimits.requests) * 100,
         },
         tokens: {
-          used: geminiUsage?.tokens_used || 0,
+          used: geminiUsage?.tokens_used ?? 0,
           limit: geminiLimits.tokens,
-          remaining: geminiLimits.tokens - (geminiUsage?.tokens_used || 0),
-          percentage: ((geminiUsage?.tokens_used || 0) / geminiLimits.tokens) * 100,
+          remaining: geminiLimits.tokens - (geminiUsage?.tokens_used ?? 0),
+          percentage: ((geminiUsage?.tokens_used ?? 0) / geminiLimits.tokens) * 100,
         },
       },
       firecrawl: {
         requests: {
-          used: firecrawlUsage?.requests_count || 0,
+          used: firecrawlUsage?.requests_count ?? 0,
           limit: firecrawlLimits.requests,
-          remaining: firecrawlLimits.requests - (firecrawlUsage?.requests_count || 0),
-          percentage: ((firecrawlUsage?.requests_count || 0) / firecrawlLimits.requests) * 100,
+          remaining: firecrawlLimits.requests - (firecrawlUsage?.requests_count ?? 0),
+          percentage: ((firecrawlUsage?.requests_count ?? 0) / firecrawlLimits.requests) * 100,
         },
       },
       history: allUsage.slice(0, 7),

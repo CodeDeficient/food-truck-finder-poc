@@ -1,64 +1,38 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { FoodTruckService } from '@/lib/supabase';
 import { z, type infer as ZInfer } from 'zod';
+import {
+  handleGetTruckById,
+  handleGetTrucksByLocation,
+  handleGetAllTrucks,
+  handlePostTruck,
+  handlePutTruck,
+} from '@/lib/api/trucks/handlers';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
-  const radius = searchParams.get('radius') || '5';
-  const limit = Number.parseInt(searchParams.get('limit') || '50');
-  const offset = Number.parseInt(searchParams.get('offset') || '0');
+  const radius = searchParams.get('radius') ?? '5';
+  const limit = Number.parseInt(searchParams.get('limit') ?? '50');
+  const offset = Number.parseInt(searchParams.get('offset') ?? '0');
 
   try {
-    // Get specific truck by ID
-    if (id) {
-      const truck = await FoodTruckService.getTruckById(id);
-      return NextResponse.json({ truck });
+    if (id !== null && id.length > 0) {
+      return await handleGetTruckById(id);
     }
 
-    // Get trucks by location
-    if (lat && lng) {
-      const userLat = Number.parseFloat(lat);
-      const userLng = Number.parseFloat(lng);
-      const radiusKm = Number.parseFloat(radius);
-
-      const nearbyTrucks = await FoodTruckService.getTrucksByLocation(userLat, userLng, radiusKm);
-
-      return NextResponse.json({
-        trucks: nearbyTrucks,
-        total: nearbyTrucks.length,
-        limit,
-        offset,
-        hasMore: false, // Location-based queries don't use pagination
-      });
+    if (lat !== null && lat.length > 0 && lng !== null && lng.length > 0) {
+      return await handleGetTrucksByLocation(lat, lng, radius);
     }
 
-    // Get all trucks with pagination
-    const { trucks, total } = await FoodTruckService.getAllTrucks(limit, offset);
-
-    return NextResponse.json({
-      trucks,
-      total,
-      limit,
-      offset,
-      hasMore: offset + limit < (total || 0),
-      summary: {
-        totalTrucks: total,
-        averageQuality:
-          trucks && trucks.length > 0
-            ? trucks.reduce((acc, t) => acc + (t.data_quality_score || 0), 0) / trucks.length
-            : 0,
-        lastUpdated:
-          trucks && trucks.length > 0
-            ? Math.max(...trucks.map((t) => new Date(t.updated_at).getTime()))
-            : 0,
-      },
-    });
-  } catch (error) {
+    return await handleGetAllTrucks(limit, offset);
+  } catch (error: unknown) {
     console.error('Error fetching food trucks:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 },
+    );
   }
 }
 
@@ -173,22 +147,16 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as ZInfer<typeof FoodTruckSchema>;
     const validatedData = FoodTruckSchema.parse(body);
-
-    const newTruck = await FoodTruckService.createTruck(validatedData);
-
-    return NextResponse.json(
-      {
-        message: 'Food truck created successfully',
-        truck: newTruck,
-      },
-      { status: 201 },
-    );
-  } catch (error) {
+    return await handlePostTruck(validatedData);
+  } catch (error: unknown) {
     console.error('Error creating food truck:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Failed to create food truck' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 },
+    );
   }
 }
 
@@ -197,18 +165,15 @@ export async function PUT(request: NextRequest) {
     const body = (await request.json()) as ZInfer<typeof UpdateFoodTruckSchema>;
     const validatedData = UpdateFoodTruckSchema.parse(body);
     const { id, ...updates } = validatedData;
-
-    const updatedTruck = await FoodTruckService.updateTruck(id, updates);
-
-    return NextResponse.json({
-      message: 'Food truck updated successfully',
-      truck: updatedTruck,
-    });
-  } catch (error) {
+    return await handlePutTruck(id, updates);
+  } catch (error: unknown) {
     console.error('Error updating food truck:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Failed to update food truck' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 },
+    );
   }
 }
