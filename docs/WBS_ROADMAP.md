@@ -25,12 +25,17 @@ This document provides a detailed breakdown of all tasks required to improve and
 
 ## 2.0 Security & Access Control
 
-- **[ ] 2.1: Secure Admin Dashboard**
-  - **Guidance:** The `/admin` route and all its sub-routes must be protected. Currently, it's publicly accessible. The goal is to restrict access to a single, authenticated developer user (me).
-  - **CCR:** C:7, C:8, R:8
-  - **Verification:** Unauthorized users navigating to `/admin` are redirected to a login page or an access denied page. The designated admin user can log in and access the dashboard.
+  - **[ ] 2.1: Secure Admin Dashboard**
+    - **Guidance:** The `/admin` route and all its sub-routes must be protected. Currently, it's publicly accessible. The goal is to restrict access to a single, authenticated developer user (me).
+    - **CCR:** C:7, C:8, R:8
+    - **Common Pitfalls & Fallbacks:**
+      - **JWT Mismatch:** The `iss` (issuer) in the Firebase JWT might not match what Supabase expects. **Fallback:** Double-check the Firebase Project ID in the Supabase Auth settings.
+      - **Custom Claims Not Propagating:** The Firebase Cloud Function might fail to add the `role` claim. **Fallback:** Manually trigger the function and check the logs in the Firebase console. Use the Firebase Admin SDK to inspect the user's custom claims directly.
+      - **RLS Policies Failing:** The `authorize` function might not correctly interpret the role from the JWT. **Fallback:** Use `set_config` in the Supabase SQL Editor to manually set a mock JWT and debug the RLS policy logic line-by-line.
+    - **Verification:** Unauthorized users navigating to `/admin` are redirected to a login page or an access denied page. The designated admin user can log in and access the dashboard.
   - **[x] 2.1.1: Research Authentication Provider**
     - **Guidance:** Per user direction, the primary authentication provider will be Google, managed through a service like Firebase Authentication to decouple it from Supabase. Research the integration of Firebase Auth with a Supabase backend. The goal is to use Firebase for sign-in and then pass the user's identity (JWT) to Supabase to control data access via RLS.
+    - **Tools/Libraries:** Firebase Authentication, Firebase Cloud Functions, Firebase Admin SDK, Supabase Client Library.
     - **CCR:** C:7, C:7, R:7
     - **Verification:** A new document, `docs/AUTH_ARCHITECTURE.md`, is created detailing the chosen implementation strategy.
   - **[x] 2.1.2: Research Role-Based Access Control (RBAC) with External JWT**
@@ -40,10 +45,16 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **[ ] 2.1.3: Implement Supabase RBAC Schema**
     - **Guidance:** Create the necessary SQL types and tables in Supabase to support a permission-based RBAC system, as detailed in `docs/AUTH_ARCHITECTURE.md`.
     - **CCR:** C:4, C:9, R:4
+    - **Impact Analysis:**
+      - **Associated Files:** `supabase/migrations/<timestamp>_create_rbac_schema.sql`
+      - **Affected Files:** All RLS policies, `app/middleware.ts`, any future components that manage roles.
     - **Verification:** The `app_role` and `app_permission` types, and the `role_permissions` table are successfully created in the Supabase database.
   - **[ ] 2.1.4: Implement Supabase `authorize` Function**
     - **Guidance:** Create the `public.authorize` SQL function in Supabase. This function will be the central point for checking user permissions in all RLS policies.
     - **CCR:** C:5, C:8, R:6
+    - **Impact Analysis:**
+      - **Associated Files:** `supabase/migrations/<timestamp>_create_authorize_function.sql`
+      - **Affected Files:** All RLS policies, any tests that simulate user roles.
     - **Verification:** The `authorize` function is created and returns the expected boolean values when tested with different roles and permissions in the Supabase SQL Editor.
     - **[ ] 2.1.4.1: Draft `authorize` Function SQL**
       - **Guidance:** Write the initial SQL for the function based on the architecture defined in `docs/AUTH_ARCHITECTURE.md`.
@@ -53,10 +64,41 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** In the Supabase SQL Editor, use the `set_config` command to simulate JWTs with different roles (`admin`, `authenticated`) and test the function's output against various permissions.
       - **CCR:** C:4, C:9, R:4
       - **Verification:** The function returns `true` for authorized roles and `false` for unauthorized roles.
+    - **[ ] 2.1.4.3: Security Review of `authorize` Function SQL**
+      - **Guidance:** Before migration, perform a dedicated security review of the final SQL code for the `authorize` function. Check for any potential logic flaws, edge cases, or possibilities for privilege escalation.
+      - **CCR:** C:4, C:8, R:7
+      - **Verification:** The review is completed and signed off on in the project documentation.
+    - **[ ] 2.1.4.1: Draft `authorize` Function SQL**
+      - **Guidance:** Write the initial SQL for the function based on the architecture defined in `docs/AUTH_ARCHITECTURE.md`.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The SQL code is written and passes a syntax check.
+    - **[ ] 2.1.4.2: Test `authorize` Function with Mock JWTs**
+      - **Guidance:** In the Supabase SQL Editor, use the `set_config` command to simulate JWTs with different roles (`admin`, `authenticated`) and test the function's output against various permissions.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** The function returns `true` for authorized roles and `false` for unauthorized roles.
+    - **[ ] 2.1.4.3: Security Review of `authorize` Function SQL**
+      - **Guidance:** Before migration, perform a dedicated security review of the final SQL code for the `authorize` function. Check for any potential logic flaws, edge cases, or possibilities for privilege escalation.
+      - **CCR:** C:4, C:8, R:7
+      - **Verification:** The review is completed and signed off on in the project documentation.
   - **[ ] 2.1.5: Refactor RLS Policies to Use `authorize` Function**
     - **Guidance:** Update all existing RLS policies on tables like `trucks`, `events`, etc., to use the new `authorize` function instead of direct role checks.
     - **CCR:** C:6, C:7, R:7
+    - **Impact Analysis:**
+      - **Associated Files:** `supabase/migrations/<timestamp>_refactor_rls_policies.sql`
+      - **Affected Files:** All code performing CRUD operations on tables with RLS (`trucks`, `events`, `menu_items`, etc.), all integration and e2e tests.
     - **Verification:** RLS policies are updated, and data access rules are correctly enforced for different user roles.
+    - **[ ] 2.1.5.1: Refactor `trucks` Table RLS**
+      - **Guidance:** Update the RLS policies for the `trucks` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The policies are updated and tested.
+    - **[ ] 2.1.5.2: Refactor `events` Table RLS**
+      - **Guidance:** Update the RLS policies for the `events` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The policies are updated and tested.
+    - **[ ] 2.1.5.3: Refactor `menu_items` Table RLS**
+      - **Guidance:** Update the RLS policies for the `menu_items` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The policies are updated and tested.
     - **[ ] 2.1.5.1: Refactor `trucks` Table RLS**
       - **Guidance:** Update the RLS policies for the `trucks` table.
       - **CCR:** C:3, C:9, R:4
@@ -85,6 +127,14 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** Deploy the function to Firebase and test the user creation flow.
       - **CCR:** C:4, C:8, R:5
       - **Verification:** A new test user is created, and their JWT is inspected to confirm the custom claim.
+    - **[ ] 2.1.7.1: Write Cloud Function Code**
+      - **Guidance:** Write the Node.js code for the `beforeUserCreated` function.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The code is written and passes linting.
+    - **[ ] 2.1.7.2: Deploy and Test Cloud Function**
+      - **Guidance:** Deploy the function to Firebase and test the user creation flow.
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** A new test user is created, and their JWT is inspected to confirm the custom claim.
   - **[ ] 2.1.8: Manually Assign Admin Role in Firebase**
     - **Guidance:** Using the Firebase Admin SDK in a secure, one-off script, assign the `admin` role to the designated admin user's Firebase UID.
     - **CCR:** C:3, C:9, R:5
@@ -93,13 +143,33 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Update the Supabase client initialization in the Next.js app to dynamically use the JWT from the authenticated Firebase user.
     - **CCR:** C:5, C:8, R:6
     - **Verification:** The Supabase client successfully authenticates requests using the Firebase JWT.
+    - **[ ] 2.1.9.1: Create a Firebase Auth Context**
+      - **Guidance:** Implement a React context to manage the Firebase user state and provide the JWT to the application.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** The context is created and provides the user's JWT.
+    - **[ ] 2.1.9.2: Update Supabase Client to Use Context**
+      - **Guidance:** Modify the Supabase client to retrieve the JWT from the Firebase Auth Context.
+      - **CCR:** C:4, C:9, R:5
+      - **Verification:** The Supabase client is successfully initialized with the JWT.
   - **[ ] 2.1.10: Implement Middleware for Route Protection**
     - **Guidance:** Create or modify `app/middleware.ts` to check for a user's session (via Firebase) and their `admin` role (from the JWT) before allowing access to `/admin/*` paths.
     - **CCR:** C:6, C:8, R:6
+    - **Impact Analysis:**
+      - **Associated Files:** `app/middleware.ts`, `lib/auth/utils.ts` (potentially new)
+      - **Affected Files:** All routes under `/admin`, `app/login/page.tsx`, Supabase client configuration, E2E tests for admin section.
     - **Verification:** Middleware correctly intercepts and redirects non-admin users away from admin routes.
+    - **[ ] 2.1.10.1: Draft Middleware Logic**
+      - **Guidance:** Write the core logic for the middleware to decode the JWT and check for the `admin` role.
+      - **CCR:** C:4, C:9, R:5
+      - **Verification:** The logic is written and passes linting.
+    - **[ ] 2.1.10.2: Implement Redirect for Unauthorized Users**
+      - **Guidance:** Add the redirect logic to the middleware to send unauthorized users to the `/access-denied` page.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** Unauthorized users are correctly redirected.
 
 - **[ ] 2.2: Research and Plan for AI Red Teaming**
   - **Guidance:** Locate the GitHub repository for "AI Red Teaming with MCP" and research how to set it up. The goal is to proactively identify security vulnerabilities in the codebase, especially before implementing payment features.
+  - **Tools/Libraries:** GH05TCREW/PentestMCP, MCP-Mirror/enkryptai_enkryptai-mcp-server
   - **CCR:** C:8, C:5, R:7
   - **Verification:** A new document, `docs/SECURITY_PLAN.md`, is created, outlining the plan for red teaming, including setup instructions and a schedule for running scans.
     - **[ ] 2.2.1: Locate and Analyze Red Teaming Repository**
@@ -121,7 +191,15 @@ This document provides a detailed breakdown of all tasks required to improve and
 
 - **[ ] 3.1: Verify Vercel CRON Job**
   - **Guidance:** The automated scraping process is the lifeblood of this app. We need to confirm the Vercel CRON job that triggers the scraping is running correctly and on schedule.
+  - **Tools/Libraries:** Vercel Deployment Logs, `curl`.
   - **CCR:** C:6, C:7, R:8
+  - **Common Pitfalls & Fallbacks:**
+    - **Caching Issues:** The CRON job endpoint might return a cached response, preventing the job from running. **Fallback:** Add `export const dynamic = 'force-dynamic';` to the route handler to prevent caching.
+    - **Redirects:** CRON jobs do not follow redirects. **Fallback:** Ensure the CRON job path in `vercel.json` is the direct, final URL of the API route.
+    - **Production Only:** CRON jobs only run on production deployments. **Fallback:** Use `curl` with the `CRON_SECRET` to test the endpoint in development and preview environments.
+  - **Impact Analysis:**
+    - **Associated Files:** `vercel.json`, `app/api/cron/auto-scrape/route.ts`, `app/api/cron/quality-check/route.ts`, `lib/autoScraper.ts`, `lib/utils/QualityScorer.ts`, `.env.local`
+    - **Affected Files:** Supabase `food_trucks` and `activity_logs` tables, `lib/scheduler.ts`, Vercel deployment configuration.
   - **Verification:** Vercel logs show the CRON job executing successfully at the expected intervals. The "last scraped at" timestamps in the database are updated as expected.
     - **[ ] 3.1.5: Manually Trigger CRON Jobs for Testing**
       - **Guidance:** Instead of waiting for the scheduled time, use `curl` or a similar tool to send a POST request with the `CRON_SECRET` to the `/api/cron/auto-scrape` and `/api/cron/quality-check` endpoints to test them on demand.
@@ -157,15 +235,35 @@ This document provides a detailed breakdown of all tasks required to improve and
 - **[ ] 3.2: Refine Data Categorization**
   - **Guidance:** The pipeline is incorrectly identifying directories ("Food Trucks in Charleston SC") and events ("Black Food Truck Festival") as food trucks. We need to build a classification system.
   - **CCR:** C:8, C:6, R:7
+  - **Common Pitfalls & Fallbacks:**
+    - **Incorrect Classification:** The Gemini API may misclassify content. **Fallback:** Implement a confidence score threshold. If the score is too low, flag the item for manual review in the admin dashboard.
+    - **API Errors:** The Gemini API call might fail due to network issues or rate limiting. **Fallback:** Implement an exponential backoff retry mechanism. If it still fails, fall back to the less accurate heuristic methods (keyword/URL analysis).
+    - **Data Privacy:** Sending scraped data to a third-party API has privacy implications. **Fallback:** Ensure no personally identifiable information (PII) is sent to the Gemini API. Anonymize data where possible.
+  - **Impact Analysis:**
+    - **Associated Files:** `lib/pipelineProcessor.ts`, `lib/gemini.ts`, `supabase/migrations/<timestamp>_create_events_tables.sql`, `docs/DATA_PIPELINE_ARCHITECTURE.md`
+    - **Affected Files:** `food_trucks` table, new `events` and `source_directories` tables, frontend components displaying truck lists, admin dashboard.
   - **Verification:** The database correctly distinguishes between `trucks`, `events`, and `source_directories`. The main user-facing list only shows trucks.
   - **[x] 3.2.1: Research Data Classification Techniques**
     - **Guidance:** Investigate methods to programmatically classify a scraped entity. This could involve keyword analysis, URL structure analysis, or using an AI service like Gemini for classification.
+    - **Tools/Libraries:** Google Gemini API, Heuristic text analysis.
     - **CCR:** C:7, C:6, R:6
     - **Verification:** A chosen strategy is documented in `docs/DATA_PIPELINE_ARCHITECTURE.md`.
   - **[ ] 3.2.2: Implement Classifier in Scraping Engine**
     - **Guidance:** Modify the scraping and processing logic (`lib/pipelineProcessor.ts`) to include the new classification step.
     - **CCR:** C:8, C:7, R:7
     - **Verification:** New scrapes correctly categorize entities.
+    - **[ ] 3.2.2.1: Implement URL Pattern Analysis**
+      - **Guidance:** Add logic to the `pipelineProcessor` to check for keywords in the URL.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The function correctly classifies URLs based on predefined patterns.
+    - **[ ] 3.2.2.2: Implement On-Page Keyword Analysis**
+      - **Guidance:** Add logic to extract and analyze keywords from `<h1>`, `<h2>`, and `<title>` tags.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The function correctly classifies pages based on on-page keywords.
+    - **[ ] 3.2.2.3: Implement Gemini API Fallback**
+      - **Guidance:** Integrate the Gemini API call as a fallback for when the heuristic methods are not confident.
+      - **CCR:** C:5, C:8, R:6
+      - **Verification:** The Gemini API is called when needed and returns the correct classification.
     - **[ ] 3.2.2.1: Implement URL Pattern Analysis**
       - **Guidance:** Add logic to the `pipelineProcessor` to check for keywords in the URL.
       - **CCR:** C:3, C:9, R:3
@@ -194,9 +292,17 @@ This document provides a detailed breakdown of all tasks required to improve and
 - **[ ] 3.3: Implement Geocoding for Addresses**
   - **Guidance:** Some trucks will only have a physical address. We need a process to convert these addresses into latitude and longitude to display them on the map.
   - **CCR:** C:7, C:8, R:6
+  - **Common Pitfalls & Fallbacks:**
+    - **Inaccurate Geocoding:** The PostGIS geocoder may fail on poorly formatted or ambiguous addresses. **Fallback:** If the PostGIS trigger fails to find coordinates, the `pipelineProcessor.ts` script will make a follow-up call to the Nominatim API, which is better at handling fuzzy searches.
+    - **Rate Limiting:** The Nominatim API has a strict usage policy (1 request per second). **Fallback:** Implement a queueing system with a delay for address lookups to avoid being blocked.
+    - **No Results:** Neither service may find a given address. **Fallback:** Flag the truck in the admin dashboard for manual review and location entry.
+  - **Impact Analysis:**
+    - **Associated Files:** `supabase/migrations/<timestamp>_enable_postgis.sql`, `supabase/migrations/<timestamp>_create_geocoding_trigger.sql`, `lib/pipelineProcessor.ts`, `docs/DATA_PIPELINE_ARCHITECTURE.md`
+    - **Affected Files:** `food_trucks` table (performance), `components/map/MapComponent.tsx`, external dependency on Nominatim.
   - **Verification:** Trucks with only an address are visible on the map in the correct location.
   - **[x] 3.3.1: Research Geocoding Services**
     - **Guidance:** Evaluate free and open-source geocoding services. Options could include Nominatim (OpenStreetMap), or a free tier of a commercial service. Check Supabase for built-in PostGIS functions that might help.
+    - **Tools/Libraries:** Supabase PostGIS extensions (`postgis`, `postgis_tiger_geocoder`), Nominatim API (for fallback).
     - **CCR:** C:5, C:7, R:5
     - **Verification:** A service is chosen and documented in `docs/DATA_PIPELINE_ARCHITECTURE.md`.
   - **[ ] 3.3.2: Integrate Geocoding into Data Pipeline**
@@ -219,10 +325,29 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** In `lib/pipelineProcessor.ts`, add the logic to call the Nominatim API if the database geocoding fails.
       - **CCR:** C:5, C:8, R:5
       - **Verification:** The fallback logic is implemented and correctly updates the database.
+    - **[ ] 3.3.2.1: Enable PostGIS Extensions in Supabase**
+      - **Guidance:** Run the `CREATE EXTENSION` commands for `postgis` and `postgis_tiger_geocoder` in the Supabase SQL Editor.
+      - **CCR:** C:2, C:9, R:3
+      - **Verification:** The extensions are successfully enabled.
+    - **[ ] 3.3.2.2: Create Geocoding Trigger Function**
+      - **Guidance:** Write and apply the SQL for the trigger function that will automatically geocode addresses.
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** The function is created in Supabase.
+    - **[ ] 3.3.2.3: Attach Trigger to `food_trucks` Table**
+      - **Guidance:** Write and apply the `CREATE TRIGGER` SQL statement.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The trigger is attached to the table and fires on `INSERT` or `UPDATE`.
+    - **[ ] 3.3.2.4: Implement Nominatim Fallback Logic**
+      - **Guidance:** In `lib/pipelineProcessor.ts`, add the logic to call the Nominatim API if the database geocoding fails.
+      - **CCR:** C:5, C:8, R:5
+      - **Verification:** The fallback logic is implemented and correctly updates the database.
 
 - **[ ] 3.4: Define and Refine Data Quality Score**
   - **Guidance:** The current quality score is ambiguous. We need to define the specific metrics, weights, and thresholds that contribute to the score.
   - **CCR:** C:6, C:5, R:5
+  - **Impact Analysis:**
+    - **Associated Files:** `lib/utils/QualityScorer.ts`, `docs/DATA_QUALITY_GUIDE.md`, `app/api/cron/quality-check/route.ts`
+    - **Affected Files:** `food_trucks` table (`quality_score` column), `app/admin/data-quality/page.tsx` and its components.
   - **Verification:** The logic for calculating the quality score is documented and implemented, and the scores in the admin dashboard reflect the new, clear metrics.
   - **[x] 3.4.1: Research Best Practices for Data Quality Metrics**
     - **Guidance:** Look at how other data-driven applications quantify data quality. Identify key fields for a food truck (e.g., has menu, has recent location, has photo, has operating hours) and assign weights to them.
@@ -240,6 +365,14 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** Ensure the `quality-check` CRON job correctly calls the updated `DataQualityService` and stores the new scores.
       - **CCR:** C:3, C:9, R:4
       - **Verification:** The CRON job runs successfully and updates the `quality_score` column in the `food_trucks` table.
+    - **[ ] 3.4.2.1: Refactor `DataQualityService`**
+      - **Guidance:** Update the `calculateQualityScore` method in `lib/utils/QualityScorer.ts` to use the new weighted system from `docs/DATA_QUALITY_GUIDE.md`.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The method correctly calculates scores based on the new logic.
+    - **[ ] 3.4.2.2: Update `quality-check` CRON Job**
+      - **Guidance:** Ensure the `quality-check` CRON job correctly calls the updated `DataQualityService` and stores the new scores.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The CRON job runs successfully and updates the `quality_score` column in the `food_trucks` table.
 
 ---
 
@@ -248,6 +381,13 @@ This document provides a detailed breakdown of all tasks required to improve and
 - **[ ] 4.1: Redesign Core UI Components**
   - **Guidance:** The current UI is described as "boxy" and "square". The goal is to create a more modern, rounded, and visually appealing design. This will likely involve updating TailwindCSS configuration and component styles.
   - **CCR:** C:7, C:7, R:5
+  - **Common Pitfalls & Fallbacks:**
+    - **Styling Conflicts:** A new UI library could conflict with existing Tailwind CSS classes. **Fallback:** Use a dedicated Tailwind CSS plugin like `tailwindcss-bg-glass` for the glassmorphism effect to minimize conflicts.
+    - **Performance:** Glassmorphism and other complex styles can impact rendering performance. **Fallback:** Use these effects sparingly on key components and test performance with Lighthouse.
+    - **Browser Incompatibility:** The `backdrop-filter` property used for glassmorphism is not supported in all browsers. **Fallback:** Provide a solid color fallback for unsupported browsers.
+  - **Impact Analysis:**
+    - **Associated Files:** `app/globals.css`, `tailwind.config.ts`, `components/ui/card.tsx`, `components/ui/button.tsx`, `package.json`, `docs/UI_DESIGN_GUIDE.md`
+    - **Affected Files:** Potentially all components in the application due to global style changes; snapshot tests for UI components.
   - **Verification:** The application's UI reflects the new design language.
   - **[x] 4.1.1: Research UI Frameworks and Design Systems**
     - **Guidance:** Investigate "Magic UI" and other open-source component libraries/frameworks that can help achieve the desired "black glassmorphism with red neon highlights" aesthetic.
@@ -269,15 +409,38 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** Update the `Button` component to incorporate neon glow effects on hover and focus, using custom styles in `globals.css`.
       - **CCR:** C:4, C:8, R:4
       - **Verification:** The `Button` component has the desired neon effect.
+    - **[ ] 4.1.2.1: Install and Configure `glasscn-ui`**
+      - **Guidance:** Add the `glasscn-ui` package and update `tailwind.config.ts` and `globals.css` as per the library's documentation.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The library is installed and configured without errors.
+    - **[ ] 4.1.2.2: Refactor `Card` Component**
+      - **Guidance:** Update the `Card` component in `components/ui/` to use the `glass` variant from `glasscn-ui`.
+      - **CCR:** C:3, C:9, R:3
+      - **Verification:** The `Card` component now has a glassmorphism effect.
+    - **[ ] 4.1.2.3: Refactor `Button` Component**
+      - **Guidance:** Update the `Button` component to incorporate neon glow effects on hover and focus, using custom styles in `globals.css`.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The `Button` component has the desired neon effect.
 
 - **[ ] 4.2: Improve "View Details" Experience**
   - **Guidance:** Clicking "View Details" should not navigate to a new page. It should display the information on the same page, using a modal, accordion, or similar non-disruptive UI pattern.
   - **CCR:** C:6, C:9, R:4
+  - **Impact Analysis:**
+    - **Associated Files:** `components/TruckCard.tsx`, `components/home/TruckListSection.tsx`, `components/ui/AlertDialog.tsx`, `app/trucks/[id]/page.tsx`
+    - **Affected Files:** Core user experience, application routing and state management, styling of the new detail view.
   - **Verification:** The user can view truck details without a full page load.
   - **[ ] 4.2.1: Implement Non-Navigational Detail View**
     - **Guidance:** Refactor the `TruckCard` and `TruckListSection` components to open details in a modal (`AlertDialog` or `Sheet` from `components/ui`) or by expanding the card itself.
     - **CCR:** C:6, C:9, R:4
     - **Verification:** The new detail view is functional and smooth.
+    - **[ ] 4.2.1.1: Create Detail View Modal**
+      - **Guidance:** Create a new component for the detail view modal using the `AlertDialog` component.
+      - **CCR:** C:4, C:9, R:3
+      - **Verification:** The modal component is created and can be triggered.
+    - **[ ] 4.2.1.2: Integrate Modal into `TruckCard`**
+      - **Guidance:** Add the logic to the `TruckCard` to open the modal on "View Details" click.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** The modal opens with the correct truck's details.
   - **[ ] 4.2.2: Hide Developer-Facing Data**
     - **Guidance:** Remove fields like "Coordinates" from the user-facing detail view. This data is useful for admins but not for regular users.
     - **CCR:** C:2, C:10, R:1
@@ -286,6 +449,9 @@ This document provides a detailed breakdown of all tasks required to improve and
 - **[ ] 4.3: Replace Food Truck Icon**
   - **Guidance:** The current map marker for food trucks needs to be replaced with a better icon that clearly represents a food truck.
   - **CCR:** C:2, C:10, R:1
+  - **Impact Analysis:**
+    - **Associated Files:** `public/<new-icon>.svg`, `components/map/MapComponent.tsx`
+    - **Affected Files:** Map marker visuals, Leaflet icon configuration.
   - **Verification:** The map displays the new, improved food truck icon.
   - **[ ] 4.3.1: Source a New Food Truck Icon**
     - **Guidance:** Find a suitable, open-source (or free-to-use) SVG icon for a food truck.
@@ -299,6 +465,9 @@ This document provides a detailed breakdown of all tasks required to improve and
 - **[ ] 4.4: Design and Implement User Portal**
   - **Guidance:** Create a user-specific area, likely accessed via a hamburger menu or user icon in the header. This will be the foundation for personalized features.
   - **CCR:** C:8, C:6, R:7
+  - **Impact Analysis:**
+    - **Associated Files:** `docs/USER_PORTAL_PLAN.md`, `components/TruckCard.tsx`, `supabase/migrations/<timestamp>_create_user_favorites.sql`, new portal components (`components/user/*`), new route (`app/user/*`)
+    - **Affected Files:** Database schema, application UI, API layer, authentication system, client-side state management.
   - **Verification:** A basic user portal is accessible after login.
   - **[ ] 4.4.1: Plan User Portal Features (Phase 1)**
     - **Guidance:** For the initial version, plan for a minimal set of features: viewing favorited trucks and a settings page. Document plans for future features like notifications and coupons.
@@ -312,6 +481,30 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** Write and apply a Supabase migration to create the `user_favorites` table with `user_id` and `truck_id` columns.
       - **CCR:** C:3, C:9, R:4
       - **Verification:** The table is created in Supabase.
+    - **[ ] 4.4.2.1.1: Implement RLS Policies for `user_favorites`**
+      - **Guidance:** After creating the table, immediately enable RLS and apply policies that ensure users can only access their own favorite entries. The policies should check that `auth.uid() = user_id`.
+      - **CCR:** C:3, C:10, R:5
+      - **Verification:** RLS policies are active on the table, and tests confirm that one user cannot access another user's favorites.
+    - **[ ] 4.4.2.2: Implement "Favorite" Button UI**
+      - **Guidance:** Add a "favorite" button to the `TruckCard` component, with logic to handle the visual state (favorited/not favorited).
+      - **CCR:** C:4, C:9, R:3
+      - **Verification:** The button appears and changes state on click.
+    - **[ ] 4.4.2.3: Implement Favorite/Unfavorite Logic**
+      - **Guidance:** Create the client-side and server-side logic to add/remove entries from the `user_favorites` table when the button is clicked.
+      - **CCR:** C:5, C:8, R:5
+      - **Verification:** Clicking the button correctly updates the database.
+    - **[ ] 4.4.2.4: Display Favorites in User Portal**
+      - **Guidance:** Create a new component to fetch and display the user's favorited trucks in their portal.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** The user's favorites are correctly displayed.
+    - **[ ] 4.4.2.1: Create `user_favorites` Table**
+      - **Guidance:** Write and apply a Supabase migration to create the `user_favorites` table with `user_id` and `truck_id` columns.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The table is created in Supabase.
+    - **[ ] 4.4.2.1.1: Implement RLS Policies for `user_favorites`**
+      - **Guidance:** After creating the table, immediately enable RLS and apply policies that ensure users can only access their own favorite entries. The policies should check that `auth.uid() = user_id`.
+      - **CCR:** C:3, C:10, R:5
+      - **Verification:** RLS policies are active on the table, and tests confirm that one user cannot access another user's favorites.
     - **[ ] 4.4.2.2: Implement "Favorite" Button UI**
       - **Guidance:** Add a "favorite" button to the `TruckCard` component, with logic to handle the visual state (favorited/not favorited).
       - **CCR:** C:4, C:9, R:3
@@ -332,11 +525,22 @@ This document provides a detailed breakdown of all tasks required to improve and
 - **[ ] 5.1: Fix Data Discrepancies**
   - **Guidance:** The admin dashboard panels are not all showing the same data (e.g., 9 trucks vs. 10 trucks). This suggests a data fetching or state management issue.
   - **CCR:** C:7, C:6, R:7
+  - **Impact Analysis:**
+    - **Associated Files:** `components/admin/dashboard/TrucksPage.tsx`, `app/admin/data-quality/page.tsx`, `package.json`, `lib/queryClient.ts` (new)
+    - **Affected Files:** All data-fetching components in the admin dashboard, application's data fetching and caching strategy.
   - **Verification:** All panels on the admin dashboard show consistent data that matches the database.
   - **[ ] 5.1.1: Investigate Data Fetching Logic**
     - **Guidance:** Review the data fetching code for each panel on the admin dashboard (`app/admin/page.tsx` and its components). Check if some panels are using cached data or different query filters.
     - **CCR:** C:6, C:7, R:6
     - **Verification:** The root cause of the discrepancy is identified and documented.
+    - **[ ] 5.1.1.1: Analyze `TrucksPage` Component**
+      - **Guidance:** Examine the data fetching in `components/admin/dashboard/TrucksPage.tsx`.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The data fetching logic is understood and documented.
+    - **[ ] 5.1.1.2: Analyze Data Quality Components**
+      - **Guidance:** Examine the data fetching in `app/admin/data-quality/page.tsx` and its child components.
+      - **CCR:** C:4, C:8, R:4
+      - **Verification:** The data fetching logic is understood and documented.
     - **[ ] 5.1.1.1: Analyze `TrucksPage` Component**
       - **Guidance:** Examine the data fetching in `components/admin/dashboard/TrucksPage.tsx`.
       - **CCR:** C:4, C:8, R:4
@@ -357,6 +561,22 @@ This document provides a detailed breakdown of all tasks required to improve and
       - **Guidance:** Replace the existing `useEffect`-based data fetching with the `useQuery` hook from TanStack Query.
       - **CCR:** C:4, C:9, R:4
       - **Verification:** All admin dashboard components use `useQuery` for data fetching.
+    - **[ ] 5.1.2.1: Implement TanStack Query**
+      - **Guidance:** Integrate TanStack Query (React Query) for server state management to ensure data is fetched and cached consistently across all components.
+      - **CCR:** C:5, C:8, R:6
+      - **Verification:** TanStack Query is set up and used for data fetching in the admin dashboard.
+    - **[ ] 5.1.2.1.1: Install and Configure TanStack Query**
+      - **Guidance:** Add the `@tanstack/react-query` package and set up the `QueryClientProvider`.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** TanStack Query is installed and configured.
+    - **[ ] 5.1.2.1.2: Create a `useTrucks` Hook**
+      - **Guidance:** Create a custom hook that uses `useQuery` to fetch the list of trucks.
+      - **CCR:** C:4, C:9, R:5
+      - **Verification:** The hook is created and successfully fetches truck data.
+    - **[ ] 5.1.2.2: Refactor Components to Use `useQuery`**
+      - **Guidance:** Replace the existing `useEffect`-based data fetching with the `useQuery` hook from TanStack Query.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** All admin dashboard components use `useQuery` for data fetching.
 
 - **[ ] 5.2: Improve Auto-Scraping Page**
   - **Guidance:** The auto-scraping page is vague. It needs to provide more useful information about scraping status and history.
@@ -366,10 +586,30 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Create a table to log the status of each scraping batch job (start time, end time, status, number of trucks processed). Display this history on the auto-scraping page.
     - **CCR:** C:6, C:8, R:5
     - **Verification:** The page shows a history of past scraping jobs.
+    - **[ ] 5.2.1.1: Create `scraping_history` Table**
+      - **Guidance:** Write and apply a Supabase migration to create the `scraping_history` table.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The table is created in Supabase.
+    - **[ ] 5.2.1.2: Log Scrapes to History Table**
+      - **Guidance:** Modify the `auto-scrape` CRON job to log the results of each run to the new table.
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** The CRON job correctly logs its status.
+    - **[ ] 5.2.1.3: Create History Table Component**
+      - **Guidance:** Create a new React component to fetch and display the scraping history.
+      - **CCR:** C:4, C:9, R:3
+      - **Verification:** The component is created and displays the history.
   - **[ ] 5.2.2: Implement "Trigger Manual Scrape" Functionality**
     - **Guidance:** The button currently does nothing. Hook it up to an API endpoint that triggers the scraping pipeline on demand. Provide feedback to the user that the scrape has started.
     - **CCR:** C:5, C:9, R:4
     - **Verification:** Clicking the button successfully initiates a new scraping job.
+    - **[ ] 5.2.2.1: Create Manual Scrape API Endpoint**
+      - **Guidance:** Create a new API route that triggers the `autoScraper.runAutoScraping()` function.
+      - **CCR:** C:4, C:9, R:5
+      - **Verification:** The API endpoint is created and can be called.
+    - **[ ] 5.2.2.2: Connect Button to Endpoint**
+      - **Guidance:** Add the client-side logic to call the new API endpoint when the button is clicked.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The button successfully triggers the API endpoint.
 
 - **[ ] 5.3: Improve Data Quality Page UI**
   - **Guidance:** The charts on the Data Quality page are boxy and the pie chart labels overlap.
@@ -438,6 +678,18 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** The advisor has identified a large number of unused indexes across various tables (`api_usage`, `discovered_directories`, `discovered_urls`, `food_trucks`, `scraping_jobs`). These should be reviewed and dropped to save space and reduce maintenance overhead.
     - **CCR:** C:5, C:8, R:5
     - **Verification:** The unused indexes are removed, and application functionality remains unaffected.
+    - **[ ] 7.2.2.1: Analyze Index Usage**
+      - **Guidance:** Use the `pg_stat_user_indexes` view in Supabase to confirm that the identified indexes have zero or very low usage.
+      - **CCR:** C:3, C:8, R:3
+      - **Verification:** The analysis confirms the advisor's findings.
+    - **[ ] 7.2.2.2: Draft `DROP INDEX` Statements**
+      - **Guidance:** Write the `DROP INDEX` statements for the confirmed unused indexes.
+      - **CCR:** C:2, C:9, R:4
+      - **Verification:** The SQL is syntactically correct.
+    - **[ ] 7.2.2.3: Apply Index Deletions via Migration**
+      - **Guidance:** Create a new Supabase migration file with the `DROP INDEX` statements and apply it.
+      - **CCR:** C:3, C:9, R:5
+      - **Verification:** The indexes are removed from the database.
     - **[ ] 7.2.2.1: Analyze Index Usage**
       - **Guidance:** Use the `pg_stat_user_indexes` view in Supabase to confirm that the identified indexes have zero or very low usage.
       - **CCR:** C:3, C:8, R:3

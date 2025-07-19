@@ -123,18 +123,6 @@ function normalizeSourceUrls(source_urls?: string | string[]): string[] {
 }
 
 /**
- * Creates a default location object
- */
-function createDefaultLocation(timestamp?: string) {
-  return {
-    lat: 0,
-    lng: 0,
-    address: undefined,
-    timestamp: timestamp || new Date().toISOString()
-  };
-}
-
-/**
  * Creates default operating hours
  */
 function createDefaultOperatingHours(): OperatingHours {
@@ -171,9 +159,17 @@ export function mapUprootedVeganData(data: UprootedVeganData): Partial<FoodTruck
     state: data.state,
     
     // Location fields
-    current_location: primaryLocation || createDefaultLocation(now),
-    exact_location: data.exact_location,
-    city_location: data.city_location,
+    current_location: primaryLocation ? {
+      lat: primaryLocation.lat,
+      lng: primaryLocation.lng,
+      address: primaryLocation.address,
+      timestamp: primaryLocation.timestamp || now,
+    } : {
+      lat: 0,
+      lng: 0,
+      address: undefined,
+      timestamp: now,
+    },
     scheduled_locations: data.scheduled_locations,
     
     // Menu and hours
