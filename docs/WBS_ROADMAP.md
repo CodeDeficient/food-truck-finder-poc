@@ -67,6 +67,28 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** The automated scraping process is the lifeblood of this app. We need to confirm the Vercel CRON job that triggers the scraping is running correctly and on schedule.
   - **CCR:** C:6, C:7, R:8
   - **Verification:** Vercel logs show the CRON job executing successfully at the expected intervals. The "last scraped at" timestamps in the database are updated as expected.
+  - **[ ] 3.1.1: Research CRON Job Configuration**
+    - **Guidance:** Review `vercel.json` to identify all configured CRON jobs, their paths, and their schedules.
+    - **CCR:** C:1, C:10, R:0
+    - **Verification:** All CRON jobs are identified and listed in the sub-tasks below.
+  - **[ ] 3.1.2: Analyze `auto-scrape` Job**
+    - **Guidance:** The CRON job at `/api/cron/auto-scrape` runs daily at 8:00 AM EST (13:00 UTC). It is protected by a `CRON_SECRET` and triggers the `autoScraper.runAutoScraping()` function. It also schedules follow-up tasks via the `scheduler` module.
+    - **CCR:** C:4, C:9, R:5
+    - **Verification Plan:**
+      - **1. Check Vercel Logs:** After 8:00 AM EST, inspect the Vercel deployment logs for the `/api/cron/auto-scrape` endpoint. Look for successful (200) or failed (500) status codes.
+      - **2. Check Supabase `activity_logs`:** Query the `activity_logs` table for `auto_scrape_started` and `auto_scrape_completed` or `auto_scrape_failed` entries.
+      - **3. Check `food_trucks` data:** Verify that the `last_scraped_at` timestamps for trucks have been recently updated.
+  - **[ ] 3.1.3: Analyze `quality-check` Job**
+    - **Guidance:** The CRON job at `/api/cron/quality-check` runs daily at 8:00 AM EST (13:00 UTC). It is also protected by the `CRON_SECRET`. It fetches all trucks, calculates quality scores using `DataQualityService`, and batch updates the scores in the database.
+    - **CCR:** C:4, C:9, R:5
+    - **Verification Plan:**
+      - **1. Check Vercel Logs:** After 8:00 AM EST, inspect the Vercel deployment logs for the `/api/cron/quality-check` endpoint.
+      - **2. Check Supabase `activity_logs`:** Query the `activity_logs` table for `quality_check_started` and `quality_check_completed` or `quality_check_failed` entries.
+      - **3. Check `food_trucks` data:** Verify that the `quality_score` column for trucks has been recently updated.
+  - **[ ] 3.1.4: Create Checkpoint for CRON Job Verification**
+    - **Guidance:** Before making any changes to the CRON jobs or their underlying code, create a checkpoint. This could be a git commit, a database backup, or both. This will allow for a quick rollback if verification fails.
+    - **CCR:** C:2, C:10, R:2
+    - **Verification:** A checkpoint is created and noted in the project documentation.
 
 - **[ ] 3.2: Refine Data Categorization**
   - **Guidance:** The pipeline is incorrectly identifying directories ("Food Trucks in Charleston SC") and events ("Black Food Truck Festival") as food trucks. We need to build a classification system.
