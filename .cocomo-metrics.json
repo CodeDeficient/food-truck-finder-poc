@@ -1,0 +1,56 @@
+{
+  "sourceFiles": 585,
+  "totalLOC": 174248,
+  "logicalLOC": 158183,
+  "commentLines": 7942,
+  "blankLines": 8123,
+  "languages": {
+    "Markdown": {
+      "files": 65,
+      "lines": 12763
+    },
+    "CSS": {
+      "files": 4,
+      "lines": 103
+    },
+    "TypeScript": {
+      "files": 169,
+      "lines": 24919
+    },
+    "TypeScript React": {
+      "files": 237,
+      "lines": 20408
+    },
+    "JSON": {
+      "files": 48,
+      "lines": 113425
+    },
+    "JavaScript": {
+      "files": 47,
+      "lines": 1437
+    },
+    "SQL": {
+      "files": 15,
+      "lines": 1193
+    }
+  },
+  "cyclomaticComplexity": 0,
+  "cognitiveComplexity": 0,
+  "typeScriptCoverage": 0,
+  "testCoverage": 0,
+  "lintingErrors": 0,
+  "components": 171,
+  "apiEndpoints": 26,
+  "customHooks": 23,
+  "utilityFunctions": 92,
+  "totalCommits": 196,
+  "developmentDays": 0,
+  "branchesUsed": 0,
+  "aiAssistedFiles": 0,
+  "promptingPatterns": 0,
+  "systematicRefactoring": 0,
+  "documentationFiles": 45,
+  "testFiles": 95,
+  "configurationFiles": 0,
+  "processDocumentation": 2
+}
