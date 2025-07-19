@@ -157,10 +157,10 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** The current UI is described as "boxy" and "square". The goal is to create a more modern, rounded, and visually appealing design. This will likely involve updating TailwindCSS configuration and component styles.
   - **CCR:** C:7, C:7, R:5
   - **Verification:** The application's UI reflects the new design language.
-  - **[ ] 4.1.1: Research UI Frameworks and Design Systems**
+  - **[x] 4.1.1: Research UI Frameworks and Design Systems**
     - **Guidance:** Investigate "Magic UI" and other open-source component libraries/frameworks that can help achieve the desired "black glassmorphism with red neon highlights" aesthetic.
     - **CCR:** C:5, C:6, R:4
-    - **Verification:** A decision on whether to use a library or build custom styles is made and documented.
+    - **Verification:** A decision on whether to use a library or build custom styles is made and documented in `docs/UI_DESIGN_GUIDE.md`.
   - **[ ] 4.1.2: Update Base Styles and Component Library**
     - **Guidance:** Modify `app/globals.css`, `tailwind.config.ts`, and core UI components in `components/ui/` to use more `border-radius`, new color schemes, and other modern styling.
     - **CCR:** C:7, C:8, R:5
