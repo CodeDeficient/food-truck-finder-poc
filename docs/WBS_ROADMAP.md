@@ -110,7 +110,7 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** The pipeline is incorrectly identifying directories ("Food Trucks in Charleston SC") and events ("Black Food Truck Festival") as food trucks. We need to build a classification system.
   - **CCR:** C:8, C:6, R:7
   - **Verification:** The database correctly distinguishes between `trucks`, `events`, and `source_directories`. The main user-facing list only shows trucks.
-  - **[ ] 3.2.1: Research Data Classification Techniques**
+  - **[x] 3.2.1: Research Data Classification Techniques**
     - **Guidance:** Investigate methods to programmatically classify a scraped entity. This could involve keyword analysis, URL structure analysis, or using an AI service like Gemini for classification.
     - **CCR:** C:7, C:6, R:6
     - **Verification:** A chosen strategy is documented in `docs/DATA_PIPELINE_ARCHITECTURE.md`.
