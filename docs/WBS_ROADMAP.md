@@ -140,7 +140,7 @@ This document provides a detailed breakdown of all tasks required to improve and
   - **Guidance:** The current quality score is ambiguous. We need to define the specific metrics, weights, and thresholds that contribute to the score.
   - **CCR:** C:6, C:5, R:5
   - **Verification:** The logic for calculating the quality score is documented and implemented, and the scores in the admin dashboard reflect the new, clear metrics.
-  - **[ ] 3.4.1: Research Best Practices for Data Quality Metrics**
+  - **[x] 3.4.1: Research Best Practices for Data Quality Metrics**
     - **Guidance:** Look at how other data-driven applications quantify data quality. Identify key fields for a food truck (e.g., has menu, has recent location, has photo, has operating hours) and assign weights to them.
     - **CCR:** C:4, C:6, R:4
     - **Verification:** A formula and a list of weighted metrics are documented in `docs/DATA_QUALITY_GUIDE.md`.
