@@ -37,22 +37,38 @@ This document provides a detailed breakdown of all tasks required to improve and
     - **Guidance:** Investigate best practices for implementing RBAC in Supabase using a JWT from an external provider (like Firebase). This involves setting up a custom `auth.users` table or a separate `profiles` table with a `role` column, and creating RLS policies that check this role.
     - **CCR:** C:6, C:7, R:6
     - **Verification:** A clear plan for managing admin roles is added to `docs/AUTH_ARCHITECTURE.md`.
-  - **[ ] 2.1.3: Implement Middleware for Route Protection**
-    - **Guidance:** Create or modify `app/middleware.ts` to check for a user's session (via the new auth provider) and their admin role before allowing access to `/admin/*` paths.
-    - **CCR:** C:6, C:8, R:6
-    - **Verification:** Middleware correctly intercepts and redirects non-admin users.
-  - **[ ] 2.1.4: Create Admin Role and Assignment Logic**
-    - **Guidance:** Implement logic (either in Supabase dashboard via SQL or in a secure backend function) to assign an "admin" role to a specific user ID based on their Firebase UID. This must be a secure, backend-only operation.
+  - **[ ] 2.1.3: Implement Supabase RBAC Schema**
+    - **Guidance:** Create the necessary SQL types and tables in Supabase to support a permission-based RBAC system, as detailed in `docs/AUTH_ARCHITECTURE.md`.
+    - **CCR:** C:4, C:9, R:4
+    - **Verification:** The `app_role` and `app_permission` types, and the `role_permissions` table are successfully created in the Supabase database.
+  - **[ ] 2.1.4: Implement Supabase `authorize` Function**
+    - **Guidance:** Create the `public.authorize` SQL function in Supabase. This function will be the central point for checking user permissions in all RLS policies.
+    - **CCR:** C:5, C:8, R:6
+    - **Verification:** The `authorize` function is created and returns the expected boolean values when tested with different roles and permissions in the Supabase SQL Editor.
+  - **[ ] 2.1.5: Refactor RLS Policies to Use `authorize` Function**
+    - **Guidance:** Update all existing RLS policies on tables like `trucks`, `events`, etc., to use the new `authorize` function instead of direct role checks.
     - **CCR:** C:6, C:7, R:7
-    - **Verification:** The admin user has the correct role in the database.
-  - **[ ] 2.1.2: Implement Middleware for Route Protection**
-    - **Guidance:** Create or modify `app/middleware.ts` to check for a user's session and admin role before allowing access to `/admin/*` paths.
+    - **Verification:** RLS policies are updated, and data access rules are correctly enforced for different user roles.
+  - **[ ] 2.1.6: Configure Firebase and Supabase Integration**
+    - **Guidance:** Follow the steps in `docs/AUTH_ARCHITECTURE.md` to add the Firebase Project ID as a trusted JWT issuer in the Supabase dashboard.
+    - **CCR:** C:3, C:9, R:4
+    - **Verification:** The integration is successfully created in the Supabase dashboard.
+  - **[ ] 2.1.7: Implement Firebase Cloud Function for Custom Claims**
+    - **Guidance:** Deploy a `beforeUserCreated` blocking function in Firebase to assign a default `authenticated` role to new users.
+    - **CCR:** C:6, C:7, R:6
+    - **Verification:** New users created via Firebase Auth have the `role: 'authenticated'` custom claim in their JWT.
+  - **[ ] 2.1.8: Manually Assign Admin Role in Firebase**
+    - **Guidance:** Using the Firebase Admin SDK in a secure, one-off script, assign the `admin` role to the designated admin user's Firebase UID.
+    - **CCR:** C:3, C:9, R:5
+    - **Verification:** The admin user's JWT contains the `role: 'admin'` custom claim.
+  - **[ ] 2.1.9: Configure Next.js Supabase Client for Firebase JWT**
+    - **Guidance:** Update the Supabase client initialization in the Next.js app to dynamically use the JWT from the authenticated Firebase user.
+    - **CCR:** C:5, C:8, R:6
+    - **Verification:** The Supabase client successfully authenticates requests using the Firebase JWT.
+  - **[ ] 2.1.10: Implement Middleware for Route Protection**
+    - **Guidance:** Create or modify `app/middleware.ts` to check for a user's session (via Firebase) and their `admin` role (from the JWT) before allowing access to `/admin/*` paths.
     - **CCR:** C:6, C:8, R:6
-    - **Verification:** Middleware correctly intercepts and redirects non-admin users.
-  - **[ ] 2.1.3: Create Admin Role and Assignment Logic**
-    - **Guidance:** Implement logic (either in Supabase dashboard via SQL or in a secure backend function) to assign an "admin" role to my specific user ID. This should not be something that can be done from the client-side.
-    - **CCR:** C:6, C:7, R:7
-    - **Verification:** The admin user has the correct role in the Supabase `auth.users` table or a custom roles table.
+    - **Verification:** Middleware correctly intercepts and redirects non-admin users away from admin routes.
 
 - **[ ] 2.2: Research and Plan for AI Red Teaming**
   - **Guidance:** Locate the GitHub repository for "AI Red Teaming with MCP" and research how to set it up. The goal is to proactively identify security vulnerabilities in the codebase, especially before implementing payment features.
