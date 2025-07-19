@@ -230,3 +230,8 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
 - **Rule 1.36: Never Merge with Build Errors**: Do not merge to main or deploy if the build is failing. All build errors must be resolved before merging.
 
 - **Rule 1.37: Adopt a 'Global View' for TypeScript Debugging**: To avoid the inefficient cycle of fixing one build error at a time, use `npx tsc --noEmit` to get a comprehensive list of all TypeScript errors across the project before starting to fix them. This provides a complete picture of the work required and prevents rework.
+
+- **Rule 1.38: Handle Missing ESLint Plugins**: If ESLint fails with a `MODULE_NOT_FOUND` error, it indicates that a required plugin is missing. Run `npm install` to restore any missing packages.
+
+  - _Trigger Case_: ESLint fails with a `MODULE_NOT_FOUND` error.
+  - _Example_: If `eslint-plugin-unicorn` is missing, run `npm install` to restore it.
