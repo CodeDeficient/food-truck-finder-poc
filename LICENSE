@@ -1,0 +1,35 @@
+Business Source License 1.1
+
+Licensed Work: Food Truck Finder
+License Grant: You may copy, modify, and distribute the Licensed Work, 
+provided that you do not use the Licensed Work for Commercial Use.
+
+Commercial Use Definition:
+Commercial Use means any use of the Licensed Work that is primarily 
+intended for commercial advantage or monetary compensation, including 
+but not limited to:
+
+1. Operating a food truck discovery or location service
+2. Providing commercial restaurant, food vendor, or dining location services  
+3. Commercial aggregation or distribution of food vendor data
+4. Integration into commercial food delivery or ordering platforms
+5. White-label licensing of food location services
+
+Non-Commercial Use includes:
+- Personal use and development
+- Educational purposes and research
+- Non-profit organizations
+- Code snippet usage in other projects
+- Contributing back to this project
+
+Change Date: January 20, 2029
+Change License: Apache License, Version 2.0
+
+Copyright (c) 2025 Food Truck Finder
+
+For commercial licensing inquiries, contact: [commercial-license-contact]
+
+---
+
+Note: After the Change Date above, the license automatically converts to 
+Apache License 2.0, making this project fully open source.
