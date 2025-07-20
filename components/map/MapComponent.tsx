@@ -106,13 +106,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
 
-  // Choose tile layer based on theme - using high contrast, readable options
+  // Choose tile layer based on theme - using free alternatives
   const isDark = theme === 'dark';
   const tileLayerProps = isDark
     ? {
-        // Stadia dark mode with high contrast for readability
-        attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap</a> contributors',
-        url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+        // CartoDB Dark Matter - free dark theme alternative
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
       }
     : {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
