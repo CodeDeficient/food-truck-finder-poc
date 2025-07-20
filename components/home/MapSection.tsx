@@ -31,6 +31,7 @@ interface MapSectionProps {
   readonly userLocation: { lat: number; lng: number } | undefined;
   readonly selectedTruckId: string | undefined;
   readonly setSelectedTruckId: (id: string | undefined) => void;
+  readonly theme: string | undefined;
 }
 
 /**
@@ -59,6 +60,7 @@ export function MapSection({
   userLocation,
   selectedTruckId,
   setSelectedTruckId,
+  theme,
 }: Readonly<MapSectionProps>) {
   // Added readonly
   return (
@@ -74,6 +76,7 @@ export function MapSection({
           userLocation?.lng ?? 0,
         ]}
         selectedTruckLocation={getSelectedTruckLocation(selectedTruckId, filteredTrucks)}
+        theme={theme}
       />
     </div>
   );

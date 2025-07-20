@@ -46,7 +46,7 @@ export function TruckAccordionItem({
             </p>
           )}
         </div>
-        <Badge variant={isOpen(truck) ? 'default' : 'secondary'}>
+        <Badge variant={isOpen(truck) ? 'open' : 'secondary'}>
           {isOpen(truck) ? 'Open' : 'Closed'}
         </Badge>
       </AccordionTrigger>

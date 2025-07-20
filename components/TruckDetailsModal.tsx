@@ -19,14 +19,13 @@ interface TruckDetailsModalProps {
   readonly isTruckOpen: boolean;
 }
 
-const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rating, review_count, onClose }: {
+const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rating, review_count }: {
   truck: FoodTruck;
   name: string;
   cuisine_type: string[];
   isTruckOpen: boolean;
   average_rating: number;
   review_count: number;
-  onClose: () => void;
 }) => (
   <DialogHeader>
     <div className="flex justify-between items-start">
@@ -51,7 +50,7 @@ const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rati
         )}
       </div>
       <div className="flex flex-col items-end space-y-2">
-        <Badge variant={isTruckOpen ? 'default' : 'secondary'} className="mb-2">
+        <Badge variant={isTruckOpen ? 'open' : 'secondary'} className="mb-2">
           {isTruckOpen ? 'Open Now' : 'Closed'}
         </Badge>
         {average_rating > 0 && (
@@ -71,7 +70,7 @@ const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rati
   </DialogHeader>
 );
 
-const TruckModalContent = ({ description, todayHours, priceRange, popularItems, phone, email, website, social_media }: {
+const TruckModalContent = ({ description, todayHours, priceRange, popularItems, phone, email, website, social_media, verification_status }: {
   description: string;
   todayHours: any;
   priceRange: string | undefined;
@@ -80,8 +79,10 @@ const TruckModalContent = ({ description, todayHours, priceRange, popularItems, 
   email: string;
   website: string;
   social_media: any;
+  verification_status: string;
 }) => (
   <div className="space-y-6">
+    
     {description !== '' && (
       <div>
         <h3 className="text-lg font-semibold mb-2">About</h3>
@@ -142,6 +143,21 @@ const TruckModalContent = ({ description, todayHours, priceRange, popularItems, 
 );
 
 export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: TruckDetailsModalProps) {
+  // Defensive checks for required data
+  if (!truck || !truck.id) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="glass max-w-md">
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+          </DialogHeader>
+          <p className="text-muted-foreground">Unable to load truck details. Invalid data.</p>
+          <Button onClick={onClose} variant="default">Close</Button>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  
   const { popularItems, priceRange, todayHours } = useTruckCard(truck);
   const {
     name = 'Unnamed Truck',
@@ -155,7 +171,7 @@ export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: Truck
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="glass max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="glass max-w-2xl max-h-[90vh] overflow-y-auto z-[10001]">
         <TruckModalHeader
           truck={truck}
           name={name}
@@ -163,7 +179,6 @@ export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: Truck
           isTruckOpen={isTruckOpen}
           average_rating={average_rating}
           review_count={review_count}
-          onClose={onClose}
         />
         <TruckModalContent
           description={description}
@@ -174,6 +189,7 @@ export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: Truck
           email={email}
           website={website}
           social_media={social_media}
+          verification_status={truck.verification_status || 'pending'}
         />
         <div className="flex gap-3 pt-4 border-t border-border">
           {website !== '' && (

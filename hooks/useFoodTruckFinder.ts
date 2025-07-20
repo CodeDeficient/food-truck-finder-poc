@@ -4,6 +4,7 @@ import {
   getUserLocationHelper,
   loadFoodTrucksHelper,
   loadNearbyTrucksHelper,
+  isViableTruck,
 } from '@/lib/utils/foodTruckHelpers';
 
 /**
@@ -34,11 +35,13 @@ export const useFoodTruckFinder = () => {
     await loadNearbyTrucksHelper(userLocation, setTrucks);
   };
 
-  const filteredTrucks = trucks.filter(
-    (truck) =>
-      truck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (truck.description ?? '').toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredTrucks = trucks
+    .filter((truck) => isViableTruck(truck)) // Only show trucks with minimum viable data
+    .filter(
+      (truck) =>
+        truck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (truck.description ?? '').toLowerCase().includes(searchTerm.toLowerCase()),
+    );
 
   return {
     trucks,
