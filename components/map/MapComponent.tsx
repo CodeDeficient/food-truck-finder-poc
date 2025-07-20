@@ -106,15 +106,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
 
-  // Choose tile layer based on theme - using free alternatives with better contrast
+  // Choose tile layer based on theme - perfect dark mode balance
   const isDark = theme === 'dark';
   const tileLayerProps = isDark
     ? {
-        // CartoDB Voyager - better contrast dark theme with roads highlighted
+        // CartoDB Dark Matter - perfect dark base with CSS filter enhancements
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-        // Add custom styling for better contrast
-        className: 'dark-map-tiles'
+        url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        // Add custom styling for perfect dark mode balance
+        className: 'optimized-dark-map-tiles'
       }
     : {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
