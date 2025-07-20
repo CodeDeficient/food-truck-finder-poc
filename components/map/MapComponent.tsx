@@ -106,15 +106,15 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
 
-  // Choose tile layer based on theme - perfect dark mode balance
+  // Choose tile layer based on theme - modern Google Maps style dark theme
   const isDark = theme === 'dark';
   const tileLayerProps = isDark
     ? {
-        // CartoDB Dark Matter - perfect dark base with CSS filter enhancements
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        // Add custom styling for perfect dark mode balance
-        className: 'optimized-dark-map-tiles'
+        // Jawg Dark - modern dark theme with highlighted roads like Google Maps
+        attribution: '&copy; <a href="https://www.jawg.io" target="_blank">&copy; Jawg</a> - &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+        url: 'https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=community',
+        // Add custom styling for modern dark mode
+        className: 'modern-dark-map-tiles'
       }
     : {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
