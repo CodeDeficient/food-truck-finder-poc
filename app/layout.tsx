@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { StagewiseToolbar } from '@stagewise/toolbar-next';
-import ReactPlugin from '@stagewise-plugins/react';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -29,7 +27,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <StagewiseToolbar config={{ plugins: [ReactPlugin] }} />
         </ThemeProvider>
       </body>
     </html>

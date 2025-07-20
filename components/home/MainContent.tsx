@@ -9,6 +9,7 @@ interface MainContentProps {
   readonly selectedTruckId: string | undefined;
   readonly setSelectedTruckId: (id: string | undefined) => void;
   readonly isOpen: (truck: FoodTruck) => boolean;
+  readonly theme: string | undefined;
 }
 
 /**
@@ -22,6 +23,7 @@ export function MainContent({
   selectedTruckId,
   setSelectedTruckId,
   isOpen,
+  theme,
 }: MainContentProps) {
   
 
@@ -34,6 +36,7 @@ export function MainContent({
             userLocation={userLocation}
             selectedTruckId={selectedTruckId}
             setSelectedTruckId={setSelectedTruckId}
+            theme={theme}
           />
           <TruckListSection
             filteredTrucks={filteredTrucks}

@@ -85,6 +85,8 @@ export const badgeVariants = tv({
       destructive:
         'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
       outline: 'text-foreground',
+      success: 'border-transparent bg-green-600 text-white hover:bg-green-700 shadow-sm shadow-green-500/20',
+      open: 'border-transparent bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 shadow-lg shadow-green-500/30',
     },
   },
   defaultVariants: {

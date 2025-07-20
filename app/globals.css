@@ -4,34 +4,65 @@
 
 @layer base {
   :root {
-    --background: 210 20% 8%;
-    --foreground: 210 40% 98%;
-    --card: 210 20% 12%;
-    --card-foreground: 210 40% 98%;
-    --popover: 210 20% 12%;
-    --popover-foreground: 210 40% 98%;
+    /* Dark mode (default) */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.1%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.1%;
+    --popover-foreground: 0 0% 98%;
     --primary: 0 100% 50%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 20%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 210 40% 16%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 0 84% 50%;
-    --accent-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 100% 50%;
+    --accent-foreground: 0 0% 9%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
     --ring: 0 100% 50%;
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
-    /* Custom Cyber-Diner theme variables */
+    /* True Glassmorphism theme variables */
     --neon-red: #ff0040;
     --neon-red-glow: #ff0040;
-    --neon-blue: #00ffff;
-    --cyber-dark: #0a0a0f;
+    --neon-blue: #00d4ff;
     --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-bg-strong: rgba(255, 255, 255, 0.08);
     --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-border-strong: rgba(255, 255, 255, 0.15);
+  }
+  
+  .light {
+    /* Light mode */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 0 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 0 100% 50%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 0 100% 50%;
+    
+    /* Light mode glassmorphism variables */
+    --glass-bg: rgba(0, 0, 0, 0.02);
+    --glass-bg-strong: rgba(0, 0, 0, 0.05);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-border-strong: rgba(0, 0, 0, 0.12);
   }
   
   * {
@@ -40,8 +71,31 @@
   
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(210 30% 6%) 100%);
+    min-height: 100vh;
   }
+}
+
+
+/* Map marker glow effects and truck coloring */
+.glow-green {
+  --truck-color-light: #10b981;
+  --truck-color-dark: #059669;
+  filter: drop-shadow(0 0 8px #10b981);
+}
+
+.glow-red {
+  --truck-color-light: #f59e0b;
+  --truck-color-dark: #d97706;
+  filter: drop-shadow(0 0 8px #ef4444);
+}
+
+/* Enhanced glow in dark mode */
+.dark .glow-green {
+  filter: drop-shadow(0 0 12px #22c55e) drop-shadow(0 0 20px #22c55e80);
+}
+
+.dark .glow-red {
+  filter: drop-shadow(0 0 12px #ef4444) drop-shadow(0 0 20px #ef444480);
 }
 
 @layer components {
@@ -53,32 +107,34 @@
   }
   
   .glass-strong {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg-strong);
     backdrop-filter: blur(16px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--glass-border-strong);
   }
   
-  /* Neon effects */
+  /* Neon effects - softer and more readable */
   .neon-text {
     color: var(--neon-red);
     text-shadow: 
-      0 0 5px var(--neon-red-glow),
-      0 0 10px var(--neon-red-glow),
-      0 0 20px var(--neon-red-glow);
+      0 0 2px rgba(0, 0, 0, 0.5),
+      0 0 4px rgba(0, 0, 0, 0.3),
+      0 0 6px var(--neon-red-glow),
+      0 0 8px var(--neon-red-glow);
   }
   
   .neon-border {
     border: 1px solid var(--neon-red);
     box-shadow: 
-      0 0 5px var(--neon-red-glow),
-      inset 0 0 5px var(--neon-red-glow);
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      0 0 4px var(--neon-red-glow),
+      inset 0 0 2px var(--neon-red-glow);
   }
   
   .neon-glow {
     box-shadow: 
-      0 0 10px var(--neon-red-glow),
-      0 0 20px var(--neon-red-glow),
-      0 0 40px var(--neon-red-glow);
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 8px var(--neon-red-glow),
+      0 0 12px var(--neon-red-glow);
   }
   
   /* Hover effects */
@@ -88,7 +144,10 @@
   
   .hover-neon:hover {
     color: var(--neon-red);
-    text-shadow: 0 0 10px var(--neon-red-glow);
+    text-shadow: 
+      0 0 1px rgba(0, 0, 0, 0.5),
+      0 0 4px var(--neon-red-glow);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transform: translateY(-1px);
   }
   
@@ -99,5 +158,28 @@
   
   .rounded-modern-lg {
     border-radius: 1.5rem;
+  }
+  
+  /* Modal and dialog z-index fixes */
+  [data-radix-dialog-overlay],
+  [data-radix-dialog-content] {
+    z-index: 10000 !important;
+  }
+  
+  /* Leaflet map container should be lower */
+  .leaflet-container {
+    z-index: 1 !important;
+  }
+  
+  /* Glassmorphism backdrop for modals */
+  [data-radix-dialog-overlay] {
+    background: rgba(8, 7, 16, 0.8);
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Allow glow effects for food truck markers */
+  .food-truck-marker-icon.glow-green,
+  .food-truck-marker-icon.glow-red {
+    filter: inherit !important;
   }
 }

@@ -37,8 +37,7 @@ interface DashboardData {
 
 export default function AdminDashboard() {
   const { trucks, loading, dataStatus } = useFoodTrucks();
-  // Corrected to fix 'no-useless-undefined' by removing the explicit 'undefined' argument.
-  const [dashboardData, setDashboardData] = useState<DashboardData>();
+  const [dashboardData, setDashboardData] = useState<DashboardData | undefined>(undefined);
 
   useEffect(() => {
     const getDashboardData = async () => {

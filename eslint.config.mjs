@@ -64,6 +64,13 @@ export default tseslint.config(
       'eslint-*.json',
       'quality-report.json',
       'analyze-complexity-violations.cjs', // Ignore CJS file causing parsing errors
+      // Supabase utility scripts (CLI scripts with intentional console usage)
+      'apply-rls-fix.js',
+      'check-data.js', 
+      'check-database.js',
+      'check-policies.js',
+      'execute-sql.js',
+      'debug-console.js',
     ],
   },
 

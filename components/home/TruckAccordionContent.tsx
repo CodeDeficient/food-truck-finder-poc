@@ -29,6 +29,27 @@ export const TruckAccordionContent: React.FC<TruckAccordionContentProps> = ({
     );
   }
 
+  // Smart sorting: prioritize open trucks and specific locations
+  const sortedTrucks = [...filteredTrucks].sort((a, b) => {
+    const aOpen = isOpen(a);
+    const bOpen = isOpen(b);
+    const aHasAddress = !!(a.current_location?.address && a.current_location.address.trim());
+    const bHasAddress = !!(b.current_location?.address && b.current_location.address.trim());
+    
+    // First, sort by open/closed status (open first)
+    if (aOpen !== bOpen) {
+      return aOpen ? -1 : 1;
+    }
+    
+    // Then sort by specific address vs city only (specific first)
+    if (aHasAddress !== bHasAddress) {
+      return aHasAddress ? -1 : 1;
+    }
+    
+    // Finally, sort alphabetically by name
+    return a.name.localeCompare(b.name);
+  });
+
   return (
     <Accordion 
       type="single" 
@@ -37,7 +58,7 @@ export const TruckAccordionContent: React.FC<TruckAccordionContentProps> = ({
       onValueChange={(value) => setSelectedTruckId(value || undefined)}
       className="space-y-2"
     >
-      {filteredTrucks.map((truck) => (
+      {sortedTrucks.map((truck) => (
         <TruckAccordionItem
           key={truck.id}
           truck={truck}
