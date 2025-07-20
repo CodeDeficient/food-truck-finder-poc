@@ -254,14 +254,13 @@
       contrast(1.1);
   }
   
-  /* Perfect dark mode map tiles - balanced contrast and visibility */
-  .optimized-dark-map-tiles {
-    /* Apply filters to make the dark map perfectly balanced */
+  /* Modern Google Maps style dark theme */
+  .modern-dark-map-tiles {
+    /* Enhance the modern dark theme with better contrast */
     filter: 
-      brightness(0.85)        /* Slightly darker overall */
-      contrast(1.3)          /* Higher contrast for roads/water */
-      saturate(0.8)          /* Reduce oversaturation */
-      hue-rotate(10deg);     /* Slight blue shift for cooler tone */
+      brightness(0.95)       /* Keep it bright enough to see details */
+      contrast(1.1)          /* Subtle contrast boost */
+      saturate(1.2);         /* Enhanced colors for roads/water */
     
     /* Smooth transition when loading */
     transition: filter 0.3s ease;
