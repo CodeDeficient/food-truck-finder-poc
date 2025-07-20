@@ -114,6 +114,7 @@ export function getUserLocationHelper(
     // eslint-disable-next-line sonarjs/no-intrusive-permissions -- Geolocation is essential for finding nearby food trucks
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log('📍 User location accuracy:', position.coords.accuracy, 'meters');
         setUserLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -121,9 +122,14 @@ export function getUserLocationHelper(
       },
       (error) => {
         console.warn('Location access denied:', error);
-        // Default to San Francisco
-        setUserLocation({ lat: 37.7749, lng: -122.4194 });
+        // Default to Charleston, SC for this project
+        setUserLocation({ lat: 32.7765, lng: -79.9311 });
       },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
     );
   } else {
     // Default to San Francisco if geolocation is not supported
@@ -151,10 +157,16 @@ export async function loadFoodTrucksHelper(
   setLoading: (loading: boolean) => void,
 ) {
   try {
-    const { trucks } = await supabaseFallback.getFoodTrucks();
-    setTrucks(trucks);
+    console.log('🔍 Starting to load food trucks...');
+    const result = await supabaseFallback.getFoodTrucks();
+    console.log('📦 Full result from supabaseFallback:', result);
+    console.log('🚛 Number of trucks found:', result.trucks.length);
+    console.log('📊 Data status:', result.status);
+    console.log('💾 Is from cache:', result.isFromCache);
+    setTrucks(result.trucks);
   } catch (error: unknown) {
-    console.error('Failed to load food trucks:', error);
+    console.error('❌ Failed to load food trucks:', error);
+    setTrucks([]);
   } finally {
     setLoading(false);
   }
@@ -188,6 +200,50 @@ export async function loadNearbyTrucksHelper(
   }
 }
 
+// Filter trucks that have minimum viable data to display
+/**
+ * Determines if a food truck has enough essential data to be displayed to users.
+ * @example
+ * isViableTruck(foodTruck)
+ * // returns true if truck has name and location, false otherwise
+ * @param {FoodTruck} truck - The food truck object to validate.
+ * @returns {boolean} Indicates whether the truck should be displayed.
+ * @description
+ *   - Checks for minimum required fields: name and valid location coordinates.
+ *   - Ensures location has either coordinates OR a meaningful address.
+ *   - Flags trucks missing essential data for admin review.
+ */
+export function isViableTruck(truck: FoodTruck): boolean {
+  // Must have a name
+  if (!truck.name || truck.name.trim() === '' || truck.name === 'Unnamed Truck') {
+    console.warn('🚨 Truck missing name:', truck.id);
+    return false;
+  }
+  
+  // Must have location data
+  if (!truck.current_location) {
+    console.warn('🚨 Truck missing location data:', truck.name);
+    return false;
+  }
+  
+  // Must have either coordinates OR a meaningful address
+  const hasCoordinates = 
+    typeof truck.current_location.lat === 'number' && 
+    typeof truck.current_location.lng === 'number';
+    
+  const hasAddress = 
+    truck.current_location.address && 
+    truck.current_location.address.trim() !== '' &&
+    truck.current_location.address !== 'Unknown';
+  
+  if (!hasCoordinates && !hasAddress) {
+    console.warn('🚨 Truck missing both coordinates and address:', truck.name);
+    return false;
+  }
+  
+  return true;
+}
+
 // Check if a food truck is currently open
 /**
  * Determines if the food truck is currently open based on its operating hours.
@@ -195,7 +251,7 @@ export async function loadNearbyTrucksHelper(
  * isTruckOpen(myFoodTruck)
  * // returns true or false depending on current time and truck's operating hours
  * @param {FoodTruck} truck - The food truck object with operating hours.
- * @returns {boolean} Indicates whether the food truck is open.
+ * @returns {boolean} Indicates whether the truck is open.
  * @description
  *   - Utilizes the current day's name to fetch operating hours.
  *   - Handles potential errors in parsing operating hours.

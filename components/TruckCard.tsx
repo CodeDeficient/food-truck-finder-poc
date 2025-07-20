@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import type { FoodTruck } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
-import { Eye, MapPin } from 'lucide-react';
+import { Eye, MapPin, Heart } from 'lucide-react';
 import { MenuSection } from '@/components/ui/MenuSection';
 import { SocialMediaSection } from '@/components/ui/SocialMediaSection';
 import { ContactSection } from '@/components/ui/ContactSection';
@@ -19,16 +19,33 @@ interface TruckCardProps {
   readonly onSelectTruck: () => void;
   readonly userLocation?: { lat: number; lng: number };
   readonly hideHeader?: boolean;
+  readonly isFavorite?: boolean;
+  readonly onToggleFavorite?: () => void;
 }
 
-export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: TruckCardProps) {
+export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, isFavorite = false, onToggleFavorite }: TruckCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Defensive checks for required data
+  if (!truck?.id) {
+    return (
+      <Card className="hover:shadow-md transition-shadow cursor-pointer dark:bg-slate-800 dark:border-slate-700">
+        <CardContent className="p-4">
+          <p className="text-muted-foreground">Invalid truck data</p>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   const { popularItems, priceRange, todayHours } = useTruckCard(truck);
   const {
     name = 'Unnamed Truck',
     social_media = {},
-    contact_info: { phone = '', email = '', website = '' } = {},
+    contact_info = {},
   } = truck;
+  
+  // Safely extract contact info with fallbacks
+  const { phone = '', email = '', website = '' } = contact_info ?? {};
 
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,6 +54,13 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite();
+    }
   };
 
   return (
@@ -57,7 +81,20 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false }: 
               )}
             </div>
             <div className="flex flex-col items-end space-y-1">
-              <Badge variant={isOpen ? 'default' : 'secondary'}>{isOpen ? 'Open' : 'Closed'}</Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant={isOpen ? 'open' : 'secondary'}>{isOpen ? 'Open' : 'Closed'}</Badge>
+                {onToggleFavorite && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`hover:scale-110 transition-all duration-200 ${isFavorite ? 'neon-text' : 'hover-neon'}`}
+                    onClick={handleToggleFavorite}
+                    aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    <Heart className={`size-4 ${isFavorite ? 'fill-current' : ''}`} />
+                  </Button>
+                )}
+              </div>
               {/* Show price range fallback if no explicit prices */}
               {popularItems.every((item) => item.price === undefined) &&
                 priceRange !== undefined &&

@@ -9,6 +9,8 @@ import type { LatLngExpression } from 'leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import type { FoodTruck } from '@/lib/types';
+import { isTruckOpen } from '@/lib/utils/foodTruckHelpers';
+import { geocodeAddress, CHARLESTON_FALLBACK } from '@/lib/utils/geocoding';
 
 interface MapComponentProps {
   readonly trucks: FoodTruck[];
@@ -17,6 +19,7 @@ interface MapComponentProps {
   readonly defaultZoom?: number;
   readonly onSelectTruck?: (truckId: string) => void;
   readonly selectedTruckLocation?: LatLngExpression;
+  readonly theme?: string;
 }
 
 const MapViewUpdater = ({
@@ -35,13 +38,17 @@ const MapViewUpdater = ({
   return <></>;
 };
 
-const foodTruckIcon = new L.Icon({
-  iconUrl: '/food-truck-icon.svg',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-  className: 'food-truck-marker-icon',
-});
+const getFoodTruckIcon = (isOpen: boolean, theme: string) => {
+  const color = isOpen ? 'green' : 'red';
+  return new L.Icon({
+    iconUrl: '/food-truck-icon.svg',
+    iconSize: [64, 64],
+    iconAnchor: [32, 52], // Adjusted for better pin positioning
+    popupAnchor: [0, -52],
+    shadowUrl: undefined, // Use CSS shadow instead
+    className: `food-truck-marker-icon glow-${color}`
+  });
+};
 
 const MapComponent: React.FC<MapComponentProps> = ({
   trucks,
@@ -50,24 +57,67 @@ const MapComponent: React.FC<MapComponentProps> = ({
   defaultZoom = 10,
   onSelectTruck,
   selectedTruckLocation,
+  theme,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [trucksWithCoords, setTrucksWithCoords] = useState<FoodTruck[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const validTrucks = trucks.filter(
-    (truck) =>
-      truck.current_location &&
-      typeof truck.current_location.lat === 'number' &&
-      typeof truck.current_location.lng === 'number',
-  );
+  // Process trucks to ensure all have coordinates - no geocoding delays
+  useEffect(() => {
+    if (!trucks.length) {
+      setTrucksWithCoords([]);
+      return;
+    }
+    
+    console.log('🗺️ Processing', trucks.length, 'trucks for map display');
+    
+    const processedTrucks: FoodTruck[] = trucks.map(truck => {
+      if (!truck.current_location) {
+        console.warn('⚠️ Skipping truck with no location:', truck.name);
+        return null;
+      }
+      
+      // Ensure truck has valid coordinates, use fallback if needed
+      const lat = truck.current_location.lat || CHARLESTON_FALLBACK.lat;
+      const lng = truck.current_location.lng || CHARLESTON_FALLBACK.lng;
+      
+      return {
+        ...truck,
+        current_location: {
+          ...truck.current_location,
+          lat,
+          lng,
+        },
+      };
+    }).filter((truck): truck is FoodTruck => truck !== null);
+    
+    console.log('🎯 Processed trucks for map:', processedTrucks.length);
+    setTrucksWithCoords(processedTrucks);
+  }, [trucks]);
+
+  const validTrucks = trucksWithCoords;
 
   const initialMapCenter: LatLngExpression =
     userLocation && typeof userLocation.lat === 'number' && typeof userLocation.lng === 'number'
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
+
+  // Choose tile layer based on theme - using high contrast, readable options
+  const isDark = theme === 'dark';
+  const tileLayerProps = isDark
+    ? {
+        // Stadia dark mode with high contrast for readability
+        attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap</a> contributors',
+        url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+      }
+    : {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      };
 
   if (!isMounted) {
     return (
@@ -78,10 +128,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#f0f0f0',
+          backgroundColor: isDark ? '#000' : '#f0f0f0',
         }}
       >
-        <p>Loading map...</p>
+        <p style={{ color: isDark ? '#fff' : '#000' }}>Loading map...</p>
       </div>
     );
   }
@@ -95,32 +145,38 @@ const MapComponent: React.FC<MapComponentProps> = ({
       className="rounded-lg"
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution={tileLayerProps.attribution}
+        url={tileLayerProps.url}
       />
       <MapViewUpdater
         center={selectedTruckLocation}
         zoom={selectedTruckLocation ? 13 : undefined}
       />
-      {validTrucks.map((truck) => (
-        <Marker
-          key={truck.id}
-          position={[truck.current_location.lat, truck.current_location.lng]}
-          icon={foodTruckIcon}
-          eventHandlers={{
-            click: () => {
-              if (onSelectTruck) {
-                onSelectTruck(truck.id);
-              }
-            },
-          }}
-        >
-          <Popup>
-            <h4 className="font-bold">{truck.name}</h4>
-            {truck.current_location.address && <div>{truck.current_location.address}</div>}
-          </Popup>
-        </Marker>
-      ))}
+      {validTrucks.map((truck) => {
+        const isOpen = isTruckOpen(truck);
+        return (
+          <Marker
+            key={truck.id}
+            position={[truck.current_location.lat, truck.current_location.lng]}
+            icon={getFoodTruckIcon(isOpen, theme || 'light')}
+            eventHandlers={{
+              click: () => {
+                if (onSelectTruck) {
+                  onSelectTruck(truck.id);
+                }
+              },
+            }}
+          >
+            <Popup>
+              <h4 className="font-bold">{truck.name}</h4>
+              {truck.current_location.address && <div>{truck.current_location.address}</div>}
+              <div className={isOpen ? 'text-green-600' : 'text-red-600'}>
+                {isOpen ? 'Open' : 'Closed'}
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
       {userLocation && (
         <Marker position={[userLocation.lat, userLocation.lng]}>
           <Popup>You are here</Popup>
