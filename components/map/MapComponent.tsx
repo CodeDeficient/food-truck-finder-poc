@@ -106,13 +106,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
 
-  // Choose tile layer based on theme - modern Google Maps style dark theme
+  // Choose tile layer based on theme - working dark theme without auth issues
   const isDark = theme === 'dark';
   const tileLayerProps = isDark
     ? {
-        // Jawg Dark - modern dark theme with highlighted roads like Google Maps
-        attribution: '&copy; <a href="https://www.jawg.io" target="_blank">&copy; Jawg</a> - &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
-        url: 'https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=community',
+        // Esri World Dark Gray - professional dark theme, no auth required
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
         // Add custom styling for modern dark mode
         className: 'modern-dark-map-tiles'
       }
