@@ -182,4 +182,75 @@
   .food-truck-marker-icon.glow-red {
     filter: inherit !important;
   }
+  
+  /* Enhanced dark mode map styling for better contrast */
+  .dark .leaflet-container {
+    /* Add subtle border and enhanced contrast in dark mode */
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 4px 6px rgba(0, 0, 0, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  }
+  
+  /* Enhance map attribution in dark mode */
+  .dark .leaflet-control-attribution {
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
+  }
+  
+  .dark .leaflet-control-attribution a {
+    color: rgba(0, 212, 255, 0.9) !important;
+    text-shadow: 0 0 2px rgba(0, 212, 255, 0.3);
+  }
+  
+  /* Enhance map controls in dark mode */
+  .dark .leaflet-control-zoom a {
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px);
+    font-weight: bold;
+  }
+  
+  .dark .leaflet-control-zoom a:hover {
+    background: rgba(0, 0, 0, 0.9) !important;
+    color: #00d4ff !important;
+    box-shadow: 0 0 4px rgba(0, 212, 255, 0.3);
+  }
+  
+  /* Better popup styling in dark mode */
+  .dark .leaflet-popup-content-wrapper {
+    background: rgba(0, 0, 0, 0.9) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  .dark .leaflet-popup-tip {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  /* Enhanced food truck markers in dark mode with better glow */
+  .dark .food-truck-marker-icon.glow-green {
+    filter: 
+      drop-shadow(0 0 8px #22c55e) 
+      drop-shadow(0 0 16px #22c55e80)
+      drop-shadow(0 0 24px #22c55e40)
+      brightness(1.2)
+      contrast(1.1);
+  }
+  
+  .dark .food-truck-marker-icon.glow-red {
+    filter: 
+      drop-shadow(0 0 8px #ef4444) 
+      drop-shadow(0 0 16px #ef444480)
+      drop-shadow(0 0 24px #ef444440)
+      brightness(1.2)
+      contrast(1.1);
+  }
 }
