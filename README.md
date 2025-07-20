@@ -196,6 +196,33 @@ food-truck-finder/
 
 ---
 
+## 📜 License & Commercial Use
+
+This project is licensed under the **Business Source License 1.1**.
+
+### You can freely:
+- ✅ Use the code for personal/educational projects
+- ✅ Submit contributions and improvements  
+- ✅ Reference code snippets in your own projects
+- ✅ Study the implementation for learning
+- ✅ Use for non-profit organizations
+
+### Commercial Use Notice:
+**Commercial food truck/restaurant discovery services require a commercial license.**
+
+The license specifically restricts:
+- Operating a food truck discovery or location service
+- Commercial restaurant/food vendor location services
+- Commercial aggregation of food vendor data
+- Integration into commercial food platforms
+
+### License Evolution:
+After **January 20, 2029**, this license automatically converts to **Apache License 2.0**, making the project fully open source.
+
+For commercial licensing inquiries, contact: [commercial-license-contact]
+
+---
+
 ## Installation
 
 To set up the project locally, follow these steps:
