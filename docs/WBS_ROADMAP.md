@@ -1,4 +1,9 @@
-# Food Truck Finder - WBS & Strategic Roadmap
+# Food Truck Finder - WBS & Strategic Roadmap (REFERENCE)
+
+**⚠️ STATUS: REFERENCE DOCUMENT**  
+**Active Planning Document:** [`docs/PROJECT_PLAN.md`](PROJECT_PLAN.md)
+
+*This document contains detailed task breakdowns for reference but is no longer the active planning document.*
 
 ## Project Overview & Guiding Principles
 
@@ -37,12 +42,13 @@
 
 ---
 
-## 2.0 Security & Access Control
+## 2.0 Security & Access Control (REVISED - PHASE 1 SIMPLIFIED)
 
-  - **[ ] 2.1: Secure Admin Dashboard**
-    - **Guidance:** The `/admin` route and all its sub-routes must be protected. Currently, it's publicly accessible. The goal is to restrict access to a single, authenticated developer user (me).
-    - **CCR:** C:7, C:8, R:8 -> **Action:** This is an epic. Breaking it down.
-    - **Verification:** Unauthorized users navigating to `/admin` are redirected to a login page or an access denied page. The designated admin user can log in and access the dashboard.
+  - **[ ] 2.1: Secure Admin Dashboard (SIMPLIFIED FOR BETA)**
+    - **Guidance:** REVISED APPROACH - Instead of complex Firebase+Supabase auth, implement simple password protection for closed beta launch. This gets us secure admin access in 1-2 days instead of 2+ weeks.
+    - **CCR:** C:3, C:9, R:4 -> **Action:** Simplified approach for immediate launch readiness.
+    - **Verification:** Admin routes protected by environment variable password, unauthorized access blocked.
+    - **Future:** Complex RBAC system moved to Phase 3 (public launch).
   - **[x] 2.1.1: Research Authentication Provider**
     - **Guidance:** Per user direction, the primary authentication provider will be Google, managed through a service like Firebase Authentication to decouple it from Supabase. Research the integration of Firebase Auth with a Supabase backend. The goal is to use Firebase for sign-in and then pass the user's identity (JWT) to Supabase to control data access via RLS.
     - **Tools/Libraries:** Firebase Authentication, Firebase Cloud Functions, Firebase Admin SDK, Supabase Client Library.
@@ -291,6 +297,7 @@
     - **Inaccurate Geocoding:** The PostGIS geocoder may fail on poorly formatted or ambiguous addresses. **Fallback:** If the PostGIS trigger fails to find coordinates, the `pipelineProcessor.ts` script will make a follow-up call to the Nominatim API, which is better at handling fuzzy searches.
     - **Rate Limiting:** The Nominatim API has a strict usage policy (1 request per second). **Fallback:** Implement a queueing system with a delay for address lookups to avoid being blocked.
     - **No Results:** Neither service may find a given address. **Fallback:** Flag the truck in the admin dashboard for manual review and location entry.
+    - **Debugging:** Two trucks need coordinate validation despite having addresses.
   - **Impact Analysis:**
     - **Associated Files:** `supabase/migrations/<timestamp>_enable_postgis.sql`, `supabase/migrations/<timestamp>_create_geocoding_trigger.sql`, `lib/pipelineProcessor.ts`, `docs/DATA_PIPELINE_ARCHITECTURE.md`
     - **Affected Files:** `food_trucks` table (performance), `components/map/MapComponent.tsx`, external dependency on Nominatim.
@@ -300,10 +307,11 @@
     - **Tools/Libraries:** Supabase PostGIS extensions (`postgis`, `postgis_tiger_geocoder`), Nominatim API (for fallback).
     - **CCR:** C:3, C:9, R:3
     - **Verification:** A service is chosen and documented in `docs/DATA_PIPELINE_ARCHITECTURE.md`.
-  - **[ ] 3.3.2: Integrate Geocoding into Data Pipeline**
-    - **Guidance:** Add a step in the pipeline that checks if GPS coordinates are missing and, if so, calls the chosen geocoding service to populate them.
-    - **CCR:** C:7, C:8, R:6 -> **Action:** Break down.
-    - **Verification:** The `latitude` and `longitude` columns in the `trucks` table are populated for address-only entries after a scrape.
+- **[ ] 3.3.2: Integrate Geocoding into Data Pipeline**
+  - **Guidance:** Add a step in the pipeline that checks if GPS coordinates are missing and, if so, calls the chosen geocoding service to populate them.
+  - **CCR:** C:7, C:8, R:6 -> **Action:** Break down.
+  - **Verification:** The `latitude` and `longitude` columns in the `trucks` table are populated for address-only entries after a scrape.
+  - **Future Changes:** Validate and possibly fix coordinates for existing trucks with addresses. Ensure correct usage of coordinates for map display.
     - **[ ] 3.3.2.1: Enable PostGIS Extensions in Supabase**
       - **Guidance:** Run the `CREATE EXTENSION` commands for `postgis` and `postgis_tiger_geocoder` in the Supabase SQL Editor.
       - **CCR:** C:2, C:10, R:3
@@ -320,6 +328,62 @@
       - **Guidance:** In `lib/pipelineProcessor.ts`, add the logic to call the Nominatim API if the database geocoding fails (i.e., `latitude` is still null after insert/update).
       - **CCR:** C:4, C:9, R:5
       - **Verification:** The fallback logic is implemented and correctly updates the database.
+  - **[✅] 3.3.3: Implement Client-Side Geocoding for Map Display (DEPRECATED)**
+    - **Guidance:** ~~To immediately address the map display issue where only one food truck appears despite trucks having addresses, implement client-side geocoding within the MapComponent to convert addresses to coordinates on-the-fly.~~ **DEPRECATED: Replaced with immediate display approach due to poor UX.**
+    - **CCR:** C:7, C:8, R:6 -> **Action:** COMPLETED, THEN REFACTORED
+    - **Verification:** All food trucks with valid addresses now appear on the map with proper pins.
+    - **[x] 3.3.3.1: Create Geocoding Utility Module**
+      - **Guidance:** Create `lib/utils/geocoding.ts` using the free Nominatim API from OpenStreetMap to convert addresses to coordinates with rate limiting and proper error handling.
+      - **CCR:** C:3, C:9, R:4
+      - **Verification:** The utility module is created with proper error handling and rate limiting.
+    - **[x] 3.3.3.2: Update MapComponent with Geocoding Logic (REFACTORED)**
+      - **Guidance:** ~~Modify `components/map/MapComponent.tsx` to: Detect trucks with valid addresses but missing/default coordinates, Call the geocoding API asynchronously for those trucks, Merge geocoded coordinates back into truck data, Display all trucks with coordinates on the map~~ **REFACTORED: Removed client-side geocoding for immediate display with fallback coordinates.**
+      - **CCR:** C:4, C:8, R:5
+      - **Verification:** The MapComponent now displays all trucks immediately without geocoding delays or "Geocoding truck locations..." loading messages.
+    - **[x] 3.3.3.3: Implement Coordinate Validation Logic (SIMPLIFIED)**
+      - **Guidance:** ~~Add logic to distinguish between meaningful coordinates and Charleston fallback coordinates (32.7767, -79.9311) to ensure proper geocoding of trucks that only have default coordinates.~~ **SIMPLIFIED: Now uses simple fallback logic for immediate display.**
+      - **CCR:** C:2, C:9, R:3
+      - **Verification:** Trucks display immediately using existing coordinates or Charleston fallback for missing coordinates.
+    - **[ ] 3.3.3.4: Validate and Fix Existing Truck Coordinates**
+      - **Guidance:** Review and fix coordinates for all existing trucks to ensure unique pin locations when possible. Some trucks may have duplicate default coordinates (32.7767, -79.9311) or inaccurate coordinates that need to be corrected using their actual addresses.
+      - **CCR:** C:6, C:8, R:5 -> **Action:** Break down.
+      - **Impact Analysis:**
+        - **Associated Files:** `supabase/migrations/<timestamp>_fix_truck_coordinates.sql`, `scripts/coordinate-validation.ts`, `lib/utils/geocoding.ts`
+        - **Affected Files:** `food_trucks` table, MapComponent display, admin dashboard coordinate validation
+      - **Verification:** All trucks with valid addresses have unique, accurate coordinates and display at correct locations on the map.
+      - **[ ] 3.3.3.4.1: Research Coordinate Fixing Best Practices**
+        - **Guidance:** Research examples and best practices for bulk coordinate validation and fixing in geocoding applications. Look for strategies to:
+          - Identify and prioritize trucks with duplicate/default coordinates
+          - Validate accuracy of existing coordinates against addresses
+          - Handle edge cases (PO boxes, mobile trucks, etc.)
+          - Minimize API calls while maximizing accuracy
+        - **CCR:** C:3, C:9, R:3
+        - **Verification:** Best practices and approach documented in `docs/DATA_PIPELINE_ARCHITECTURE.md`.
+      - **[ ] 3.3.3.4.2: Audit Current Truck Coordinates**
+        - **Guidance:** Query the database to identify trucks that:
+          - Have default Charleston coordinates (32.7767, -79.9311) but valid addresses
+          - Have duplicate coordinates (multiple trucks at same location)
+          - Have coordinates that seem inconsistent with their listed address
+          - Missing coordinates entirely
+        - **CCR:** C:3, C:10, R:4
+        - **Verification:** A comprehensive audit report identifying problematic coordinates is created.
+      - **[ ] 3.3.3.4.3: Create Coordinate Validation Script**
+        - **Guidance:** Create a Node.js script that can:
+          - Connect to Supabase database
+          - Iterate through trucks with problematic coordinates
+          - Use geocoding API to get accurate coordinates from addresses
+          - Update database with corrected coordinates
+          - Log all changes for review
+        - **CCR:** C:5, C:8, R:5
+        - **Verification:** The script successfully validates and updates coordinates with proper error handling.
+      - **[ ] 3.3.3.4.4: Execute Coordinate Fixes**
+        - **Guidance:** Run the validation script against the production database, starting with trucks that have the most obvious issues (default coordinates with valid addresses).
+        - **CCR:** C:3, C:9, R:4
+        - **Verification:** Updated coordinates are accurate and trucks appear in correct locations on the map.
+      - **[ ] 3.3.3.4.5: Implement Ongoing Coordinate Monitoring**
+        - **Guidance:** Add checks to the data quality scoring system to flag trucks with potentially inaccurate coordinates and integrate coordinate validation into the admin dashboard.
+        - **CCR:** C:4, C:8, R:4
+        - **Verification:** The admin dashboard shows coordinate quality metrics and flags problematic entries.
 
 - **[ ] 3.4: Define and Refine Data Quality Score**
   - **Guidance:** The current quality score is ambiguous. We need to define the specific metrics, weights, and thresholds that contribute to the score. This score should also inform a user-friendly "onboarding progress" metric for food truck owners.
@@ -358,9 +422,9 @@
 
 ## 4.0 UI/UX Overhaul & Frontend Features
 
-- **[ ] 4.1: Redesign Core UI Components**
+- **[✅] 4.1: Redesign Core UI Components**
   - **Guidance:** The current UI is described as "boxy" and "square". The goal is to create a more modern, rounded, and visually appealing design, based on a "black glassmorphism with red neon highlights" theme.
-  - **CCR:** C:7, C:7, R:5 -> **Action:** Break down.
+  - **CCR:** C:7, C:7, R:5 -> **Action:** COMPLETED.
   - **Common Pitfalls & Fallbacks:**
     - **Styling Conflicts:** A new UI library could conflict with existing Tailwind CSS classes. **Fallback:** Use a dedicated Tailwind CSS plugin like `tailwindcss-bg-glass` for the glassmorphism effect to minimize conflicts.
     - **Performance:** Glassmorphism and other complex styles can impact rendering performance. **Fallback:** Use these effects sparingly on key components and test performance with Lighthouse.
@@ -374,62 +438,85 @@
     - **Tools/Libraries:** `tailwindcss-bg-glass`, `framer-motion` (for animations).
     - **CCR:** C:3, C:9, R:2
     - **Verification:** A decision on whether to use a library or build custom styles is made and documented in `docs/UI_DESIGN_GUIDE.md`.
-  - **[ ] 4.1.2: Update Base Styles and Component Library**
+  - **[✅] 4.1.2: Update Base Styles and Component Library**
     - **Guidance:** Modify `app/globals.css`, `tailwind.config.ts`, and core UI components in `components/ui/` to use more `border-radius`, new color schemes, and other modern styling.
-    - **CCR:** C:6, C:9, R:5 -> **Action:** Break down.
+    - **CCR:** C:6, C:9, R:5 -> **Action:** COMPLETED.
     - **Verification:** Components like Cards, Buttons, and Badges have a new, rounded look.
-    - **[ ] 4.1.2.1: Install and Configure `tailwindcss-bg-glass`**
-      - **Guidance:** Add the `tailwindcss-bg-glass` package and update `tailwind.config.ts` and `globals.css` as per the library's documentation.
+    - **[x] 4.1.2.1: Implement Custom Glassmorphism Solution**
+      - **Guidance:** Instead of external library, implemented custom glassmorphism using Tailwind CSS utilities and CSS variables in `globals.css`.
       - **CCR:** C:2, C:10, R:3
-      - **Verification:** The library is installed and configured without errors.
-    - **[ ] 4.1.2.2: Refactor `Card` Component**
-      - **Guidance:** Update the `Card` component in `components/ui/` to use the `glass` variant.
+      - **Verification:** Custom `.glass`, `.glass-strong`, `.neon-border`, and `.neon-glow` utilities are implemented.
+    - **[x] 4.1.2.2: Refactor `Card` Component**
+      - **Guidance:** Updated the `Card` component to use the `glass` class and `rounded-modern` styling.
       - **CCR:** C:2, C:10, R:2
-      - **Verification:** The `Card` component now has a glassmorphism effect.
-    - **[ ] 4.1.2.3: Refactor `Button` Component**
-      - **Guidance:** Update the `Button` component to incorporate neon glow effects on hover and focus, using custom styles in `globals.css`.
+      - **Verification:** The `Card` component now has a glassmorphism effect with modern rounded corners.
+    - **[x] 4.1.2.3: Refactor `Button` Component**
+      - **Guidance:** Updated the `Button` component using `tailwind-variants` with neon glow effects, hover animations, and scale transforms.
       - **CCR:** C:3, C:9, R:3
-      - **Verification:** The `Button` component has the desired neon effect.
+      - **Verification:** The `Button` component has multiple variants including `neon`, `ghost`, and `secondary` with desired effects.
+    - **[x] 4.1.2.4: Create Component Variants System**
+      - **Guidance:** Implemented `components/ui/variants.ts` using `tailwind-variants` for consistent styling across all UI components.
+      - **CCR:** C:4, C:9, R:4
+      - **Verification:** Comprehensive variant system includes buttons, badges, alerts, sheets, and other components.
 
-- **[ ] 4.2: Improve "View Details" Experience**
-  - **Guidance:** Clicking "View Details" should not navigate to a new page. It should display the information on the same page, using a modal, accordion, or similar non-disruptive UI pattern.
-  - **CCR:** C:6, C:9, R:4 -> **Action:** Break down.
-  - **Impact Analysis:**
-    - **Associated Files:** `components/TruckCard.tsx`, `components/home/TruckListSection.tsx`, `components/ui/AlertDialog.tsx`, `app/trucks/[id]/page.tsx`
-    - **Affected Files:** Core user experience, application routing and state management, styling of the new detail view.
-  - **Verification:** The user can view truck details without a full page load.
-  - **[ ] 4.2.1: Implement Non-Navigational Detail View**
-    - **Guidance:** Refactor the `TruckCard` and `TruckListSection` components to open details in a modal (`AlertDialog` or `Sheet` from `components/ui`) or by expanding the card itself.
-    - **CCR:** C:5, C:9, R:4 -> **Action:** Break down.
-    - **Verification:** The new detail view is functional and smooth.
-    - **[ ] 4.2.1.1: Create Detail View Modal**
+  - **[✅] 4.2: Improve "View Details" Experience**
+    - **Guidance:** Clicking "View Details" should not navigate to a new page. It should display the information on the same page, using a modal, accordion, or similar non-disruptive UI pattern. For desktop users, implement a sliding panel from below the map to allow simultaneous viewing of truck location and details.
+    - **CCR:** C:6, C:9, R:4 -> **Action:** MOBILE COMPLETED, DESKTOP ENHANCEMENT NEEDED.
+    - **Impact Analysis:**
+      - **Associated Files:** `components/TruckCard.tsx`, `components/home/TruckListSection.tsx`, `components/ui/AlertDialog.tsx`, `app/trucks/[id]/page.tsx`
+      - **Affected Files:** Core user experience, application routing and state management, styling of the new detail view.
+    - **Verification:** The user can view truck details without a full page load, and desktop users can see both map location and details simultaneously.
+    - **[x] 4.2.1: Implement Non-Navigational Detail View (Mobile)**
+      - **Guidance:** Refactor the `TruckCard` and `TruckListSection` components to open details in a modal (`AlertDialog` or `Sheet` from `components/ui`) or by expanding the card itself.
+      - **CCR:** C:5, C:9, R:4
+      - **Verification:** The new detail view is functional and smooth.
+    - **[x] 4.2.1.1: Create Detail View Modal**
       - **Guidance:** Create a new component for the detail view modal using the `AlertDialog` component.
       - **CCR:** C:3, C:10, R:2
       - **Verification:** The modal component is created and can be triggered.
-    - **[ ] 4.2.1.2: Integrate Modal into `TruckCard`**
+    - **[x] 4.2.1.2: Integrate Modal into `TruckCard`**
       - **Guidance:** Add the logic to the `TruckCard` to open the modal on "View Details" click.
       - **CCR:** C:3, C:9, R:3
       - **Verification:** The modal opens with the correct truck's details.
-  - **[ ] 4.2.2: Hide Developer-Facing Data**
-    - **Guidance:** Remove fields like "Coordinates" from the user-facing detail view. This data is useful for admins but not for regular users.
-    - **CCR:** C:1, C:10, R:1
-    - **Verification:** The detail view only shows user-friendly information.
+    - **[x] 4.2.2: Hide Developer-Facing Data**
+      - **Guidance:** Remove fields like "Coordinates" from the user-facing detail view. This data is useful for admins but not for regular users.
+      - **CCR:** C:1, C:10, R:1
+      - **Verification:** The detail view only shows user-friendly information.
+    - **[ ] 4.2.3: Implement Desktop Sliding Panel**
+      - **Guidance:** For desktop users (screen width >= 1024px), replace the modal with a sliding panel that emerges from below the map. This allows users to see both the truck's location on the map and its details simultaneously, improving the user experience by eliminating the choice between location vs details.
+      - **CCR:** C:5, C:8, R:4
+      - **Impact Analysis:**
+        - **Associated Files:** `components/TruckDetailsModal.tsx`, `components/ui/sheet.tsx`, responsive design utilities
+        - **Affected Files:** Main page layout, map container sizing, TruckCard click handlers
+      - **Verification:** On desktop, clicking "View Details" opens a sliding panel below the map while keeping the map visible and interactive.
+      - **[ ] 4.2.3.1: Create Responsive Detail View Logic**
+        - **Guidance:** Implement logic to detect screen size and choose between modal (mobile) and sliding panel (desktop) presentation.
+        - **CCR:** C:2, C:10, R:3
+        - **Verification:** The component correctly chooses the appropriate presentation method based on screen size.
+      - **[ ] 4.2.3.2: Implement Desktop Sliding Panel Component**
+        - **Guidance:** Create a sliding panel component that animates from below the map area, using the existing glassmorphism design language.
+        - **CCR:** C:4, C:9, R:4
+        - **Verification:** The sliding panel animates smoothly and maintains the application's design consistency.
+      - **[ ] 4.2.3.3: Update Layout for Panel Integration**
+        - **Guidance:** Modify the main page layout to accommodate the sliding panel without disrupting the map or truck list sections.
+        - **CCR:** C:3, C:9, R:3
+        - **Verification:** The layout gracefully handles the sliding panel on desktop while maintaining mobile compatibility.
 
-- **[ ] 4.3: Replace Food Truck Icon**
-  - **Guidance:** The current map marker for food trucks needs to be replaced with a better icon that clearly represents a food truck.
-  - **CCR:** C:2, C:10, R:1
-  - **Impact Analysis:**
-    - **Associated Files:** `public/<new-icon>.svg`, `components/map/MapComponent.tsx`
-    - **Affected Files:** Map marker visuals, Leaflet icon configuration.
-  - **Verification:** The map displays the new, improved food truck icon.
-  - **[ ] 4.3.1: Source a New Food Truck Icon**
-    - **Guidance:** Find a suitable, open-source (or free-to-use) SVG icon for a food truck.
-    - **CCR:** C:1, C:10, R:0
-    - **Verification:** A new SVG file is added to the `public/` directory.
-  - **[ ] 4.3.2: Update Map Component to Use New Icon**
-    - **Guidance:** Modify `components/map/MapComponent.tsx` to use the new icon for markers.
-    - **CCR:** C:2, C:10, R:2
-    - **Verification:** The new icon appears correctly on the map.
+  - **[✅] 4.3: Replace Food Truck Icon**
+    - **Guidance:** The current map marker for food trucks needs to be replaced with a better icon that clearly represents a food truck.
+    - **CCR:** C:2, C:10, R:1
+    - **Impact Analysis:**
+      - **Associated Files:** `public/new-icon.svg`, `components/map/MapComponent.tsx`
+      - **Affected Files:** Map marker visuals, Leaflet icon configuration.
+    - **Verification:** The map displays the new, improved food truck icon.
+    - **[x] 4.3.1: Source a New Food Truck Icon**
+      - **Guidance:** Find a suitable, open-source (or free-to-use) SVG icon for a food truck.
+      - **CCR:** C:1, C:10, R:0
+      - **Verification:** A new SVG file is added to the `public/` directory.
+    - **[x] 4.3.2: Update Map Component to Use New Icon**
+      - **Guidance:** Modify `components/map/MapComponent.tsx` to use the new icon for markers.
+      - **CCR:** C:2, C:10, R:2
+      - **Verification:** The new icon appears correctly on the map.
 
 - **[ ] 4.4: Design and Implement User Portal**
   - **Guidance:** Create a user-specific area, accessed via a sliding pop-out hamburger menu or user icon in the header. This will be the foundation for personalized features.
@@ -444,13 +531,13 @@
     - **Verification:** A feature list for the user portal is documented in `docs/USER_PORTAL_PLAN.md`.
   - **[ ] 4.4.2: Implement User Favorites**
     - **Guidance:** Add a "favorite" button to `TruckCard`. Create a new table in Supabase to store user favorites (`user_id`, `truck_id`). Display favorited trucks in the user portal.
-    - **CCR:** C:7, C:8, R:6 -> **Action:** Break down.
+    - **CCR:** C:7, C:8, R:6 - **Action:** PARTIALLY COMPLETED.
     - **Verification:** Users can favorite and unfavorite trucks, and the list appears in their portal.
-    - **[ ] 4.4.2.1: Create `user_favorites` Table**
+    - **[✅] 4.4.2.1: Create `user_favorites` Table**
       - **Guidance:** Write and apply a Supabase migration to create the `user_favorites` table with `user_id` and `truck_id` columns.
       - **CCR:** C:2, C:10, R:3
       - **Verification:** The table is created in Supabase.
-    - **[ ] 4.4.2.1.1: Implement RLS Policies for `user_favorites`**
+    - **[✅] 4.4.2.1.1: Implement RLS Policies for `user_favorites`**
       - **Guidance:** After creating the table, immediately enable RLS and apply policies that ensure users can only access their own favorite entries. The policies should check that `auth.uid() = user_id`.
       - **CCR:** C:3, C:10, R:4
       - **Verification:** RLS policies are active on the table, and tests confirm that one user cannot access another user's favorites.

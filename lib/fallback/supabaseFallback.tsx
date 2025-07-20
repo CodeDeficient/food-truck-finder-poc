@@ -145,21 +145,54 @@ class SupabaseFallbackManager {
    * Separated so you can easily modify your existing query logic
    */
   private async fetchFromSupabase(): Promise<FoodTruck[]> {
-    // The key is to set a reasonable timeout so we don't wait forever
-    const response = await this.supabase
-      .from('food_trucks')
-      .select('*')
-      .abortSignal(AbortSignal.timeout(5000)); // 5 second timeout
+    console.log('🔌 Connecting to Supabase...');
+    console.log('📊 Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('🔑 Anon key present:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    
+    try {
+      // The key is to set a reasonable timeout so we don't wait forever
+      const response = await this.supabase
+        .from('food_trucks')
+        .select('*')
+        .abortSignal(AbortSignal.timeout(10000)); // 10 second timeout
 
-    if (response.error !== null) {
-      throw new Error(`Supabase error: ${response.error.message}`);
-    }
+      console.log('📡 Raw Supabase response:', response);
+      console.log('❌ Response error:', response.error);
+      console.log('📋 Response data type:', typeof response.data);
+      console.log('📊 Response data length:', Array.isArray(response.data) ? response.data.length : 'Not an array');
+      
+      if (response.error !== null) {
+        console.error('💥 Supabase query error details:', {
+          message: response.error.message,
+          details: response.error.details,
+          hint: response.error.hint,
+          code: response.error.code
+        });
+        throw new Error(`Supabase error: ${response.error.message}`);
+      }
 
-    // Fixed: Properly handle the data with explicit null checking
-    if (response.data != undefined && Array.isArray(response.data)) {
-      return response.data.filter((item): item is FoodTruck => isFoodTruckData(item));
+      // Fixed: Properly handle the data with explicit null checking
+      if (response.data != undefined && Array.isArray(response.data)) {
+        console.log('✅ Found', response.data.length, 'raw records from Supabase');
+        if (response.data.length > 0) {
+          console.log('👀 Sample record:', JSON.stringify(response.data[0], null, 2));
+        }
+        const filteredData = response.data.filter((item): item is FoodTruck => {
+          const isValid = isFoodTruckData(item);
+          if (!isValid) {
+            console.warn('⚠️ Invalid food truck data found:', item);
+          }
+          return isValid;
+        });
+        console.log('✅ Filtered to', filteredData.length, 'valid food trucks');
+        return filteredData;
+      }
+      console.warn('⚠️ No data returned from Supabase or data is not an array');
+      return [];
+    } catch (error) {
+      console.error('💥 Error in fetchFromSupabase:', error);
+      throw error;
     }
-    return [];
   }
 
   /**
