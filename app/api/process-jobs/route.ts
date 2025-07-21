@@ -59,8 +59,7 @@ export async function POST(request: NextRequest) {
         
         // Mark job as failed
         await ScrapingJobService.updateJobStatus(job.id, 'failed', {
-          error_message: errorMsg,
-          failed_at: new Date().toISOString()
+          errors: [errorMsg]
         });
         
         console.error(`Failed to process job ${job.id}:`, error);
