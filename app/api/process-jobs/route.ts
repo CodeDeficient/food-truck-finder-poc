@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     logActivity({
-      type: 'job_processing',
+      type: 'cron_job',
       action: 'batch_process_completed',
       details: {
         timestamp: new Date().toISOString(),
