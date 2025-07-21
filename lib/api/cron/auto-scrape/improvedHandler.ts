@@ -160,8 +160,11 @@ async function processHighPriorityJobs(timeLimit: number): Promise<void> {
 
       // Just update status to indicate it's been queued
       await ScrapingJobService.updateJobStatus(job.id, 'pending', {
-        queued_at: new Date().toISOString(),
-        notes: 'Queued for processing by job processor'
+        data_collected: {
+          ...job.data_collected,
+          queued_at: new Date().toISOString(),
+          queued_note: 'Queued for processing by job processor'
+        }
       });
     }
   } catch (error) {
