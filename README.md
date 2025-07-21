@@ -15,7 +15,7 @@ A modern, full-stack web application built with **professional-grade architectur
 
 - **Framework**: Next.js (React)
 - **Styling**: Tailwind CSS
-- **State Management**: React Hooks
+- **State Management**: Zustand, React Hooks
 - **Backend & Database**: Next.js API Routes, Supabase (PostgreSQL, Auth, Storage, Edge Functions)
 - **Web Scraping**: Firecrawl
 - **AI-Powered Search**: Tavily AI
@@ -270,6 +270,10 @@ We welcome contributions to the Food Truck Finder Application! Please follow the
 
 The `package.json` includes a variety of scripts to streamline development, testing, and quality assurance:
 
+- **Core Development**:
+  - `npm run dev`: Starts the Next.js development server.
+  - `npm run build`: Builds the application for production.
+  - `npm run start`: Starts the production server.
 - **Linting & Formatting**:
   - `npm run lint`: Runs ESLint on all `.js`, `.jsx`, `.ts`, `.tsx` files.
   - `npm run lint:fix`: Automatically fixes linting errors.
@@ -277,8 +281,9 @@ The `package.json` includes a variety of scripts to streamline development, test
   - `npm run format`: Formats code using Prettier.
 - **Testing**:
   - `npm run test`: Runs Jest unit/integration tests.
+  - `npm run test:watch`: Runs Jest in watch mode.
   - `npm run test:coverage`: Runs Jest tests with code coverage.
-  - `npm run test:e2e`: Runs Playwright E2E tests (basic).
+  - `npm run test:e2e`: Runs basic Playwright E2E tests.
   - `npm run test:e2e:playwright`: Runs all Playwright tests.
   - `npm run test:e2e:pipeline`: Runs Playwright tests specific to the data pipeline.
   - `npm run test:e2e:upscaling`: Runs Playwright tests for pipeline upscaling.
@@ -311,6 +316,57 @@ The `package.json` includes a variety of scripts to streamline development, test
   - `npm run ts-migrate:init`: Initializes `ts-migrate`.
   - `npm run ts-migrate:migrate`: Migrates JavaScript to TypeScript.
   - `npm run ts-migrate:reignore`: Re-ignores files for `ts-migrate`.
+- **Database**:
+  - `npm run db:backup`: Backs up the database.
+  - `npm run db:restore`: Restores the database.
+  - `npm run db:migrate:check`: Checks for database migration changes.
+- **Security**:
+  - `npm run security:audit`: Runs `npm audit` and a custom security scan.
+  - `npm run security:deps`: Runs `npm audit` with a moderate audit level.
+- **Data Pipeline & Scraping**:
+  - `npm run pipeline:validate`: Validates food truck data.
+  - `npm run pipeline:sync`: Syncs truck locations.
+  - `npm run pipeline:cleanup`: Cleans up stale data.
+  - `npm run scraper:run`: Runs the web scraper.
+  - `npm run scraper:validate`: Validates scraped data.
+  - `npm run scraper:schedule`: Schedules scraping jobs.
+- **Owner & Data Management**:
+  - `npm run owner:sync`: Syncs owner updates.
+  - `npm run owner:validate`: Validates owner data.
+  - `npm run data:merge`: Merges scraped and owner data.
+  - `npm run data:conflicts`: Resolves data conflicts.
+  - `npm run data:priority`: Applies data priority rules.
+- **GPS & Notifications**:
+  - `npm run gps:validate`: Validates GPS coordinates.
+  - `npm run gps:track`: Tracks location changes.
+  - `npm run notifications:owners`: Notifies owners.
+- **Billing & Verification**:
+  - `npm run billing:process`: Processes subscriptions.
+  - `npm run billing:trials`: Manages free trials.
+  - `npm run billing:notifications`: Sends billing notifications.
+  - `npm run verification:process`: Processes verification requests.
+  - `npm run verification:badge`: Updates verification badges.
+- **Analytics**:
+  - `npm run analytics:revenue`: Analyzes revenue metrics.
+  - `npm run analytics:conversion`: Tracks trial conversions.
+  - `npm run analytics:engagement`: Measures owner engagement.
+  - `npm run analytics:trucks`: Analyzes truck data.
+- **Onboarding & Feature Management**:
+  - `npm run onboard:uprooted`: Onboards a specific food truck.
+  - `npm run add:uprooted-truck`: Adds a specific food truck.
+  - `npm run add:uprooted-events`: Adds events for a specific food truck.
+  - `npm run features:unlock`: Unlocks premium features.
+  - `npm run features:restrict`: Restricts expired features.
+- **Marketing & Ads**:
+  - `npm run marketing:campaigns`: Runs marketing campaigns.
+  - `npm run marketing:retention`: Runs owner retention campaigns.
+  - `npm run ads:serve`: Serves contextual ads.
+  - `npm run ads:revenue`: Calculates ad revenue.
+- **Gemini & Fallback**:
+  - `npm run gemini:test`: Tests the Gemini connection.
+  - `npm run gemini:usage`: Checks Gemini usage.
+  - `npm run locations:verify`: Verifies locations.
+  - `npm run fallback:test`: Tests the Supabase fallback.
 
 ### Browser Debugging with browser-tools-mcp
 
