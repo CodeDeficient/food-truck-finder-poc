@@ -163,10 +163,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
         updateWhenZooming={false}
         // Better visual quality
         className={tileLayerProps.className}
-        // Apply dark filter directly as style
-        style={isDark ? {
-          filter: 'invert(1) hue-rotate(180deg) brightness(0.9) contrast(1.1)'
-        } : {}}
       />
       <MapViewUpdater
         center={selectedTruckLocation}
