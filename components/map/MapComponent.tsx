@@ -3,6 +3,7 @@
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
+import './Map.css'; // Enhanced map styling
 
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import type { LatLngExpression } from 'leaflet';
@@ -106,34 +107,32 @@ const MapComponent: React.FC<MapComponentProps> = ({
       ? [userLocation.lat, userLocation.lng]
       : defaultCenter;
 
-  // Choose tile layer based on theme - working dark theme without auth issues
+  // SIMPLE AND EFFECTIVE: Use the crisp OpenStreetMap for both modes
   const isDark = theme === 'dark';
-  const tileLayerProps = isDark
-    ? {
-        // Esri World Dark Gray - professional dark theme, no auth required
-        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-        // Add custom styling for modern dark mode
-        className: 'modern-dark-map-tiles'
-      }
-    : {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      };
+  
+  const tileLayerProps = {
+    // Use the crisp OpenStreetMap tiles that you like
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    className: isDark ? 'dark-inverted-map' : 'light-crisp-map'
+  };
 
   if (!isMounted) {
     return (
       <div
+        className={`map-loading rounded-lg shadow-md ${isDark ? 'dark' : ''}`}
         style={{
-          height: '100%',
+          height: '400px',
           width: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: isDark ? '#000' : '#f0f0f0',
         }}
       >
-        <p style={{ color: isDark ? '#fff' : '#000' }}>Loading map...</p>
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full border-2 border-current border-t-transparent animate-spin" />
+          <p style={{ color: isDark ? '#fff' : '#000' }}>Loading map...</p>
+        </div>
       </div>
     );
   }
@@ -143,12 +142,31 @@ const MapComponent: React.FC<MapComponentProps> = ({
       center={initialMapCenter}
       zoom={defaultZoom}
       scrollWheelZoom={true}
+      zoomControl={true}
+      doubleClickZoom={true}
+      dragging={true}
       style={{ height: '400px', width: '100%' }}
-      className="rounded-lg"
+      className="rounded-lg shadow-md"
+      // Enhanced performance settings
+      preferCanvas={false}
     >
       <TileLayer
         attribution={tileLayerProps.attribution}
         url={tileLayerProps.url}
+        maxZoom={19}
+        minZoom={1}
+        tileSize={256}
+        zoomOffset={0}
+        // Performance enhancements
+        keepBuffer={2}
+        updateWhenIdle={true}
+        updateWhenZooming={false}
+        // Better visual quality
+        className={tileLayerProps.className}
+        // Apply dark filter directly as style
+        style={isDark ? {
+          filter: 'invert(1) hue-rotate(180deg) brightness(0.9) contrast(1.1)'
+        } : {}}
       />
       <MapViewUpdater
         center={selectedTruckLocation}
