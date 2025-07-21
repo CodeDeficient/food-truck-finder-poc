@@ -254,16 +254,23 @@
       contrast(1.1);
   }
   
-  /* Modern Google Maps style dark theme */
-  .modern-dark-map-tiles {
-    /* Enhance the modern dark theme with better contrast */
+  /* Popular developer choice - CartoDB Dark Matter with minimal styling */
+  .popular-dark-theme {
+    /* Most developers prefer minimal filters - let the tiles speak for themselves */
     filter: 
-      brightness(0.95)       /* Keep it bright enough to see details */
-      contrast(1.1)          /* Subtle contrast boost */
-      saturate(1.2);         /* Enhanced colors for roads/water */
+      brightness(1.0)        /* No brightness change - tiles are already optimized */
+      contrast(1.05);        /* Tiny contrast boost for crispness */
     
-    /* Smooth transition when loading */
-    transition: filter 0.3s ease;
+    /* Smooth loading */
+    transition: opacity 0.2s ease;
+  }
+  
+  /* Alternative: Slight enhancement for those who want a bit more pop */
+  .popular-dark-enhanced {
+    filter: 
+      brightness(0.95)
+      contrast(1.1)
+      saturate(1.05);
   }
   
   /* Enhanced styling for dark mode map tiles */
