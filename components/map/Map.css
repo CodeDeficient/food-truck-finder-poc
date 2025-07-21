@@ -1,0 +1,262 @@
+/* Enhanced map styling for better visual quality and smoother rendering */
+
+/* ===== SIMPLE & EFFECTIVE MAP STYLES ===== */
+
+/* DEBUG: Test if classes are being applied */
+.light-crisp-map {
+  border: 2px solid red !important; /* TEMP DEBUG */
+}
+
+.dark-inverted-map {
+  border: 2px solid blue !important; /* TEMP DEBUG */
+  background: rgba(255, 0, 0, 0.1) !important; /* TEMP DEBUG */
+}
+
+/* Light mode - Crisp OpenStreetMap (no filters) */
+.light-crisp-map .leaflet-tile {
+  /* Keep the crisp, clear appearance you like */
+  opacity: 0;
+  animation: fadeInTile 0.3s ease-in-out forwards;
+}
+
+/* Dark mode - Clean inversion that maintains readability */
+.dark-inverted-map .leaflet-tile {
+  /* Perfect dark inversion with excellent street visibility */
+  filter: 
+    invert(1) 
+    hue-rotate(180deg) 
+    brightness(0.9) 
+    contrast(1.1) !important;
+  opacity: 0;
+  animation: fadeInTileDark 0.3s ease-in-out forwards;
+}
+
+/* Apply filter to the entire tile layer for dark mode */
+.dark-inverted-map {
+  filter: 
+    invert(1) 
+    hue-rotate(180deg) 
+    brightness(0.9) 
+    contrast(1.1) !important;
+}
+
+/* Make sure the filter applies to ALL tiles in dark mode */
+.dark-inverted-map img {
+  filter: 
+    invert(1) 
+    hue-rotate(180deg) 
+    brightness(0.9) 
+    contrast(1.1) !important;
+}
+
+/* Alternative approach - apply to tile pane */
+.dark-inverted-map .leaflet-tile-pane {
+  filter: 
+    invert(1) 
+    hue-rotate(180deg) 
+    brightness(0.9) 
+    contrast(1.1) !important;
+}
+
+/* Dark tile fade-in animation */
+@keyframes fadeInTileDark {
+  to {
+    opacity: 1;
+    filter: 
+      invert(1) 
+      hue-rotate(180deg) 
+      brightness(0.9) 
+      contrast(1.1) !important;
+  }
+}
+
+/* Improve tile loading transitions */
+.enhanced-light-map .leaflet-tile {
+  opacity: 0;
+  animation: fadeInTile 0.3s ease-in-out forwards;
+}
+
+.enhanced-dark-map .leaflet-tile {
+  opacity: 0;
+  animation: fadeInTile 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeInTile {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Smooth tile transitions and reduce grid visibility */
+.leaflet-tile-container {
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+.leaflet-layer {
+  will-change: transform;
+}
+
+/* Reduce tile borders/grid lines */
+.leaflet-tile {
+  border: none !important;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: optimize-contrast;
+}
+
+/* Improve map container smoothness */
+.leaflet-container {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+  outline-color: transparent;
+  transform: translateZ(0); /* Hardware acceleration */
+}
+
+/* Better zoom animation */
+.leaflet-zoom-animated {
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Smooth panning */
+.leaflet-pan-anim .leaflet-tile-container {
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Enhanced food truck markers */
+.food-truck-marker-icon {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: all 0.2s ease-in-out;
+}
+
+.food-truck-marker-icon:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.glow-green {
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.6)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.glow-red {
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Better popup styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-popup-content {
+  margin: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Zoom control styling */
+.leaflet-control-zoom {
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-control-zoom a {
+  border-radius: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f0f9ff;
+  color: #0369a1;
+}
+
+/* Attribution styling */
+.leaflet-control-attribution {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+/* Dark theme adjustments */
+.dark .leaflet-control-attribution {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #e5e7eb;
+}
+
+.dark .leaflet-control-attribution a {
+  color: #93c5fd;
+}
+
+.dark .leaflet-popup-content-wrapper {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark .leaflet-popup-tip {
+  background-color: #1f2937;
+}
+
+.dark .leaflet-control-zoom a {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+.dark .leaflet-control-zoom a:hover {
+  background-color: #4b5563;
+  color: #60a5fa;
+}
+
+/* Reduce visual noise during loading */
+.leaflet-tile-loading {
+  opacity: 0.5;
+  filter: blur(1px);
+}
+
+/* Better mobile responsiveness */
+@media (max-width: 768px) {
+  .leaflet-container {
+    touch-action: pan-x pan-y;
+  }
+  
+  .food-truck-marker-icon {
+    transform: scale(0.9);
+  }
+  
+  .leaflet-control-zoom {
+    transform: scale(1.1);
+  }
+}
+
+/* Performance optimizations */
+.leaflet-tile-pane {
+  transform: translate3d(0, 0, 0);
+}
+
+.leaflet-overlay-pane {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Smooth loading skeleton */
+.map-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.dark .map-loading {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200% 100%;
+}
