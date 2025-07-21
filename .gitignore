@@ -86,3 +86,4 @@ components/map/DebugOverlay.tsx
 errors/mapcontainer-already-initialized.md
 test-lint.ts
 /errors/
+.env*.local
