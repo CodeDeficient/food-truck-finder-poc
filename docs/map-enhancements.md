@@ -1,4 +1,4 @@
-# Map Enhancements for Street and City Visibility
+# Map Enhancements for Street and City Visibility (revisit for future enhancements)
 
 ## Overview
 Enhanced the map component to provide much better street names, city labels, and highway visibility for the food truck finder application.
