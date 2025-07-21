@@ -368,34 +368,6 @@ The `package.json` includes a variety of scripts to streamline development, test
   - `npm run locations:verify`: Verifies locations.
   - `npm run fallback:test`: Tests the Supabase fallback.
 
-### Browser Debugging with browser-tools-mcp
-
-This project uses [browser-tools-mcp](https://github.com/AgentDeskAI/browser-tools-mcp) for local browser-based debugging and inspection. To use:
-
-1.  Open the Command Palette in VS Code (`Ctrl+Shift+P`).
-2.  Search for and run `Browser Tools: Open Browser`.
-3.  Use the browser window to interact with your app at `http://localhost:3000` (or your dev server URL).
-4.  Use the browser-tools-mcp sidebar for DOM inspection, console, network, and accessibility audits.
-
-See the [browser-tools-mcp documentation](https://github.com/AgentDeskAI/browser-tools-mcp) for advanced features and troubleshooting.
-
-### Pre-commit Hooks with Husky and lint-staged
-
-This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks and [lint-staged](https://github.com/okonet/lint-staged) to run linters on staged files, ensuring code quality and consistency before commits.
-
-**How it works:**
-
-- When you attempt to commit changes, Husky triggers the pre-commit hook.
-- The pre-commit hook executes `pnpm exec lint-staged`.
-- `lint-staged` then runs configured linters (`eslint --fix` and `prettier --write`) only on the files you've staged for commit.
-- This process helps catch errors and enforce formatting standards automatically before code is added to the repository.
-
-**Setup:**
-
-1.  Husky and `lint-staged` are installed as dev dependencies.
-2.  Husky is initialized (via `pnpm husky init` or automatically by the `prepare` script in `package.json`).
-3.  The `.husky/pre-commit` hook is configured to run `pnpm exec lint-staged`.
-4.  The `lint-staged` configuration in `package.json` specifies which commands to run on which file types.
 
 ## 📚 **Documentation**
 
