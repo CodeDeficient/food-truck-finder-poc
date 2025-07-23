@@ -109,8 +109,9 @@ function LoginDivider() {
  *   - Uses `Card`, `LoginHeader`, `EmailLoginForm`, `LoginDivider`, `GoogleLoginButton`, and `LoginFooter` for structuring the page.
  */
 export default function LoginPage() {
+    var _a;
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get('redirectedFrom') ?? '/admin';
+    const redirectTo = (_a = searchParams.get('redirectedFrom')) !== null && _a !== void 0 ? _a : '/admin';
     const { handleEmailLogin, handleGoogleLogin, loading, error, email, setEmail, password, setPassword, } = useAuthHandlers(redirectTo);
     return (<div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
       <Card className="w-full max-w-md">

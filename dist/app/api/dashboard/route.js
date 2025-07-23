@@ -61,16 +61,19 @@ async function getDashboardOverview() {
         const qualityStats = await FoodTruckService.getDataQualityStats();
         return {
             totalTrucks: total,
-            recentTrucks: trucks.slice(0, 5).map((truck) => ({
-                id: truck.id,
-                name: truck.name,
-                location: truck.current_location ?? { address: 'Unknown location' },
-                operating_hours: truck.operating_hours ?? {},
-                menu: truck.menu ?? [],
-                contact: truck.contact_info ?? {},
-                last_updated: truck.updated_at,
-                data_quality_score: truck.data_quality_score ?? 0,
-            })),
+            recentTrucks: trucks.slice(0, 5).map((truck) => {
+                var _a, _b, _c, _d, _e;
+                return ({
+                    id: truck.id,
+                    name: truck.name,
+                    location: (_a = truck.current_location) !== null && _a !== void 0 ? _a : { address: 'Unknown location' },
+                    operating_hours: (_b = truck.operating_hours) !== null && _b !== void 0 ? _b : {},
+                    menu: (_c = truck.menu) !== null && _c !== void 0 ? _c : [],
+                    contact: (_d = truck.contact_info) !== null && _d !== void 0 ? _d : {},
+                    last_updated: truck.updated_at,
+                    data_quality_score: (_e = truck.data_quality_score) !== null && _e !== void 0 ? _e : 0,
+                });
+            }),
             averageQuality: qualityStats.avg_quality_score,
             verifiedTrucks: qualityStats.verified_count,
             pendingTrucks: qualityStats.pending_count,
@@ -122,7 +125,7 @@ async function getProcessingStatus() {
             processing: processingQueue.length,
             completedToday: completedQueue.filter((item) => item.processed_at != undefined && item.processed_at > yesterday).length,
             failedToday: failedQueue.filter((item) => item.created_at > yesterday).length,
-            totalTokensUsed: completedQueue.reduce((sum, item) => sum + (item.gemini_tokens_used ?? 0), 0),
+            totalTokensUsed: completedQueue.reduce((sum, item) => { var _a; return sum + ((_a = item.gemini_tokens_used) !== null && _a !== void 0 ? _a : 0); }, 0),
         };
     }
     catch (error) {
@@ -141,35 +144,36 @@ async function getDataQualityStatus() {
     }
 }
 async function getAPIUsageStatus() {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     try {
         const [geminiUsage, firecrawlUsage, allUsage] = await Promise.all([
             APIUsageService.getTodayUsage('gemini'),
             APIUsageService.getTodayUsage('firecrawl'),
             APIUsageService.getAllUsageStats(),
         ]);
-        const geminiLimits = { requests: 1500, tokens: 32_000 };
+        const geminiLimits = { requests: 1500, tokens: 32000 };
         const firecrawlLimits = { requests: 500, tokens: 0 };
         return {
             gemini: {
                 requests: {
-                    used: geminiUsage?.requests_count ?? 0,
+                    used: (_a = geminiUsage === null || geminiUsage === void 0 ? void 0 : geminiUsage.requests_count) !== null && _a !== void 0 ? _a : 0,
                     limit: geminiLimits.requests,
-                    remaining: geminiLimits.requests - (geminiUsage?.requests_count ?? 0),
-                    percentage: ((geminiUsage?.requests_count ?? 0) / geminiLimits.requests) * 100,
+                    remaining: geminiLimits.requests - ((_b = geminiUsage === null || geminiUsage === void 0 ? void 0 : geminiUsage.requests_count) !== null && _b !== void 0 ? _b : 0),
+                    percentage: (((_c = geminiUsage === null || geminiUsage === void 0 ? void 0 : geminiUsage.requests_count) !== null && _c !== void 0 ? _c : 0) / geminiLimits.requests) * 100,
                 },
                 tokens: {
-                    used: geminiUsage?.tokens_used ?? 0,
+                    used: (_d = geminiUsage === null || geminiUsage === void 0 ? void 0 : geminiUsage.tokens_used) !== null && _d !== void 0 ? _d : 0,
                     limit: geminiLimits.tokens,
-                    remaining: geminiLimits.tokens - (geminiUsage?.tokens_used ?? 0),
-                    percentage: ((geminiUsage?.tokens_used ?? 0) / geminiLimits.tokens) * 100,
+                    remaining: geminiLimits.tokens - ((_e = geminiUsage === null || geminiUsage === void 0 ? void 0 : geminiUsage.tokens_used) !== null && _e !== void 0 ? _e : 0),
+                    percentage: (((_f = geminiUsage === null || geminiUsage === void 0 ? void 0 : geminiUsage.tokens_used) !== null && _f !== void 0 ? _f : 0) / geminiLimits.tokens) * 100,
                 },
             },
             firecrawl: {
                 requests: {
-                    used: firecrawlUsage?.requests_count ?? 0,
+                    used: (_g = firecrawlUsage === null || firecrawlUsage === void 0 ? void 0 : firecrawlUsage.requests_count) !== null && _g !== void 0 ? _g : 0,
                     limit: firecrawlLimits.requests,
-                    remaining: firecrawlLimits.requests - (firecrawlUsage?.requests_count ?? 0),
-                    percentage: ((firecrawlUsage?.requests_count ?? 0) / firecrawlLimits.requests) * 100,
+                    remaining: firecrawlLimits.requests - ((_h = firecrawlUsage === null || firecrawlUsage === void 0 ? void 0 : firecrawlUsage.requests_count) !== null && _h !== void 0 ? _h : 0),
+                    percentage: (((_j = firecrawlUsage === null || firecrawlUsage === void 0 ? void 0 : firecrawlUsage.requests_count) !== null && _j !== void 0 ? _j : 0) / firecrawlLimits.requests) * 100,
                 },
             },
             history: allUsage.slice(0, 7),
@@ -226,7 +230,7 @@ function getDefaultUsage() {
     return {
         gemini: {
             requests: { used: 0, limit: 1500, remaining: 1500, percentage: 0 },
-            tokens: { used: 0, limit: 32_000, remaining: 32_000, percentage: 0 },
+            tokens: { used: 0, limit: 32000, remaining: 32000, percentage: 0 },
         },
         firecrawl: {
             requests: { used: 0, limit: 500, remaining: 500, percentage: 0 },

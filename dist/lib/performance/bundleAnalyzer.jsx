@@ -110,7 +110,6 @@ export const OptimizedImports = {
  * Performance monitoring for bundle loading
  */
 export class BundlePerformanceMonitor {
-    static loadTimes = new Map();
     /**
      * Track chunk load time
      */
@@ -140,6 +139,7 @@ export class BundlePerformanceMonitor {
         return times.length > 0 ? times.reduce((sum, time) => sum + time, 0) / times.length : 0;
     }
 }
+BundlePerformanceMonitor.loadTimes = new Map();
 /**
  * Code splitting helper for React components
  */

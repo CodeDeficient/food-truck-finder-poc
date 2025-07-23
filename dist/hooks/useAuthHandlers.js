@@ -53,7 +53,7 @@ export function useAuthHandlers(redirectTo) {
                 if (profileError) {
                     throw profileError;
                 }
-                if (profile?.role === 'admin') {
+                if ((profile === null || profile === void 0 ? void 0 : profile.role) === 'admin') {
                     router.push(redirectTo);
                 }
                 else {
