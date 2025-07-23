@@ -12,7 +12,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 *   - The improvement rate is calculated approximately as a percentage of estimated improvements out of a sample of 10 trucks.
 */
 export function CleanupPreview({ previewData }) {
-    var _a, _b;
     if (previewData === undefined) {
         return;
     }
@@ -37,7 +36,7 @@ export function CleanupPreview({ previewData }) {
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">
-              {(_b = (_a = previewData.operations) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0}
+              {previewData.operations?.length ?? 0}
             </div>
             <div className="text-sm text-muted-foreground">Operations Ready</div>
           </div>

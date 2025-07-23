@@ -11,10 +11,9 @@ import { ContactSection } from '@/components/ui/ContactSection';
 import { TruckDetailsModal } from '@/components/TruckDetailsModal';
 import { useState } from 'react';
 export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, isFavorite = false, onToggleFavorite }) {
-    var _a;
     const [isModalOpen, setIsModalOpen] = useState(false);
     // Defensive checks for required data
-    if (!(truck === null || truck === void 0 ? void 0 : truck.id)) {
+    if (!truck?.id) {
         return (<Card className="hover:shadow-md transition-shadow cursor-pointer dark:bg-slate-800 dark:border-slate-700">
         <CardContent className="p-4">
           <p className="text-muted-foreground">Invalid truck data</p>
@@ -24,7 +23,7 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, is
     const { popularItems, priceRange, todayHours } = useTruckCard(truck);
     const { name = 'Unnamed Truck', social_media = {}, contact_info = {}, } = truck;
     // Safely extract contact info with fallbacks
-    const { phone = '', email = '', website = '' } = contact_info !== null && contact_info !== void 0 ? contact_info : {};
+    const { phone = '', email = '', website = '' } = contact_info ?? {};
     const handleViewDetails = (e) => {
         e.stopPropagation();
         setIsModalOpen(true);
@@ -43,7 +42,7 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, is
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <CardTitle className="text-lg dark:text-gray-100">{truck.name}</CardTitle>
-              {((_a = truck.current_location) === null || _a === void 0 ? void 0 : _a.address) != undefined && (<CardDescription className="flex items-center mt-1 dark:text-gray-400">
+              {truck.current_location?.address != undefined && (<CardDescription className="flex items-center mt-1 dark:text-gray-400">
                   <MapPin className="size-4 mr-1"/>
                   {truck.current_location.address}
                 </CardDescription>)}
@@ -72,13 +71,10 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, is
                 </div>)}
             </>)}
 
-          {popularItems.length > 0 && (<MenuSection items={popularItems.map(item => {
-                var _a;
-                return ({
-                    name: item.name,
-                    price: formatPrice((_a = item.price) !== null && _a !== void 0 ? _a : 0),
-                });
-            })}/>)}
+          {popularItems.length > 0 && (<MenuSection items={popularItems.map(item => ({
+                name: item.name,
+                price: formatPrice(item.price ?? 0),
+            }))}/>)}
 
           {Object.keys(social_media).length > 0 && (typeof social_media === 'object') && (<SocialMediaSection socialMedia={social_media}/>)}
 

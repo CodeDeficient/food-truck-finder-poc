@@ -19,12 +19,10 @@ import { operationConfig } from './OperationSelector';
 export function CleanupOperationDetails({ operations }) {
     return (<div className="space-y-3">
       <h4 className="font-semibold">Operation Details</h4>
-      {operations.map((operation, index) => {
-            var _a;
-            return (<div key={index} className="border rounded-lg p-3">
+      {operations.map((operation, index) => (<div key={index} className="border rounded-lg p-3">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              {(_a = operationConfig[operation.type]) === null || _a === void 0 ? void 0 : _a.icon}
+              {operationConfig[operation.type]?.icon}
               <span className="font-medium">{operation.description}</span>
             </div>
             <Badge variant={operation.errorCount > 0 ? 'destructive' : 'default'}>
@@ -44,7 +42,6 @@ export function CleanupOperationDetails({ operations }) {
                 </div>
               </AlertDescription>
             </Alert>)}
-        </div>);
-        })}
+        </div>))}
     </div>);
 }

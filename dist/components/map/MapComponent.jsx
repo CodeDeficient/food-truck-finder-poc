@@ -12,7 +12,7 @@ const MapViewUpdater = ({ center, zoom, }) => {
     const map = useMap();
     useEffect(() => {
         if (center) {
-            map.flyTo(center, zoom !== null && zoom !== void 0 ? zoom : map.getZoom());
+            map.flyTo(center, zoom ?? map.getZoom());
         }
     }, [center, zoom, map]);
     return <></>;
@@ -49,8 +49,14 @@ const MapComponent = ({ trucks, userLocation, defaultCenter, defaultZoom = 10, o
             // Ensure truck has valid coordinates, use fallback if needed
             const lat = truck.current_location.lat || CHARLESTON_FALLBACK.lat;
             const lng = truck.current_location.lng || CHARLESTON_FALLBACK.lng;
-            return Object.assign(Object.assign({}, truck), { current_location: Object.assign(Object.assign({}, truck.current_location), { lat,
-                    lng }) });
+            return {
+                ...truck,
+                current_location: {
+                    ...truck.current_location,
+                    lat,
+                    lng,
+                },
+            };
         }).filter((truck) => truck !== null);
         console.log('🎯 Processed trucks for map:', processedTrucks.length);
         setTrucksWithCoords(processedTrucks);

@@ -304,7 +304,7 @@ function useDashboardData() {
         void fetchDashboardData();
         const interval = setInterval(() => {
             void fetchDashboardData();
-        }, 30000);
+        }, 30_000);
         return () => clearInterval(interval);
     }, []);
     return { cronJobs, metrics, isLoading, error, fetchDashboardData, triggerManualScrape };
@@ -336,13 +336,12 @@ function getStatusIcon(status) {
     }
 }
 function getStatusBadge(status) {
-    var _a;
     const variants = {
         running: 'default',
         idle: 'secondary',
         error: 'destructive',
     };
-    return <Badge variant={(_a = variants[status]) !== null && _a !== void 0 ? _a : 'secondary'}>{status}</Badge>;
+    return <Badge variant={variants[status] ?? 'secondary'}>{status}</Badge>;
 }
 /**
  * Represents a dashboard for managing and monitoring web scraping tasks.

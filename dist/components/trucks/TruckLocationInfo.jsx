@@ -14,7 +14,6 @@ import { MapPin } from 'lucide-react';
  *   - Adapts text and background colors based on dark mode settings.
  */
 export function TruckLocationInfo({ truck }) {
-    var _a, _b, _c;
     return (<Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-gray-100">
@@ -24,12 +23,12 @@ export function TruckLocationInfo({ truck }) {
         <CardDescription className="dark:text-gray-400">Current location</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {((_a = truck.current_location) === null || _a === void 0 ? void 0 : _a.address) == undefined ? (<p className="text-gray-400 text-sm">No address available</p>) : (<div>
+        {truck.current_location?.address == undefined ? (<p className="text-gray-400 text-sm">No address available</p>) : (<div>
             <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Address</label>
             <p className="text-gray-900 dark:text-gray-200">{truck.current_location.address}</p>
           </div>)}
 
-        {((_b = truck.current_location) === null || _b === void 0 ? void 0 : _b.lat) != undefined && ((_c = truck.current_location) === null || _c === void 0 ? void 0 : _c.lng) != undefined && (<div>
+        {truck.current_location?.lat != undefined && truck.current_location?.lng != undefined && (<div>
             <label className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Coordinates
             </label>
