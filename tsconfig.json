@@ -43,8 +43,6 @@
     "lib/**/*.tsx",
     "types/**/*.ts",
     "tailwind.config.ts",
-    "postcss.config.mjs",
-    "next.config.mjs",
     ".next/types/**/*.ts"
   ],
   "exclude": [
