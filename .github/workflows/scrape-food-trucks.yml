@@ -34,7 +34,7 @@ jobs:
       - name: Prepare Action
         run: |
           echo "Preparing GitHub Action environment..."
-          chmod +x .github/actions/scrape/github-action-scraper-simple.js
+          chmod +x .github/actions/scrape/github-action-scraper.js
         
       - name: Run Food Truck Scraping Action
         uses: ./.github/actions/scrape
