@@ -37,9 +37,7 @@ jobs:
           chmod +x .github/actions/scrape/github-action-scraper.js
         
       - name: Run Food Truck Scraping Action
-        uses: ./.github/actions/scrape
-        with:
-          limit: ${{ github.event.inputs.limit || '10' }}
+        run: node ./.github/actions/scrape/github-action-scraper.js
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
