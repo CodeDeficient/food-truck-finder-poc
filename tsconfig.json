@@ -10,7 +10,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
+    "outDir": "./dist",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -43,9 +43,6 @@
     "lib/**/*.ts",
     "lib/**/*.tsx",
     "types/**/*.ts",
-    "tailwind.config.ts",
-    "postcss.config.mjs",
-    "next.config.mjs",
     ".next/types/**/*.ts"
   ],
   "exclude": [
