@@ -33,7 +33,7 @@ async function main() {
   try {
     // Step 1: Create new jobs for URLs that need scraping
     log('\n--- Step 1: Creating scraping jobs ---');
-    const { autoScraper } = await import('../lib/autoScraper.js');
+    const { autoScraper } = await import('../dist/lib/autoScraper.js');
     const createResult = await autoScraper.runAutoScraping();
     log(`Created ${createResult.newTrucksFound} new jobs, ${createResult.trucksProcessed} total processed`);
 
