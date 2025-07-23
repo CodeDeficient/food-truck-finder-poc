@@ -1,15 +1,11 @@
 {
-  "extends": "./tsconfig.lib.json",
+  "extends": "./tsconfig.node.json",
   "compilerOptions": {
-    "rootDir": "src/actions",
     "outDir": "./.github/actions/scrape/dist",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./lib/*"]
+      "@/lib/*": ["./lib/*"],
+      "@/supabase/*": ["./lib/supabase/*"]
     }
   },
-  "include": [
-    "./src/actions/**/*.ts",
-    "./src/actions/**/*.tsx"
-  ]
+  "include": ["src/actions/**/*.ts", "src/actions/**/*.tsx"]
 }

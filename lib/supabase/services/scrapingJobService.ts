@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../client';
+import { supabase, supabaseAdmin } from '../client.js';
 import type { ScrapingJob } from '../types';
 import { type PostgrestResponse, type PostgrestSingleResponse } from '@supabase/supabase-js';
 

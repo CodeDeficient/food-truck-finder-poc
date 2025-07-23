@@ -122,21 +122,7 @@ export function checkPerformanceBudget(analysis: Partial<BundleAnalysis>): {
 /**
  * Dynamic import utilities for code splitting
  */
-export const DynamicImports = {
-  // Admin dashboard components
-  AdminDashboard: () => import('@/app/admin/page'),
-  FoodTruckManagement: () => import('@/app/admin/food-trucks/page'),
-  Analytics: () => import('@/app/admin/analytics/page'),
 
-  // Chart components (heavy dependencies)
-  Charts: () => import('recharts'),
-
-  // Authentication components
-  LoginPage: () => import('@/app/login/page'),
-
-  // Map components - commented out until component exists
-  // MapDisplay: () => import('@/components/MapDisplay'),
-};
 
 /**
  * Optimized imports for common libraries

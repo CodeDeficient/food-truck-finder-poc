@@ -10,8 +10,8 @@
  */
 
 import { parseArgs } from 'node:util';
-import { processScrapingJob } from './lib/pipeline/scrapingProcessor.js';
-import { ScrapingJobService } from './lib/supabase/services/scrapingJobService.js';
+import { processScrapingJob } from '../../lib/pipeline/scrapingProcessor.js';
+import { ScrapingJobService } from '../../lib/supabase/services/scrapingJobService.js';
 
 // Parse command line arguments
 const options = {
