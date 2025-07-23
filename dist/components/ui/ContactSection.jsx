@@ -16,11 +16,11 @@ export function ContactSection({ contactInfo, verificationStatus }) {
     return (<div>
       <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Contact</h4>
       <div className="space-y-1 dark:text-gray-300">
-        {contactInfo?.phone !== undefined && (<a href={`tel:${contactInfo.phone}`} className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400">
+        {(contactInfo === null || contactInfo === void 0 ? void 0 : contactInfo.phone) !== undefined && (<a href={`tel:${contactInfo.phone}`} className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400">
             <Phone className="size-3 mr-1"/>
             <span className="truncate">{contactInfo.phone}</span>
           </a>)}
-        {contactInfo?.website !== undefined && (<a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400">
+        {(contactInfo === null || contactInfo === void 0 ? void 0 : contactInfo.website) !== undefined && (<a href={contactInfo.website} target="_blank" rel="noopener noreferrer" className="flex items-center text-sm hover:text-blue-600 dark:hover:text-blue-400">
             <Globe className="size-3 mr-1"/>
             <span className="truncate">Website</span>
           </a>)}

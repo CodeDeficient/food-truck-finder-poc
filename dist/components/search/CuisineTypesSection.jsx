@@ -19,10 +19,7 @@ export function CuisineTypesSection({ filters, setFilters, cuisineTypes, }) {
     return (<div>
       <label className="text-sm font-medium mb-2 block dark:text-gray-100">Cuisine Type</label>
       <div className="flex flex-wrap gap-2">
-        {cuisineTypes.map((cuisine) => (<Badge key={cuisine} variant={filters.cuisine === cuisine ? 'default' : 'outline'} className="cursor-pointer dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700" onClick={() => setFilters({
-                ...filters,
-                cuisine: filters.cuisine === cuisine ? '' : cuisine,
-            })}>
+        {cuisineTypes.map((cuisine) => (<Badge key={cuisine} variant={filters.cuisine === cuisine ? 'default' : 'outline'} className="cursor-pointer dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700" onClick={() => setFilters(Object.assign(Object.assign({}, filters), { cuisine: filters.cuisine === cuisine ? '' : cuisine }))}>
             {cuisine}
           </Badge>))}
       </div>

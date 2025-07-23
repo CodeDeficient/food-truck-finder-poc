@@ -23,6 +23,7 @@ import { TruckNotFound } from '@/components/admin/food-trucks/detail/TruckNotFou
 *   - Returns a fallback component if the truck data is not found.
 */
 export default async function FoodTruckDetailPage({ params }) {
+    var _a, _b, _c;
     const resolvedParams = await params;
     const truckResult = await FoodTruckService.getTruckById(resolvedParams.id);
     if (!isFoodTruck(truckResult)) {
@@ -35,7 +36,7 @@ export default async function FoodTruckDetailPage({ params }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BasicInfoCard truck={truck}/>
-        <ContactInfoCard phone={truck.contact_info?.phone} email={truck.contact_info?.email} website={truck.contact_info?.website}/>
+        <ContactInfoCard phone={(_a = truck.contact_info) === null || _a === void 0 ? void 0 : _a.phone} email={(_b = truck.contact_info) === null || _b === void 0 ? void 0 : _b.email} website={(_c = truck.contact_info) === null || _c === void 0 ? void 0 : _c.website}/>
         <LocationInfoCard truck={truck}/>
         <OperatingHoursCard truck={truck}/>
         <RatingsReviewsCard truck={truck}/>
