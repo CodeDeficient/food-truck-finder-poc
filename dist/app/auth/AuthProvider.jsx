@@ -23,9 +23,8 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         // Get initial session
         const getSession = async () => {
-            var _a;
             const { data: { session }, } = await supabase.auth.getSession();
-            setUser((_a = session === null || session === void 0 ? void 0 : session.user) !== null && _a !== void 0 ? _a : undefined);
+            setUser(session?.user ?? undefined);
             setLoading(false);
         };
         void getSession().catch((error) => {
@@ -33,8 +32,7 @@ export function AuthProvider({ children }) {
         });
         // Listen for auth changes
         const { data: { subscription }, } = supabase.auth.onAuthStateChange((_event, session) => {
-            var _a;
-            setUser((_a = session === null || session === void 0 ? void 0 : session.user) !== null && _a !== void 0 ? _a : undefined);
+            setUser(session?.user ?? undefined);
             setLoading(false);
         });
         return () => subscription.unsubscribe();

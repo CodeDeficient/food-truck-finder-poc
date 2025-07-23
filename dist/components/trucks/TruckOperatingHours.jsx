@@ -15,14 +15,13 @@ import { Clock } from 'lucide-react';
  *   - 'N/A' is shown if opening or closing time is not defined.
  */
 function DaySchedule({ day, dayData }) {
-    var _a, _b;
     const dayName = day.charAt(0).toUpperCase() + day.slice(1);
     return (<div className="flex justify-between items-center">
       <span className="text-sm font-medium dark:text-gray-200">{dayName}</span>
       <span className="text-sm text-gray-600 dark:text-gray-400">
-        {(dayData === null || dayData === void 0 ? void 0 : dayData.closed) === true
+        {dayData?.closed === true
             ? 'Closed'
-            : `${(_a = dayData === null || dayData === void 0 ? void 0 : dayData.open) !== null && _a !== void 0 ? _a : 'N/A'} - ${(_b = dayData === null || dayData === void 0 ? void 0 : dayData.close) !== null && _b !== void 0 ? _b : 'N/A'}`}
+            : `${dayData?.open ?? 'N/A'} - ${dayData?.close ?? 'N/A'}`}
       </span>
     </div>);
 }
@@ -52,8 +51,7 @@ export function TruckOperatingHours({ truck }) {
       <CardContent>
         {hasOperatingHours ? (<div className="space-y-2">
             {daysOfWeek.map((day) => {
-                var _a;
-                const dayData = (_a = truck.operating_hours) === null || _a === void 0 ? void 0 : _a[day];
+                const dayData = truck.operating_hours?.[day];
                 return <DaySchedule key={day} day={day} dayData={dayData}/>;
             })}
           </div>) : (<p className="text-gray-400 text-sm">Operating hours not available</p>)}

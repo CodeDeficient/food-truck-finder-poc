@@ -18,12 +18,11 @@ import { TruckCard } from '@/components/TruckCard';
  *   - Applies varying styling based on dark/light theme settings in the interface.
  */
 export function TruckAccordionItem({ truck, selectedTruckId: _selectedTruckId, setSelectedTruckId, isOpen, userLocation, }) {
-    var _a;
     return (<AccordionItem value={truck.id} key={truck.id}>
       <AccordionTrigger className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md">
         <div className="flex-1 text-left">
           <h4 className="font-medium dark:text-gray-100">{truck.name}</h4>
-          {Boolean((_a = truck.current_location) === null || _a === void 0 ? void 0 : _a.address) && (<p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">
+          {Boolean(truck.current_location?.address) && (<p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">
               {truck.current_location.address}
             </p>)}
         </div>

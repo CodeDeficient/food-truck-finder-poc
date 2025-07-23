@@ -35,5 +35,5 @@ export function RealtimeStatusIndicator() {
         connectionError,
         latestMetrics,
     });
-    return (<RealtimeStatusDisplay isConnected={isConnected} isConnecting={isConnecting} connectionError={connectionError} lastEventTime={lastEventTime} connect={connect} disconnect={disconnect} systemMetrics={systemMetrics} scrapingJobs={latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.scrapingJobs} alerts={alerts} showDetails={showDetails} onToggleDetails={() => setShowDetails(!showDetails)} onAcknowledgeAlert={acknowledgeAlert} recentEventsCount={recentEvents.length} onClearEvents={clearEvents}/>);
+    return (<RealtimeStatusDisplay isConnected={isConnected} isConnecting={isConnecting} connectionError={connectionError} lastEventTime={lastEventTime} connect={connect} disconnect={disconnect} systemMetrics={systemMetrics} scrapingJobs={latestMetrics?.scrapingJobs} alerts={alerts} showDetails={showDetails} onToggleDetails={() => setShowDetails(!showDetails)} onAcknowledgeAlert={acknowledgeAlert} recentEventsCount={recentEvents.length} onClearEvents={clearEvents}/>);
 }

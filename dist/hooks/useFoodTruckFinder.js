@@ -27,11 +27,8 @@ export const useFoodTruckFinder = () => {
     };
     const filteredTrucks = trucks
         .filter((truck) => isViableTruck(truck)) // Only show trucks with minimum viable data
-        .filter((truck) => {
-        var _a;
-        return truck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ((_a = truck.description) !== null && _a !== void 0 ? _a : '').toLowerCase().includes(searchTerm.toLowerCase());
-    });
+        .filter((truck) => truck.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (truck.description ?? '').toLowerCase().includes(searchTerm.toLowerCase()));
     return {
         trucks,
         loading,

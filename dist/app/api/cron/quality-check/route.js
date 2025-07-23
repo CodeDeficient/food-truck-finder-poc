@@ -28,7 +28,10 @@ function logQualityCheckCompletion(qualityResults) {
     logActivity({
         type: 'cron_job',
         action: 'quality_check_completed',
-        details: Object.assign({ logTimestamp: new Date().toISOString() }, qualityResults),
+        details: {
+            logTimestamp: new Date().toISOString(),
+            ...qualityResults,
+        },
     });
     console.info('Data quality check completed successfully');
 }
@@ -55,7 +58,10 @@ export async function POST(request) {
         return NextResponse.json({
             success: true,
             message: 'Quality check completed successfully',
-            data: Object.assign(Object.assign({}, qualityResults), { timestamp: new Date().toISOString() }),
+            data: {
+                ...qualityResults,
+                timestamp: new Date().toISOString(),
+            },
         });
     }
     catch (error) {
@@ -68,7 +74,6 @@ export async function POST(request) {
     }
 }
 function assessTrucksQuality(trucks) {
-    var _a;
     let trucksWithMissingData = 0;
     let lowQualityTrucks = 0;
     let totalQualityScore = 0;
@@ -85,7 +90,7 @@ function assessTrucksQuality(trucks) {
         if (assessment.score < 0.6) {
             lowQualityTrucks++;
         }
-        if (((_a = truck.current_location) === null || _a === void 0 ? void 0 : _a.timestamp) != undefined) {
+        if (truck.current_location?.timestamp != undefined) {
             const locationAge = Date.now() - new Date(truck.current_location.timestamp).getTime();
             const daysSinceUpdate = locationAge / (1000 * 60 * 60 * 24);
             if (daysSinceUpdate > 7) {

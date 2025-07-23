@@ -41,14 +41,14 @@ export async function GET(request) {
         if (jobId !== null && jobId !== '') {
             // Get specific job status
             const jobs = await ScrapingJobService.getJobsByStatus('all');
-            const job = jobs === null || jobs === void 0 ? void 0 : jobs.find((j) => j.id === jobId);
+            const job = jobs?.find((j) => j.id === jobId);
             if (!job) {
                 return NextResponse.json({ error: 'Job not found' }, { status: 404 });
             }
             return NextResponse.json({ job });
         }
         // Get jobs by status
-        const jobs = await ScrapingJobService.getJobsByStatus(status !== null && status !== void 0 ? status : 'pending');
+        const jobs = await ScrapingJobService.getJobsByStatus(status ?? 'pending');
         return NextResponse.json({
             jobs,
             summary: {
