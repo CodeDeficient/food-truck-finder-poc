@@ -31,6 +31,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+      - name: List compiled files
+        run: |
+          ls -R dist
+          ls -R .github/actions/scrape
       - name: Prepare Action
         run: |
           echo "Preparing GitHub Action environment..."
