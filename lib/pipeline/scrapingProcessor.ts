@@ -1,6 +1,6 @@
-import { firecrawl } from '@/lib/firecrawl';
-import { gemini } from '@/lib/gemini';
-import { ScrapingJobService } from '@/lib/supabase';
+import { GeminiApiClient } from '../gemini/geminiApiClient';
+import { FirecrawlApiClient } from '../api/firecrawl/handlers';
+import { ScrapingJobService } from '../supabase/services/scrapingJobService';
 import type { ExtractedFoodTruckDetails } from '../types';
 import {
   validateInputAndPrepare,
@@ -80,7 +80,7 @@ async function handleGeminiExtraction(markdown: string, sourceUrl: string, jobId
 async function handleJobFailure(jobId: string, error: string) {
   console.error(`Job ${jobId} failed:`, error);
   try {
-    const currentJob = await ScrapingJobService.getJobsByStatus('all').then((jobs) =>
+    const currentJob = await ScrapingJobService.getJobsByStatus('all').then((jobs: { id: string; status: string }[]) =>
       jobs.find((j) => j.id === jobId),
     );
     if (currentJob && currentJob.status !== 'failed') {

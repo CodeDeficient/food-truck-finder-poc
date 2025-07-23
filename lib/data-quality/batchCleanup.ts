@@ -3,35 +3,13 @@
  * Implements automated data quality improvements and cleanup operations
  */
 
-import { FoodTruckService, type FoodTruck, DataQualityService } from '@/lib/supabase';
+import { FoodTruckService, DataQualityService } from '@/lib/supabase';
+import type { FoodTruck, CleanupOperation, CleanupOperationType, BatchCleanupResult } from '@/lib/types';
 import { DuplicatePreventionService } from './duplicatePrevention';
 import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils';
 
-export interface CleanupOperation {
-  type:
-    | 'normalize_phone'
-    | 'fix_coordinates'
-    | 'remove_placeholders'
-    | 'update_quality_scores'
-    | 'merge_duplicates';
-  description: string;
-  affectedCount: number;
-  successCount: number;
-  errorCount: number;
-  errors: string[];
-}
-
-export interface BatchCleanupResult {
-  totalProcessed: number;
-  operations: CleanupOperation[];
-  summary: {
-    trucksImproved: number;
-    duplicatesRemoved: number;
-    qualityScoreImprovement: number;
-    placeholdersRemoved: number;
-  };
-  duration: number;
-}
+// Re-export the types for backward compatibility
+export type { CleanupOperation, CleanupOperationType, BatchCleanupResult };
 
 interface MergeOperationContext {
   operation: CleanupOperation;
