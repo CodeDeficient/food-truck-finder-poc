@@ -13,6 +13,7 @@ import { Settings } from 'lucide-react';
  *   - Formats the average quality score as a percentage with one decimal precision.
  */
 export function DataQualityScoreCard({ dataQualityStats }) {
+    var _a;
     return (<Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Data Quality Score</CardTitle>
@@ -20,7 +21,7 @@ export function DataQualityScoreCard({ dataQualityStats }) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {((dataQualityStats.avg_quality_score ?? 0) * 100).toFixed(1)}%
+          {(((_a = dataQualityStats.avg_quality_score) !== null && _a !== void 0 ? _a : 0) * 100).toFixed(1)}%
         </div>
         <p className="text-xs text-muted-foreground">Average quality score across all trucks</p>
       </CardContent>

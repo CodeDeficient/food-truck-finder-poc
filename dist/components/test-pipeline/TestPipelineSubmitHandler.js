@@ -1,4 +1,5 @@
 export async function submitTestPipeline({ useRawText, url, rawText, isDryRun, }) {
+    var _a;
     const payload = {
         url: useRawText ? undefined : url,
         rawText: useRawText ? rawText : undefined,
@@ -11,7 +12,7 @@ export async function submitTestPipeline({ useRawText, url, rawText, isDryRun, }
     });
     const data = (await response.json());
     if (!response.ok) {
-        throw new Error(data.error ?? 'Test run failed');
+        throw new Error((_a = data.error) !== null && _a !== void 0 ? _a : 'Test run failed');
     }
     return data;
 }

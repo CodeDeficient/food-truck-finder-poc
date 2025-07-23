@@ -12,6 +12,7 @@ export default function AdminDashboard() {
     const [dashboardData, setDashboardData] = useState(undefined);
     useEffect(() => {
         const getDashboardData = async () => {
+            var _a;
             const pendingVerifications = trucks.filter((t) => t.verification_status === 'pending').length;
             const pendingScrapingJobs = await ScrapingJobService.getJobsByStatus('pending');
             const runningScrapingJobs = await ScrapingJobService.getJobsByStatus('running');
@@ -25,7 +26,7 @@ export default function AdminDashboard() {
                 console.error('Error fetching data quality stats:', qualityError);
                 throw qualityError; // Re-throw to be caught by the .catch() block
             }
-            const dataQualityStats = qualityStatsResult ?? {
+            const dataQualityStats = (_a = qualityStatsResult) !== null && _a !== void 0 ? _a : {
                 total_trucks: 0,
                 avg_quality_score: 0,
                 high_quality_count: 0,
