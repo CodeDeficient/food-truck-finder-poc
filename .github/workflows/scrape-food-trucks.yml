@@ -33,6 +33,8 @@ jobs:
         run: npm ci
       - name: Build TypeScript
         run: npx tsc
+      - name: List dist files
+        run: find dist
       - name: Run scraping jobs
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
