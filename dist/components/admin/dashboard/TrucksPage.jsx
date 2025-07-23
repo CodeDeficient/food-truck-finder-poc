@@ -1,0 +1,28 @@
+import React, { useEffect, useState } from 'react';
+import TruckCard from '@/components/ui/TruckCard';
+/**
+* Loads and displays a list of trucks on the dashboard.
+* @example
+* TrucksPage()
+* Returns a container with truck cards or a loading message.
+* @returns {JSX.Element} A container with truck cards or a loading message.
+* @description
+*   - Uses temporary truck data, which should be replaced with real truck loading logic.
+*   - Employs useState to manage the array of trucks.
+*   - Displays 'Loading trucks...' message when truck data is unavailable.
+*/
+const TrucksPage = () => {
+    const [trucks, setTrucks] = useState([]);
+    useEffect(() => {
+        // Placeholder: Integrate actual truck loading logic here
+        setTrucks([
+            // Temporary data - replace with real query
+            { id: "1", name: "Temp Truck 1", cuisine_type: ["American"], price_range: "$", data_quality_score: 0, verification_status: "pending", source_urls: [], last_scraped_at: "", current_location: { lat: 0, lng: 0, address: "", timestamp: "" }, operating_hours: { monday: { closed: true }, tuesday: { closed: true }, wednesday: { closed: true }, thursday: { closed: true }, friday: { closed: true }, saturday: { closed: true }, sunday: { closed: true } }, menu: [], contact_info: {}, social_media: {}, created_at: "", updated_at: "", description: "", specialties: [], scheduled_locations: [] },
+            { id: "2", name: "Temp Truck 2", cuisine_type: ["Mexican"], price_range: "$", data_quality_score: 0, verification_status: "pending", source_urls: [], last_scraped_at: "", current_location: { lat: 0, lng: 0, address: "", timestamp: "" }, operating_hours: { monday: { closed: true }, tuesday: { closed: true }, wednesday: { closed: true }, thursday: { closed: true }, friday: { closed: true }, saturday: { closed: true }, sunday: { closed: true } }, menu: [], contact_info: {}, social_media: {}, created_at: "", updated_at: "", description: "", specialties: [], scheduled_locations: [] }
+        ]);
+    }, []);
+    return (<div className="trucks-container">
+      {trucks.length > 0 ? (trucks.map(truck => { var _a, _b, _c, _d; return <TruckCard key={truck.id} title={truck.name} price={(_a = truck.price_range) !== null && _a !== void 0 ? _a : ''} reviews={(_b = truck.review_count) !== null && _b !== void 0 ? _b : 0} image_url={(_c = truck.image_url) !== null && _c !== void 0 ? _c : '/placeholder-logo.png'} rating={(_d = truck.average_rating) !== null && _d !== void 0 ? _d : 0}/>; })) : (<p>Loading trucks...</p>)}
+    </div>);
+};
+export default TrucksPage;

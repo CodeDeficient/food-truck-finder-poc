@@ -1,0 +1,62 @@
+export let schedulerInstance;
+export const schedulerTasks = [
+    {
+        id: 'instagram_scrape',
+        name: 'Instagram Data Scraping',
+        enabled: true,
+        intervalMinutes: 120,
+        lastRun: new Date(Date.now() - 1800000).toISOString(),
+        lastSuccess: new Date(Date.now() - 1800000).toISOString(),
+        successCount: 45,
+        errorCount: 3,
+        nextRun: new Date(Date.now() + 5400000).toISOString(),
+    },
+    {
+        id: 'website_crawl',
+        name: 'Website Crawling',
+        enabled: true,
+        intervalMinutes: 360,
+        lastRun: new Date(Date.now() - 7200000).toISOString(),
+        lastSuccess: new Date(Date.now() - 7200000).toISOString(),
+        successCount: 23,
+        errorCount: 1,
+        nextRun: new Date(Date.now() + 14400000).toISOString(),
+    },
+    {
+        id: 'data_quality_check',
+        name: 'Data Quality Assessment',
+        enabled: true,
+        intervalMinutes: 720,
+        lastRun: new Date(Date.now() - 21600000).toISOString(),
+        lastSuccess: new Date(Date.now() - 21600000).toISOString(),
+        successCount: 12,
+        errorCount: 0,
+        nextRun: new Date(Date.now() + 21600000).toISOString(),
+    },
+    {
+        id: 'gemini_processing',
+        name: 'AI Data Processing',
+        enabled: false,
+        intervalMinutes: 480,
+        lastRun: new Date(Date.now() - 28800000).toISOString(),
+        lastSuccess: new Date(Date.now() - 28800000).toISOString(),
+        successCount: 8,
+        errorCount: 2,
+        lastError: 'Rate limit exceeded',
+        nextRun: undefined,
+    },
+    {
+        id: 'location_update',
+        name: 'Real-time Location Updates',
+        enabled: true,
+        intervalMinutes: 30,
+        lastRun: new Date(Date.now() - 900000).toISOString(),
+        lastSuccess: new Date(Date.now() - 900000).toISOString(),
+        successCount: 156,
+        errorCount: 8,
+        nextRun: new Date(Date.now() + 900000).toISOString(),
+    },
+];
+export function setSchedulerInstance(instance) {
+    schedulerInstance = instance;
+}
