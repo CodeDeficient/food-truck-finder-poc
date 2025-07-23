@@ -13,7 +13,6 @@ import { MapPin } from 'lucide-react';
  *   - Utilizes semantic HTML elements for accessibility and clarity.
  */
 export function LocationInfoCard({ truck }) {
-    var _a, _b, _c, _d;
     return (<Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -23,19 +22,19 @@ export function LocationInfoCard({ truck }) {
         <CardDescription>Current location and address details</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {((_a = truck.current_location) === null || _a === void 0 ? void 0 : _a.address) === undefined ? (<p className="text-gray-400 text-sm">No address available</p>) : (<div>
+        {truck.current_location?.address === undefined ? (<p className="text-gray-400 text-sm">No address available</p>) : (<div>
             <label className="text-sm font-medium text-gray-500">Address</label>
             <p className="text-gray-900">{truck.current_location.address}</p>
           </div>)}
 
-        {((_b = truck.current_location) === null || _b === void 0 ? void 0 : _b.lat) !== undefined && ((_c = truck.current_location) === null || _c === void 0 ? void 0 : _c.lng) !== undefined && (<div>
+        {truck.current_location?.lat !== undefined && truck.current_location?.lng !== undefined && (<div>
             <label className="text-sm font-medium text-gray-500">Coordinates</label>
             <p className="text-gray-900 font-mono text-sm">
               {truck.current_location.lat.toFixed(6)}, {truck.current_location.lng.toFixed(6)}
             </p>
           </div>)}
 
-        {((_d = truck.current_location) === null || _d === void 0 ? void 0 : _d.timestamp) != undefined && (<div>
+        {truck.current_location?.timestamp != undefined && (<div>
             <label className="text-sm font-medium text-gray-500">Last Updated</label>
             <p className="text-gray-900">
               {new Date(truck.current_location.timestamp).toLocaleString()}

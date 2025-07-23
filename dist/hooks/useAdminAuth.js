@@ -13,15 +13,14 @@ import { useRouter } from 'next/navigation';
  *   - Uses authentication and routing hooks for functionality.
  */
 export function useAdminAuth() {
-    var _a, _b, _c;
     const { user, signOut } = useAuth();
     const router = useRouter();
     const handleSignOut = async () => {
         await signOut();
         router.push('/');
     };
-    const userInitials = ((_a = user === null || user === void 0 ? void 0 : user.user_metadata) === null || _a === void 0 ? void 0 : _a.full_name) == undefined
-        ? ((_c = (_b = user === null || user === void 0 ? void 0 : user.email) === null || _b === void 0 ? void 0 : _b.slice(0, 2).toUpperCase()) !== null && _c !== void 0 ? _c : 'AD')
+    const userInitials = user?.user_metadata?.full_name == undefined
+        ? (user?.email?.slice(0, 2).toUpperCase() ?? 'AD')
         : user.user_metadata.full_name
             .split(' ')
             .map((n) => n[0])

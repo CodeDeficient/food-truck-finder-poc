@@ -35,8 +35,8 @@ async function getEventsAndSchedules() {
         console.error('Error fetching schedules:', schedulesError);
     }
     return {
-        events: events !== null && events !== void 0 ? events : [],
-        schedules: schedules !== null && schedules !== void 0 ? schedules : [],
+        events: events ?? [],
+        schedules: schedules ?? [],
     };
 }
 // Page header component

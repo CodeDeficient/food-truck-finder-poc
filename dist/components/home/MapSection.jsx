@@ -7,11 +7,10 @@ const DynamicMapComponent = dynamic(() => import('@/components/map/MapComponent'
 });
 // Helper function to get selected truck location
 function getSelectedTruckLocation(selectedTruckId, filteredTrucks) {
-    var _a, _b;
     if (selectedTruckId == undefined)
         return undefined;
     const truck = filteredTrucks.find((t) => t.id === selectedTruckId);
-    return ((_a = truck === null || truck === void 0 ? void 0 : truck.current_location) === null || _a === void 0 ? void 0 : _a.lat) == undefined || ((_b = truck === null || truck === void 0 ? void 0 : truck.current_location) === null || _b === void 0 ? void 0 : _b.lng) == undefined
+    return truck?.current_location?.lat == undefined || truck?.current_location?.lng == undefined
         ? undefined
         : [truck.current_location.lat, truck.current_location.lng];
 }
@@ -37,12 +36,11 @@ function getSelectedTruckLocation(selectedTruckId, filteredTrucks) {
  *   - Applies styling to ensure responsive map dimensions.
  */
 export function MapSection({ filteredTrucks, userLocation, selectedTruckId, setSelectedTruckId, theme, }) {
-    var _a, _b;
     // Added readonly
     return (<div className="lg:col-span-2 h-80 min-h-[320px] sm:h-96 sm:min-h-[400px] dark:bg-slate-800 rounded-lg shadow">
       <DynamicMapComponent trucks={filteredTrucks} userLocation={userLocation} onSelectTruck={setSelectedTruckId} defaultCenter={[
-            (_a = userLocation === null || userLocation === void 0 ? void 0 : userLocation.lat) !== null && _a !== void 0 ? _a : 0,
-            (_b = userLocation === null || userLocation === void 0 ? void 0 : userLocation.lng) !== null && _b !== void 0 ? _b : 0,
+            userLocation?.lat ?? 0,
+            userLocation?.lng ?? 0,
         ]} selectedTruckLocation={getSelectedTruckLocation(selectedTruckId, filteredTrucks)} theme={theme}/>
     </div>);
 }

@@ -87,10 +87,9 @@ function FoodTruckQualityTable({ trucks }) {
 *   - Provides an action button linking to the review page for detailed inspection.
 */
 function FoodTruckQualityRow({ truck }) {
-    var _a, _b, _c;
-    const qualityCategory = categorizeQualityScore((_a = truck.data_quality_score) !== null && _a !== void 0 ? _a : 0);
-    const badgeClasses = getQualityBadgeClasses((_b = truck.data_quality_score) !== null && _b !== void 0 ? _b : 0);
-    const ariaLabel = getQualityScoreAriaLabel((_c = truck.data_quality_score) !== null && _c !== void 0 ? _c : 0);
+    const qualityCategory = categorizeQualityScore(truck.data_quality_score ?? 0);
+    const badgeClasses = getQualityBadgeClasses(truck.data_quality_score ?? 0);
+    const ariaLabel = getQualityScoreAriaLabel(truck.data_quality_score ?? 0);
     return (<TableRow>
       <TableCell className="font-medium">{truck.name}</TableCell>
       <TableCell>
@@ -138,7 +137,6 @@ function FoodTruckQualityRow({ truck }) {
  *   - Sorts trucks by their data quality score for easy review, with lowest scores first.
  */
 export default async function DataQualityPage() {
-    var _a;
     const { trucks } = await FoodTruckService.getAllTrucks(100, 0); // Fetch first 100 trucks
     // Fetch data quality stats using the Supabase function
     const { data: qualityStatsResult, error: qualityError } = await supabase
@@ -147,7 +145,7 @@ export default async function DataQualityPage() {
     if (qualityError != undefined) {
         console.error('Error fetching data quality stats:', qualityError);
     }
-    const dataQualityStats = (_a = qualityStatsResult) !== null && _a !== void 0 ? _a : {
+    const dataQualityStats = qualityStatsResult ?? {
         total_trucks: 0,
         avg_quality_score: 0,
         high_quality_count: 0,
@@ -158,7 +156,7 @@ export default async function DataQualityPage() {
         flagged_count: 0,
     };
     // Sort trucks by data quality score (lowest first for review)
-    const sortedTrucks = [...trucks].sort((a, b) => { var _a, _b; return ((_a = a.data_quality_score) !== null && _a !== void 0 ? _a : 0) - ((_b = b.data_quality_score) !== null && _b !== void 0 ? _b : 0); });
+    const sortedTrucks = [...trucks].sort((a, b) => (a.data_quality_score ?? 0) - (b.data_quality_score ?? 0));
     return (<div className="flex flex-col gap-6">
       <PageHeader />
 

@@ -14,7 +14,7 @@ import { useState, useEffect } from 'react';
 */
 function processRecentEvents(recentEvents) {
     return recentEvents
-        .filter((event) => { var _a; return ((_a = event.severity) !== null && _a !== void 0 ? _a : 'info') !== 'info'; }) // Handle nullable severity explicitly
+        .filter((event) => (event.severity ?? 'info') !== 'info') // Handle nullable severity explicitly
         .map((event) => {
         // Explicitly guard event.data and its message property
         const message = typeof event.data === 'object' &&
@@ -64,7 +64,7 @@ export const useSystemAlerts = (recentEvents) => {
         }
     }, [recentEvents, alerts]);
     const acknowledgeAlert = (alertId) => {
-        setAlerts((prev) => prev.map((alert) => (alert.id === alertId ? Object.assign(Object.assign({}, alert), { acknowledged: true }) : alert)));
+        setAlerts((prev) => prev.map((alert) => (alert.id === alertId ? { ...alert, acknowledged: true } : alert)));
     };
     const toggleDetails = () => {
         setShowDetails((prev) => !prev);

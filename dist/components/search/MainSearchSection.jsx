@@ -11,7 +11,7 @@ import {} from '../SearchFilters'; // Import SearchFilters interface
  *   setFilters: (filters) => { /* update filters */
 export function MainSearchSection({ filters, setFilters, loading, handleSearch, showAdvanced, setShowAdvanced, activeFilterCount, }) {
     return (<div className="flex flex-wrap items-center gap-2 sm:space-x-2">
-      <SearchInputWithIcon placeholder="Search food trucks, cuisine, or menu items..." value={filters.query} onChange={(e) => setFilters(Object.assign(Object.assign({}, filters), { query: e.target.value }))} onKeyDown={(e) => {
+      <SearchInputWithIcon placeholder="Search food trucks, cuisine, or menu items..." value={filters.query} onChange={(e) => setFilters({ ...filters, query: e.target.value })} onKeyDown={(e) => {
             if (e.key === 'Enter') {
                 handleSearch();
             }

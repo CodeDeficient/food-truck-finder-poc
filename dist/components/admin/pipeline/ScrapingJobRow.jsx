@@ -24,10 +24,9 @@ function getBadgeVariant(status) {
  *   - Default display for 'completed_at' is 'N/A' if the job is not completed.
  */
 export function ScrapingJobRow({ job }) {
-    var _a;
     return (<TableRow key={job.id}>
       <TableCell className="font-medium">{job.job_type}</TableCell>
-      <TableCell>{(_a = job.target_url) !== null && _a !== void 0 ? _a : job.target_handle}</TableCell>
+      <TableCell>{job.target_url ?? job.target_handle}</TableCell>
       <TableCell>
         <Badge variant={getBadgeVariant(job.status)}>{job.status}</Badge>
       </TableCell>

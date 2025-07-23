@@ -15,7 +15,7 @@ import * as React from 'react';
 const CustomTooltip = ({ active, payload, label }) => {
     if (active === true && payload != undefined && payload.length > 0) {
         return (<div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg" role="status" aria-live="assertive">
-        <p className="font-medium">{`${label !== null && label !== void 0 ? label : 'Unknown'}: ${payload[0].value}`}</p>
+        <p className="font-medium">{`${label ?? 'Unknown'}: ${payload[0].value}`}</p>
         <p className="text-sm text-gray-600">
           {payload[0].payload.percentage != undefined &&
                 payload[0].payload.percentage !== '' &&

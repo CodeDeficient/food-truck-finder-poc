@@ -14,7 +14,6 @@ import { AlertTriangle } from 'lucide-react';
 *   - Falls back to zero if any count statistics are missing using nullish coalescing.
 */
 export function QualityDistributionCard({ dataQualityStats, }) {
-    var _a, _b, _c, _d;
     return (<Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Quality Distribution</CardTitle>
@@ -22,14 +21,14 @@ export function QualityDistributionCard({ dataQualityStats, }) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold text-green-600">
-          {(_a = dataQualityStats.high_quality_count) !== null && _a !== void 0 ? _a : 0}
+          {dataQualityStats.high_quality_count ?? 0}
         </div>
         <p className="text-xs text-muted-foreground">
-          <span className="text-green-600">{(_b = dataQualityStats.high_quality_count) !== null && _b !== void 0 ? _b : 0} high</span>,{' '}
+          <span className="text-green-600">{dataQualityStats.high_quality_count ?? 0} high</span>,{' '}
           <span className="text-yellow-600">
-            {(_c = dataQualityStats.medium_quality_count) !== null && _c !== void 0 ? _c : 0} medium
+            {dataQualityStats.medium_quality_count ?? 0} medium
           </span>
-          , <span className="text-red-600">{(_d = dataQualityStats.low_quality_count) !== null && _d !== void 0 ? _d : 0} low</span>
+          , <span className="text-red-600">{dataQualityStats.low_quality_count ?? 0} low</span>
         </p>
       </CardContent>
     </Card>);
