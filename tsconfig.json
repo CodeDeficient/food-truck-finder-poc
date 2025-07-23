@@ -42,7 +42,6 @@
     "lib/**/*.ts",
     "lib/**/*.tsx",
     "types/**/*.ts",
-    "tailwind.config.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [
