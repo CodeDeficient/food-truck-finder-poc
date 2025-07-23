@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
-import { processScrapingJob } from '../../lib/pipelineProcessor.js';
+import { processScrapingJob } from '/lib/pipelineProcessor.js';
 import fs from 'fs';
 
 // Load environment variables
