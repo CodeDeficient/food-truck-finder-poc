@@ -1,13 +1,15 @@
-import { GeminiApiClient } from '../gemini/geminiApiClient';
-import { FirecrawlApiClient } from '../api/firecrawl/handlers';
-import { ScrapingJobService } from '../supabase/services/scrapingJobService';
-import type { ExtractedFoodTruckDetails } from '../types';
+
+import { firecrawl } from '../firecrawl.js';
+import { gemini } from '../gemini.js';
+
+import { ScrapingJobService } from '../supabase/services/scrapingJobService.js';
+import type { ExtractedFoodTruckDetails } from '../types.js';
 import {
   validateInputAndPrepare,
   buildTruckDataSchema,
   handleDuplicateCheck,
   finalizeJobStatus,
-} from './pipelineHelpers';
+} from './pipelineHelpers.js';
 
 /**
  * Initiates web scraping for a specified food truck website.
