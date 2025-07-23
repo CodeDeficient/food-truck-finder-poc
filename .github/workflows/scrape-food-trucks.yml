@@ -35,6 +35,10 @@ jobs:
         run: npx tsc
       - name: List dist files
         run: find dist
+      - name: List dist/lib files
+        run: ls -l dist/lib/pipeline
+      - name: List dist/lib files
+        run: ls -l dist/lib
       - name: Run scraping jobs
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
