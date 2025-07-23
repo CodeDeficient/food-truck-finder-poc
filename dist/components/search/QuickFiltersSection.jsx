@@ -17,7 +17,7 @@ import { Clock } from 'lucide-react';
 */
 export function QuickFiltersSection({ filters, setFilters, clearFilters, }) {
     return (<div className="flex items-center space-x-2">
-      <Button variant={filters.openNow ? 'default' : 'outline'} size="sm" onClick={() => setFilters(Object.assign(Object.assign({}, filters), { openNow: !filters.openNow }))} className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700">
+      <Button variant={filters.openNow ? 'default' : 'outline'} size="sm" onClick={() => setFilters({ ...filters, openNow: !filters.openNow })} className="dark:text-gray-300 dark:border-slate-600 dark:hover:bg-slate-700">
         <Clock className="size-4 mr-1"/>
         Open Now
       </Button>

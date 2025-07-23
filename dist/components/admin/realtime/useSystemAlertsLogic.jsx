@@ -31,7 +31,7 @@ export function useSystemAlertsLogic({ recentEvents, }) {
         setAlerts(newAlerts);
     }, [recentEvents]);
     const acknowledgeAlert = (alertId) => {
-        setAlerts((prev) => prev.map((alert) => (alert.id === alertId ? Object.assign(Object.assign({}, alert), { acknowledged: true }) : alert)));
+        setAlerts((prev) => prev.map((alert) => (alert.id === alertId ? { ...alert, acknowledged: true } : alert)));
     };
     return { alerts, acknowledgeAlert };
 }

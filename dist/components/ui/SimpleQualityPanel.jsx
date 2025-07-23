@@ -20,7 +20,6 @@ import { RefreshCw, Settings, Loader2 } from 'lucide-react';
  *   - Returns structured result or error message based on response contents.
  */
 const recalculateAllScores = async () => {
-    var _a, _b, _c, _d, _e;
     const response = await fetch('/api/admin/data-quality', {
         method: 'POST',
         headers: {
@@ -36,13 +35,13 @@ const recalculateAllScores = async () => {
             ? {
                 success: true,
                 data: {
-                    updated: (_b = (_a = result.data) === null || _a === void 0 ? void 0 : _a.updated) !== null && _b !== void 0 ? _b : 0,
-                    errors: (_d = (_c = result.data) === null || _c === void 0 ? void 0 : _c.errors) !== null && _d !== void 0 ? _d : 0,
+                    updated: result.data?.updated ?? 0,
+                    errors: result.data?.errors ?? 0,
                 },
             }
             : {
                 success: false,
-                error: (_e = result.error) !== null && _e !== void 0 ? _e : 'Failed to recalculate quality scores',
+                error: result.error ?? 'Failed to recalculate quality scores',
             };
     }
     return { success: false, error: 'Invalid response format' };
@@ -120,13 +119,12 @@ export const SimpleQualityPanel = ({ onRefresh }) => {
      *   - Uses the `finally` block to ensure recalculation status is updated regardless of success or failure.
      */
     const handleRecalculateAll = async () => {
-        var _a, _b;
         setIsRecalculating(true);
         try {
             const result = await recalculateAllScores();
             if (result.success) {
-                alert(`Quality scores updated successfully! ${(_a = result.data) === null || _a === void 0 ? void 0 : _a.updated} trucks updated, ${(_b = result.data) === null || _b === void 0 ? void 0 : _b.errors} errors.`);
-                onRefresh === null || onRefresh === void 0 ? void 0 : onRefresh();
+                alert(`Quality scores updated successfully! ${result.data?.updated} trucks updated, ${result.data?.errors} errors.`);
+                onRefresh?.();
             }
             else {
                 throw new Error(result.error);

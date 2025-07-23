@@ -35,8 +35,7 @@ export function setupEventListeners(eventSource, handleEvent) {
 }
 // Helper function to setup authentication for event source
 export function setupEventSourceAuth() {
-    var _a;
-    const token = (_a = localStorage.getItem('supabase.auth.token')) !== null && _a !== void 0 ? _a : sessionStorage.getItem('supabase.auth.token');
+    const token = localStorage.getItem('supabase.auth.token') ?? sessionStorage.getItem('supabase.auth.token');
     if (token == undefined || token === '') {
         throw new Error('No authentication token available');
     }

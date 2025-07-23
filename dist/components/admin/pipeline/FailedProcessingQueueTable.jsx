@@ -35,10 +35,8 @@ export function FailedProcessingQueueTable({ processingQueue }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {processingQueue.failed.map((item) => {
-            var _a;
-            return (<TableRow key={item.id}>
-                <TableCell className="font-medium">{(_a = item.truck_id) !== null && _a !== void 0 ? _a : 'N/A'}</TableCell>
+            {processingQueue.failed.map((item) => (<TableRow key={item.id}>
+                <TableCell className="font-medium">{item.truck_id ?? 'N/A'}</TableCell>
                 <TableCell>{item.processing_type}</TableCell>
                 <TableCell>
                   <Badge variant="destructive">{item.status}</Badge>
@@ -49,8 +47,7 @@ export function FailedProcessingQueueTable({ processingQueue }) {
                     View Details
                   </Button>
                 </TableCell>
-              </TableRow>);
-        })}
+              </TableRow>))}
           </TableBody>
         </Table>
       </CardContent>

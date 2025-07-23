@@ -1,19 +1,8 @@
 'use client';
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 // Inspired by react-hot-toast library
 import * as React from 'react';
 const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_REMOVE_DELAY = 1_000_000;
 let count = 0;
 function genId() {
     count = (count + 1) % Number.MAX_SAFE_INTEGER;
@@ -45,8 +34,14 @@ const addToRemoveQueue = (toastId) => {
     }, TOAST_REMOVE_DELAY);
     toastTimeouts.set(toastId, timeout);
 };
-const handleAddToast = (state, toast) => (Object.assign(Object.assign({}, state), { toasts: [toast, ...state.toasts].slice(0, TOAST_LIMIT) }));
-const handleUpdateToast = (state, toast) => (Object.assign(Object.assign({}, state), { toasts: state.toasts.map((t) => (t.id === toast.id ? Object.assign(Object.assign({}, t), toast) : t)) }));
+const handleAddToast = (state, toast) => ({
+    ...state,
+    toasts: [toast, ...state.toasts].slice(0, TOAST_LIMIT),
+});
+const handleUpdateToast = (state, toast) => ({
+    ...state,
+    toasts: state.toasts.map((t) => (t.id === toast.id ? { ...t, ...toast } : t)),
+});
 /**
 * Updates the state by removing a toast with a specific id or all open toasts if the id is unspecified.
 * @example
@@ -70,8 +65,15 @@ const handleDismissToast = (state, toastId) => {
             addToRemoveQueue(toast.id);
         }
     }
-    return Object.assign(Object.assign({}, state), { toasts: state.toasts.map((t) => (t.id === toastId || toastId === undefined
-            ? Object.assign(Object.assign({}, t), { open: false }) : t)) });
+    return {
+        ...state,
+        toasts: state.toasts.map((t) => (t.id === toastId || toastId === undefined
+            ? {
+                ...t,
+                open: false,
+            }
+            : t)),
+    };
 };
 /**
 * Removes toasts based on optional toastId or clears all if toastId not provided.
@@ -87,9 +89,15 @@ const handleDismissToast = (state, toastId) => {
 */
 const handleRemoveToast = (state, toastId) => {
     if (toastId === undefined) {
-        return Object.assign(Object.assign({}, state), { toasts: [] });
+        return {
+            ...state,
+            toasts: [],
+        };
     }
-    return Object.assign(Object.assign({}, state), { toasts: state.toasts.filter((t) => t.id !== toastId) });
+    return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== toastId),
+    };
 };
 /**
 * Manages toast notifications state transitions based on the action type.
@@ -143,20 +151,24 @@ function dispatch(action) {
  *   - The `dismiss` function closes the toast notification.
  *   - The `update` function allows modification of toast properties after creation.
  */
-function toast(_a) {
-    var props = __rest(_a, []);
+function toast({ ...props }) {
     const id = genId();
     const update = (props) => dispatch({
         type: 'UPDATE_TOAST',
-        toast: Object.assign(Object.assign({}, props), { id }),
+        toast: { ...props, id },
     });
     const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
     dispatch({
         type: 'ADD_TOAST',
-        toast: Object.assign(Object.assign({}, props), { id, open: true, onOpenChange: (open) => {
+        toast: {
+            ...props,
+            id,
+            open: true,
+            onOpenChange: (open) => {
                 if (!open)
                     dismiss();
-            } }),
+            },
+        },
     });
     return {
         id: id,
@@ -188,6 +200,10 @@ function useToast() {
             }
         };
     }, []);
-    return Object.assign(Object.assign({}, state), { toast, dismiss: (toastId) => dispatch({ type: 'DISMISS_TOAST', toastId }) });
+    return {
+        ...state,
+        toast,
+        dismiss: (toastId) => dispatch({ type: 'DISMISS_TOAST', toastId }),
+    };
 }
 export { useToast, toast };

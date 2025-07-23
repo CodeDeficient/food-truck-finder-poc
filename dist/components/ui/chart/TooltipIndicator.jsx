@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
  *   - Returns nothing if `hideIndicator` is true.
  */
 export function TooltipIndicator({ indicator, hideIndicator, indicatorColor, nestLabel, itemConfig, }) {
-    if (itemConfig === null || itemConfig === void 0 ? void 0 : itemConfig.icon) {
+    if (itemConfig?.icon) {
         return <itemConfig.icon />;
     }
     if (hideIndicator) {

@@ -23,7 +23,7 @@ function safeJsonParse(jsonString, typeGuard) {
         const parsed = JSON.parse(jsonString);
         return typeGuard(parsed) ? parsed : undefined;
     }
-    catch (_a) {
+    catch {
         return undefined;
     }
 }
@@ -35,10 +35,11 @@ function isBrowserEnvironment() {
         globalThis.window === globalThis;
 }
 class SupabaseFallbackManager {
+    CACHE_KEY = 'food-trucks-cache';
+    TRUCK_CACHE_KEY_PREFIX = 'food-truck-';
+    CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    supabase;
     constructor() {
-        this.CACHE_KEY = 'food-trucks-cache';
-        this.TRUCK_CACHE_KEY_PREFIX = 'food-truck-';
-        this.CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
         if (process.env.NEXT_PUBLIC_SUPABASE_URL === undefined || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === undefined) {
             throw new Error('Supabase URL and Anon Key are required!');
         }
@@ -209,14 +210,13 @@ class SupabaseFallbackManager {
         }
     }
     getCachedTruck(id) {
-        var _a;
         try {
             if (isBrowserEnvironment()) {
                 const cacheKey = `${this.TRUCK_CACHE_KEY_PREFIX}${id}`;
                 const cached = globalThis.window.localStorage.getItem(cacheKey);
                 if (cached !== null) {
                     // Fixed: Return the parsed result or null instead of undefined
-                    return (_a = safeJsonParse(cached, isFoodTruckData)) !== null && _a !== void 0 ? _a : null;
+                    return safeJsonParse(cached, isFoodTruckData) ?? null;
                 }
             }
             return null;
@@ -231,13 +231,12 @@ class SupabaseFallbackManager {
      * This is your safety net
      */
     getCachedData() {
-        var _a;
         try {
             if (isBrowserEnvironment()) {
                 const cached = globalThis.window.localStorage.getItem(this.CACHE_KEY);
                 if (cached !== null) {
                     // Fixed: Return the parsed result or null instead of undefined
-                    return (_a = safeJsonParse(cached, isCachedData)) !== null && _a !== void 0 ? _a : null;
+                    return safeJsonParse(cached, isCachedData) ?? null;
                 }
             }
             return null;

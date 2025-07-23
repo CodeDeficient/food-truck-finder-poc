@@ -33,11 +33,10 @@ function getConnectionStatusMetric(isConnected, isConnecting, connectionError) {
     };
 }
 function getActiveJobsMetric(latestMetrics) {
-    var _a, _b, _c, _d;
     return {
         label: 'Active Jobs',
-        value: (_b = (_a = latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.scrapingJobs) === null || _a === void 0 ? void 0 : _a.active) !== null && _b !== void 0 ? _b : 0,
-        status: ((_d = (_c = latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.scrapingJobs) === null || _c === void 0 ? void 0 : _c.active) !== null && _d !== void 0 ? _d : 0) > 0 ? 'healthy' : 'warning',
+        value: latestMetrics?.scrapingJobs?.active ?? 0,
+        status: (latestMetrics?.scrapingJobs?.active ?? 0) > 0 ? 'healthy' : 'warning',
         icon: <Activity className="size-4"/>,
     };
 }
@@ -54,13 +53,11 @@ function getActiveJobsMetric(latestMetrics) {
  *   - Uses a Server icon component for representation.
  */
 function getSystemHealthMetric(latestMetrics) {
-    var _a, _b;
     return {
         label: 'System Health',
-        value: (_b = (_a = latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.systemHealth) === null || _a === void 0 ? void 0 : _a.status) !== null && _b !== void 0 ? _b : 'unknown',
+        value: latestMetrics?.systemHealth?.status ?? 'unknown',
         status: (() => {
-            var _a;
-            const healthStatus = (_a = latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.systemHealth) === null || _a === void 0 ? void 0 : _a.status;
+            const healthStatus = latestMetrics?.systemHealth?.status;
             if (healthStatus === 'healthy')
                 return 'healthy';
             if (healthStatus === 'warning')
@@ -82,15 +79,13 @@ function getSystemHealthMetric(latestMetrics) {
  *   - Uses default values (0 for the score) if data quality metrics are not provided.
  */
 function getDataQualityMetric(latestMetrics) {
-    var _a, _b;
     return {
         label: 'Data Quality',
-        value: (_b = (_a = latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.dataQuality) === null || _a === void 0 ? void 0 : _a.averageScore) !== null && _b !== void 0 ? _b : 0,
+        value: latestMetrics?.dataQuality?.averageScore ?? 0,
         unit: '%',
         trend: 'stable',
         status: (() => {
-            var _a, _b;
-            const score = (_b = (_a = latestMetrics === null || latestMetrics === void 0 ? void 0 : latestMetrics.dataQuality) === null || _a === void 0 ? void 0 : _a.averageScore) !== null && _b !== void 0 ? _b : 0;
+            const score = latestMetrics?.dataQuality?.averageScore ?? 0;
             if (score >= 80)
                 return 'healthy';
             if (score >= 60)

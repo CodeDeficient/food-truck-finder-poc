@@ -45,12 +45,10 @@ async function fetchJobData() {
 // Helper function to filter jobs by type
 function filterJobsByType(recentJobs) {
     const autoScrapeJobs = recentJobs.filter((job) => {
-        var _a, _b;
-        return job.job_type === 'auto_scrape' || ((_b = (_a = job.target_url) === null || _a === void 0 ? void 0 : _a.includes('auto')) !== null && _b !== void 0 ? _b : false);
+        return job.job_type === 'auto_scrape' || (job.target_url?.includes('auto') ?? false);
     });
     const qualityCheckJobs = recentJobs.filter((job) => {
-        var _a, _b;
-        return job.job_type === 'quality_check' || ((_b = (_a = job.target_url) === null || _a === void 0 ? void 0 : _a.includes('quality')) !== null && _b !== void 0 ? _b : false);
+        return job.job_type === 'quality_check' || (job.target_url?.includes('quality') ?? false);
     });
     return { autoScrapeJobs, qualityCheckJobs };
 }
@@ -67,8 +65,8 @@ function countNewTrucksToday(todayTrucks) {
 function createJobResult(jobs, todayTrucks, newTrucksToday, isQualityCheck = false) {
     const firstJob = jobs[0];
     const hasJobs = jobs.length > 0;
-    const isCompleted = hasJobs && (firstJob === null || firstJob === void 0 ? void 0 : firstJob.status) === 'completed';
-    const isFailed = hasJobs && (firstJob === null || firstJob === void 0 ? void 0 : firstJob.status) === 'failed';
+    const isCompleted = hasJobs && firstJob?.status === 'completed';
+    const isFailed = hasJobs && firstJob?.status === 'failed';
     let message;
     if (isCompleted) {
         message = isQualityCheck
@@ -82,7 +80,7 @@ function createJobResult(jobs, todayTrucks, newTrucksToday, isQualityCheck = fal
         message = isQualityCheck ? 'No recent quality checks' : 'No recent scraping jobs';
     }
     return {
-        success: hasJobs ? (firstJob === null || firstJob === void 0 ? void 0 : firstJob.status) === 'completed' : true,
+        success: hasJobs ? firstJob?.status === 'completed' : true,
         message,
         trucksProcessed: todayTrucks.total,
         newTrucksFound: isQualityCheck ? 0 : newTrucksToday,
