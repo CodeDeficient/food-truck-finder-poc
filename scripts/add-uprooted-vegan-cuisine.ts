@@ -3,8 +3,8 @@
  * This is Jennifer's business - our first customer validation partner
  */
 
-import { FoodTruckService } from '../lib/supabase/services/foodTruckService';
-import type { FoodTruck, MenuItem, MenuCategory } from '../lib/supabase/types';
+import { FoodTruckService } from '@/lib/supabase/services/foodTruckService.js';
+import type { FoodTruck, MenuItem, MenuCategory } from '@/lib/supabase/types.js';
 
 // Uprooted Vegan Cuisine comprehensive data
 const uprootedVeganData: Partial<FoodTruck> = {

@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022"],
+    "module": "es2022",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "rootDir": "src/actions",
+    "outDir": "./dist/actions",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "allowJs": false,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noEmit": false,
+    "declaration": false,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["./lib/*"]
+    }
+  },
+  "include": [
+    "./src/actions/**/*.ts",
+    "./src/actions/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
+}

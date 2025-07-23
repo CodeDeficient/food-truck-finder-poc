@@ -7,7 +7,7 @@
  * Uprooted Vegan Cuisine data against the current database schema.
  */
 
-import type { FoodTruck } from '../lib/types';
+import type { FoodTruck } from '@/lib/types.js';
 
 // Required fields for Uprooted Vegan Cuisine as provided by user
 const REQUIRED_FIELDS = [
