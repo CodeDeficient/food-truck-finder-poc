@@ -154,6 +154,8 @@ export interface FoodTruck extends FoodTruckSchema {
   image_url?: string;
   average_rating?: number;
   review_count?: number;
+  exact_location?: any;
+  city_location?: any;
 }
 
 export interface GeminiResponse<T = unknown> {
