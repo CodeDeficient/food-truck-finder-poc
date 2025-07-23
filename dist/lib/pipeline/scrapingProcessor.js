@@ -1,5 +1,3 @@
-import { firecrawl } from '../firecrawl';
-import { gemini } from '../gemini';
 import { ScrapingJobService } from '../supabase/services/scrapingJobService';
 import { validateInputAndPrepare, buildTruckDataSchema, handleDuplicateCheck, finalizeJobStatus, } from './pipelineHelpers';
 /**

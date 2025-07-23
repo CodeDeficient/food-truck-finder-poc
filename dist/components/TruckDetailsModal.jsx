@@ -9,13 +9,15 @@ import { X, MapPin, Clock, Phone, Globe, Star } from 'lucide-react';
 import { MenuSection } from '@/components/ui/MenuSection';
 import { SocialMediaSection } from '@/components/ui/SocialMediaSection';
 import { ContactSection } from '@/components/ui/ContactSection';
-const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rating, review_count }) => (<DialogHeader>
+const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rating, review_count }) => {
+    var _a;
+    return (<DialogHeader>
     <div className="flex justify-between items-start">
       <div className="flex-1">
         <DialogTitle className="text-2xl font-bold neon-text mb-2">
           {name}
         </DialogTitle>
-        {truck.current_location?.address !== undefined && truck.current_location.address !== '' && (<div className="flex items-center text-muted-foreground mb-2">
+        {((_a = truck.current_location) === null || _a === void 0 ? void 0 : _a.address) !== undefined && truck.current_location.address !== '' && (<div className="flex items-center text-muted-foreground mb-2">
             <MapPin className="size-4 mr-2"/>
             <span>{truck.current_location.address}</span>
           </div>)}
@@ -42,6 +44,7 @@ const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rati
       </div>
     </div>
   </DialogHeader>);
+};
 const TruckModalContent = ({ description, todayHours, priceRange, popularItems, phone, email, website, social_media, verification_status }) => (<div className="space-y-6">
     
     {description !== '' && (<div>
@@ -68,10 +71,13 @@ const TruckModalContent = ({ description, todayHours, priceRange, popularItems, 
 
     {popularItems.length > 0 && (<div>
         <h3 className="text-lg font-semibold mb-3">Popular Items</h3>
-        <MenuSection items={popularItems.map(item => ({
-            name: item.name,
-            price: formatPrice(item.price ?? 0),
-        }))}/>
+        <MenuSection items={popularItems.map(item => {
+            var _a;
+            return ({
+                name: item.name,
+                price: formatPrice((_a = item.price) !== null && _a !== void 0 ? _a : 0),
+            });
+        })}/>
       </div>)}
 
     {(phone !== '' || email !== '' || website !== '') && (<div>

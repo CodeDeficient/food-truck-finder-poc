@@ -57,20 +57,21 @@ function getQualityScoreLabel(score) {
  *   - Includes an "Edit" button linking to the food truck's admin page.
  */
 function FoodTruckTableRow({ truck }) {
-    const qualityScore = truck.data_quality_score ?? 0;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    const qualityScore = (_a = truck.data_quality_score) !== null && _a !== void 0 ? _a : 0;
     return (<TableRow>
       <TableCell className="font-medium">{truck.name}</TableCell>
       <TableCell>
         <div className="space-y-1">
-          {truck.contact_info?.phone !== undefined && (<div className="text-sm">📞 {truck.contact_info.phone}</div>)}
-          {truck.contact_info?.email !== undefined && (<div className="text-sm">✉️ {truck.contact_info.email}</div>)}
-          {truck.contact_info?.website !== undefined && (<div className="text-sm">🌐 {truck.contact_info.website}</div>)}
-          {truck.contact_info?.phone === undefined &&
-            truck.contact_info?.email === undefined &&
-            truck.contact_info?.website === undefined && (<span className="text-muted-foreground">No contact info</span>)}
+          {((_b = truck.contact_info) === null || _b === void 0 ? void 0 : _b.phone) !== undefined && (<div className="text-sm">📞 {truck.contact_info.phone}</div>)}
+          {((_c = truck.contact_info) === null || _c === void 0 ? void 0 : _c.email) !== undefined && (<div className="text-sm">✉️ {truck.contact_info.email}</div>)}
+          {((_d = truck.contact_info) === null || _d === void 0 ? void 0 : _d.website) !== undefined && (<div className="text-sm">🌐 {truck.contact_info.website}</div>)}
+          {((_e = truck.contact_info) === null || _e === void 0 ? void 0 : _e.phone) === undefined &&
+            ((_f = truck.contact_info) === null || _f === void 0 ? void 0 : _f.email) === undefined &&
+            ((_g = truck.contact_info) === null || _g === void 0 ? void 0 : _g.website) === undefined && (<span className="text-muted-foreground">No contact info</span>)}
         </div>
       </TableCell>
-      <TableCell>{truck.cuisine_type?.join(', ') ?? 'N/A'}</TableCell>
+      <TableCell>{(_j = (_h = truck.cuisine_type) === null || _h === void 0 ? void 0 : _h.join(', ')) !== null && _j !== void 0 ? _j : 'N/A'}</TableCell>
       <TableCell>
         <Badge variant={truck.verification_status === 'verified' ? 'default' : 'outline'}>
           {truck.verification_status}
