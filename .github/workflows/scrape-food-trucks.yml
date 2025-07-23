@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set working directory
+        run: echo "Working in $(pwd)"
+        working-directory: ./
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
