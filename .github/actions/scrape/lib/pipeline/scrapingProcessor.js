@@ -1,7 +1,7 @@
-import { firecrawl } from '../firecrawl';
-import { gemini } from '../gemini';
-import { ScrapingJobService } from '../supabase/services/scrapingJobService';
-import { validateInputAndPrepare, buildTruckDataSchema, handleDuplicateCheck, finalizeJobStatus, } from './pipelineHelpers';
+import { firecrawl } from '../firecrawl.js';
+import { gemini } from '../gemini.js';
+import { ScrapingJobService } from '../supabase/services/scrapingJobService.js';
+import { validateInputAndPrepare, buildTruckDataSchema, handleDuplicateCheck, finalizeJobStatus, } from './pipelineHelpers.js';
 /**
  * Initiates web scraping for a specified food truck website.
  * @example

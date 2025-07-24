@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { autoScraper } from '@/lib/autoScraper';
-import { scheduler } from '@/lib/scheduler';
-import { logActivity } from '@/lib/activityLogger';
+import { autoScraper } from '../../../../../../../lib/autoScraper.js';
+import { scheduler } from '../../../../../../../lib/scheduler.js';
+import { logActivity } from '../../../../../../../lib/activityLogger.js';
 /**
 * Verifies the cron secret authorization header against a stored environment variable.
 * @example

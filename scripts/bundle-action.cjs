@@ -1,9 +1,16 @@
 const { exec } = require('child_process');
 
-exec('npx ncc build ./.github/actions/scrape/github-action-scraper.js -o ./.github/actions/scrape/ -s', (err, stdout, stderr) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log(stdout);
-});
+const { execSync } = require('child_process');
+const path = require('path');
+
+const outputDir = path.join(__dirname, '..', '.github', 'actions', 'scrape', 'dist');
+const entrypoint = path.join(__dirname, '..', '.github', 'actions', 'scrape', 'index.js');
+
+try {
+  // Bundle the action
+  execSync(`npx ncc build ${entrypoint} -o ${outputDir}`, { stdio: 'inherit' });
+  console.log('Action bundled successfully.');
+} catch (err) {
+  console.error('Failed to bundle action:', err);
+  process.exit(1);
+}

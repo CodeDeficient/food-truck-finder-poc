@@ -1,6 +1,6 @@
-import { firecrawl } from '@/lib/firecrawl';
-import { gemini } from '@/lib/gemini';
-import { FoodTruckService, ScrapingJobService, DataProcessingService, } from '@/lib/supabase';
+import { firecrawl } from '../../../../../../lib/firecrawl.js';
+import { gemini } from '../../../../../../lib/gemini.js';
+import { FoodTruckService, ScrapingJobService, DataProcessingService, } from '../../../../../../lib/supabase.js';
 // Helper function to test Firecrawl scraping
 export async function testFirecrawlScraping(testUrl) {
     console.info('Testing Firecrawl scraping...');

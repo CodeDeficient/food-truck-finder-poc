@@ -1,8 +1,8 @@
-import { APIUsageService } from './supabase';
-import { GeminiApiClient } from './gemini/geminiApiClient';
-import { GeminiUsageLimits } from './gemini/usageLimits';
-import { PromptTemplates } from './gemini/promptTemplates';
-import { GeminiResponseParser } from './gemini/responseParser';
+import { APIUsageService } from './supabase.js';
+import { GeminiApiClient } from './gemini/geminiApiClient.js';
+import { GeminiUsageLimits } from './gemini/usageLimits.js';
+import { PromptTemplates } from './gemini/promptTemplates.js';
+import { GeminiResponseParser } from './gemini/responseParser.js';
 export class GeminiService {
     apiClient;
     dailyRequestLimit = 1500;
