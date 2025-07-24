@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
+import { ScrapingJobService, FoodTruckService } from '../../../../../../../lib/supabase.js';
 export async function handleGetRequest() {
     const metrics = await getScrapingMetrics();
     return NextResponse.json({

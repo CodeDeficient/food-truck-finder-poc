@@ -1,4 +1,4 @@
-import { handleFirecrawlStage, handleGeminiStage, handleSupabaseStage } from './stageHandlers';
+import { handleFirecrawlStage, handleGeminiStage, handleSupabaseStage } from './stageHandlers.js';
 // Helper function to handle stage errors and return a consistent error object
 function handleStageErrorAndReturn(firecrawlResult, geminiResult, supabaseResult, logs) {
     return {

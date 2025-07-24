@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../../../../../lib/supabase.js';
 /**
  * Assess basic information of a FoodTruck object and adjust its score based on missing attributes.
  * @example
