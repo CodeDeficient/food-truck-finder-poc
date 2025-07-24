@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../client';
+import { supabase, supabaseAdmin } from '../client.js';
 export const APIUsageService = {
     async trackUsage(serviceName, requests, tokens) {
         if (!supabaseAdmin) {

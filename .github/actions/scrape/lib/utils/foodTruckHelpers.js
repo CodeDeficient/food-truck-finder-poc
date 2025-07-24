@@ -1,4 +1,4 @@
-import { supabaseFallback } from '@/lib/fallback/supabaseFallback';
+import { supabaseFallback } from '../../../../../lib/fallback/supabaseFallback.js';
 export const getCurrentDay = () => {
     const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     return days[new Date().getDay()];

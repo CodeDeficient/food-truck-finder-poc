@@ -1,5 +1,5 @@
-import { APIUsageService } from '../supabase';
-import { APIMonitor } from '../monitoring/apiMonitor';
+import { APIUsageService } from '../supabase.js';
+import { APIMonitor } from '../monitoring/apiMonitor.js';
 export class GeminiUsageLimits {
     static DEFAULT_LIMITS = {
         dailyRequestLimit: 1500,
