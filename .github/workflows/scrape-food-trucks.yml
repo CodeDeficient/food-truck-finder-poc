@@ -40,6 +40,9 @@ jobs:
           echo "Preparing GitHub Action environment..."
           chmod +x .github/actions/scrape/github-action-scraper.js
         
+      - name: Bundle action
+        run: node scripts/bundle-action.js
+
       - name: Run Food Truck Scraping Action
         run: node ./.github/actions/scrape/github-action-scraper.js
         env:
