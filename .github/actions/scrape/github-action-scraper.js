@@ -99,6 +99,16 @@ async function main() {
                 console.error(`❌ Job ${job.id} failed:`, errorMessage);
                 // Log the error but continue processing other jobs
                 console.error('Error details:', error);
+                // Optionally, update the job status to 'failed' here if not handled in processScrapingJob
+                try {
+                    await ScrapingJobService.updateJobStatus(job.id, 'failed', {
+                        errors: [errorMessage, error.stack].filter(Boolean),
+                    });
+                    console.log(`🔔 Job ${job.id} status updated to 'failed' in Supabase.`);
+                }
+                catch (updateError) {
+                    console.error(`🔥 Failed to update status for job ${job.id}:`, updateError);
+                }
             }
             // Add a small delay between jobs to be respectful to APIs
             if (processedCount < jobsToProcess.length) {
