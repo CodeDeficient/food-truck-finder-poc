@@ -124,7 +124,7 @@
     "@radix-ui/react-tooltip": "1.1.6",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "latest",
+    "@supabase/supabase-js": "^2.52.1",
     "@types/jest": "^30.0.0",
     "@typescript-eslint/typescript-estree": "^8.35.0",
     "autoprefixer": "^10.4.20",
