@@ -111,8 +111,8 @@ node -e "require('./dist/index.js')"
 
 ### **Stage 5: Runtime Checks** ⚡
 ```bash
-# Test critical paths
-npm run test:critical
+# Test critical paths (e.g., E2E or pipeline health)
+npm run test:e2e:basic
 ```
 **Purpose**: Verify core functionality works  
 **Success Criteria**: All critical tests pass  

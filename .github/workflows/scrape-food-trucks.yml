@@ -31,15 +31,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-      - name: Build TypeScript
-        run: npx tsc
-      - name: List dist files
-        run: find dist
-      - name: List dist/lib files
-        run: ls -l dist/lib/pipeline
-      - name: List dist/lib files
-        run: ls -l dist/lib
-      - name: Run scraping jobs
+      - name: List compiled files
+        run: |
+          ls -R dist
+          ls -R .github/actions/scrape
+      - name: Prepare Action
+        run: |
+          echo "Preparing GitHub Action environment..."
+          chmod +x .github/actions/scrape/github-action-scraper.js
+        
+      - name: Bundle action
+        run: node scripts/bundle-action.cjs
+
+      - name: Run Food Truck Scraping Action
+        run: node ./.github/actions/scrape/github-action-scraper.js
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -48,8 +53,6 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-        run: |
-          node scripts/github-action-scraper.js --limit ${{ github.event.inputs.limit || '10' }}
 
       - name: Upload logs
         if: always()

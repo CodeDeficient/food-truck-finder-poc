@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { BatchCleanupService, type CleanupOperation } from '@/lib/data-quality/batchCleanup';
+import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
+import type { CleanupOperationType, DataCleanupRequestBody } from '@/lib/types';
 import { DuplicatePreventionService } from '@/lib/data-quality/duplicatePrevention';
-
-export interface DataCleanupRequestBody {
-  action: string;
-  options?: {
-    batchSize?: number;
-    dryRun?: boolean;
-    operations?: string[];
-    truckData?: Record<string, unknown>;
-    targetId?: string;
-    sourceId?: string;
-  };
-}
 
 /**
  * Handles different types of data cleanup requests and returns appropriate responses.
@@ -101,7 +90,7 @@ export async function handleFullCleanup(
   const result = await BatchCleanupService.runFullCleanup({
     batchSize: options?.batchSize ?? 50,
     dryRun: options?.dryRun ?? false,
-    operations: options?.operations as CleanupOperation['type'][],
+    operations: options?.operations as CleanupOperationType[],
   });
 
   return NextResponse.json({
@@ -193,7 +182,7 @@ export async function handleDryRun(
 ): Promise<NextResponse> {
   const result = await BatchCleanupService.runFullCleanup({
     ...options,
-    operations: options?.operations as CleanupOperation['type'][],
+    operations: options?.operations as CleanupOperationType[],
     dryRun: true,
   });
 

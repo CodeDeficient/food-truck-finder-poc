@@ -1,9 +1,27 @@
 # Data Pipeline Architecture
 
-This document outlines the architecture of the data pipeline for the Food Truck Finder application, with a focus on the classification of scraped entities.
+This document outlines the architecture of the data pipeline for the Food Truck Finder application.
 
-## 1. Entity Classification Strategy
+## 1. Entity Processing and Implicit Classification (Current Implementation)
 
+The current pipeline uses an "extract-then-validate" model to implicitly classify scraped content. Instead of pre-classifying a URL, it attempts to extract food truck data from any given source. This process acts as the primary classification gate.
+
+### 1.1. Current Workflow
+1.  **Scraping:** A URL (from a directory, event page, or direct link) is passed to the Firecrawl service to scrape its content.
+2.  **Extraction & Implicit Classification:** The resulting Markdown is passed to the Gemini API with a prompt to extract structured food truck details.
+    - **Success (Implicitly a `food_truck` source):** If Gemini successfully extracts valid food truck data, the pipeline proceeds.
+    - **Failure (Implicitly not a `food_truck` source):** If Gemini cannot find relevant details, the extraction fails, the job is marked as failed, and the pipeline for this URL is terminated.
+3.  **Validation & Storage:** The successfully extracted data is validated and stored in the `food_trucks` table in Supabase.
+
+This approach effectively filters out irrelevant URLs (like event pages without truck details or general directories) at the data extraction stage, ensuring only valid food truck information is processed.
+
+---
+
+## 2. Future Enhancements: Advanced Pre-Classification & Geocoding
+
+The following features are planned for a future iteration of the data pipeline to improve efficiency and data richness by pre-classifying URLs before attempting expensive AI extraction.
+
+### 2.1. Tiered Entity Classification
 To address the issue of misclassifying scraped data, we will implement a multi-tiered classification system. The goal is to accurately categorize each scraped URL as one of the following types: `food_truck`, `event`, or `source_directory`.
 
 ### 1.1. Classification Tiers
@@ -33,14 +51,14 @@ The classification process will proceed through the following tiers, stopping as
     *   **Cons:** Higher latency and potential cost associated with API calls. This will be used as a fallback to minimize cost.
 
 ### 1.2. Implementation Plan
-
+1.  **Create New Schemas:** Add `events` and `source_directories` tables to the Supabase database.
 1.  **Modify `lib/pipelineProcessor.ts`:** The core logic for this classification system will be implemented within the `pipelineProcessor`. A new function, `classifyScrapedEntity`, will be created to encapsulate the tiered logic.
-2.  **Update Supabase Schema:** New tables for `events` and `source_directories` will be created to store the classified data. The `food_trucks` table will only store entities classified as `food_truck`.
 3.  **Integrate with Scraping Engine:** The `ScraperEngine` will call the `classifyScrapedEntity` function after fetching the content of a URL and before any data extraction occurs.
 
 This hybrid approach balances speed, cost, and accuracy, ensuring that we can efficiently and correctly categorize the data that powers our application.
 
-## 2. Geocoding Strategy
+---
+### 2.2. Geocoding Fallback Strategy
 
 To ensure all food trucks can be displayed on the map, we need a reliable way to convert physical addresses into GPS coordinates (latitude and longitude).
 

@@ -3,8 +3,8 @@
  * This script adds the food truck and events as our first premium verified customer
  */
 
-import addUprootedVeganCuisine from './add-uprooted-vegan-cuisine';
-import addUprootedEvents from './add-uprooted-events';
+import addUprootedVeganCuisine from './add-uprooted-vegan-cuisine.js';
+import addUprootedEvents from './add-uprooted-events.js';
 
 async function onboardUprootedVegan() {
   console.log('🌟 ONBOARDING UPROOTED VEGAN CUISINE 🌟');

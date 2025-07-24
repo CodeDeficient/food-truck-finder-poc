@@ -53,6 +53,7 @@ Welcome to the comprehensive documentation center for the **Food Truck Finder** 
 ### **Remediation Plans**
 - **[WBS Remediation Plan](WBS_REMEDIATION_PLAN.md)** - Work breakdown structure
 - **[TSC Remediation Plan](TSC_REMEDIATION_PLAN.md)** - TypeScript compilation fixes
+- **[COCOMO III Project Analysis](COCOMO_ANALYSIS.md)** - Project effort and productivity analysis
 - **[Duplication Remediation Guide](DUPLICATION_REMEDIATION_GUIDE.md)** - Code deduplication
 
 ---

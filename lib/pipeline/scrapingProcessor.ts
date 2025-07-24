@@ -1,13 +1,15 @@
-import { firecrawl } from '@/lib/firecrawl';
-import { gemini } from '@/lib/gemini';
-import { ScrapingJobService } from '@/lib/supabase';
-import type { ExtractedFoodTruckDetails } from '../types';
+
+import { firecrawl } from '../firecrawl.js';
+import { gemini } from '../gemini.js';
+
+import { ScrapingJobService } from '../supabase/services/scrapingJobService.js';
+import type { ExtractedFoodTruckDetails } from '../types.js';
 import {
   validateInputAndPrepare,
   buildTruckDataSchema,
   handleDuplicateCheck,
   finalizeJobStatus,
-} from './pipelineHelpers';
+} from './pipelineHelpers.js';
 
 /**
  * Initiates web scraping for a specified food truck website.
@@ -80,7 +82,7 @@ async function handleGeminiExtraction(markdown: string, sourceUrl: string, jobId
 async function handleJobFailure(jobId: string, error: string) {
   console.error(`Job ${jobId} failed:`, error);
   try {
-    const currentJob = await ScrapingJobService.getJobsByStatus('all').then((jobs) =>
+    const currentJob = await ScrapingJobService.getJobsByStatus('all').then((jobs: { id: string; status: string }[]) =>
       jobs.find((j) => j.id === jobId),
     );
     if (currentJob && currentJob.status !== 'failed') {
