@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { FoodTruckService } from '@/lib/supabase';
+import { FoodTruckService } from '../../../../../../lib/supabase.js';
 export async function handleGetTruckById(id) {
     const truckResult = await FoodTruckService.getTruckById(id);
     if ('error' in truckResult) {

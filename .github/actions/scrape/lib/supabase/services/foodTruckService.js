@@ -1,6 +1,6 @@
-import { supabase, supabaseAdmin } from '../client';
-import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils';
-import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils';
+import { supabase, supabaseAdmin } from '../client.js';
+import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils.js';
+import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils.js';
 export const FoodTruckService = {
     async getAllTrucks(limit = 50, offset = 0) {
         try {
