@@ -7,4 +7,4 @@ inputs:
     default: "10"
 runs:
   using: "node20"
-  main: "github-action-scraper-simple.js"
+  main: "index.js"
