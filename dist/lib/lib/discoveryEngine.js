@@ -1,5 +1,5 @@
 // lib/discoveryEngine.ts
-import { supabaseAdmin } from './supabase';
+import { supabaseAdmin } from './supabase/services/apiUsageService.js';
 import { SC_TARGET_CITIES, DISCOVERY_CONFIG } from './config';
 /**
 * Executes a search request against the Tavily API.

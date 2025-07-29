@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
+import { BatchCleanupService } from '../../data-quality/batchCleanup.js';
 /**
  * Handles post requests by executing specific actions based on the provided body.
  * @example
