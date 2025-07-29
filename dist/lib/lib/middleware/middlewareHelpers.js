@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { AuditLogger } from '@/lib/security/auditLogger';
-import { createSupabaseMiddlewareClient } from '@/lib/supabaseMiddleware';
+import { AuditLogger } from '../../security/auditLogger';
+import { createSupabaseMiddlewareClient } from '../../supabaseMiddleware';
 /**
  * Logs a security event and redirects the request to a specified path.
  * @example

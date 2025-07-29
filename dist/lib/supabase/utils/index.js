@@ -1,5 +1,5 @@
-import { supabaseAdmin } from '../client';
-import { isMenuItem } from './typeGuards';
+import { supabaseAdmin } from '../client.js';
+import { isMenuItem } from './typeGuards.js';
 function handleSupabaseError(error, context) {
     console.warn(`Error in ${context}:`, error.message);
 }
@@ -79,4 +79,4 @@ async function insertMenuItems(truckId, menuData) {
     }
 }
 export { handleSupabaseError, calculateDistance, normalizeTruckLocation, prepareMenuItemsForInsert, insertMenuItems, };
-export { buildMenuByTruck, groupMenuItems } from './menuUtils';
+export { buildMenuByTruck, groupMenuItems } from './menuUtils.js';
