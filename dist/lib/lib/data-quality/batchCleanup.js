@@ -2,7 +2,7 @@
  * SOTA Batch Data Cleanup System
  * Implements automated data quality improvements and cleanup operations
  */
-import { FoodTruckService, DataQualityService } from '@/lib/supabase';
+import { FoodTruckService, DataQualityService } from '../../supabase/client.js';
 import { DuplicatePreventionService } from './duplicatePrevention';
 import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils';
 /**
