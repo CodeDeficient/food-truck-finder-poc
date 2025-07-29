@@ -1,6 +1,6 @@
-import { isMenuCategory, isMenuItem } from './typeGuards';
-import { supabaseAdmin } from '../client';
-import { handleSupabaseError } from './index';
+import { isMenuCategory, isMenuItem } from './typeGuards.js';
+import { supabaseAdmin } from '../client.js';
+import { handleSupabaseError } from './index.js';
 export function buildMenuByTruck(menuItems) {
     const menuByTruck = {};
     for (const item of menuItems) {

@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '../client';
+import { supabaseAdmin } from '../supabase/client.js';
 import { isMenuItem } from './typeGuards';
 function handleSupabaseError(error, context) {
     console.warn(`Error in ${context}:`, error.message);

@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../client';
+import { supabase, supabaseAdmin } from '../supabase/client.js';
 export const ScrapingJobService = {
     async createJob(jobData) {
         if (!supabaseAdmin) {

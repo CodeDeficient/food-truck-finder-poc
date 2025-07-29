@@ -1,6 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import { parseArgs } from 'node:util';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -15,11 +16,59 @@ if (!supabaseUrl || !serviceRoleKey) {
 
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
+// Parse command line arguments
+const options = {
+  status: {
+    type: 'string',
+    short: 's'
+  },
+  limit: {
+    type: 'string',
+    short: 'l',
+    default: '100'
+  },
+  help: {
+    type: 'boolean',
+    short: 'h',
+    default: false
+  }
+};
+
+const { values } = parseArgs({ options, allowPositionals: false });
+
+if (values.help) {
+  console.log(`
+Get Scraping Jobs
+
+Usage: node get-scraping-jobs.js [options]
+
+Options:
+  -s, --status <status>  Filter by job status (pending, running, completed, failed)
+  -l, --limit <number>   Limit number of results (default: 100)
+  -h, --help            Show this help message
+  `);
+  process.exit(0);
+}
+
 async function getScrapingJobs() {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('scraping_jobs')
-      .select('id, status, target_url');
+      .select('id, status, target_url, created_at, completed_at');
+    
+    // Apply status filter if provided
+    if (values.status) {
+      query = query.eq('status', values.status);
+    }
+    
+    // Apply limit
+    const limit = Number.parseInt(values.limit || '100', 10);
+    query = query.limit(limit);
+    
+    // Order by creation date
+    query = query.order('created_at', { ascending: false });
+
+    const { data, error } = await query;
 
     if (error) {
       throw error;

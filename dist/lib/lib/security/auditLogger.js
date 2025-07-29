@@ -2,7 +2,7 @@
  * SOTA Security Audit Logging System
  * Implements comprehensive audit logging for admin actions and security events
  */
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '../../supabase/client.js';
 /**
  * Audit Logger Service
  */
