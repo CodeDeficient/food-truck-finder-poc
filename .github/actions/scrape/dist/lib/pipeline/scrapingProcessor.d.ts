@@ -1,4 +1,4 @@
-import type { ExtractedFoodTruckDetails } from '../types';
+import type { ExtractedFoodTruckDetails } from '../types.js';
 /**
  * Processes a scraping job by managing its lifecycle and data extraction.
  * @example

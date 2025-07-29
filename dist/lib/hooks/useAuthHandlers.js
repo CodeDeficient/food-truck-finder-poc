@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../../supabase/client.js';
 import { useRouter } from 'next/navigation';
 /**
  * Provides authentication handlers for email and Google login.

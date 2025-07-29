@@ -9,9 +9,10 @@
  * Usage: node scripts/github-action-scraper.js --limit 10
  */
 
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { parseArgs } from 'node:util';
-import { processScrapingJob } from '../dist/lib/pipeline/scrapingProcessor.js';
-import { ScrapingJobService } from '../dist/lib/supabase/services/scrapingJobService.js';
 
 // Parse command line arguments
 const options = {
@@ -74,10 +75,23 @@ console.log('🚀 GitHub Action Scraper Starting');
 console.log(`📊 Processing up to ${limit} jobs`);
 console.log(`🔗 Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 50)}...`);
 
+// Import these after dotenv is loaded to ensure environment variables are available
+let processScrapingJob, ScrapingJobService;
+
+async function initializeModules() {
+  const scrapingProcessor = await import('../dist/lib/pipeline/scrapingProcessor.js');
+  const scrapingJobService = await import('../dist/lib/supabase/services/scrapingJobService.js');
+  processScrapingJob = scrapingProcessor.processScrapingJob;
+  ScrapingJobService = scrapingJobService.ScrapingJobService;
+}
+
 /**
  * Main execution function
  */
 async function main() {
+  // Initialize modules with environment variables loaded
+  await initializeModules();
+
   let processedCount = 0;
   let successCount = 0;
   let failureCount = 0;

@@ -235,3 +235,43 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
 
   - _Trigger Case_: ESLint fails with a `MODULE_NOT_FOUND` error.
   - _Example_: If `eslint-plugin-unicorn` is missing, run `npm install` to restore it.
+
+- **Rule 1.39: ESM Import Best Practices**: Always use explicit file extensions (`.js`) in relative imports and never import directly from directories. Use dynamic imports for modules that require environment variables to be loaded first.
+
+  - _Trigger Case_: ESM import resolution errors (`ERR_UNSUPPORTED_DIR_IMPORT`, `ERR_MODULE_NOT_FOUND`).
+  - _Example_: Instead of `import { APIUsageService } from '../supabase'`, use `import { APIUsageService } from '../supabase/services/apiUsageService.js'`.
+
+- **Rule 1.40: Environment Variable Loading in ESM**: Load environment variables before importing modules that depend on them. Use dynamic imports (`await import()`) for modules requiring environment variables, and initialize them after dotenv configuration.
+
+  - _Trigger Case_: Modules failing to initialize due to missing environment variables.
+  - _Example_: 
+    ```javascript
+    import dotenv from 'dotenv';
+    dotenv.config({ path: '.env.local' });
+    const { processScrapingJob } = await import('../dist/lib/pipeline/scrapingProcessor.js');
+    ```
+
+- **Rule 1.41: Unicode Normalization for Data Validation**: When comparing text data for duplicates or matches, always normalize Unicode characters (especially apostrophes, quotes, and special characters) before comparison to prevent false negatives due to character encoding differences.
+
+  - _Trigger Case_: Duplicate detection failing due to different Unicode representations of the same character.
+  - _Example_: Normalize apostrophes: `name.replace(/[\u2018\u2019\u0060\u00B4]/g, "'")`
+
+- **Rule 1.42: Intelligent Data Filtering and Quality Scoring**: Implement multi-tier filtering systems with quality scoring to prevent resource waste on poor-quality data sources. Use pre-filtering to reject obviously invalid data before expensive processing.
+
+  - _Trigger Case_: Repeated processing of URLs that consistently fail or produce invalid data.
+  - _Example_: URL quality scoring system that increases/decreases scores based on success/failure and automatically blacklists poor performers.
+
+- **Rule 1.43: Proper Invalid Data Handling**: Instead of creating placeholder entries for invalid data, implement proper validation that discards invalid data with appropriate logging and job status updates.
+
+  - _Trigger Case_: Pipeline creating "Unknown" or placeholder entries for invalid data.
+  - _Example_: Check for null/empty required fields and discard with proper job status update rather than creating fallback entries.
+
+- **Rule 1.44: Comprehensive Duplicate Prevention**: Implement advanced duplicate detection using normalization, fuzzy matching, and similarity scoring to catch duplicates that simple exact matching would miss.
+
+  - _Trigger Case_: Duplicate entries with slight variations in spelling, capitalization, or punctuation.
+  - _Example_: Combine case-insensitive matching, Unicode normalization, suffix removal, and Levenshtein distance for robust duplicate detection.
+
+- **Rule 1.45: Safe Job Creation with Error Handling**: When creating jobs or database entries, ensure all required fields are properly set and implement comprehensive error handling with appropriate status updates.
+
+  - _Trigger Case_: Job creation failing due to missing required fields or database errors.
+  - _Example_: Always set required fields like `job_type` and handle database errors gracefully with proper logging and status updates.
