@@ -1,6 +1,6 @@
-import { firecrawl } from '@/lib/firecrawl';
-import { gemini } from '@/lib/gemini';
-import { FoodTruckService } from '@/lib/supabase';
+import { firecrawl } from '../../firecrawl';
+import { gemini } from '../../gemini/geminiApiClient.js';
+import { FoodTruckService } from '../../supabase/client.js';
 import { mapExtractedDataToTruckSchema } from './schemaMapper';
 function getErrorMessage(error, fallback) {
     if (error instanceof Error)

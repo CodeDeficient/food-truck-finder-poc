@@ -1,5 +1,5 @@
-import { ScrapingJobService, FoodTruckService } from '../supabase';
-import { DuplicatePreventionService } from '../data-quality/duplicatePrevention';
+import { ScrapingJobService, FoodTruckService } from '../supabase/client.js';
+import { DuplicatePreventionService } from '../data-quality/duplicatePrevention.js';
 // Helper function to validate input and prepare basic data
 /**
  * Validates input data and prepares food truck information.

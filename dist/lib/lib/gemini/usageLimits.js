@@ -1,4 +1,4 @@
-import { APIUsageService } from '../supabase';
+import { APIUsageService } from '../supabase/client.js';
 import { APIMonitor } from '../monitoring/apiMonitor';
 export class GeminiUsageLimits {
     static DEFAULT_LIMITS = {
