@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { firecrawl } from '@/lib/firecrawl';
+import { firecrawl } from '../../firecrawl';
 // Helper function to handle scrape operation
 /**
  * Executes a web scraping operation on the specified URL.

@@ -2,7 +2,7 @@
  * SOTA Duplicate Prevention System
  * Implements intelligent duplicate detection and prevention for food truck data
  */
-import { FoodTruckService } from '@/lib/supabase';
+import { FoodTruckService } from '../../supabase/services/foodTruckService.js';
 // Duplicate detection configuration
 export const DUPLICATE_DETECTION_CONFIG = {
     // Similarity thresholds (0.0 = no match, 1.0 = exact match)
