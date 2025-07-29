@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../../supabase/client.js';
 /**
  * Handles a GET request to retrieve OAuth configuration status.
  * @example

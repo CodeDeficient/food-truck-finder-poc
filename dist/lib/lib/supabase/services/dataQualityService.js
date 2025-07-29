@@ -1,5 +1,5 @@
-import { supabaseAdmin } from '../client';
-import { handleSupabaseError } from '../utils';
+import { supabaseAdmin } from '../supabase/client.js';
+import { handleSupabaseError } from '../utils/index.js';
 export const DataQualityService = {
     calculateQualityScore: (truck) => {
         // Placeholder for actual quality score calculation logic

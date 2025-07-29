@@ -2,7 +2,7 @@
  * SOTA API Usage Monitoring and Alerting System
  * Implements proactive monitoring, alerting, and throttling for all external APIs
  */
-import { APIUsageService } from '@/lib/supabase';
+import { APIUsageService } from '../../supabase/services/apiUsageService.js';
 // API Rate Limits Configuration
 export const API_LIMITS = {
     gemini: {

@@ -1,0 +1,1 @@
+feat: Add more logging and UUID validation to FoodTruckService
