@@ -1,5 +1,5 @@
-import type { ExtractedFoodTruckDetails, FoodTruckSchema } from '../types';
-import { type FoodTruck } from '../supabase';
+import type { ExtractedFoodTruckDetails, FoodTruckSchema } from '../types.js';
+import { type FoodTruck } from '../supabase.js';
 /**
  * Validates input data and prepares food truck information.
  * @example

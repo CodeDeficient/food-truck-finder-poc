@@ -1,4 +1,4 @@
-import { APIUsageService } from './supabase/services/apiUsageService.js';
+import { APIUsageService } from './supabase.js';
 import { GeminiApiClient } from './gemini/geminiApiClient.js';
 import { GeminiUsageLimits } from './gemini/usageLimits.js';
 import { PromptTemplates } from './gemini/promptTemplates.js';
