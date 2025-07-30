@@ -1,4 +1,9 @@
-export declare function handleGetTruckById(id: string): Promise<any>;
+import { NextResponse } from 'next/server';
+export declare function handleGetTruckById(id: string): Promise<NextResponse<{
+    error: string;
+}> | NextResponse<{
+    truck: import("@/lib/supabase").FoodTruck;
+}>>;
 /**
  * Retrieves a list of food trucks within a specified radius.
  * @example
@@ -14,7 +19,15 @@ export declare function handleGetTruckById(id: string): Promise<any>;
  *   - Returns an error message with status 500 if an error is encountered.
  *   - Currently, assumes no pagination is needed for location-based searches.
  */
-export declare function handleGetTrucksByLocation(lat: string, lng: string, radius: string): Promise<any>;
+export declare function handleGetTrucksByLocation(lat: string, lng: string, radius: string): Promise<NextResponse<{
+    error: string;
+}> | NextResponse<{
+    trucks: import("@/lib/supabase").FoodTruck[];
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+}>>;
 /**
  * Retrieves truck data with pagination support.
  * @example
@@ -29,7 +42,20 @@ export declare function handleGetTrucksByLocation(lat: string, lng: string, radi
  *   - Determines `hasMore` by comparing total trucks to limit and offset.
  *   - Calculates `lastUpdated` timestamp from truck data.
  */
-export declare function handleGetAllTrucks(limit: number, offset: number): Promise<any>;
+export declare function handleGetAllTrucks(limit: number, offset: number): Promise<NextResponse<{
+    error: string;
+}> | NextResponse<{
+    trucks: import("@/lib/supabase").FoodTruck[];
+    total: number;
+    limit: number;
+    offset: number;
+    hasMore: boolean;
+    summary: {
+        totalTrucks: number;
+        averageQuality: number;
+        lastUpdated: number;
+    };
+}>>;
 /**
 * Handles the creation of a food truck by delegating to the FoodTruckService.
 * @example
@@ -42,7 +68,12 @@ export declare function handleGetAllTrucks(limit: number, offset: number): Promi
 *   - Handles errors, logging them and returning appropriate HTTP statuses.
 *   - Converts the data into a Partial<FoodTruck> type before passing it to the service.
 */
-export declare function handlePostTruck(truckData: unknown): Promise<any>;
+export declare function handlePostTruck(truckData: unknown): Promise<NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    truck: import("@/lib/supabase").FoodTruck;
+}>>;
 /**
  * Updates food truck information with given updates and returns the operation status.
  * @example
@@ -56,4 +87,9 @@ export declare function handlePostTruck(truckData: unknown): Promise<any>;
  *   - It logs errors to the console if the update operation fails.
  *   - Responds with HTTP status 500 in case of any error during the update process.
  */
-export declare function handlePutTruck(id: string, updates: unknown): Promise<any>;
+export declare function handlePutTruck(id: string, updates: unknown): Promise<NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    truck: import("@/lib/supabase").FoodTruck;
+}>>;

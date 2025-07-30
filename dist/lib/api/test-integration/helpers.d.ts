@@ -1,3 +1,6 @@
+import { type FirecrawlResponse } from '@/lib/firecrawl';
+import { type FoodTruck, type ScrapingJob, type DataProcessingQueue } from '@/lib/supabase';
+import type { GeminiResponse, MenuCategory } from '@/lib/types';
 interface FirecrawlTestResult {
     success: boolean;
     result?: FirecrawlResponse;
@@ -8,11 +11,11 @@ export declare function testFirecrawlScraping(testUrl: string): Promise<Firecraw
 export declare function testGeminiProcessing(): Promise<{
     success: boolean;
     error: string;
-    details: any;
+    details: string | undefined;
     result?: undefined;
 } | {
     success: boolean;
-    result: any;
+    result: GeminiResponse<MenuCategory[]>;
     error?: undefined;
     details?: undefined;
 }>;
@@ -53,9 +56,9 @@ export declare function testSupabaseOperations(testUrl: string, geminiResult: Ge
 export declare function formatTestResults(scrapeResult: FirecrawlTestResult, geminiResult: GeminiResponse<GeminiProcessMenuDataResult>, supabaseResults: SupabaseTestResults): FormattedTestResults;
 export declare function runIntegrationTestSteps(testUrl: string): Promise<FirecrawlTestResult | {
     success: boolean;
-    error: string;
-    details: any;
-    result?: undefined;
+    result: GeminiResponse<MenuCategory[]>;
+    error?: undefined;
+    details?: undefined;
 } | {
     success: boolean;
     results: FormattedTestResults;

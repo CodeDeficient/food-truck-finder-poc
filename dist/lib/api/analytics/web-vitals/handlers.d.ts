@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 /**
  * Get Web Vitals Analytics Data
  */
@@ -20,7 +20,7 @@ export declare function getRequestParams(request: NextRequest): {
  *   - Limits the number of returned metrics to 1000 to avoid overwhelming the client.
  */
 export declare function fetchAndFilterMetrics(request: NextRequest): Promise<{
-    metrics: any;
+    metrics: any[];
     days: number;
     startDate: Date;
 }>;
@@ -58,7 +58,9 @@ export declare function getPercentile(sortedValues: number[], percentile: number
  *   - Logs any 'poor' performance metrics for monitoring purposes.
  *   - Ensures metrics collection is non-blocking, even if an error occurs during database operations.
  */
-export declare function handlePostRequest(request: NextRequest): Promise<any>;
+export declare function handlePostRequest(request: NextRequest): Promise<NextResponse<{
+    success: boolean;
+}>>;
 /**
 * Handles a GET request to fetch web vitals analytics data, process it, and respond with a summary.
 * @example
@@ -72,4 +74,27 @@ export declare function handlePostRequest(request: NextRequest): Promise<any>;
 *   - Generates a response containing the metrics, summary, and calculated time period.
 *   - Logs errors and responses with a status code in case of failure during data fetching.
 */
-export declare function handleGetRequest(request: NextRequest): Promise<any>;
+export declare function handleGetRequest(request: NextRequest): Promise<NextResponse<{
+    success: boolean;
+    data: {
+        metrics: any[];
+        summary: Record<string, {
+            count: number;
+            average: number | undefined;
+            median: number | undefined;
+            p75: number | undefined;
+            p95: number | undefined;
+            goodCount: number;
+            needsImprovementCount: number;
+            poorCount: number;
+        }>;
+        period: {
+            days: number;
+            startDate: string;
+            endDate: string;
+        };
+    };
+}> | NextResponse<{
+    success: boolean;
+    error: string;
+}>>;

@@ -4,7 +4,7 @@ export declare class GeminiService {
     private dailyRequestLimit;
     private dailyTokenLimit;
     constructor();
-    checkUsageLimits: () => any;
+    checkUsageLimits: () => Promise<import("./gemini/usageLimits").UsageCheck>;
     private makeGeminiRequest;
     processMenuData: (rawMenuText: string) => Promise<GeminiResponse<MenuCategory[]>>;
     extractLocationFromText: (textInput: string) => Promise<GeminiResponse<LocationData>>;

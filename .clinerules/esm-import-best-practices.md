@@ -184,3 +184,16 @@ node scripts/fix-imports-systematic.js
 3. **Fix Phase:** Apply systematic corrections
 4. **Validation Phase:** Test fixes don't break functionality
 5. **Prevention Phase:** Update processes to prevent future issues
+
+## Recent Learnings and Best Practices
+
+### Rule 6.4: Consistent Duplicate Prevention Logic
+Ensure that both real-time and batch duplicate detection systems use the same logic and thresholds to maintain consistency. Copy duplicate prevention algorithms directly into batch scripts when import dependencies are problematic.
+
+- **Trigger Case**: Batch deduplication scripts producing different results than real-time duplicate prevention.
+- **Example**: Copy `calculateSimilarity` and related functions directly into batch scripts to ensure identical duplicate detection logic.
+
+### Rule 6.5: Proper ESM/CJS Interop
+When mixing ESM and CommonJS modules, use appropriate import/export syntax for each context. CommonJS files should use `require()` and `module.exports`, while ESM files should use `import` and `export`.
+
+- **Trigger Case**: Mixing `import`/`export` syntax in CommonJS files or vice versa.

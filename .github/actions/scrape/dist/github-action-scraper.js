@@ -8,8 +8,8 @@
  * Usage: node src/actions/github-action-scraper.js --limit 10
  */
 import { parseArgs } from 'node:util';
-import { processScrapingJob } from '../../../dist/lib/pipeline/scrapingProcessor.js';
-import { ScrapingJobService } from '../../../dist/lib/supabase/services/scrapingJobService.js';
+import { processScrapingJob } from '../../../../dist/lib/pipeline/scrapingProcessor.js';
+import { ScrapingJobService } from '../../../../dist/lib/supabase/services/scrapingJobService.js';
 // Parse command line arguments
 const options = {
     limit: {

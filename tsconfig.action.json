@@ -1,11 +1,12 @@
 {
-  "extends": "./tsconfig.node.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./.github/actions/scrape/dist",
-    "paths": {
-      "@/lib/*": ["./lib/*"],
-      "@/supabase/*": ["./lib/supabase/*"]
-    }
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": false,
+    "declaration": true,
+    "outDir": "./.github/actions/scrape/dist"
   },
-  "include": ["src/actions/**/*.ts", "src/actions/**/*.tsx"]
+  "include": ["src/actions/**/*.ts"],
+  "exclude": ["node_modules", "dist", "lib"]
 }
