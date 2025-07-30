@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../supabase/client.js';
+import { supabase, supabaseAdmin } from '../client.js';
 export const DataProcessingService = {
     async addToQueue(queueData) {
         if (!supabaseAdmin) {

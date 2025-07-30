@@ -1,4 +1,4 @@
-import type { FoodTruck, FoodTruckSchema } from '../types';
+import type { FoodTruck, FoodTruckSchema } from '../types.js';
 /**
  * Checks if a value is a non-null object.
  */

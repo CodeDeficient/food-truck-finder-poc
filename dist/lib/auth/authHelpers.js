@@ -1,4 +1,4 @@
-import { supabase } from '../../supabase/client.js';
+import { supabase } from '@/lib/supabase';
 export async function verifyAdminAccess(request) {
     try {
         const authHeader = request.headers.get('authorization');

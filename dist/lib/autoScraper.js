@@ -1,8 +1,8 @@
 // lib/autoScraper.ts
-import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config';
-import { supabaseAdmin, ScrapingJobService } from './supabase/client.js';
-import { processScrapingJob } from 'pipelineProcessor.js';
-import { dispatchGeminiOperation } from './gemini/geminiApiClient.js';
+import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config.js';
+import { supabaseAdmin, ScrapingJobService } from './supabase.js';
+import { processScrapingJob } from '@/lib/pipelineProcessor';
+import { dispatchGeminiOperation } from './gemini.js';
 /*
 Food Truck Scraping Strategy (wbs 2.1.2)
 ----------------------------------------

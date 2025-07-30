@@ -4,7 +4,7 @@
  * This utility handles the transformation of Uprooted Vegan Cuisine data
  * to match our FoodTruck schema, including field mappings and defaults.
  */
-import type { FoodTruck, MenuCategory, OperatingHours } from '../types';
+import type { FoodTruck, MenuCategory, OperatingHours } from '../types.js';
 export interface UprootedVeganData {
     name: string;
     description?: string;

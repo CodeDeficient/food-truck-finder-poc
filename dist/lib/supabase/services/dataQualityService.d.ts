@@ -1,4 +1,4 @@
-import type { FoodTruck } from '../types';
+import type { FoodTruck } from '../types/index.js';
 export declare const DataQualityService: {
     calculateQualityScore: (truck: FoodTruck) => {
         score: number;

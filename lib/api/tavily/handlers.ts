@@ -1,4 +1,4 @@
-import type { TavilyResult } from './types';
+import type { TavilyResult } from './types.js';
 
 /**
  * Sends a search query to the Tavily API and retrieves results.

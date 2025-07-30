@@ -13,10 +13,10 @@
  */
 export declare function performTavilySearch(params: Record<string, unknown>): Promise<{
     results: {
-        title: any;
-        url: any;
-        content: any;
-        raw_content: any;
+        title: string;
+        url: string;
+        content: string;
+        raw_content: string;
     }[];
 }>;
 /**

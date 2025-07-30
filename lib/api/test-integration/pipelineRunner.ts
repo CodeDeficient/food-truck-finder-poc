@@ -1,4 +1,4 @@
-import { executePipeline } from './pipelineRunnerHelpers';
+import { executePipeline } from './pipelineRunnerHelpers.js';
 import type { PipelineRunResult } from '@/lib/types';
 
 // Extracted helper function for pipeline execution

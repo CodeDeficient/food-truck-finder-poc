@@ -1,7 +1,7 @@
-import { supabase, supabaseAdmin } from '../client';
-import type { FoodTruck, RawMenuItemFromDB } from '../types';
-import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils';
-import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils';
+import { supabase, supabaseAdmin } from '../client.js';
+import type { FoodTruck, RawMenuItemFromDB } from '../types/index.js';
+import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils/index.js';
+import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils.js';
 import { type PostgrestResponse, type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export const FoodTruckService = {

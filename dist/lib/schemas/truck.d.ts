@@ -35,8 +35,8 @@ export declare const LocationDataSchema: z.ZodObject<{
     confidence: number;
     landmarks: string[];
     address?: string | undefined;
-    city?: string | undefined;
     state?: string | undefined;
+    city?: string | undefined;
     raw_location_text?: string | undefined;
 }, {
     coordinates: {
@@ -46,8 +46,8 @@ export declare const LocationDataSchema: z.ZodObject<{
     confidence: number;
     landmarks: string[];
     address?: string | undefined;
-    city?: string | undefined;
     state?: string | undefined;
+    city?: string | undefined;
     raw_location_text?: string | undefined;
 }>;
 export declare const DailyOperatingHoursSchema: z.ZodUnion<[z.ZodObject<{
@@ -55,13 +55,13 @@ export declare const DailyOperatingHoursSchema: z.ZodUnion<[z.ZodObject<{
     close: z.ZodString;
     closed: z.ZodLiteral<false>;
 }, "strip", z.ZodTypeAny, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }>, z.ZodObject<{
     closed: z.ZodLiteral<true>;
 }, "strip", z.ZodTypeAny, {
@@ -75,13 +75,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -94,13 +94,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -113,13 +113,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -132,13 +132,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -151,13 +151,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -170,13 +170,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -189,13 +189,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -208,13 +208,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
     close: z.ZodString;
     closed: z.ZodLiteral<false>;
 }, "strip", z.ZodTypeAny, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }>, z.ZodObject<{
     closed: z.ZodLiteral<true>;
 }, "strip", z.ZodTypeAny, {
@@ -227,13 +227,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -246,13 +246,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -265,13 +265,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -284,13 +284,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -303,13 +303,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -322,13 +322,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -341,13 +341,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -360,13 +360,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
     close: z.ZodString;
     closed: z.ZodLiteral<false>;
 }, "strip", z.ZodTypeAny, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }>, z.ZodObject<{
     closed: z.ZodLiteral<true>;
 }, "strip", z.ZodTypeAny, {
@@ -379,13 +379,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -398,13 +398,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -417,13 +417,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -436,13 +436,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -455,13 +455,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -474,13 +474,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -493,13 +493,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -512,13 +512,13 @@ export declare const OperatingHoursSchema: z.ZodObject<{
     close: z.ZodString;
     closed: z.ZodLiteral<false>;
 }, "strip", z.ZodTypeAny, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }, {
-    closed: false;
     open: string;
     close: string;
+    closed: false;
 }>, z.ZodObject<{
     closed: z.ZodLiteral<true>;
 }, "strip", z.ZodTypeAny, {
@@ -634,8 +634,8 @@ export declare const ScheduledLocationSchema: z.ZodObject<{
     lat?: number | undefined;
     lng?: number | undefined;
     address?: string | undefined;
-    city?: string | undefined;
     state?: string | undefined;
+    city?: string | undefined;
     zip_code?: string | undefined;
 }, {
     timestamp: string;
@@ -644,8 +644,8 @@ export declare const ScheduledLocationSchema: z.ZodObject<{
     lat?: number | undefined;
     lng?: number | undefined;
     address?: string | undefined;
-    city?: string | undefined;
     state?: string | undefined;
+    city?: string | undefined;
     zip_code?: string | undefined;
 }>;
 export declare const FoodTruckSchema: z.ZodObject<{
@@ -684,8 +684,8 @@ export declare const FoodTruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }, {
         timestamp: string;
@@ -694,8 +694,8 @@ export declare const FoodTruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }>, "many">>;
     operating_hours: z.ZodObject<{
@@ -704,13 +704,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -723,13 +723,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -742,13 +742,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -761,13 +761,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -780,13 +780,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -799,13 +799,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -818,13 +818,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -837,13 +837,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -856,13 +856,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -875,13 +875,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -894,13 +894,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -913,13 +913,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -932,13 +932,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -951,13 +951,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -970,13 +970,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -989,13 +989,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -1008,13 +1008,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1027,13 +1027,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1046,13 +1046,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1065,13 +1065,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1084,13 +1084,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1103,13 +1103,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1122,13 +1122,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1141,13 +1141,13 @@ export declare const FoodTruckSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -1245,8 +1245,72 @@ export declare const FoodTruckSchema: z.ZodObject<{
     average_rating: z.ZodOptional<z.ZodNumber>;
     review_count: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    source_urls: string[];
     name: string;
+    current_location: {
+        timestamp: string;
+        lat: number;
+        lng: number;
+        address?: string | undefined;
+    };
+    operating_hours: {
+        monday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        tuesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        wednesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        thursday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        friday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        saturday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        sunday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    } & {
+        [k: string]: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    };
     menu: {
         name: string;
         items: {
@@ -1257,65 +1321,6 @@ export declare const FoodTruckSchema: z.ZodObject<{
             is_popular?: boolean | undefined;
         }[];
     }[];
-    operating_hours: {
-        monday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        tuesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        wednesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        thursday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        friday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        saturday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        sunday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    } & {
-        [k: string]: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    };
     contact_info: {
         phone?: string | undefined;
         email?: string | undefined;
@@ -1329,15 +1334,10 @@ export declare const FoodTruckSchema: z.ZodObject<{
         yelp?: string | undefined;
     };
     cuisine_type: string[];
-    data_quality_score: number;
-    current_location: {
-        timestamp: string;
-        lat: number;
-        lng: number;
-        address?: string | undefined;
-    };
     specialties: string[];
+    data_quality_score: number;
     verification_status: "pending" | "verified" | "flagged";
+    source_urls: string[];
     last_scraped_at: string;
     email?: string | undefined;
     scheduled_locations?: {
@@ -1347,24 +1347,88 @@ export declare const FoodTruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }[] | undefined;
     description?: string | undefined;
-    schedule?: any[] | undefined;
-    website?: string | undefined;
+    average_rating?: number | undefined;
+    review_count?: number | undefined;
     price_range?: "$" | "$$" | "$$$" | undefined;
     test_run_flag?: boolean | undefined;
+    website?: string | undefined;
     phone_number?: string | undefined;
     instagram_handle?: string | undefined;
     facebook_handle?: string | undefined;
     twitter_handle?: string | undefined;
-    average_rating?: number | undefined;
-    review_count?: number | undefined;
+    schedule?: any[] | undefined;
 }, {
-    source_urls: string[];
     name: string;
+    current_location: {
+        timestamp: string;
+        lat: number;
+        lng: number;
+        address?: string | undefined;
+    };
+    operating_hours: {
+        monday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        tuesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        wednesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        thursday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        friday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        saturday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        sunday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    } & {
+        [k: string]: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    };
     menu: {
         name: string;
         items: {
@@ -1375,65 +1439,6 @@ export declare const FoodTruckSchema: z.ZodObject<{
             is_popular?: boolean | undefined;
         }[];
     }[];
-    operating_hours: {
-        monday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        tuesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        wednesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        thursday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        friday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        saturday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        sunday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    } & {
-        [k: string]: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    };
     contact_info: {
         phone?: string | undefined;
         email?: string | undefined;
@@ -1447,15 +1452,10 @@ export declare const FoodTruckSchema: z.ZodObject<{
         yelp?: string | undefined;
     };
     cuisine_type: string[];
-    data_quality_score: number;
-    current_location: {
-        timestamp: string;
-        lat: number;
-        lng: number;
-        address?: string | undefined;
-    };
     specialties: string[];
+    data_quality_score: number;
     verification_status: "pending" | "verified" | "flagged";
+    source_urls: string[];
     last_scraped_at: string;
     email?: string | undefined;
     scheduled_locations?: {
@@ -1465,21 +1465,21 @@ export declare const FoodTruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }[] | undefined;
     description?: string | undefined;
-    schedule?: any[] | undefined;
-    website?: string | undefined;
+    average_rating?: number | undefined;
+    review_count?: number | undefined;
     price_range?: "$" | "$$" | "$$$" | undefined;
     test_run_flag?: boolean | undefined;
+    website?: string | undefined;
     phone_number?: string | undefined;
     instagram_handle?: string | undefined;
     facebook_handle?: string | undefined;
     twitter_handle?: string | undefined;
-    average_rating?: number | undefined;
-    review_count?: number | undefined;
+    schedule?: any[] | undefined;
 }>;
 export declare const TruckSchema: z.ZodObject<{
     name: z.ZodString;
@@ -1517,8 +1517,8 @@ export declare const TruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }, {
         timestamp: string;
@@ -1527,8 +1527,8 @@ export declare const TruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }>, "many">>;
     operating_hours: z.ZodObject<{
@@ -1537,13 +1537,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1556,13 +1556,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1575,13 +1575,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1594,13 +1594,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1613,13 +1613,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1632,13 +1632,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1651,13 +1651,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1670,13 +1670,13 @@ export declare const TruckSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -1689,13 +1689,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1708,13 +1708,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1727,13 +1727,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1746,13 +1746,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1765,13 +1765,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1784,13 +1784,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1803,13 +1803,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1822,13 +1822,13 @@ export declare const TruckSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -1841,13 +1841,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1860,13 +1860,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1879,13 +1879,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1898,13 +1898,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1917,13 +1917,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1936,13 +1936,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1955,13 +1955,13 @@ export declare const TruckSchema: z.ZodObject<{
             close: z.ZodString;
             closed: z.ZodLiteral<false>;
         }, "strip", z.ZodTypeAny, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }, {
-            closed: false;
             open: string;
             close: string;
+            closed: false;
         }>, z.ZodObject<{
             closed: z.ZodLiteral<true>;
         }, "strip", z.ZodTypeAny, {
@@ -1974,13 +1974,13 @@ export declare const TruckSchema: z.ZodObject<{
         close: z.ZodString;
         closed: z.ZodLiteral<false>;
     }, "strip", z.ZodTypeAny, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }, {
-        closed: false;
         open: string;
         close: string;
+        closed: false;
     }>, z.ZodObject<{
         closed: z.ZodLiteral<true>;
     }, "strip", z.ZodTypeAny, {
@@ -2083,9 +2083,75 @@ export declare const TruckSchema: z.ZodObject<{
     updated_at: z.ZodString;
     is_active: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
-    id: string;
-    source_urls: string[];
     name: string;
+    id: string;
+    created_at: string;
+    updated_at: string;
+    current_location: {
+        timestamp: string;
+        lat: number;
+        lng: number;
+        address?: string | undefined;
+    };
+    operating_hours: {
+        monday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        tuesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        wednesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        thursday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        friday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        saturday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        sunday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    } & {
+        [k: string]: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    };
     menu: {
         name: string;
         items: {
@@ -2096,66 +2162,6 @@ export declare const TruckSchema: z.ZodObject<{
             is_popular?: boolean | undefined;
         }[];
     }[];
-    created_at: string;
-    operating_hours: {
-        monday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        tuesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        wednesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        thursday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        friday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        saturday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        sunday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    } & {
-        [k: string]: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    };
     contact_info: {
         phone?: string | undefined;
         email?: string | undefined;
@@ -2169,17 +2175,11 @@ export declare const TruckSchema: z.ZodObject<{
         yelp?: string | undefined;
     };
     cuisine_type: string[];
-    data_quality_score: number;
-    current_location: {
-        timestamp: string;
-        lat: number;
-        lng: number;
-        address?: string | undefined;
-    };
     specialties: string[];
+    data_quality_score: number;
     verification_status: "pending" | "verified" | "flagged";
+    source_urls: string[];
     last_scraped_at: string;
-    updated_at: string;
     email?: string | undefined;
     scheduled_locations?: {
         timestamp: string;
@@ -2188,26 +2188,92 @@ export declare const TruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }[] | undefined;
     description?: string | undefined;
-    schedule?: any[] | undefined;
-    website?: string | undefined;
+    is_active?: boolean | undefined;
+    average_rating?: number | undefined;
+    review_count?: number | undefined;
     price_range?: "$" | "$$" | "$$$" | undefined;
     test_run_flag?: boolean | undefined;
+    website?: string | undefined;
     phone_number?: string | undefined;
     instagram_handle?: string | undefined;
     facebook_handle?: string | undefined;
     twitter_handle?: string | undefined;
-    average_rating?: number | undefined;
-    review_count?: number | undefined;
-    is_active?: boolean | undefined;
+    schedule?: any[] | undefined;
 }, {
-    id: string;
-    source_urls: string[];
     name: string;
+    id: string;
+    created_at: string;
+    updated_at: string;
+    current_location: {
+        timestamp: string;
+        lat: number;
+        lng: number;
+        address?: string | undefined;
+    };
+    operating_hours: {
+        monday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        tuesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        wednesday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        thursday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        friday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        saturday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+        sunday?: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    } & {
+        [k: string]: {
+            open: string;
+            close: string;
+            closed: false;
+        } | {
+            closed: true;
+        } | undefined;
+    };
     menu: {
         name: string;
         items: {
@@ -2218,66 +2284,6 @@ export declare const TruckSchema: z.ZodObject<{
             is_popular?: boolean | undefined;
         }[];
     }[];
-    created_at: string;
-    operating_hours: {
-        monday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        tuesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        wednesday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        thursday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        friday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        saturday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-        sunday?: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    } & {
-        [k: string]: {
-            closed: false;
-            open: string;
-            close: string;
-        } | {
-            closed: true;
-        } | undefined;
-    };
     contact_info: {
         phone?: string | undefined;
         email?: string | undefined;
@@ -2291,17 +2297,11 @@ export declare const TruckSchema: z.ZodObject<{
         yelp?: string | undefined;
     };
     cuisine_type: string[];
-    data_quality_score: number;
-    current_location: {
-        timestamp: string;
-        lat: number;
-        lng: number;
-        address?: string | undefined;
-    };
     specialties: string[];
+    data_quality_score: number;
     verification_status: "pending" | "verified" | "flagged";
+    source_urls: string[];
     last_scraped_at: string;
-    updated_at: string;
     email?: string | undefined;
     scheduled_locations?: {
         timestamp: string;
@@ -2310,20 +2310,20 @@ export declare const TruckSchema: z.ZodObject<{
         lat?: number | undefined;
         lng?: number | undefined;
         address?: string | undefined;
-        city?: string | undefined;
         state?: string | undefined;
+        city?: string | undefined;
         zip_code?: string | undefined;
     }[] | undefined;
     description?: string | undefined;
-    schedule?: any[] | undefined;
-    website?: string | undefined;
+    is_active?: boolean | undefined;
+    average_rating?: number | undefined;
+    review_count?: number | undefined;
     price_range?: "$" | "$$" | "$$$" | undefined;
     test_run_flag?: boolean | undefined;
+    website?: string | undefined;
     phone_number?: string | undefined;
     instagram_handle?: string | undefined;
     facebook_handle?: string | undefined;
     twitter_handle?: string | undefined;
-    average_rating?: number | undefined;
-    review_count?: number | undefined;
-    is_active?: boolean | undefined;
+    schedule?: any[] | undefined;
 }>;

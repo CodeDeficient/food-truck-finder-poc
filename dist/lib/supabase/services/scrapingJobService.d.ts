@@ -1,4 +1,4 @@
-import type { ScrapingJob } from '../types';
+import type { ScrapingJob } from '../types/index.js';
 export declare const ScrapingJobService: {
     createJob(jobData: Partial<ScrapingJob>): Promise<ScrapingJob>;
     getJobsByStatus(status: string): Promise<ScrapingJob[]>;

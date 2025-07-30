@@ -1,4 +1,4 @@
-import type { MenuCategory, RawMenuItemFromDB, FoodTruck } from '../types';
+import type { MenuCategory, RawMenuItemFromDB, FoodTruck } from '../types/index.js';
 export declare function buildMenuByTruck(menuItems: RawMenuItemFromDB[]): Record<string, RawMenuItemFromDB[]>;
 export declare function groupMenuItems(rawItems: RawMenuItemFromDB[]): MenuCategory[];
 export declare function updateTruckData(id: string, updatesWithoutMenu: Partial<FoodTruck>): Promise<FoodTruck | {

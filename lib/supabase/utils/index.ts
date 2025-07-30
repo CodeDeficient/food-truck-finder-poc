@@ -1,8 +1,8 @@
 import { type PostgrestError } from '@supabase/supabase-js';
-import { supabaseAdmin } from '../client';
-import type { FoodTruck, FoodTruckLocation, MenuCategory, MenuItem } from '../types';
+import { supabaseAdmin } from '../client.js';
+import type { FoodTruck, FoodTruckLocation, MenuCategory, MenuItem } from '../types/index.js';
 
-import { isMenuItem } from './typeGuards';
+import { isMenuItem } from './typeGuards.js';
 
 function handleSupabaseError(error: PostgrestError | Error, context: string) {
   console.warn(`Error in ${context}:`, error.message);
@@ -111,4 +111,4 @@ export {
     
     
 }
-export {buildMenuByTruck, groupMenuItems} from './menuUtils';
+export {buildMenuByTruck, groupMenuItems} from './menuUtils.js';

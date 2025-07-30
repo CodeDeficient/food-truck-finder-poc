@@ -1,5 +1,5 @@
-import { supabase, supabaseAdmin } from '../client';
-import type { ApiUsage } from '../types';
+import { supabase, supabaseAdmin } from '../client.js';
+import type { ApiUsage } from '../types/index.js';
 import { type PostgrestResponse, type PostgrestSingleResponse, type PostgrestError } from '@supabase/supabase-js';
 
 export const APIUsageService = {

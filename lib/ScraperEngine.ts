@@ -1,4 +1,4 @@
-import { firecrawl } from './firecrawl'; // Import the firecrawl singleton
+import { firecrawl } from './firecrawl.js'; // Import the firecrawl singleton
 import * as crypto from 'node:crypto'; // Node.js crypto for secure randomness
 
 interface InstagramPost {
