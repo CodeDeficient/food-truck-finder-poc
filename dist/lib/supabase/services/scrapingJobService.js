@@ -23,7 +23,7 @@ export const ScrapingJobService = {
     },
     async getJobsByStatus(status) {
         try {
-            const query = (supabaseAdmin ?? supabase).from('scraping_jobs').select('*');
+            const query = supabase.from('scraping_jobs').select('*');
             const { data, error } = await (status === 'all' ? query : query.eq('status', status))
                 .order('priority', { ascending: false })
                 .order('scheduled_at', { ascending: true });

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ScrapingJobService } from '../../supabase/client.js';
+import { ScrapingJobService } from '@/lib/supabase';
 /**
  * Handles a legacy scraping request and creates a scraping job.
  * @example

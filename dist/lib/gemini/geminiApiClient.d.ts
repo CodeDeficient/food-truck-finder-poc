@@ -1,4 +1,4 @@
-import type { GeminiResponse } from '../types';
+import type { GeminiResponse } from '../types.js';
 export interface GeminiApiConfig {
     temperature?: number;
     maxTokens?: number;

@@ -1,3 +1,4 @@
+import { Database } from './types.js';
 import { NextRequest, NextResponse } from 'next/server';
 /**
 * Create a Supabase client configured for middleware

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import type { OAuthStatus } from './types';
+import type { OAuthStatus } from './types.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**

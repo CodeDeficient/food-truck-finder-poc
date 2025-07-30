@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { PipelineRequestBody } from './types';
+import type { PipelineRequestBody } from './types.js';
 /**
  * Handles a legacy scraping request and creates a scraping job.
  * @example

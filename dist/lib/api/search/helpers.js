@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { applyCuisineFilter, applyOpenNowFilter, applyTextSearchFilter, } from '../../api/search/filters';
-import { getAndFilterFoodTrucks, sortFoodTrucksByQuality } from '../../api/search/data.js';
+import { applyCuisineFilter, applyOpenNowFilter, applyTextSearchFilter, } from '@/lib/api/search/filters';
+import { getAndFilterFoodTrucks, sortFoodTrucksByQuality } from '@/lib/api/search/data';
 /**
  * Processes a search request and returns filtered and sorted food trucks based on query parameters.
  * @example

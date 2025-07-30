@@ -1,6 +1,6 @@
-import { supabaseAdmin } from '../client';
-import type { FoodTruck } from '../types';
-import { handleSupabaseError } from '../utils';
+import { supabaseAdmin } from '../client.js';
+import type { FoodTruck } from '../types/index.js';
+import { handleSupabaseError } from '../utils/index.js';
 import { type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export const DataQualityService = {
