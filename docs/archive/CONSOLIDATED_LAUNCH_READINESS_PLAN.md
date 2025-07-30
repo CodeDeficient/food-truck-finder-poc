@@ -36,7 +36,7 @@
    ```
 
 3. **Configure Vercel Environment Variables**:
-   - `SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `NEXTAUTH_SECRET`
@@ -209,7 +209,7 @@ import { ComponentRef } from 'react';
 ### Environment Variables:
 ```bash
 # Required for launch
-SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 NEXTAUTH_SECRET=your_nextauth_secret

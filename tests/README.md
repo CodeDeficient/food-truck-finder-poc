@@ -216,7 +216,7 @@ npm run test:pipeline:health
     npm run test:pipeline:all
   env:
     BASE_URL: ${{ env.STAGING_URL }}
-    SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+    NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
     SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 ```
 
