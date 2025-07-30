@@ -1,3 +1,4 @@
+import type { FoodTruck } from '@/lib/supabase';
 /**
 * Returns an array of regular expressions that identify placeholder patterns.
 * @example

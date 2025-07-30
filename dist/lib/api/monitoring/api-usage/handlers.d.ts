@@ -1,5 +1,10 @@
-import { NextRequest } from 'next/server';
-export declare function handleComprehensiveMonitoring(): any;
+import { NextRequest, NextResponse } from 'next/server';
+import { type APIService } from '@/lib/monitoring/apiMonitor';
+export declare function handleComprehensiveMonitoring(): NextResponse<{
+    success: boolean;
+    data: Promise<import("@/lib/monitoring/apiMonitor").APIMonitoringResult>;
+    timestamp: string;
+}>;
 /**
  * Handles monitoring of API service usage based on the request parameters.
  * @example
@@ -13,9 +18,21 @@ export declare function handleComprehensiveMonitoring(): any;
  *   - Calls `APIMonitor.canMakeRequest` to determine if the request can be made when action is 'check'.
  *   - Returns current usage statistics when action is not 'check'.
  */
-export declare function handleServiceSpecificMonitoring(request: NextRequest, service: APIService): Promise<any>;
-export declare function handleClearAlerts(): any;
-export declare function handleGetAlerts(): any;
+export declare function handleServiceSpecificMonitoring(request: NextRequest, service: APIService): Promise<NextResponse<{
+    success: boolean;
+    service: "gemini" | "firecrawl" | "tavily" | "supabase";
+    usage: Promise<import("@/lib/monitoring/apiMonitor").APIUsageData>;
+    timestamp: string;
+}>>;
+export declare function handleClearAlerts(): NextResponse<{
+    success: boolean;
+    message: string;
+}>;
+export declare function handleGetAlerts(): NextResponse<{
+    success: boolean;
+    alerts: import("@/lib/monitoring/apiMonitor").APIUsageAlert[];
+    count: number;
+}>;
 /**
  * Handles test alert triggering based on service and level provided.
  * @example
@@ -33,4 +50,10 @@ export declare function handleGetAlerts(): any;
 export declare function handleTestAlert(body: {
     service: string;
     level: string;
-}): any;
+}): NextResponse<{
+    success: boolean;
+    error: string;
+}> | NextResponse<{
+    success: boolean;
+    message: string;
+}>;

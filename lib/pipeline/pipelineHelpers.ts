@@ -35,7 +35,16 @@ export async function validateInputAndPrepare(
     console.warn(`Job ${jobId}: Missing sourceUrl for food truck data, proceeding without it.`);
   }
 
-  const name = extractedTruckData.name ?? 'Unknown Food Truck'; // Ensure name has a fallback
+  // CRITICAL: If name is null, undefined, empty, or "Unknown Food Truck", discard the truck data
+  if (!extractedTruckData.name || extractedTruckData.name.trim() === '' || extractedTruckData.name.trim().toLowerCase() === 'unknown food truck') {
+    console.info(`Job ${jobId}: Discarding truck data - invalid name: "${extractedTruckData.name}"`);
+    await ScrapingJobService.updateJobStatus(jobId, 'failed', {
+      errors: ['Invalid food truck name - data discarded to prevent "Unknown Food Truck" entries'],
+    });
+    return { isValid: false, name: '' };
+  }
+
+  const name = extractedTruckData.name;
   console.info(
     `Job ${jobId}: Preparing to create/update food truck: ${name} from ${sourceUrl ?? 'Unknown Source'}`,
   );

@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import type { PipelineRequestBody } from './types';
 /**
  * Handles a legacy scraping request and creates a scraping job.
@@ -11,4 +12,11 @@ import type { PipelineRequestBody } from './types';
  *   - Defaults `job_type` to 'website_scrape' and `priority` to 1 if not provided.
  *   - Includes a suggestion note about using the new unified pipeline API.
  */
-export declare function handleLegacyScrapingRequest(body: PipelineRequestBody): Promise<any>;
+export declare function handleLegacyScrapingRequest(body: PipelineRequestBody): Promise<NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    job_id: string;
+    target_url: string;
+    note: string;
+}>>;

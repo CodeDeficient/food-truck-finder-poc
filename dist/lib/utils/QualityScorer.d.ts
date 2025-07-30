@@ -1,3 +1,4 @@
+import type { FoodTruck } from '@/lib/supabase';
 export interface QualityAssessment {
     score: number;
     issues: string[];

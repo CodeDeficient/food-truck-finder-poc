@@ -66,6 +66,7 @@ This blog documents the incredible journey of building the **Food Truck Finder**
 | **[17](17-lessons-learned.md)** | Lessons from a Self-Taught Journey | Key insights and knowledge gained |
 | **[18](18-ai-as-mentor.md)** | AI as Mentor: The Future of Learning | How AI transformed the learning experience |
 | **[19](19-whats-next.md)** | What's Next: UI Polish and Beyond | Future improvements and career goals |
+| **[20](20-summary-milestone.md)** | Milestone Achieved: From Zero to Production-Ready | Celebrating production deployment and next steps |
 
 ---
 
