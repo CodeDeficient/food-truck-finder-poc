@@ -9,7 +9,7 @@
     "build": "next build",
     "build:lib": "tsc --project tsconfig.lib.json",
     "build:action": "npm run build:lib && tsc --project tsconfig.action.json && npm run postbuild:action",
-    "postbuild:action": "echo success",
+    "postbuild:action": "powershell -ExecutionPolicy Bypass -File scripts/postbuild-action.ps1",
     "start": "next start",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",

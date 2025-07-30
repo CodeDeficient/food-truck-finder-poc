@@ -20,5 +20,5 @@ interface RequestMetadata {
  *   - Logs access attempts to the admin panel for auditing purposes.
  *   - Redirects to an appropriate error handler if the user isn't authenticated or authorized.
  */
-export declare function protectAdminRoutes(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata): Promise<any>;
+export declare function protectAdminRoutes(req: NextRequest, res: NextResponse, requestMetadata: RequestMetadata): Promise<NextResponse<unknown>>;
 export {};

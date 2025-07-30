@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 /**
  * Handles a POST request to initiate an auto-scraping process and returns the result.
  * @example
@@ -12,5 +12,7 @@ import { NextRequest } from 'next/server';
  *   - Schedules follow-up tasks after successful scraping.
  *   - Catches and logs errors with a failure response in case of any exceptions during the process.
  */
-export declare function handlePostRequest(request: NextRequest): Promise<any>;
-export declare function handleGetRequest(): any;
+export declare function handlePostRequest(request: NextRequest): Promise<NextResponse<unknown>>;
+export declare function handleGetRequest(): NextResponse<{
+    error: string;
+}>;

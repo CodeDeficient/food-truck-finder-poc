@@ -23,7 +23,7 @@ interface DeleteScheduleOptions {
 export declare function handlePostRequest(body: {
     action: string;
     options?: Record<string, unknown>;
-}): Promise<any>;
+}): Promise<NextResponse<unknown>>;
 export declare function handleGetStatus(): Promise<NextResponse>;
 export declare function handleGetSchedules(): Promise<NextResponse>;
 export declare function handleGetHistory(searchParams: URLSearchParams): Promise<NextResponse>;

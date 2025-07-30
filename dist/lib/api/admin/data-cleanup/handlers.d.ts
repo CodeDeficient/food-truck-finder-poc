@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import type { DataCleanupRequestBody } from '@/lib/types';
 /**
  * Handles different types of data cleanup requests and returns appropriate responses.
  * @example

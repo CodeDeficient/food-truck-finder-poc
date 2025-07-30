@@ -2,6 +2,7 @@
  * SOTA Duplicate Prevention System
  * Implements intelligent duplicate detection and prevention for food truck data
  */
+import { type FoodTruck } from '@/lib/supabase';
 export declare const DUPLICATE_DETECTION_CONFIG: {
     readonly thresholds: {
         readonly name: 0.85;
@@ -48,7 +49,12 @@ export declare class DuplicatePreventionService {
      */
     private static calculateSimilarity;
     /**
-     * Calculate string similarity using Levenshtein distance
+     * Normalize food truck names for better comparison
+     * Removes common suffixes, normalizes case, handles punctuation variations
+     */
+    private static normalizeFoodTruckName;
+    /**
+     * Calculate string similarity using Levenshtein distance with enhanced food truck name handling
      */
     private static calculateStringSimilarity;
     /**
