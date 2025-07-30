@@ -3,7 +3,7 @@
  * Implements intelligent duplicate detection and prevention for food truck data
  */
 
-import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck } from '../supabase.js';
 
 // Duplicate detection configuration
 export const DUPLICATE_DETECTION_CONFIG = {
