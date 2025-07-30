@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { APIUsageService } from '../supabase';
+import { APIUsageService } from '../supabase.js';
 import type { GeminiResponse } from '../types';
 
 export interface GeminiApiConfig {

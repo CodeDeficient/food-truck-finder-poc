@@ -1,4 +1,4 @@
-import { APIUsageService } from '../supabase';
+import { APIUsageService } from '../supabase.js';
 import { APIMonitor } from '../monitoring/apiMonitor';
 
 export interface UsageLimits {
