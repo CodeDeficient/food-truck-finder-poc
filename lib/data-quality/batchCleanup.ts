@@ -5,8 +5,8 @@
 
 import { FoodTruckService, DataQualityService } from '@/lib/supabase';
 import type { FoodTruck, CleanupOperation, CleanupOperationType, BatchCleanupResult } from '@/lib/types';
-import { DuplicatePreventionService } from './duplicatePrevention';
-import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils';
+import { DuplicatePreventionService } from './duplicatePrevention.js';
+import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils.js';
 
 // Re-export the types for backward compatibility
 export type { CleanupOperation, CleanupOperationType, BatchCleanupResult };

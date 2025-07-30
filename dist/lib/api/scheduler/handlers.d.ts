@@ -1,4 +1,5 @@
-import type { PutRequestBody } from './types';
+import { NextResponse } from 'next/server';
+import type { PutRequestBody } from './types.js';
 /**
  * Retrieves the current status and summary information of scheduler tasks.
  * @example
@@ -20,7 +21,17 @@ import type { PutRequestBody } from './types';
  *   - Provides a detailed summary of the tasks, including counts of total, enabled, and running tasks.
  *   - Accumulates total successes and errors from all scheduler tasks for comprehensive reporting.
  */
-export declare function handleSchedulerStatus(): any;
+export declare function handleSchedulerStatus(): NextResponse<{
+    isRunning: boolean;
+    tasks: import("./types.js").SchedulerTask[];
+    summary: {
+        totalTasks: number;
+        enabledTasks: number;
+        runningTasks: number;
+        totalSuccesses: number;
+        totalErrors: number;
+    };
+}>;
 /**
 * Generates a JSON response containing a list of scheduler logs
 * @example
@@ -33,8 +44,18 @@ export declare function handleSchedulerStatus(): any;
 *   - Log timestamps are derived from the current time and adjusted to simulate real-time delays.
 *   - Provides insight into scheduler task execution and any issues encountered.
 */
-export declare function handleSchedulerLogs(): any;
-export declare function handleSchedulerDefault(): any;
+export declare function handleSchedulerLogs(): NextResponse<{
+    logs: {
+        timestamp: string;
+        taskId: string;
+        level: string;
+        message: string;
+    }[];
+}>;
+export declare function handleSchedulerDefault(): NextResponse<{
+    message: string;
+    endpoints: string[];
+}>;
 /**
 * Initializes the scheduler if it's not already running
 * @example
@@ -47,7 +68,12 @@ export declare function handleSchedulerDefault(): any;
 *   - Sets the current time as the start time for the new scheduler instance.
 *   - Returns a 409 status code if the scheduler is already running.
 */
-export declare function handleStartScheduler(): any;
+export declare function handleStartScheduler(): NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    status: string;
+}>;
 /**
 * Stops the scheduler if it is currently running and returns a status message.
 * @example
@@ -59,7 +85,12 @@ export declare function handleStartScheduler(): any;
 *   - Returns an error message if the scheduler is not running.
 *   - Sets the scheduler instance to undefined to signify it has been stopped.
 */
-export declare function handleStopScheduler(): any;
+export declare function handleStopScheduler(): NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    status: string;
+}>;
 /**
  * Executes a task by its ID and returns the execution result.
  * @example
@@ -73,7 +104,12 @@ export declare function handleStopScheduler(): any;
  *   - Task execution includes simulating success or failure. Math.random is used for simulation.
  *   - Updates task properties like lastRun, lastSuccess, successCount, errorCount based on execution result.
  */
-export declare function handleExecuteTask(taskId: string): any;
+export declare function handleExecuteTask(taskId: string): NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    task: import("./types.js").SchedulerTask;
+}>;
 /**
  * Handles the update of a task configuration by modifying schedulerTasks.
  * @example
@@ -86,4 +122,9 @@ export declare function handleExecuteTask(taskId: string): any;
  *   - Modifies the task configuration using provided config object.
  *   - Updates nextRun time if intervalMinutes is specified and task is enabled.
  */
-export declare function handleUpdateTask(body: PutRequestBody): any;
+export declare function handleUpdateTask(body: PutRequestBody): NextResponse<{
+    error: string;
+}> | NextResponse<{
+    message: string;
+    task: import("./types.js").SchedulerTask;
+}>;

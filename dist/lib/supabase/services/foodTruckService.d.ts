@@ -1,4 +1,4 @@
-import type { FoodTruck } from '../types';
+import type { FoodTruck } from '../types/index.js';
 export declare const FoodTruckService: {
     getAllTrucks(limit?: number, offset?: number): Promise<{
         trucks: FoodTruck[];
