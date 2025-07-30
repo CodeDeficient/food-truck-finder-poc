@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { FoodTruckService } from '../../supabase/client.js';
+import { FoodTruckService } from '@/lib/supabase';
 /**
  * Handles GET requests by executing different actions based on query parameters.
  * @example

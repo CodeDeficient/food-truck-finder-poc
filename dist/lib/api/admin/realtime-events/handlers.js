@@ -1,4 +1,4 @@
-import { ScrapingJobService, FoodTruckService, } from '../../supabase/client.js';
+import { ScrapingJobService, FoodTruckService, } from '@/lib/supabase';
 /**
 * Handles incoming GET requests by streaming real-time admin events through Server-Sent Events.
 * @example

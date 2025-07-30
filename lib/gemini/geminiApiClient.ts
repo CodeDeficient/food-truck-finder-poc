@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { APIUsageService } from '../supabase.js';
-import type { GeminiResponse } from '../types';
+import type { GeminiResponse } from '../types.js';
 
 export interface GeminiApiConfig {
   temperature?: number;

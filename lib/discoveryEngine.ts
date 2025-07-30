@@ -1,6 +1,6 @@
 // lib/discoveryEngine.ts
-import { supabaseAdmin } from './supabase';
-import { SC_TARGET_CITIES, DISCOVERY_CONFIG } from './config';
+import { supabaseAdmin } from './supabase.js';
+import { SC_TARGET_CITIES, DISCOVERY_CONFIG } from './config.js';
 
 export interface DiscoveredUrl {
   url: string;

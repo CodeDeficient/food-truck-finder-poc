@@ -1,4 +1,4 @@
-import type { DataProcessingQueue } from '../types';
+import type { DataProcessingQueue } from '../types/index.js';
 export declare const DataProcessingService: {
     addToQueue(queueData: Partial<DataProcessingQueue>): Promise<DataProcessingQueue>;
     getNextQueueItem(): Promise<DataProcessingQueue | undefined>;

@@ -1,10 +1,10 @@
 // lib/pipelineManager.ts
 // Unified Pipeline Manager - Consolidates all pipeline operations
 
-import { ScrapingJobService, type ScrapingJob } from './supabase';
-import { discoveryEngine } from './discoveryEngine';
-import { processScrapingJob } from './pipelineProcessor';
-import { ensureDefaultTrucksAreScraped } from './autoScraper';
+import { ScrapingJobService, type ScrapingJob } from './supabase.js';
+import { discoveryEngine } from './discoveryEngine.js';
+import { processScrapingJob } from './pipelineProcessor.js';
+import { ensureDefaultTrucksAreScraped } from './autoScraper.js';
 
 // Configuration interfaces
 export interface PipelineConfig {

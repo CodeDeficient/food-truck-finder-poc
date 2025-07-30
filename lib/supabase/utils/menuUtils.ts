@@ -1,7 +1,7 @@
-import type { MenuItem, MenuCategory, RawMenuItemFromDB, FoodTruck } from '../types';
-import { isMenuCategory, isMenuItem } from './typeGuards';
-import { supabaseAdmin } from '../client';
-import { handleSupabaseError } from './index';
+import type { MenuItem, MenuCategory, RawMenuItemFromDB, FoodTruck } from '../types/index.js';
+import { isMenuCategory, isMenuItem } from './typeGuards.js';
+import { supabaseAdmin } from '../client.js';
+import { handleSupabaseError } from './index.js';
 import { type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export function buildMenuByTruck(menuItems: RawMenuItemFromDB[]): Record<string, RawMenuItemFromDB[]> {

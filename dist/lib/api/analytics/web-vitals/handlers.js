@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '../../supabase/client.js';
+import { supabaseAdmin } from '@/lib/supabase';
 /**
  * Get Web Vitals Analytics Data
  */
