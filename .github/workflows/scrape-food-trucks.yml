@@ -73,13 +73,13 @@ jobs:
             echo "✅ Pipeline completed successfully"
           fi
 
-      - name: Monitor API usage
-        if: always()
-        run: |
-          echo "📈 Checking API usage..."
-          node -e "
-          import { APIUsageService } from './dist/lib/supabase/services/apiUsageService.js';
-          APIUsageService.getTodayUsage('gemini').then(usage => {
-            console.log('Gemini API usage today:', JSON.stringify(usage, null, 2));
-          }).catch(console.error);
-          "
+      # - name: Monitor API usage
+      #   if: always()
+      #   run: |
+      #     echo "📈 Checking API usage..."
+      #     node -e "
+      #     import { APIUsageService } from './dist/lib/supabase/services/apiUsageService.js';
+      #     APIUsageService.getTodayUsage('gemini').then(usage => {
+      #       console.log('Gemini API usage today:', JSON.stringify(usage, null, 2));
+      #     }).catch(console.error);
+      #     "
