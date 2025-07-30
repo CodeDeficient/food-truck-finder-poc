@@ -1,10 +1,10 @@
-import { type MenuCategory, type LocationData, type OperatingHours, type SentimentAnalysisResult, type EnhancedFoodTruckData, type ExtractedFoodTruckDetails, type GeminiResponse } from './types';
+import { type MenuCategory, type LocationData, type OperatingHours, type SentimentAnalysisResult, type EnhancedFoodTruckData, type ExtractedFoodTruckDetails, type GeminiResponse } from './types.js';
 export declare class GeminiService {
     private apiClient;
     private dailyRequestLimit;
     private dailyTokenLimit;
     constructor();
-    checkUsageLimits: () => Promise<import("./gemini/usageLimits").UsageCheck>;
+    checkUsageLimits: () => Promise<import("./gemini/usageLimits.js").UsageCheck>;
     private makeGeminiRequest;
     processMenuData: (rawMenuText: string) => Promise<GeminiResponse<MenuCategory[]>>;
     extractLocationFromText: (textInput: string) => Promise<GeminiResponse<LocationData>>;

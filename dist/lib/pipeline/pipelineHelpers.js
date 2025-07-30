@@ -1,5 +1,4 @@
-import { ScrapingJobService } from '../supabase/services/scrapingJobService.js';
-import { FoodTruckService } from '../supabase/services/foodTruckService.js';
+import { ScrapingJobService, FoodTruckService } from '../supabase.js';
 import { DuplicatePreventionService } from '../data-quality/duplicatePrevention.js';
 // Helper function to validate input and prepare basic data
 /**
