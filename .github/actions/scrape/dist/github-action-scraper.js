@@ -7,9 +7,12 @@
  *
  * Usage: node src/actions/github-action-scraper.js --limit 10
  */
+
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { parseArgs } from 'node:util';
-import { processScrapingJob } from '../../../../dist/lib/pipeline/scrapingProcessor.js';
-import { ScrapingJobService } from '../../../../dist/lib/supabase/services/scrapingJobService.js';
+
 // Parse command line arguments
 const options = {
     limit: {
@@ -24,6 +27,7 @@ const options = {
     }
 };
 const { values } = parseArgs({ options, allowPositionals: false });
+
 if (values.help) {
     console.log(`
 GitHub Action Scraper
@@ -42,7 +46,9 @@ Environment Variables Required:
   `);
     process.exit(0);
 }
+
 const limit = parseInt(values.limit || '10', 10);
+
 // Validate environment variables
 const requiredEnvVars = [
     'NEXT_PUBLIC_SUPABASE_URL',
@@ -55,18 +61,34 @@ if (missingEnvVars.length > 0) {
     missingEnvVars.forEach(envVar => console.error(`  - ${envVar}`));
     process.exit(1);
 }
+
 // Check for AI API key
 if (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {
     console.error('❌ Missing AI API key: either GEMINI_API_KEY or GOOGLE_API_KEY is required');
     process.exit(1);
 }
+
 console.log('🚀 GitHub Action Scraper Starting');
 console.log(`📊 Processing up to ${limit} jobs`);
 console.log(`🔗 Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 50)}...`);
+
+// Import these after dotenv is loaded to ensure environment variables are available
+let processScrapingJob, ScrapingJobService;
+
+async function initializeModules() {
+  const scrapingProcessor = await import('../../../../dist/lib/pipeline/scrapingProcessor.js');
+  const scrapingJobService = await import('../../../../dist/lib/supabase/services/scrapingJobService.js');
+  processScrapingJob = scrapingProcessor.processScrapingJob;
+  ScrapingJobService = scrapingJobService.ScrapingJobService;
+}
+
 /**
  * Main execution function
  */
 async function main() {
+    // Initialize modules with environment variables loaded
+    await initializeModules();
+
     let processedCount = 0;
     let successCount = 0;
     let failureCount = 0;
@@ -123,26 +145,31 @@ async function main() {
     }
     console.log('\n🏁 GitHub Action Scraper completed');
 }
+
 // Error handlers
 process.on('uncaughtException', (error) => {
     console.error('💥 Uncaught Exception:', error);
     process.exit(1);
 });
+
 process.on('unhandledRejection', (reason, promise) => {
     console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
     process.exit(1);
 });
+
 // Graceful shutdown
 process.on('SIGINT', () => {
     console.log('\n⏹️  Received SIGINT, shutting down gracefully...');
     process.exit(0);
 });
+
 process.on('SIGTERM', () => {
     console.log('\n⏹️  Received SIGTERM, shutting down gracefully...');
     process.exit(0);
 });
-// Run the main function using top-level await for pure ESM module
-await main().catch((error) => {
+
+// Run the main function
+main().catch((error) => {
     console.error('💥 Unhandled error in main:', error);
     process.exit(1);
 });
