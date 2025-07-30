@@ -1,6 +1,6 @@
-import type { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '../types';
-import { ScrapingJobService, FoodTruckService, type FoodTruck } from '../supabase';
-import { DuplicatePreventionService } from '../data-quality/duplicatePrevention';
+import type { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '../types.js';
+import { ScrapingJobService, FoodTruckService, type FoodTruck } from '../supabase.js';
+import { DuplicatePreventionService } from '../data-quality/duplicatePrevention.js';
 
 // Helper function to validate input and prepare basic data
 /**
