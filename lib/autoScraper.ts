@@ -145,7 +145,7 @@ async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapin
       priority: 5,
       scheduled_at: new Date().toISOString(),
     });
-    processScrapingJob(job.id).catch((error) => {
+    processScrapingJob(job.id).catch((error: Error) => {
       console.error('Failed to process scraping job:', error);
     });
     return {
