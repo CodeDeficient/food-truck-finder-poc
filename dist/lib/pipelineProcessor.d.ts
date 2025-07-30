@@ -1,1 +1,1 @@
-export { processScrapingJob, createOrUpdateFoodTruck } from './pipeline/index';
+export { processScrapingJob, createOrUpdateFoodTruck } from './pipeline/index.js';
