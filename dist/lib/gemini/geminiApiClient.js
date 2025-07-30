@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { APIUsageService } from '../supabase/services/apiUsageService.js';
+import { APIUsageService } from '../supabase.js';
 export class GeminiApiClient {
     genAI;
     modelName;

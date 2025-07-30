@@ -2,7 +2,7 @@
  * SOTA Duplicate Prevention System
  * Implements intelligent duplicate detection and prevention for food truck data
  */
-import { type FoodTruck } from '@/lib/supabase';
+import { type FoodTruck } from '../supabase.js';
 export declare const DUPLICATE_DETECTION_CONFIG: {
     readonly thresholds: {
         readonly name: 0.85;
