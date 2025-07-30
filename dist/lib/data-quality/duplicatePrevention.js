@@ -3,6 +3,8 @@
  * Implements intelligent duplicate detection and prevention for food truck data
  */
 import { FoodTruckService } from '../supabase/services/foodTruckService.js';
+import { supabaseAdmin } from '../supabase/client.js';
+
 // Duplicate detection configuration
 export const DUPLICATE_DETECTION_CONFIG = {
     // Similarity thresholds (0.0 = no match, 1.0 = exact match)
@@ -21,10 +23,52 @@ export const DUPLICATE_DETECTION_CONFIG = {
         menu: 0.1, // 10% weight for menu similarity
     },
 };
+
 /**
  * Advanced Duplicate Prevention Service
  */
 export class DuplicatePreventionService {
+    /**
+     * Check if a URL has already been processed (duplicate URL check)
+     * @param {string} url - The URL to check for duplicates
+     * @returns {Promise<{isDuplicate: boolean, reason: string}>} - Result of duplicate check
+     */
+    static async isDuplicateUrl(url) {
+        try {
+            // Check if this URL already exists in the food_trucks table as a source URL
+            const { data, error } = await supabaseAdmin
+                .from('food_trucks')
+                .select('id, source_urls')
+                .contains('source_urls', [url])
+                .limit(1);
+
+            if (error) {
+                console.error('Error checking for duplicate URL:', error);
+                return {
+                    isDuplicate: false,
+                    reason: 'Error occurred during duplicate check - proceeding with caution'
+                };
+            }
+
+            if (data && data.length > 0) {
+                return {
+                    isDuplicate: true,
+                    reason: `URL already processed and exists in food truck record ID: ${data[0].id}`
+                };
+            }
+
+            return {
+                isDuplicate: false,
+                reason: 'URL not found in existing records'
+            };
+        } catch (error) {
+            console.error('Error in isDuplicateUrl:', error);
+            return {
+                isDuplicate: false,
+                reason: 'Error occurred during duplicate check - proceeding with caution'
+            };
+        }
+    }
     /**
      * Check if a food truck is a duplicate of existing trucks
      */
