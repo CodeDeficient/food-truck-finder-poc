@@ -1,1 +1,1 @@
-export { processScrapingJob, createOrUpdateFoodTruck } from './scrapingProcessor';
+export { processScrapingJob, createOrUpdateFoodTruck } from './scrapingProcessor.js';
