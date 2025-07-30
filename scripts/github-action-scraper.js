@@ -21,6 +21,11 @@ const options = {
     short: 'l',
     default: '10'
   },
+  debug: {
+    type: 'boolean',
+    short: 'd',
+    default: false
+  },
   help: {
     type: 'boolean',
     short: 'h',
@@ -38,6 +43,7 @@ Usage: node scripts/github-action-scraper.js [options]
 
 Options:
   -l, --limit <number>  Maximum number of jobs to process (default: 10)
+  -d, --debug          Enable debug logging
   -h, --help           Show this help message
 
 Environment Variables Required:
@@ -50,6 +56,14 @@ Environment Variables Required:
 }
 
 const limit = parseInt(values.limit || '10', 10);
+const debugMode = values.debug || false;
+
+// Debug logging function
+function debugLog(...args) {
+  if (debugMode) {
+    console.log('🐛 DEBUG:', ...args);
+  }
+}
 
 // Validate environment variables
 const requiredEnvVars = [
@@ -74,6 +88,16 @@ if (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {
 console.log('🚀 GitHub Action Scraper Starting');
 console.log(`📊 Processing up to ${limit} jobs`);
 console.log(`🔗 Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 50)}...`);
+if (debugMode) {
+  console.log('🐛 Debug mode enabled');
+  debugLog('Environment variables loaded:', { 
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    hasFirecrawlKey: !!process.env.FIRECRAWL_API_KEY,
+    hasGeminiKey: !!process.env.GEMINI_API_KEY,
+    hasGoogleKey: !!process.env.GOOGLE_API_KEY
+  });
+}
 
 // Import these after dotenv is loaded to ensure environment variables are available
 let processScrapingJob, ScrapingJobService, DuplicatePreventionService;
