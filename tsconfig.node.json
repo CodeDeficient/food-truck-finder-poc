@@ -8,5 +8,5 @@
     "declaration": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "tests/**/*.tsx"]
+  "include": ["tests/**/*.ts", "tests/**/*.tsx"]
 }

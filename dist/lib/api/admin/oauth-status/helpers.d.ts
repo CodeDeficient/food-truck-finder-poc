@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 /**
  * Handles a GET request to retrieve OAuth configuration status.
  * @example
@@ -11,7 +11,38 @@ import { NextRequest } from 'next/server';
  *   - Adapts the response to include both modern and legacy format details.
  *   - Provides a step-by-step legacy configuration guide if OAuth is not ready.
  */
-export declare function handleGetRequest(_request: NextRequest): Promise<any>;
+export declare function handleGetRequest(_request: NextRequest): Promise<NextResponse<{
+    legacy_format: {
+        oauth_status: "error" | "ready" | "partial" | "not_configured";
+        message: string;
+        configuration_steps: string[] | undefined;
+    };
+    timestamp: string;
+    environment: "development" | "production";
+    supabase: {
+        connected: boolean;
+        projectId: string;
+        authSettings?: {
+            googleEnabled: boolean;
+            signupEnabled: boolean;
+            autoconfirm: boolean;
+        };
+        error?: string;
+    };
+    environment_variables: {
+        supabaseUrl: boolean;
+        supabaseAnonKey: boolean;
+        supabaseServiceKey: boolean;
+    };
+    oauth_flow: {
+        loginPageExists: boolean;
+        callbackRouteExists: boolean;
+        authProviderConfigured: boolean;
+    };
+    recommendations: string[];
+    overall_status: "ready" | "partial" | "not_configured" | "error";
+    success: boolean;
+}>>;
 /**
  * Handles a post request to generate an OAuth test URL based on the environment.
  * @example
@@ -31,4 +62,12 @@ export declare function handleGetRequest(_request: NextRequest): Promise<any>;
  *   - Utilizes `generateOAuthTestUrl` to construct the OAuth test URL.
  *   - Responds with JSON containing test instructions and automation commands for verifying OAuth functionality.
  */
-export declare function handlePostRequest(): any;
+export declare function handlePostRequest(): NextResponse<{
+    success: boolean;
+    message: string;
+    test_url: string;
+    environment: string;
+    instructions: string[];
+    manual_test_steps: string[];
+    automation_commands: string[];
+}>;

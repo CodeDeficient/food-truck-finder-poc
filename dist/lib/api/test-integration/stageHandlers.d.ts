@@ -1,3 +1,4 @@
+import { type ExtractedFoodTruckDetails, type StageResult } from '@/lib/types';
 export declare function handleFirecrawlStage(url: string, rawText: string | undefined, logs: string[]): Promise<{
     firecrawlResult: StageResult;
     contentToProcess: string | undefined;

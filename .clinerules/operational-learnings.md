@@ -275,3 +275,28 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
 
   - _Trigger Case_: Job creation failing due to missing required fields or database errors.
   - _Example_: Always set required fields like `job_type` and handle database errors gracefully with proper logging and status updates.
+
+- **Rule 1.46: Consistent Duplicate Prevention Logic**: Ensure that both real-time and batch duplicate detection systems use the same logic and thresholds to maintain consistency. Copy duplicate prevention algorithms directly into batch scripts when import dependencies are problematic.
+
+  - _Trigger Case_: Batch deduplication scripts producing different results than real-time duplicate prevention.
+  - _Example_: Copy `calculateSimilarity` and related functions directly into batch scripts to ensure identical duplicate detection logic.
+
+- **Rule 1.47: Proper ESM/CJS Interop**: When mixing ESM and CommonJS modules, use appropriate import/export syntax for each context. CommonJS files should use `require()` and `module.exports`, while ESM files should use `import` and `export`.
+
+  - _Trigger Case_: Mixing `import`/`export` syntax in CommonJS files or vice versa.
+  - _Example_: Use `require('dotenv').config()` in `.cjs` files instead of `import('dotenv/config')`.
+
+- **Rule 1.48: Robust Data Quality Validation**: Implement comprehensive validation at multiple pipeline stages to catch and handle invalid data before it pollutes the database. Use explicit checks rather than relying on fallback values.
+
+  - _Trigger Case_: Invalid data creating placeholder entries or corrupting existing records.
+  - _Example_: Check for required fields like `name` before processing and discard invalid data with proper logging rather than creating "Unknown" entries.
+
+- **Rule 1.49: Regular Job Queue Maintenance**: Implement regular monitoring and cleanup of job queues to prevent resource waste from duplicate jobs. Create diagnostic and cleanup tools for ongoing pipeline health.
+
+  - _Trigger Case_: Discovery of duplicate jobs causing resource waste and processing inefficiency.
+  - _Example_: Create `check-duplicate-jobs.js` and `cleanup-duplicate-jobs.js` scripts to identify and remove duplicate pending jobs, keeping only the most recent job for each URL.
+
+- **Rule 1.50: Database-Level Constraints for Data Integrity**: Implement database-level unique constraints to enforce data integrity and prevent duplicate entries at the source. This is more reliable than application-level duplicate prevention and eliminates race conditions.
+
+  - _Trigger Case_: Duplicate entries being created despite application-level duplicate prevention logic.
+  - _Example_: Add unique constraint on food truck names: `ALTER TABLE food_trucks ADD CONSTRAINT unique_food_truck_name UNIQUE (name);` and handle constraint violations in application code by updating existing entries instead of creating duplicates.

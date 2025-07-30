@@ -76,13 +76,16 @@ console.log(`📊 Processing up to ${limit} jobs`);
 console.log(`🔗 Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 50)}...`);
 
 // Import these after dotenv is loaded to ensure environment variables are available
-let processScrapingJob, ScrapingJobService;
+let processScrapingJob, ScrapingJobService, DuplicatePreventionService;
 
 async function initializeModules() {
-  const scrapingProcessor = await import('../dist/lib/pipeline/scrapingProcessor.js');
-  const scrapingJobService = await import('../dist/lib/supabase/services/scrapingJobService.js');
-  processScrapingJob = scrapingProcessor.processScrapingJob;
-  ScrapingJobService = scrapingJobService.ScrapingJobService;
+  const { processScrapingJob: psj } = await import('../dist/lib/pipeline/scrapingProcessor.js');
+  const { ScrapingJobService: sjs } = await import('../dist/lib/supabase/services/scrapingJobService.js');
+  const { DuplicatePreventionService: dps } = await import('../dist/lib/data-quality/duplicatePrevention.js');
+  
+  processScrapingJob = psj;
+  ScrapingJobService = sjs;
+  DuplicatePreventionService = dps;
 }
 
 /**
@@ -95,6 +98,7 @@ async function main() {
   let processedCount = 0;
   let successCount = 0;
   let failureCount = 0;
+  let skippedCount = 0;
 
   try {
     console.log('\n📋 Fetching pending scraping jobs...');
@@ -118,6 +122,20 @@ async function main() {
       processedCount++;
       console.log(`\n[${processedCount}/${jobsToProcess.length}] Processing job: ${job.id}`);
       console.log(`🎯 Target URL: ${job.target_url}`);
+
+      // Early duplicate check
+      console.log(`🔍 Checking for duplicates for URL: ${job.target_url}`);
+      const { isDuplicate, reason } = await DuplicatePreventionService.isDuplicateUrl(job.target_url);
+
+      if (isDuplicate) {
+        skippedCount++;
+        console.log(`🚫 Duplicate found for URL: ${job.target_url}. Reason: ${reason}. Skipping job.`);
+        await ScrapingJobService.updateJobStatus(job.id, 'completed', {
+            completed_at: new Date().toISOString(),
+            message: `Skipped: Duplicate URL found before processing. Reason: ${reason}`
+        });
+        continue; // Skip to the next job
+      }
       
       try {
         // Process the scraping job using the pipeline
@@ -149,7 +167,9 @@ async function main() {
   console.log(`  Total processed: ${processedCount}`);
   console.log(`  Successful: ${successCount} ✅`);
   console.log(`  Failed: ${failureCount} ❌`);
-  console.log(`  Success rate: ${processedCount > 0 ? Math.round((successCount / processedCount) * 100) : 0}%`);
+  console.log(`  Skipped (Duplicates): ${skippedCount} 🚫`);
+  const attemptedCount = processedCount - skippedCount;
+  console.log(`  Success rate (of attempted): ${attemptedCount > 0 ? Math.round((successCount / attemptedCount) * 100) : 0}%`);
 
   if (failureCount > 0) {
     console.log('\n⚠️  Some jobs failed. Check the logs above for details.');
