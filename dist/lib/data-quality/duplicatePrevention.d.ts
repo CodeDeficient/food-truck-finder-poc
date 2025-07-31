@@ -95,4 +95,14 @@ export declare class DuplicatePreventionService {
     static mergeDuplicates(targetId: string, sourceId: string): Promise<FoodTruck | {
         error: string;
     }>;
+    /**
+     * Check if a food truck name already exists in the database to prevent duplicate scraping
+     * This is used for early duplicate detection before processing scraping jobs to save API resources
+     * @param truckName - The name of the food truck to check
+     * @returns Object with isDuplicate flag and reason
+     */
+    static isDuplicateUrl(truckName: string): Promise<{
+        isDuplicate: boolean;
+        reason: string;
+    }>;
 }

@@ -1,3 +1,4 @@
+import type { FoodTruck } from '@/lib/types';
 type FallbackResult = {
     readonly trucks: FoodTruck[];
     readonly isFromCache: boolean;
