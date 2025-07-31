@@ -1,6 +1,7 @@
-import { supabase, supabaseAdmin } from '../client.js';
+import { getSupabaseAdmin, getSupabase } from '../client.js';
 export const ScrapingJobService = {
     async createJob(jobData) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
         }
@@ -23,7 +24,11 @@ export const ScrapingJobService = {
     },
     async getJobsByStatus(status) {
         try {
-            const query = supabase.from('scraping_jobs').select('*');
+            const supabaseAdmin = getSupabaseAdmin();
+            if (!supabaseAdmin) {
+                throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+            }
+            const query = supabaseAdmin.from('scraping_jobs').select('*');
             const { data, error } = await (status === 'all' ? query : query.eq('status', status))
                 .order('priority', { ascending: false })
                 .order('scheduled_at', { ascending: true });
@@ -37,6 +42,7 @@ export const ScrapingJobService = {
         }
     },
     async updateJobStatus(id, status, updates = {}) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
         }
@@ -56,6 +62,7 @@ export const ScrapingJobService = {
         return data;
     },
     async incrementRetryCount(id) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
         }
@@ -78,6 +85,7 @@ export const ScrapingJobService = {
     },
     async getAllJobs(limit = 50, offset = 0) {
         try {
+            const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('scraping_jobs')
                 .select('*')
@@ -95,6 +103,7 @@ export const ScrapingJobService = {
     },
     async getJobsFromDate(date) {
         try {
+            const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('scraping_jobs')
                 .select('*')

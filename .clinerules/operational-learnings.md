@@ -300,3 +300,23 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
 
   - _Trigger Case_: Duplicate entries being created despite application-level duplicate prevention logic.
   - _Example_: Add unique constraint on food truck names: `ALTER TABLE food_trucks ADD CONSTRAINT unique_food_truck_name UNIQUE (name);` and handle constraint violations in application code by updating existing entries instead of creating duplicates.
+
+- **Rule 1.51: GitHub Actions Branch Management**: When making changes that affect GitHub Actions workflows, always push to the current feature branch and use `gh` CLI commands with `--ref` option to ensure you're testing the correct workflow version. Never assume local changes will automatically trigger the correct remote workflow without explicit branch specification.
+
+  - _Trigger Case_: Making changes to GitHub Actions workflows or related scripts that need testing.
+  - _Example_: After modifying `scripts/github-action-scraper.js`, push to current branch and run `gh workflow run scrape-food-trucks.yml --ref feature/your-branch-name` to test the specific branch version.
+
+- **Rule 1.52: Pending Jobs Fetching Verification**: Always verify that pending jobs are being fetched correctly from Supabase before processing. Implement proper error handling and logging to detect mismatches between expected and actual job counts.
+
+  - _Trigger Case_: GitHub Actions workflow showing unexpected job processing behavior or "no pending jobs" messages.
+  - _Example_: Add logging to show job count before and after fetching, and verify job status filtering is working correctly: `console.log(`Found ${pendingJobs.length} pending jobs with status: ${status}`);`
+
+- **Rule 1.53: ESM Module Resolution in GitHub Actions**: Ensure all ESM imports in GitHub Actions scripts use explicit `.js` file extensions and avoid directory imports. Test scripts locally with `node` command before running in GitHub Actions to catch import resolution issues early.
+
+  - _Trigger Case_: `ERR_UNSUPPORTED_DIR_IMPORT` or `ERR_MODULE_NOT_FOUND` errors in GitHub Actions logs.
+  - _Example_: Instead of `import { ScrapingJobService } from '../dist/lib/supabase/services'`, use `import { ScrapingJobService } from '../dist/lib/supabase/services/scrapingJobService.js'`
+
+- **Rule 1.54: Environment Variable Validation in GitHub Actions**: Always validate that required environment variables are present and correctly loaded before initializing modules that depend on them. Use explicit error messages to identify missing configuration.
+
+  - _Trigger Case_: GitHub Actions failing due to missing API keys or configuration values.
+  - _Example_: Check for required vars before module initialization: `if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is required');`

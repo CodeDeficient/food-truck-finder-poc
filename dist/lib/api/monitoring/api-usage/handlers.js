@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { APIMonitor } from '../../monitoring/apiMonitor';
+import { APIMonitor } from '@/lib/monitoring/apiMonitor';
 export function handleComprehensiveMonitoring() {
     const monitoringResult = APIMonitor.checkAllAPIs();
     return NextResponse.json({

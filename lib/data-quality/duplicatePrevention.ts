@@ -483,4 +483,42 @@ export class DuplicatePreventionService {
 
     return updatedTruckResult;
   }
+
+  /**
+   * Check if a food truck name already exists in the database to prevent duplicate scraping
+   * This is used for early duplicate detection before processing scraping jobs to save API resources
+   * @param truckName - The name of the food truck to check
+   * @returns Object with isDuplicate flag and reason
+   */
+  static async isDuplicateUrl(truckName: string): Promise<{ isDuplicate: boolean; reason: string }> {
+    try {
+      // Use existing FoodTruckService to get all trucks
+      const existingTrucksResult = await FoodTruckService.getAllTrucks();
+
+      if ('error' in existingTrucksResult) {
+        console.warn('Error fetching existing trucks for duplicate check:', existingTrucksResult.error);
+        return { isDuplicate: false, reason: 'Error checking database' };
+      }
+
+      const existingTrucks = existingTrucksResult.trucks;
+
+      // Check for similar names using existing normalization and similarity logic
+      for (const existingTruck of existingTrucks) {
+        const similarity = this.calculateStringSimilarity(truckName, existingTruck.name ?? '');
+        
+        // Use a high threshold to avoid false positives with "food truck" in names
+        if (similarity >= 0.95) {
+          return { 
+            isDuplicate: true, 
+            reason: `Similar truck name already exists: "${existingTruck.name}" (${Math.round(similarity * 100)}% similar)` 
+          };
+        }
+      }
+
+      return { isDuplicate: false, reason: 'No similar truck names found' };
+    } catch (error) {
+      console.warn('Error in isDuplicateUrl check:', error);
+      return { isDuplicate: false, reason: 'Error during duplicate check' };
+    }
+  }
 }

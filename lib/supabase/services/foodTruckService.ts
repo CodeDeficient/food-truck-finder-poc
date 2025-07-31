@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from '../client.js';
+import { getSupabase, getSupabaseAdmin } from '../client.js';
 import type { FoodTruck, RawMenuItemFromDB } from '../types/index.js';
 import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils/index.js';
 import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils.js';
@@ -10,6 +10,7 @@ export const FoodTruckService = {
     offset = 0,
   ): Promise<{ trucks: FoodTruck[]; total: number; error?: string }> {
     try {
+      const supabase = getSupabase();
       const { data, error, count }: PostgrestResponse<FoodTruck> = await supabase
         .from('food_trucks')
         .select('*', { count: 'exact' })
@@ -44,6 +45,7 @@ export const FoodTruckService = {
   },
   async getTruckById(id: string): Promise<FoodTruck | { error: string }> {
     try {
+      const supabase = getSupabase();
       const { data, error }: PostgrestSingleResponse<FoodTruck> = await supabase
         .from('food_trucks')
         .select('*')
@@ -97,6 +99,7 @@ export const FoodTruckService = {
     }
   },
   async createTruck(truckData: Partial<FoodTruck>): Promise<FoodTruck | { error: string }> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
@@ -120,6 +123,7 @@ export const FoodTruckService = {
     id: string,
     updates: Partial<FoodTruck>,
   ): Promise<FoodTruck | { error: string }> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }
@@ -147,6 +151,7 @@ export const FoodTruckService = {
     flagged_count: number;
   }> {
     try {
+      const supabase = getSupabase();
       const {
         data,
         error,
@@ -186,5 +191,3 @@ export const FoodTruckService = {
     }
   },
 };
-
-
