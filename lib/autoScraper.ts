@@ -1,7 +1,7 @@
 // lib/autoScraper.ts
 import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config.js';
 import { supabaseAdmin, ScrapingJobService } from './supabase.js';
-import { processScrapingJob } from '@/lib/pipelineProcessor';
+import { processScrapingJob } from './pipelineProcessor';
 import { dispatchGeminiOperation } from './gemini.js';
 
 // Define interfaces for better type safety

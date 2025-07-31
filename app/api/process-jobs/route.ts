@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ScrapingJobService } from '@/lib/supabase';
-import { processScrapingJob } from '@/lib/pipelineProcessor';
+import { processScrapingJob } from '../../../lib/pipelineProcessor';
 import { logActivity } from '@/lib/activityLogger';
 
 // Process jobs for up to 9 seconds (Vercel timeout is 10s)

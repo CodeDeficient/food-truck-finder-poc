@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { ScrapingJobService, FoodTruckService } from '../../supabase/client.js';
-import { logActivity } from '../../activityLogger';
-import { DEFAULT_SCRAPE_URLS } from '../../config';
+import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
+import { logActivity } from '@/lib/activityLogger';
+import { DEFAULT_SCRAPE_URLS } from '@/lib/config';
 // Vercel hobby plan has 10 second timeout, leave some buffer
 const FUNCTION_TIMEOUT_MS = 9000;
 const PROCESSING_TIMEOUT_MS = 8000;

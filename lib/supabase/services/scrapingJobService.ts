@@ -1,9 +1,10 @@
-import { supabase, supabaseAdmin } from '../client.js';
+import { getSupabaseAdmin, getSupabase } from '../client.js';
 import type { ScrapingJob } from '../types/index.js';
 import { type PostgrestResponse, type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export const ScrapingJobService = {
   async createJob(jobData: Partial<ScrapingJob>): Promise<ScrapingJob> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
@@ -28,7 +29,12 @@ export const ScrapingJobService = {
 
   async getJobsByStatus(status: string): Promise<ScrapingJob[]> {
     try {
-      const query = supabase.from('scraping_jobs').select('*');
+      const supabaseAdmin = getSupabaseAdmin();
+      if (!supabaseAdmin) {
+        throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
+      }
+
+      const query = supabaseAdmin.from('scraping_jobs').select('*');
 
       const { data, error }: PostgrestResponse<ScrapingJob> = await (
         status === 'all' ? query : query.eq('status', status)
@@ -48,6 +54,7 @@ export const ScrapingJobService = {
     status: string,
     updates: Partial<ScrapingJob> = {},
   ): Promise<ScrapingJob> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
@@ -68,6 +75,7 @@ export const ScrapingJobService = {
     return data;
   },
   async incrementRetryCount(id: string): Promise<ScrapingJob> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
@@ -95,6 +103,7 @@ export const ScrapingJobService = {
   },
   async getAllJobs(limit = 50, offset = 0): Promise<ScrapingJob[]> {
     try {
+      const supabase = getSupabase();
       const { data, error }: PostgrestResponse<ScrapingJob> = await supabase
         .from('scraping_jobs')
         .select('*')
@@ -112,6 +121,7 @@ export const ScrapingJobService = {
 
   async getJobsFromDate(date: Date): Promise<ScrapingJob[]> {
     try {
+      const supabase = getSupabase();
       const { data, error }: PostgrestResponse<ScrapingJob> = await supabase
         .from('scraping_jobs')
         .select('*')
