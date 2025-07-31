@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { BatchCleanupService } from '../../data-quality/batchCleanup.js';
-import { DuplicatePreventionService } from '../../data-quality/duplicatePrevention.js';
+import { BatchCleanupService } from '@/lib/data-quality/batchCleanup';
+import { DuplicatePreventionService } from '@/lib/data-quality/duplicatePrevention';
 /**
  * Handles different types of data cleanup requests and returns appropriate responses.
  * @example

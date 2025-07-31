@@ -1,4 +1,4 @@
-import { CachedFoodTruckService } from '../../performance/databaseCache.js';
+import { CachedFoodTruckService } from '@/lib/performance/databaseCache.js';
 /**
 * Retrieves and filters food trucks based on specified location and radius.
 * @example

@@ -1,3 +1,4 @@
+import type { FoodTruck } from '@/lib/types';
 /**
 * Filters an array of FoodTruck objects based on a given search query.
 * @example

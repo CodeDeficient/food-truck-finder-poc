@@ -1,9 +1,10 @@
-import { supabase, supabaseAdmin } from '../client.js';
+import { getSupabase, getSupabaseAdmin } from '../client.js';
 import { handleSupabaseError, normalizeTruckLocation, calculateDistance, insertMenuItems } from '../utils/index.js';
 import { buildMenuByTruck, groupMenuItems, updateTruckData, updateTruckMenu } from '../utils/menuUtils.js';
 export const FoodTruckService = {
     async getAllTrucks(limit = 50, offset = 0) {
         try {
+            const supabase = getSupabase();
             const { data, error, count } = await supabase
                 .from('food_trucks')
                 .select('*', { count: 'exact' })
@@ -43,6 +44,7 @@ export const FoodTruckService = {
     },
     async getTruckById(id) {
         try {
+            const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('food_trucks')
                 .select('*')
@@ -88,6 +90,7 @@ export const FoodTruckService = {
         }
     },
     async createTruck(truckData) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
         }
@@ -107,6 +110,7 @@ export const FoodTruckService = {
         return truck;
     },
     async updateTruck(id, updates) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
         }
@@ -124,6 +128,7 @@ export const FoodTruckService = {
     },
     async getDataQualityStats() {
         try {
+            const supabase = getSupabase();
             const { data, error, } = await supabase.rpc('get_data_quality_stats').single();
             if (error)
                 throw error;

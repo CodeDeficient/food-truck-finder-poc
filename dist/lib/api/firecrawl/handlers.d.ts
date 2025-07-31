@@ -12,7 +12,21 @@ import { NextResponse } from 'next/server';
  *   - The scrape operation targets the main content of the page only.
  *   - The resulting data is returned in both 'markdown' and 'html' formats.
  */
-export declare function handleScrapeOperation(url: string, options: Record<string, unknown>): Promise<any>;
+export declare function handleScrapeOperation(url: string, options: Record<string, unknown>): Promise<NextResponse<{
+    success: boolean;
+    data: ({
+        markdown?: string;
+        html?: string;
+        metadata?: {
+            title?: string;
+            description?: string;
+            language?: string;
+            sourceURL?: string;
+        };
+        links?: string[];
+    } | undefined)[] | undefined;
+    error: string | undefined;
+}>>;
 /**
 * Polls the crawl status of a given job ID until the job is completed or a maximum number of attempts is reached.
 * @example
@@ -40,5 +54,8 @@ export declare function pollCrawlStatus(jobId: string): Promise<NextResponse>;
 *   - Handles crawl job initiation success and failure scenarios.
 *   - Returns a JSON response on failure with error details.
 */
-export declare function handleCrawlOperation(url: string, options: Record<string, unknown>): Promise<any>;
-export declare function handleSearchOperation(): any;
+export declare function handleCrawlOperation(url: string, options: Record<string, unknown>): Promise<NextResponse<unknown>>;
+export declare function handleSearchOperation(): NextResponse<{
+    success: boolean;
+    error: string;
+}>;

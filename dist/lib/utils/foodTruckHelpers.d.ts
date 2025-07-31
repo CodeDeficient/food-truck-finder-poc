@@ -1,3 +1,4 @@
+import type { FoodTruck, DailyOperatingHours, MenuItem } from '@/lib/types';
 export declare const getCurrentDay: () => string;
 export declare const formatPrice: (price: number | string) => string;
 /**
@@ -28,7 +29,7 @@ export declare const getPopularItems: (truck: FoodTruck) => MenuItem[];
  *   - Formats the minimum and maximum prices using a helper function.
  */
 export declare const getPriceRange: (truck: FoodTruck) => string;
-export declare const getTodayHours: (truck: FoodTruck) => any;
+export declare const getTodayHours: (truck: FoodTruck) => DailyOperatingHours;
 /**
  * Retrieves the user's geolocation and updates the location state.
  * @example
