@@ -104,6 +104,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.52.1
         version: 2.53.0
+      '@tsconfig/next':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
@@ -1775,6 +1778,9 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  '@tsconfig/next@2.0.3':
+    resolution: {integrity: sha512-b4aKvmdWnv9aUy+NStUFlefirk3SItW20OJtbi5/ue9oMRaQtUYbN5zsr7OmV3rlx6Gp6h7A82gPoCXhrNGVPQ==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -6125,6 +6131,8 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.9
       '@types/react-dom': 19.1.7(@types/react@19.1.9)
+
+  '@tsconfig/next@2.0.3': {}
 
   '@tsconfig/node10@1.0.11': {}
 
