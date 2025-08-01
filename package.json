@@ -158,7 +158,8 @@
     "typescript": "^5.8.3",
     "vaul": "^0.8.0",
     "web-vitals": "^5.0.3",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+        "@tsconfig/next": "^2.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",
