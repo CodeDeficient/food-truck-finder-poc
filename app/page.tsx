@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import type { FoodTruck } from '@/lib/types';
-import TruckCard from '@/components/TruckCard';
-import { createClient } from '@/lib/supabase/client';
+import { TruckCard } from '@/components/TruckCard';
+import { getSupabase } from '@/lib/supabase/client';
 
 export default function TrucksPage() {
   const [trucks, setTrucks] = useState<FoodTruck[]>([]);
@@ -12,7 +12,7 @@ export default function TrucksPage() {
 
   useEffect(() => {
     const fetchTrucks = async () => {
-      const supabase = createClient();
+      const supabase = getSupabase();
       const { data, error: fetchError } = await supabase
         .from('trucks')
         .select('*');
