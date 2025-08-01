@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { FoodTruck } from '@/lib/types';
 import { TruckCard } from '@/components/TruckCard';
-import { getSupabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase';
 
 export default function TrucksPage() {
   const [trucks, setTrucks] = useState<FoodTruck[]>([]);
@@ -40,7 +40,7 @@ export default function TrucksPage() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
       {trucks.map(truck => (
-        <TruckCard key={truck.id} truck={truck} />
+                <TruckCard key={truck.id} truck={truck} isOpen={false} onSelectTruck={() => {}} />
       ))}
     </div>
   );
