@@ -1,70 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useThemeSwitcher } from '@/components/ThemeProvider';
-import { isTruckOpen } from '@/lib/utils/foodTruckHelpers';
-import { AppHeader } from '@/components/home/AppHeader';
-import { MainContent } from '@/components/home/MainContent';
-import { LoadingScreen } from '@/components/home/LoadingScreen';
-import { useFoodTruckFinder } from '@/hooks/useFoodTruckFinder';
+import { useEffect, useState } from 'react';
+import type { FoodTruck } from '@/lib/types';
+import TruckCard from '@/components/TruckCard';
+import { createClient } from '@/lib/supabase/client';
 
-/**
-* FoodTruckFinder is a React component that connects the UI components needed to search and display nearby food trucks.
-* @example
-* <FoodTruckFinder />
-* Renders a component that allows users to find food trucks based on their location.
-* @param None
-* @returns {JSX.Element} Returns the layout including the header and main content for the food truck finder application.
-* @description
-*   - Utilizes custom hooks `useFoodTruckFinder` and `useThemeSwitcher` for state management and theme switching.
-*   - It initiates a loading state screen while fetching data asynchronously.
-*   - Components inside include `AppHeader` and `MainContent` for interacting with the application.
-*   - The component supports theme switching between light and dark modes using `setTheme` and `resolvedTheme`.
-*/
-export default function FoodTruckFinder() {
-  const {
-    loading,
-    searchTerm,
-    setSearchTerm,
-    userLocation,
-    loadNearbyTrucks,
-    filteredTrucks,
-    selectedTruckId,
-    setSelectedTruckId,
-  } = useFoodTruckFinder();
+export default function TrucksPage() {
+  const [trucks, setTrucks] = useState<FoodTruck[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const { setTheme, resolvedTheme } = useThemeSwitcher();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const fetchTrucks = async () => {
+      const supabase = createClient();
+      const { data, error: fetchError } = await supabase
+        .from('trucks')
+        .select('*');
+
+      if (fetchError) {
+        console.error('Error fetching trucks:', fetchError);
+        setError('Failed to load trucks. Please try again later.');
+      } else {
+        setTrucks(data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchTrucks();
+  }, []);
 
   if (loading) {
-    return <LoadingScreen />;
+    return <div className="text-center p-8">Loading trucks...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center p-8 text-red-500">{error}</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      <AppHeader
-        mounted={mounted}
-        resolvedTheme={resolvedTheme}
-        setTheme={setTheme}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        userLocation={userLocation}
-        loadNearbyTrucks={() => {
-          void loadNearbyTrucks();
-        }}
-      />
-
-      <MainContent
-        filteredTrucks={filteredTrucks}
-        userLocation={userLocation}
-        selectedTruckId={selectedTruckId}
-        setSelectedTruckId={setSelectedTruckId}
-        isOpen={isTruckOpen}
-        theme={resolvedTheme}
-      />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+      {trucks.map(truck => (
+        <TruckCard key={truck.id} truck={truck} />
+      ))}
     </div>
   );
 }
-
-// No 'any' usage found in this file. All hooks and props are typed. If any dynamic values are used in MainContent or AppHeader, ensure their types are correct in their respective files.
