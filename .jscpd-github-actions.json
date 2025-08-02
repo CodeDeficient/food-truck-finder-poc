@@ -6,6 +6,9 @@
   "absolute": true,
   "blame": true,
   "ignore": [
+    "**/lib/database.types.ts",
+    "**/.claude-thoughts/**",
+    "**/.claudethoughts/**",
     "**/node_modules/**",
     "**/.git/**",
     "**/*.md",
@@ -20,6 +23,8 @@
     "**/test-results/**",
     "**/tests/**",
     "**/supabase/**",
+    "**/dist/**",
+    "**/jscpd-report/**",
     "**/*.d.ts"
   ],
   "gitignore": true,
