@@ -1,5 +1,5 @@
+
 // tests/utils/testSetup.ts
-// @ts-expect-error TS(2792): Cannot find module 'dotenv'. Did you mean to set t... Remove this comment to see the full error message
 import dotenv from 'dotenv';
 import { supabaseAdmin } from '../../lib/supabase';
 

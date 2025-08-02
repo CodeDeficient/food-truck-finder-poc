@@ -20,7 +20,9 @@ export class TaskScheduler {
     console.info('Task scheduler started');
 
     // Start all scheduled tasks
-    for (const [taskId, task] of this.tasks.entries()) {
+    const taskEntries = Array.from(this.tasks.entries());
+    for (let i = 0; i < taskEntries.length; i++) {
+      const [taskId, task] = taskEntries[i];
       if (task.enabled === true) {
         this.scheduleTask(taskId, task);
       }
@@ -36,7 +38,9 @@ export class TaskScheduler {
     this.isRunning = false;
 
     // Clear all intervals
-    for (const [taskId, interval] of this.intervals.entries()) {
+    const intervalEntries = Array.from(this.intervals.entries());
+    for (let i = 0; i < intervalEntries.length; i++) {
+      const [taskId, interval] = intervalEntries[i];
       clearInterval(interval);
       console.info(`Stopped task: ${taskId}`);
     }
@@ -142,18 +146,26 @@ export class TaskScheduler {
   }
 
   getTaskStatus(): TaskStatus[] {
-    return [...this.tasks.values()].map((task) => ({
-      id: task.id,
-      name: task.name,
-      enabled: task.enabled,
-      intervalMinutes: task.intervalMinutes,
-      lastRun: task.lastRun,
-      lastSuccess: task.lastSuccess,
-      successCount: task.successCount,
-      errorCount: task.errorCount,
-      lastError: task.lastError,
-      nextRun: this.calculateNextRun(task),
-    }));
+    const tasksArray = Array.from(this.tasks.values());
+    const result: TaskStatus[] = [];
+    
+    for (let i = 0; i < tasksArray.length; i++) {
+      const task = tasksArray[i];
+      result.push({
+        id: task.id,
+        name: task.name,
+        enabled: task.enabled,
+        intervalMinutes: task.intervalMinutes,
+        lastRun: task.lastRun,
+        lastSuccess: task.lastSuccess,
+        successCount: task.successCount,
+        errorCount: task.errorCount,
+        lastError: task.lastError,
+        nextRun: this.calculateNextRun(task),
+      });
+    }
+    
+    return result;
   }
 
   private calculateNextRun(task: ScheduledTask): string | undefined {

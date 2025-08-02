@@ -1,6 +1,4 @@
-// @ts-expect-error TS(2792): Cannot find module '@playwright/test'. Did you mea... Remove this comment to see the full error message
 import { defineConfig, devices } from '@playwright/test';
-// @ts-expect-error TS(2792): Cannot find module 'dotenv'. Did you mean to set t... Remove this comment to see the full error message
 import dotenv from 'dotenv';
 
 // Load environment variables from .env.local for tests

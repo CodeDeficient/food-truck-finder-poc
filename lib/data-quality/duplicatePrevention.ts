@@ -466,7 +466,7 @@ export class DuplicatePreventionService {
         ...source.social_media,
         ...target.social_media,
       },
-      source_urls: [...new Set([...(target.source_urls ?? []), ...(source.source_urls ?? [])])],
+      source_urls: Array.from(new Set([...(target.source_urls ?? []), ...(source.source_urls ?? [])])),
       last_scraped_at: new Date().toISOString(),
     };
 
