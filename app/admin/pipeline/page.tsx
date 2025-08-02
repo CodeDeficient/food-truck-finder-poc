@@ -1,5 +1,7 @@
 
 import { ScrapingJobService, DataProcessingService } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 import { PipelineStatisticsCards } from '@/components/admin/pipeline/PipelineStatisticsCards';
 import { RecentScrapingJobsTable } from '@/components/admin/pipeline/RecentScrapingJobsTable';
 import { FailedProcessingQueueTable } from '@/components/admin/pipeline/FailedProcessingQueueTable';
