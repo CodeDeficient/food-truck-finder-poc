@@ -1,5 +1,7 @@
 
 import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
