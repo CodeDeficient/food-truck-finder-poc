@@ -169,7 +169,7 @@ process.on('SIGTERM', () => {
 });
 
 // Run the main function using top-level await for pure ESM module
-await main().catch((error) => {
+main().catch((error) => {
   console.error('💥 Unhandled error in main:', error);
   process.exit(1);
 });

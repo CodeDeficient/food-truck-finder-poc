@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module '@playwright/test'. Did you mea... Remove this comment to see the full error message
 import { test, expect } from '@playwright/test';
 import { supabaseAdmin } from '../lib/supabase';
 import { FoodTruck } from '../lib/supabase';
@@ -25,6 +24,9 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
 
   test.beforeAll(async () => {
     // Record initial state
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin not available');
+    }
     const { count, error } = await supabaseAdmin
       .from('food_trucks')
       .select('*', { count: 'exact', head: true });
@@ -100,6 +102,9 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
 
   test('Autonomous Discovery - Multiple URLs', async ({ request }: any) => {
     // Record current state
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin not available');
+    }
     const { count: beforeCount } = await supabaseAdmin
       .from('food_trucks')
       .select('*', { count: 'exact', head: true });
@@ -122,12 +127,15 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
       .from('food_trucks')
       .select('*', { count: 'exact', head: true });
 
-    expect(afterCount).toBeGreaterThanOrEqual(beforeCount);
+    expect(afterCount ?? 0).toBeGreaterThanOrEqual(beforeCount ?? 0);
     console.log(`Trucks before: ${beforeCount}, after: ${afterCount}`);
   });
 
   test('Data Quality Validation - Menu Normalization', async ({ request }: any) => {
     // Get trucks with menus
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin not available');
+    }
     const { data: trucks, error } = await supabaseAdmin
       .from('food_trucks')
       .select('*')
@@ -175,6 +183,9 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     console.log('Invalid URL test result:', result);
 
     // Verify no incomplete data was stored
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin not available');
+    }
     const { data: trucks } = await supabaseAdmin
       .from('food_trucks')
       .select('*')
@@ -233,6 +244,9 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     await new Promise((resolve) => setTimeout(resolve, POLLING_CONFIG.longDelay));
 
     // Check for duplicates
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin not available');
+    }
     const { data: trucks } = await supabaseAdmin
       .from('food_trucks')
       .select('*')
@@ -259,6 +273,9 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
+    if (!supabaseAdmin) {
+      throw new Error('Supabase admin not available');
+    }
     const { data: staleTrucks } = await supabaseAdmin
       .from('food_trucks')
       .select('*')
@@ -296,6 +313,9 @@ test.describe('Pipeline Upscaling E2E Tests', () => {
 
 // Helper functions
 async function cleanupTruckByUrl(url: string): Promise<void> {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin not available');
+  }
   const { data: existingTrucks } = await supabaseAdmin
     .from('food_trucks')
     .select('id')
@@ -313,6 +333,9 @@ async function pollForTruckByUrl(
   maxAttempts: number,
   delay: number,
 ): Promise<FoodTruck | null> {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin not available');
+  }
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise((resolve) => setTimeout(resolve, delay));
 

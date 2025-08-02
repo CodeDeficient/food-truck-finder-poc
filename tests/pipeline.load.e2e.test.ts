@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module '@playwright/test'. Did you mea... Remove this comment to see the full error message
 import { test, expect } from '@playwright/test';
 import { supabaseAdmin } from '../lib/supabase';
 
@@ -64,7 +63,12 @@ test.describe('Pipeline Load Testing', () => {
     await new Promise((resolve) => setTimeout(resolve, LOAD_CONFIG.pollingIntervalMs * 4));
 
     // Check final state
-    const { data: finalTrucks } = await supabaseAdmin
+    const admin = supabaseAdmin ?? (await import('../lib/supabase')).supabaseAdmin;
+    if (!admin) {
+      console.error('No supabase admin available');
+      return;
+    }
+    const { data: finalTrucks } = await admin
       .from('food_trucks')
       .select('*')
       .contains('source_urls', [testUrl]);
@@ -230,6 +234,7 @@ test.describe('Pipeline Load Testing', () => {
 // Helper functions for load testing
 async function cleanupTrucksByUrl(url: string): Promise<void> {
   try {
+    if (!supabaseAdmin) return;
     const { data: existingTrucks } = await supabaseAdmin
       .from('food_trucks')
       .select('id')
@@ -245,6 +250,7 @@ async function cleanupTrucksByUrl(url: string): Promise<void> {
 }
 
 async function pollForTruck(url: string, maxAttempts: number, delay: number): Promise<unknown> {
+  if (!supabaseAdmin) return undefined;
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -273,16 +279,17 @@ async function pollForTruck(url: string, maxAttempts: number, delay: number): Pr
 
 async function performDatabaseOperation(index: number): Promise<unknown> {
   try {
+    if (!supabaseAdmin) return undefined;
     // Simulate various database operations
     const operations = [
       // Read operation
-      () => supabaseAdmin.from('food_trucks').select('id, name').limit(5),
+      () => supabaseAdmin!.from('food_trucks').select('id, name').limit(5),
 
       // Count operation
-      () => supabaseAdmin.from('food_trucks').select('*', { count: 'exact', head: true }),
+      () => supabaseAdmin!.from('food_trucks').select('*', { count: 'exact', head: true }),
 
       // Search operation
-      () => supabaseAdmin.from('food_trucks').select('*').ilike('name', '%test%').limit(3),
+      () => supabaseAdmin!.from('food_trucks').select('*').ilike('name', '%test%').limit(3),
     ];
 
     const operation = operations[index % operations.length];

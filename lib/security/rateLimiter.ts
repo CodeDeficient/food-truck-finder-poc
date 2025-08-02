@@ -191,8 +191,9 @@ export class RateLimiter {
    */
   private static cleanupExpiredEntries(): void {
     const now = Date.now();
+    const entriesArray = Array.from(rateLimitStore.entries());
 
-    for (const [key, entry] of rateLimitStore.entries()) {
+    for (const [key, entry] of entriesArray) {
       // Remove entries that are expired and not blocked
       if (
         now >= entry.resetTime &&
