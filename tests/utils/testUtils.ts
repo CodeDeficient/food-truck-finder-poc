@@ -108,7 +108,7 @@ export const TestUtils = {
         sunday: { open: '12:00', close: '20:00', closed: false },
       },
       cuisine_type: ['American'],
-      price_range: '$|$$,$$$',
+      price_range: '$$' as '$' | '$$' | '$$$' | '$$$$',
       specialties: ['Burgers', 'Fries'],
       data_quality_score: 0.8,
       verification_status: 'pending',

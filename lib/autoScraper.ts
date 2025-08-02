@@ -477,7 +477,7 @@ async function getUrlsToScrape(): Promise<string[]> {
   try {
     if (!supabaseAdmin) {
       console.warn('AutoScraper: Supabase admin client not available for discovered URLs');
-      return [...urls];
+      return Array.from(urls);
     }
 
     const { data: discoveredUrls, error } = await supabaseAdmin
@@ -497,7 +497,7 @@ async function getUrlsToScrape(): Promise<string[]> {
     console.warn('AutoScraper: Failed to fetch discovered URLs:', error);
   }
 
-  return [...urls];
+  return Array.from(urls);
 }
 
 // Helper to update discovered URL status after processing
