@@ -1,0 +1,14 @@
+[[scans]]
+  paths = ["."]
+  # Exclude generated or third-party folders
+  exclude_paths = [
+    ".next/**",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    ".git/**"
+  ]
+  # Optional: only report new findings vs Git history
+  detect_entropy = true
+  redact            = true
