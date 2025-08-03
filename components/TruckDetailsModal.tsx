@@ -4,9 +4,10 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { FoodTruck } from '@/lib/types';
+import type { FoodTruck, SocialMedia } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
+import { safe } from '@/lib/utils/safeObject';
 import { X, MapPin, Clock, Phone, Globe, Star } from 'lucide-react';
 import { MenuSection } from '@/components/ui/MenuSection';
 import { SocialMediaSection } from '@/components/ui/SocialMediaSection';
@@ -70,16 +71,15 @@ const TruckModalHeader = ({ truck, name, cuisine_type, isTruckOpen, average_rati
   </DialogHeader>
 );
 
-const TruckModalContent = ({ description, todayHours, priceRange, popularItems, phone, email, website, social_media, verification_status }: {
+const TruckModalContent = ({ description, todayHours, priceRange, popularItems, phone, email, website, social_media }: {
   description: string;
-  todayHours: any;
+  todayHours: { open: string; close: string; closed?: boolean } | { closed: true } | undefined;
   priceRange: string | undefined;
-  popularItems: any[];
+  popularItems: Array<{ name: string; price: string | number | undefined }>;
   phone: string;
   email: string;
   website: string;
-  social_media: any;
-  verification_status: string;
+  social_media: Record<string, string | undefined> | SocialMedia;
 }) => (
   <div className="space-y-6">
     
@@ -90,7 +90,7 @@ const TruckModalContent = ({ description, todayHours, priceRange, popularItems, 
       </div>
     )}
 
-    {todayHours !== undefined && todayHours.closed !== true && (
+    {todayHours !== undefined && todayHours.closed !== true && 'open' in todayHours && 'close' in todayHours && (
       <div>
         <h3 className="text-lg font-semibold mb-2 flex items-center">
           <Clock className="size-4 mr-2" />
@@ -133,7 +133,7 @@ const TruckModalContent = ({ description, todayHours, priceRange, popularItems, 
       </div>
     )}
 
-    {Object.keys(social_media).length > 0 && typeof social_media === 'object' && (
+    {Object.keys(social_media).length > 0 && (
       <div>
         <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
         <SocialMediaSection socialMedia={social_media} />
@@ -144,7 +144,7 @@ const TruckModalContent = ({ description, todayHours, priceRange, popularItems, 
 
 export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: TruckDetailsModalProps) {
   // Defensive checks for required data
-  if (!truck || !truck.id) {
+  if (!truck?.id) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="glass max-w-md">
@@ -163,11 +163,13 @@ export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: Truck
     name = 'Unnamed Truck',
     description = '',
     cuisine_type = [],
-    social_media = {},
-    contact_info: { phone = '', email = '', website = '' } = {},
     average_rating = 0,
     review_count = 0,
   } = truck;
+  
+  // Safely extract social media and contact info with safe utility
+  const socialMedia = safe(truck.social_media);
+  const { phone = '', email = '', website = '' } = safe(truck.contact_info);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -188,8 +190,7 @@ export function TruckDetailsModal({ truck, isOpen, onClose, isTruckOpen }: Truck
           phone={phone}
           email={email}
           website={website}
-          social_media={social_media}
-          verification_status={truck.verification_status || 'pending'}
+          social_media={socialMedia}
         />
         <div className="flex gap-3 pt-4 border-t border-border">
           {website !== '' && (

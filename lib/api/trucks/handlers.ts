@@ -60,7 +60,7 @@ export async function handleGetTrucksByLocation(lat: string, lng: string, radius
  *   - Calculates `lastUpdated` timestamp from truck data.
  */
 export async function handleGetAllTrucks(limit: number, offset: number) {
-  const { trucks, total, error } = await FoodTruckService.getAllTrucks(limit, offset);
+  const { trucks, total, error } = await FoodTruckService.getAllTrucks(limit, offset) ?? {};
   if (error != undefined && error !== '') {
     return NextResponse.json(
       { error: "That didn't work, please try again later." },

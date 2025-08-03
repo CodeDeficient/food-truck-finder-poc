@@ -3,6 +3,21 @@ import { ReactElement } from 'react';
 
 export type PriceRange = '$' | '$$' | '$$$' | '$$$$' | undefined;
 
+// Contact and Social Media types for reuse across interfaces
+export interface ContactInfo {
+  phone?: string;
+  email?: string;
+  website?: string;
+}
+
+export interface SocialMedia {
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  tiktok?: string;
+  yelp?: string;
+}
+
 export type DailyOperatingHours =
   | { open: string; close: string; closed?: boolean }
   | { closed: true }
@@ -79,18 +94,8 @@ export interface ExtractedFoodTruckDetails {
   }[];
   operating_hours: OperatingHours;
   menu: MenuCategory[];
-  contact_info: {
-    phone?: string;
-    email?: string;
-    website?: string;
-  };
-  social_media: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-    tiktok?: string;
-    yelp?: string;
-  };
+  contact_info?: ContactInfo;
+  social_media?: SocialMedia;
   source_url: string;
 }
 
@@ -112,18 +117,8 @@ export interface FoodTruckSchema {
   scheduled_locations: ExtractedFoodTruckDetails['scheduled_locations'];
   operating_hours: OperatingHours;
   menu: MenuCategory[];
-  contact_info: {
-    phone?: string;
-    email?: string;
-    website?: string;
-  };
-  social_media: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-    tiktok?: string;
-    yelp?: string;
-  };
+  contact_info?: ContactInfo;
+  social_media?: SocialMedia;
   cuisine_type: string[];
   price_range: PriceRange | undefined;
   specialties: string[];

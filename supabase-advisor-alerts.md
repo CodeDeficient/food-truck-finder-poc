@@ -1,27 +1,218 @@
-| name                  | title                 | level | facing   | categories   | description                                                                                                                                                                                         | detail                                                                        | remediation                                                                               | metadata                                                   | cache_key                                    |
-| --------------------- | --------------------- | ----- | -------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------- |
-| security_definer_view | Security Definer View | ERROR | EXTERNAL | ["SECURITY"] | Detects views defined with the SECURITY DEFINER property. These views enforce Postgres permissions and row level security policies (RLS) of the view creator, rather than that of the querying user | View \`public.favorite_trucks\` is defined with the SECURITY DEFINER property | https://supabase.com/docs/guides/database/database-linter?lint=0010_security_definer_view | {"name":"favorite_trucks","type":"view","schema":"public"} | security_definer_view_public_favorite_trucks |
-
-| name                            | title                               | level | facing   | categories   | description                                                   | detail                                                                                                                                                            | remediation                                                                                              | metadata                                                                        | cache_key                                                                                             |
-| ------------------------------- | ----------------------------------- | ----- | -------- | ------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| function_search_path_mutable    | Function Search Path Mutable        | WARN  | EXTERNAL | ["SECURITY"] | Detects functions where the search_path parameter is not set. | Function \`public.get_columns\` has a role mutable search_path                                                                                                    | https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable         | {"name":"get_columns","type":"function","schema":"public"}                      | function_search_path_mutable_public_get_columns_b9673a7714fe76bd800d6343175df83c                      |
-| function_search_path_mutable    | Function Search Path Mutable        | WARN  | EXTERNAL | ["SECURITY"] | Detects functions where the search_path parameter is not set. | Function \`public.update_food_trucks_updated_at\` has a role mutable search_path                                                                                  | https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable         | {"name":"update_food_trucks_updated_at","type":"function","schema":"public"}    | function_search_path_mutable_public_update_food_trucks_updated_at_10ff09e0d1433006b865e7959e736c46    |
-| function_search_path_mutable    | Function Search Path Mutable        | WARN  | EXTERNAL | ["SECURITY"] | Detects functions where the search_path parameter is not set. | Function \`public.update_user_favorites_updated_at\` has a role mutable search_path                                                                               | https://supabase.com/docs/guides/database/database-linter?lint=0011_function_search_path_mutable         | {"name":"update_user_favorites_updated_at","type":"function","schema":"public"} | function_search_path_mutable_public_update_user_favorites_updated_at_10ff09e0d1433006b865e7959e736c46 |
-| auth_otp_long_expiry            | Auth OTP long expiry                | WARN  | EXTERNAL | ["SECURITY"] | OTP expiry exceeds recommended threshold                      | We have detected that you have enabled the email provider with the OTP expiry set to more than an hour. It is recommended to set this value to less than an hour. | https://supabase.com/docs/guides/platform/going-into-prod#security                                       | {"type":"auth","entity":"Auth"}                                                 | auth_otp_long_expiry                                                                                  |
-| auth_leaked_password_protection | Leaked Password Protection Disabled | WARN  | EXTERNAL | ["SECURITY"] | Leaked password protection is currently disabled.             | Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.                          | https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection | {"type":"auth","entity":"Auth"}                                                 | auth_leaked_password_protection                                                                       |
-
-
-| name                         | title                        | level | facing   | categories      | description                                                                                                                                                                                                                                                 | detail                                                                                                                                                                                                                                                                                                                                                                                                                                                           | remediation                                                                                      | metadata                                                   | cache_key                                                                           |
-| ---------------------------- | ---------------------------- | ----- | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.user_favorites\` has a row level security policy \`Users can view their own favorites\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.         | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"user_favorites","type":"table","schema":"public"} | auth_rls_init_plan_public_user_favorites_Users can view their own favorites         |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.user_favorites\` has a row level security policy \`Users can create their own favorites\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.       | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"user_favorites","type":"table","schema":"public"} | auth_rls_init_plan_public_user_favorites_Users can create their own favorites       |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.user_favorites\` has a row level security policy \`Users can delete their own favorites\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.       | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"user_favorites","type":"table","schema":"public"} | auth_rls_init_plan_public_user_favorites_Users can delete their own favorites       |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.food_trucks\` has a row level security policy \`Food truck owners can update their own trucks\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info. | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"food_trucks","type":"table","schema":"public"}    | auth_rls_init_plan_public_food_trucks_Food truck owners can update their own trucks |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.food_trucks\` has a row level security policy \`Food truck owners can create trucks\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.           | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"food_trucks","type":"table","schema":"public"}    | auth_rls_init_plan_public_food_trucks_Food truck owners can create trucks           |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.food_trucks\` has a row level security policy \`Food truck owners can delete their own trucks\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info. | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"food_trucks","type":"table","schema":"public"}    | auth_rls_init_plan_public_food_trucks_Food truck owners can delete their own trucks |
-| auth_rls_initplan            | Auth RLS Initialization Plan | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if calls to \`current_setting()\` and \`auth.<function>()\` in RLS policies are being unnecessarily re-evaluated for each row                                                                                                                       | Table \`public.food_trucks\` has a row level security policy \`Admins can manage all trucks\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \`auth.<function>()\` with \`(select auth.<function>())\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.                  | https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan            | {"name":"food_trucks","type":"table","schema":"public"}    | auth_rls_init_plan_public_food_trucks_Admins can manage all trucks                  |
-| multiple_permissive_policies | Multiple Permissive Policies | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if multiple permissive row level security policies are present on a table for the same \`role\` and \`action\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query. | Table \`public.food_trucks\` has multiple permissive policies for role \`authenticated\` for action \`DELETE\`. Policies include \`{"Admins can manage all trucks","Enhanced admin access to food_trucks","Food truck owners can delete their own trucks"}\`                                                                                                                                                                                                     | https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies | {"name":"food_trucks","type":"table","schema":"public"}    | multiple_permissive_policies_public_food_trucks_authenticated_DELETE                |
-| multiple_permissive_policies | Multiple Permissive Policies | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if multiple permissive row level security policies are present on a table for the same \`role\` and \`action\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query. | Table \`public.food_trucks\` has multiple permissive policies for role \`authenticated\` for action \`INSERT\`. Policies include \`{"Admins can manage all trucks","Enhanced admin access to food_trucks","Food truck owners can create trucks"}\`                                                                                                                                                                                                               | https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies | {"name":"food_trucks","type":"table","schema":"public"}    | multiple_permissive_policies_public_food_trucks_authenticated_INSERT                |
-| multiple_permissive_policies | Multiple Permissive Policies | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if multiple permissive row level security policies are present on a table for the same \`role\` and \`action\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query. | Table \`public.food_trucks\` has multiple permissive policies for role \`authenticated\` for action \`SELECT\`. Policies include \`{"Admins can manage all trucks","Authenticated users can view food_trucks","Enhanced admin access to food_trucks"}\`                                                                                                                                                                                                          | https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies | {"name":"food_trucks","type":"table","schema":"public"}    | multiple_permissive_policies_public_food_trucks_authenticated_SELECT                |
-| multiple_permissive_policies | Multiple Permissive Policies | WARN  | EXTERNAL | ["PERFORMANCE"] | Detects if multiple permissive row level security policies are present on a table for the same \`role\` and \`action\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query. | Table \`public.food_trucks\` has multiple permissive policies for role \`authenticated\` for action \`UPDATE\`. Policies include \`{"Admins can manage all trucks","Enhanced admin access to food_trucks","Food truck owners can update their own trucks"}\`                                                                                                                                                                                                     | https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies | {"name":"food_trucks","type":"table","schema":"public"}    | multiple_permissive_policies_public_food_trucks_authenticated_UPDATE                |
-
+[
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Admins can insert food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Admins can insert food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Admins can update food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Admins can update food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Admins can delete food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Admins can delete food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Admins can select food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Admins can select food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Authenticated users can select food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Authenticated users can select food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Authenticated users can insert food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Authenticated users can insert food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Authenticated users can update food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Authenticated users can update food trucks"
+  },
+  {
+    "name": "auth_rls_initplan",
+    "title": "Auth RLS Initialization Plan",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if calls to \\`current_setting()\\` and \\`auth.<function>()\\` in RLS policies are being unnecessarily re-evaluated for each row",
+    "detail": "Table \\`public.food_trucks\\` has a row level security policy \\`Authenticated users can delete food trucks\\` that re-evaluates current_setting() or auth.<function>() for each row. This produces suboptimal query performance at scale. Resolve the issue by replacing \\`auth.<function>()\\` with \\`(select auth.<function>())\\`. See [docs](https://supabase.com/docs/guides/database/postgres/row-level-security#call-functions-with-select) for more info.",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0003_auth_rls_initplan",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "auth_rls_init_plan_public_food_trucks_Authenticated users can delete food trucks"
+  },
+  {
+    "name": "multiple_permissive_policies",
+    "title": "Multiple Permissive Policies",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if multiple permissive row level security policies are present on a table for the same \\`role\\` and \\`action\\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query.",
+    "detail": "Table \\`public.food_trucks\\` has multiple permissive policies for role \\`authenticated\\` for action \\`DELETE\\`. Policies include \\`{\"Admins can delete food trucks\",\"Admins can manage all trucks\",\"Authenticated users can delete food trucks\",\"Food truck owners can delete their own trucks\"}\\`",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "multiple_permissive_policies_public_food_trucks_authenticated_DELETE"
+  },
+  {
+    "name": "multiple_permissive_policies",
+    "title": "Multiple Permissive Policies",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if multiple permissive row level security policies are present on a table for the same \\`role\\` and \\`action\\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query.",
+    "detail": "Table \\`public.food_trucks\\` has multiple permissive policies for role \\`authenticated\\` for action \\`INSERT\\`. Policies include \\`{\"Admins can insert food trucks\",\"Admins can manage all trucks\",\"Authenticated users can insert food trucks\"}\\`",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "multiple_permissive_policies_public_food_trucks_authenticated_INSERT"
+  },
+  {
+    "name": "multiple_permissive_policies",
+    "title": "Multiple Permissive Policies",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if multiple permissive row level security policies are present on a table for the same \\`role\\` and \\`action\\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query.",
+    "detail": "Table \\`public.food_trucks\\` has multiple permissive policies for role \\`authenticated\\` for action \\`SELECT\\`. Policies include \\`{\"Admins can manage all trucks\",\"Admins can select food trucks\",\"Authenticated users can select food trucks\",\"Public read access to food trucks\"}\\`",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "multiple_permissive_policies_public_food_trucks_authenticated_SELECT"
+  },
+  {
+    "name": "multiple_permissive_policies",
+    "title": "Multiple Permissive Policies",
+    "level": "WARN",
+    "facing": "EXTERNAL",
+    "categories": [
+      "PERFORMANCE"
+    ],
+    "description": "Detects if multiple permissive row level security policies are present on a table for the same \\`role\\` and \\`action\\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query.",
+    "detail": "Table \\`public.food_trucks\\` has multiple permissive policies for role \\`authenticated\\` for action \\`UPDATE\\`. Policies include \\`{\"Admins can manage all trucks\",\"Admins can update food trucks\",\"Authenticated users can update food trucks\",\"Food truck owners can update their own trucks\"}\\`",
+    "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+    "metadata": {
+      "name": "food_trucks",
+      "type": "table",
+      "schema": "public"
+    },
+    "cache_key": "multiple_permissive_policies_public_food_trucks_authenticated_UPDATE"
+  }
+]

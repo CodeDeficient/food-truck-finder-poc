@@ -2,7 +2,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Phone, Mail, Globe } from 'lucide-react';
 import * as React from 'react';
-import type { FoodTruck } from '@/lib/supabase';
+import type { FoodTruck, SocialMedia } from '@/lib/types';
+import { safe } from '@/lib/utils/safeObject';
 
 interface TruckContactInfoProps {
   readonly truck: FoodTruck;
@@ -92,7 +93,7 @@ function ContactField({
  */
 function SocialMediaLinks({
   socialMedia,
-}: Readonly<{ readonly socialMedia?: Record<string, string> }>) {
+}: Readonly<{ readonly socialMedia?: SocialMedia }>) {
   if (socialMedia == undefined || Object.keys(socialMedia).length === 0) {
     return;
   }
@@ -108,7 +109,7 @@ function SocialMediaLinks({
       <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Social Media</label>
       <div className="flex flex-wrap gap-2 mt-2">
         {socialPlatforms.map(({ key, name, baseUrl, color }) => {
-          const handle = socialMedia[key];
+          const handle = socialMedia[key as keyof SocialMedia];
           if (handle == undefined || handle.length === 0) return; // Handles null, undefined, and empty string
 
           return (
@@ -143,6 +144,10 @@ function SocialMediaLinks({
  *   - SocialMediaLinks component is used to list the truck's social media presence.
  */
 export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
+  // Safely extract contact info and social media with safe utility
+  const contactInfo = safe(truck.contact_info);
+  const socialMedia = safe(truck.social_media);
+  
   return (
     <Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
@@ -156,10 +161,10 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
         <ContactField
           icon={Phone as React.ComponentType<{ className?: string }>}
           label="Phone"
-          value={truck.contact_info?.phone}
+          value={contactInfo.phone}
           href={
-            truck.contact_info?.phone !== undefined && truck.contact_info.phone !== ''
-              ? `tel:${truck.contact_info.phone}`
+            contactInfo.phone !== undefined && contactInfo.phone !== ''
+              ? `tel:${contactInfo.phone}`
               : undefined
           }
           unavailableText="No phone number available"
@@ -168,10 +173,10 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
         <ContactField
           icon={Mail as React.ComponentType<{ className?: string }>}
           label="Email"
-          value={truck.contact_info?.email}
+          value={contactInfo.email}
           href={
-            truck.contact_info?.email !== undefined && truck.contact_info.email !== ''
-              ? `mailto:${truck.contact_info.email}`
+            contactInfo.email !== undefined && contactInfo.email !== ''
+              ? `mailto:${contactInfo.email}`
               : undefined
           }
           unavailableText="No email available"
@@ -180,12 +185,12 @@ export function TruckContactInfo({ truck }: Readonly<TruckContactInfoProps>) {
         <ContactField
           icon={Globe as React.ComponentType<{ className?: string }>}
           label="Website"
-          value={truck.contact_info?.website}
-          href={truck.contact_info?.website}
+          value={contactInfo.website}
+          href={contactInfo.website}
           unavailableText="No website available"
         />
 
-        <SocialMediaLinks socialMedia={truck.social_media} />
+        <SocialMediaLinks socialMedia={socialMedia} />
       </CardContent>
     </Card>
   );
