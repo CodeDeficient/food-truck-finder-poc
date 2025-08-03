@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  // Only show this in development or for debugging
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
-  }
+  // Temporarily enabled in production for debugging
+  // if (process.env.NODE_ENV === 'production') {
+  //   return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+  // }
 
   const envVars = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
