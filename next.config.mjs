@@ -1,3 +1,6 @@
+// Load and expand environment variables
+import './config/load-env.mjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {

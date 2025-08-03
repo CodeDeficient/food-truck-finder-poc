@@ -253,3 +253,65 @@ profile: profile ?? null,
   }
   return res;
 }
+
+/**
+ * Protects user routes by verifying user authentication.
+ * @example
+ * protectUserRoutes(req, res, requestMetadata)
+ * returns NextResponse or redirects depending on user authentication status.
+ * @param {NextRequest} req - The incoming request object.
+ * @param {NextResponse} res - The response object to send back to the client.
+ * @param {RequestMetadata} requestMetadata - Metadata about the request for logging purposes.
+ * @returns {NextResponse} Returns the response object or redirects to login page.
+ * @description
+ *   - Fetches and verifies the user's session from Supabase.
+ *   - Redirects to login with a "next" parameter if user is not authenticated.
+ *   - Allows any authenticated user to access protected routes.
+ */
+export async function protectUserRoutes(
+  req: NextRequest,
+  res: NextResponse,
+  requestMetadata: RequestMetadata,
+) {
+  const supabase = createSupabaseMiddlewareClient(req, res);
+  const { data, error: userError } = await supabase.auth.getUser();
+  const user = data?.user;
+  
+  if (userError || !user) {
+    // Create the login URL with the current path as the "next" parameter
+    const loginUrl = req.nextUrl.clone();
+    loginUrl.pathname = '/login';
+    loginUrl.searchParams.set('next', req.nextUrl.pathname);
+    
+    await AuditLogger.logSecurityEvent({
+      event_type: 'permission_denied',
+      ip_address: requestMetadata.ip,
+      user_agent: requestMetadata.userAgent,
+      details: {
+        attempted_url: requestMetadata.url,
+        reason: 'not_authenticated',
+        error: userError?.message,
+      },
+      severity: 'warning',
+    });
+    
+    return NextResponse.redirect(loginUrl);
+  }
+  
+  // Log successful access for audit purposes
+  if (req.method !== 'GET' || req.nextUrl.pathname.includes('/api/')) {
+    await AuditLogger.logDataAccess({
+      userId: user.id,
+      userEmail: user.email ?? 'unknown',
+      resourceType: 'user_profile',
+      resourceId: req.nextUrl.pathname,
+      action: req.method === 'GET' ? 'read' : 'admin_access',
+      request: {
+        ip: requestMetadata.ip,
+        userAgent: requestMetadata.userAgent,
+      },
+    });
+  }
+  
+  return res;
+}

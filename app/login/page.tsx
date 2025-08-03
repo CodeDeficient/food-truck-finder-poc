@@ -169,7 +169,8 @@ function LoginDivider() {
  */
 export default function LoginPage() {
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirectedFrom') ?? '/admin';
+  // Support both 'redirectedFrom' (from middleware) and 'next' (from manual redirects)
+  const redirectTo = searchParams.get('next') ?? searchParams.get('redirectedFrom') ?? '/admin';
 
   const {
     handleEmailLogin,
