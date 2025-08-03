@@ -1,3 +1,46 @@
+import { Database } from '../supabase.js';
+
+interface QuarantineError {
+  record: any;
+  errors: string[];
+}
+
+async function validateOrQuarantine(record: any, schema: any): Promise<boolean> {
+  try {
+    const isValid = validate(record, schema);
+    if (!isValid) {
+      const errors = getValidationErrors(record, schema); // Placeholder for actual validation logic
+      await Database.from('quarantine_errors').insert([{ record, errors }]);
+      incrementMetric('quarantined');
+    } else {
+      incrementMetric('valid');
+    }
+    return isValid;
+  } catch (err) {
+    console.error('Validation failed:', err);
+    throw err;
+  } finally {
+    incrementMetric('processed');
+  }
+}
+
+function validate(record: any, schema: any): boolean {
+  // Placeholder for validation logic
+  return true;
+}
+
+function getValidationErrors(record: any, schema: any): string[] {
+  // Placeholder for retrieving validation errors
+  return ['example error'];
+}
+
+function incrementMetric(type: 'processed' | 'valid' | 'quarantined') {
+  // Placeholder for metrics emission logic
+  console.log(`Metric incremented: ${type}`);
+}
+
+export { validateOrQuarantine };
+
 import type { ExtractedFoodTruckDetails, FoodTruckSchema, MenuCategory, MenuItem } from '../types.js';
 import { ScrapingJobService, FoodTruckService, type FoodTruck } from '../supabase.js';
 import { DuplicatePreventionService } from '../data-quality/duplicatePrevention.js';

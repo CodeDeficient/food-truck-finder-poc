@@ -1,0 +1,57 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Subtle inner shadow for dark mode -->
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="1.5"/>
+      <feGaussianBlur stdDeviation="1.5" result="offset-blur"/>
+      <feFlood flood-color="#ffffff" flood-opacity="0.1"/>
+      <feComposite in2="offset-blur" operator="in"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    
+    <!-- Pin background gradient for dark mode -->
+    <linearGradient id="pinGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:hsl(var(--card));stop-opacity:1" />
+      <stop offset="100%" style="stop-color:hsl(var(--muted));stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Food truck gradient - brighter for dark mode -->
+    <linearGradient id="truckGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Accent gradient for dark mode -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Pin shape with subtle shadow -->
+  <path d="M32 8C23.2 8 16 15.2 16 24c0 12 16 32 16 32s16-20 16-32c0-8.8-7.2-16-16-16z" 
+        fill="url(#pinGradient)" 
+        stroke="hsl(var(--border))" 
+        stroke-width="0.5" 
+        filter="url(#innerShadow)"/>
+  
+  <!-- Food truck icon -->
+  <g transform="translate(32, 24) scale(1.1)">
+    <!-- Main truck body -->
+    <rect x="-7" y="-4" width="12" height="6" rx="1" fill="url(#truckGradient)" stroke="#fbbf24" stroke-width="0.4"/>
+    <!-- Cab section -->
+    <rect x="-8" y="-2" width="2.5" height="4" rx="0.5" fill="url(#truckGradient)" stroke="#fbbf24" stroke-width="0.4"/>
+    <!-- Service window -->
+    <rect x="-3" y="-3.5" width="7" height="3" rx="0.5" fill="hsl(var(--card))" stroke="#fbbf24" stroke-width="0.3"/>
+    <!-- Awning -->
+    <rect x="-3" y="0.5" width="7" height="1" rx="0.3" fill="url(#accentGradient)" stroke="#f87171" stroke-width="0.2"/>
+    <!-- Front wheel -->
+    <circle cx="-5.5" cy="3" r="1.2" fill="hsl(var(--muted-foreground))" stroke="hsl(var(--border))" stroke-width="0.3"/>
+    <circle cx="-5.5" cy="3" r="0.6" fill="hsl(var(--foreground))"/>
+    <!-- Rear wheel -->
+    <circle cx="2" cy="3" r="1.2" fill="hsl(var(--muted-foreground))" stroke="hsl(var(--border))" stroke-width="0.3"/>
+    <circle cx="2" cy="3" r="0.6" fill="hsl(var(--foreground))"/>
+    <!-- Windshield -->
+    <rect x="-7.3" y="-1.5" width="2" height="2" rx="0.3" fill="#60a5fa" stroke="#3b82f6" stroke-width="0.2"/>
+  </g>
+</svg>

@@ -1,0 +1,72 @@
+entities:
+  FoodTruck:
+    fields:
+      id:
+        type: string
+        required: true
+        format: uuid
+        severity: error
+        error_code: FT001
+      name:
+        type: string
+        required: true
+        min_length: 1
+        max_length: 100
+        regex: "^[a-zA-Z0-9\s&'-]+$"
+        severity: error
+        error_code: FT002
+      price_range:
+        type: enum
+        values: ["$", "$$", "$$$", "$$$$"]
+        required: false
+        default: null
+        severity: warn
+        error_code: FT003
+    cross_field_rules:
+      location_completeness:
+        description: "If coordinates provided, address should be provided"
+        condition: "current_location.lat != null AND current_location.lng != null"
+        requires: ["current_location.address"]
+        severity: warn
+        error_code: FT101
+
+  MenuItem:
+    fields:
+      name:
+        type: string
+        required: true
+        min_length: 1
+        max_length: 100
+        severity: error
+        error_code: MI001
+      price:
+        type: number
+        required: false
+        min_value: 0
+        max_value: 999.99
+        severity: warn
+        error_code: MI002
+    referential_rules:
+      truck_exists:
+        field: truck_id
+        references: "FoodTruck.id"
+        severity: error
+        error_code: MI101
+
+  OperatingHours:
+    fields:
+      monday:
+        type: object
+        schema: DailyOperatingHours
+        required: false
+        severity: info
+        error_code: OH001
+    cross_field_rules:
+      time_order:
+        description: "Open time must be before close time"
+        applies_to: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        condition: "open != null AND close != null"
+        validation: "open < close"
+        severity: error
+        error_code: OH101
+

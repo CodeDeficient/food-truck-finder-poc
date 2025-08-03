@@ -1,0 +1,210 @@
+{
+  "task_scope_summary": {
+    "task_name": "UI_SPECIALIST_2 • Badge & Layout Optimization",
+    "total_items_found": 15,
+    "search_completed_at": "2025-01-25T21:58:00Z",
+    "search_methods_used": [
+      "git log --grep searches",
+      "directory structure analysis", 
+      "WBS document analysis",
+      "staging directory inspection"
+    ]
+  },
+  "wbs_definitions": [
+    {
+      "type": "WBS_TASK_DEFINITION",
+      "source_file": "docs/WBS_FRACTAL_MULTI_AI_DEVELOPMENT.md",
+      "task_id": "1.2",
+      "task_name": "Badge & Layout Optimization",
+      "ai_assignment": "UI_SPECIALIST_2",
+      "line_range": "44-56",
+      "subtasks": [
+        "1.2.1 - Analyze current badge positioning conflicts",
+        "1.2.2 - Design optimal badge placement strategy", 
+        "1.2.3 - Implement badge repositioning logic",
+        "1.2.4 - Test badge visibility across viewport sizes",
+        "1.2.5 - Verify open/closed status accuracy",
+        "1.2.6 - Create responsive design tests",
+        "1.2.7 - Update CSS/styling guidelines",
+        "1.2.8 - Document badge component API",
+        "1.2.9 - Cross-browser compatibility testing",
+        "1.2.10 - Generate design system updates"
+      ]
+    },
+    {
+      "type": "WBS_TASK_DEFINITION", 
+      "source_file": "docs/WBS_food_truck_finder_fractal_structure.md",
+      "task_id": "Phase 1 - Task 2",
+      "task_name": "Badge Repositioning",
+      "line_range": "12-16",
+      "subtasks": [
+        "A - Identify conflicting UI elements",
+        "B - Reposition badge for clarity", 
+        "C - Conduct visual accessibility checks"
+      ]
+    }
+  ],
+  "staging_files": [
+    {
+      "type": "STAGING_DOCUMENTATION",
+      "file_path": "staging/ui-specialist-2/Badge-API-Documentation.md",
+      "purpose": "Badge Component API Documentation",
+      "status": "skeleton_created"
+    },
+    {
+      "type": "STAGING_DOCUMENTATION",
+      "file_path": "staging/ui-specialist-2/Design-System-Updates.md", 
+      "purpose": "Design System Updates for Badge Optimization",
+      "status": "skeleton_created"
+    },
+    {
+      "type": "STAGING_ANALYSIS",
+      "file_path": "staging/ui-specialist-2/badge-positioning-audit.md",
+      "purpose": "Badge Positioning Conflicts Analysis & Optimal Badge Placement Strategy",
+      "status": "skeleton_created"
+    },
+    {
+      "type": "STAGING_GUIDELINES",
+      "file_path": "staging/ui-specialist-2/styling-guidelines.md",
+      "purpose": "CSS/Styling Guidelines for Badge Optimization", 
+      "status": "skeleton_created"
+    },
+    {
+      "type": "TEST_SPECIFICATION",
+      "file_path": "staging/ui-specialist-2/tests/badge-visibility-tests.md",
+      "purpose": "Badge Visibility Tests Across Viewport Sizes",
+      "status": "skeleton_created"
+    },
+    {
+      "type": "TEST_SPECIFICATION", 
+      "file_path": "staging/ui-specialist-2/tests/cross-browser-compatibility-tests.md",
+      "purpose": "Cross-Browser Compatibility Testing for Badges",
+      "status": "skeleton_created"
+    },
+    {
+      "type": "TEST_SPECIFICATION",
+      "file_path": "staging/ui-specialist-2/tests/responsive-design-tests.md", 
+      "purpose": "Responsive Design Tests for Badges",
+      "status": "skeleton_created"
+    },
+    {
+      "type": "TEST_SPECIFICATION",
+      "file_path": "staging/ui-specialist-2/tests/status-accuracy-tests.md",
+      "purpose": "Open/Closed Status Verification Tests", 
+      "status": "skeleton_created"
+    }
+  ],
+  "related_commits": [
+    {
+      "type": "RELATED_COMMIT",
+      "commit_hash": "ac6e678",
+      "commit_message": "docs: Update TypeScript badge to reflect accurate percentage",
+      "relevance": "Badge-related UI improvement"
+    },
+    {
+      "type": "LAYOUT_COMMIT", 
+      "commit_hash": "c5988fa",
+      "commit_message": "feat: Create backup of simplified page.tsx before restoring finder layout",
+      "relevance": "Layout optimization related"
+    },
+    {
+      "type": "LAYOUT_COMMIT",
+      "commit_hash": "b310717", 
+      "commit_message": "fix: Correct syntax error in app/layout.tsx metadata",
+      "relevance": "Layout structure fix"
+    }
+  ],
+  "file_inspection_targets": [
+    {
+      "priority": "HIGH",
+      "category": "component_files",
+      "targets": [
+        "components/**/Badge*",
+        "components/ui/badge*", 
+        "components/status-indicator/*",
+        "components/trucks/*Badge*"
+      ],
+      "search_reason": "Primary badge component implementations"
+    },
+    {
+      "priority": "HIGH",
+      "category": "layout_files", 
+      "targets": [
+        "app/layout.tsx",
+        "app/**/layout.tsx",
+        "components/layout/*"
+      ],
+      "search_reason": "Layout optimization targets"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "styling_files",
+      "targets": [
+        "**/*.css",
+        "**/*.scss", 
+        "styles/**/*",
+        "globals.css",
+        "tailwind.config.js"
+      ],
+      "search_reason": "CSS styling for badge positioning and layout"
+    },
+    {
+      "priority": "MEDIUM", 
+      "category": "test_files",
+      "targets": [
+        "tests/**/*badge*",
+        "**/*.test.tsx",
+        "__tests__/**/*badge*"
+      ],
+      "search_reason": "Existing test coverage for badge functionality"
+    }
+  ],
+  "search_gaps_identified": [
+    {
+      "gap": "no_direct_ui_specialist2_commits",
+      "description": "No git commits found with UI_SPECIALIST_2 label - work appears to be in planning/staging phase"
+    },
+    {
+      "gap": "skeleton_documentation_only",
+      "description": "All staging files are skeleton/header-only - detailed implementation plans not yet created"
+    },
+    {
+      "gap": "no_jira_tickets_found", 
+      "description": "No JIRA ticket references found in codebase - likely using internal WBS system only"
+    },
+    {
+      "gap": "no_dedicated_branches",
+      "description": "No branches specifically named for UI_SPECIALIST_2 work detected"
+    }
+  ],
+  "next_inspection_actions": [
+    {
+      "action": "component_audit",
+      "description": "Search for existing Badge components across the entire codebase",
+      "command_suggestion": "find . -name '*[Bb]adge*' -type f"
+    },
+    {
+      "action": "layout_analysis", 
+      "description": "Identify current layout files and positioning logic",
+      "command_suggestion": "grep -r 'position.*badge\\|badge.*position' --include='*.tsx' --include='*.css'"
+    },
+    {
+      "action": "ui_conflict_detection",
+      "description": "Look for existing badge positioning conflicts in UI components", 
+      "command_suggestion": "grep -r 'z-index\\|absolute\\|fixed\\|relative' components/"
+    },
+    {
+      "action": "status_indicator_audit",
+      "description": "Find open/closed status implementation files",
+      "command_suggestion": "grep -r 'open.*close\\|status.*badge' --include='*.tsx'"
+    }
+  ],
+  "assignment_verification": {
+    "confirmed_ai_specialist": "UI_SPECIALIST_2",
+    "work_package_id": "1.2", 
+    "phase": "Phase 1: UI/UX Enhancement Package",
+    "dependencies": "None (can run in parallel)",
+    "estimated_duration": "2-3 sessions",
+    "ccr_rating": "Low complexity, high clarity, low risk"
+  }
+}

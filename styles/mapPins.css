@@ -1,0 +1,277 @@
+/* ===== MAP PIN AESTHETICS ===== */
+
+/* Centralized CSS variables for pin styling */
+:root {
+  /* Pin base variables */
+  --pin-size-48: 48px;
+  --pin-size-64: 64px;
+  --pin-shadow-light: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+  --pin-shadow-dark: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
+  --pin-blur-radius: 0.5px; /* Reduced from previous values */
+  
+  /* Pin transition variables */
+  --pin-transition: all 0.2s ease-in-out;
+  --pin-hover-scale: 1.1;
+  --pin-active-scale: 0.95;
+  
+  /* Pin glow effects */
+  --pin-glow-green: drop-shadow(0 0 4px rgba(34, 197, 94, 0.5));
+  --pin-glow-red: drop-shadow(0 0 4px rgba(239, 68, 68, 0.5));
+  --pin-glow-amber: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5));
+  --pin-glow-blue: drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
+}
+
+.dark {
+  /* Dark mode pin variables */
+  --pin-shadow-light: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
+  --pin-glow-green: drop-shadow(0 0 4px rgba(74, 222, 128, 0.6));
+  --pin-glow-red: drop-shadow(0 0 4px rgba(248, 113, 113, 0.6));
+  --pin-glow-amber: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+  --pin-glow-blue: drop-shadow(0 0 4px rgba(96, 165, 250, 0.6));
+}
+
+/* ===== BASE PIN CLASSES ===== */
+
+.map-pin {
+  transition: var(--pin-transition);
+  cursor: pointer;
+  will-change: transform, filter;
+}
+
+.map-pin:hover {
+  transform: scale(var(--pin-hover-scale));
+  filter: var(--pin-shadow-light);
+}
+
+.map-pin:active {
+  transform: scale(var(--pin-active-scale));
+}
+
+/* ===== PIN SIZE VARIANTS ===== */
+
+.map-pin-48 {
+  width: var(--pin-size-48);
+  height: var(--pin-size-48);
+}
+
+.map-pin-64 {
+  width: var(--pin-size-64);
+  height: var(--pin-size-64);
+}
+
+/* ===== PIN THEME VARIANTS ===== */
+
+.map-pin-light {
+  filter: var(--pin-shadow-light);
+}
+
+.map-pin-dark {
+  filter: var(--pin-shadow-dark);
+}
+
+/* ===== PIN STATUS/TYPE VARIANTS ===== */
+
+.map-pin-active {
+  filter: var(--pin-glow-green) var(--pin-shadow-light);
+}
+
+.map-pin-inactive {
+  filter: var(--pin-glow-red) var(--pin-shadow-light);
+  opacity: 0.7;
+}
+
+.map-pin-featured {
+  filter: var(--pin-glow-amber) var(--pin-shadow-light);
+}
+
+.map-pin-selected {
+  filter: var(--pin-glow-blue) var(--pin-shadow-light);
+  transform: scale(1.15);
+}
+
+/* ===== PIN MODIFIER CLASSES FOR TASK 1.3.4 ===== */
+
+/* Pin active state - represents open food trucks */
+.pin--active {
+  filter: var(--pin-glow-green) var(--pin-shadow-light);
+}
+
+/* Pin selected state - represents selected pins with outline effect */
+.pin--selected {
+  filter: var(--pin-glow-blue) var(--pin-shadow-light);
+  transform: scale(1.15);
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* Default pin state - neutral appearance */
+.pin--default {
+  filter: var(--pin-shadow-light);
+  opacity: 1;
+}
+
+/* Hover state enhancement - scale + slight glow */
+.pin--default:hover,
+.pin--active:hover,
+.pin--selected:hover {
+  transform: scale(var(--pin-hover-scale));
+  filter: var(--pin-glow-amber) var(--pin-shadow-light);
+  transition: var(--pin-transition);
+}
+
+/* Focus state for accessibility */
+.pin--default:focus,
+.pin--active:focus,
+.pin--selected:focus {
+  transform: scale(var(--pin-hover-scale));
+  filter: var(--pin-glow-blue) var(--pin-shadow-light);
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+  outline-offset: 2px;
+}
+
+/* Click/Active state */
+.pin--default:active,
+.pin--active:active,
+.pin--selected:active {
+  transform: scale(var(--pin-active-scale));
+  transition: var(--pin-transition);
+}
+
+/* ===== FOOD TRUCK SPECIFIC PINS ===== */
+
+.food-truck-pin {
+  transition: var(--pin-transition);
+  cursor: pointer;
+  will-change: transform, filter;
+}
+
+.food-truck-pin:hover {
+  transform: scale(var(--pin-hover-scale));
+  filter: var(--pin-glow-amber) var(--pin-shadow-light);
+}
+
+.food-truck-pin:active {
+  transform: scale(var(--pin-active-scale));
+}
+
+.food-truck-pin.open {
+  filter: var(--pin-glow-green) var(--pin-shadow-light);
+}
+
+.food-truck-pin.closed {
+  filter: var(--pin-glow-red) var(--pin-shadow-light);
+  opacity: 0.6;
+}
+
+.food-truck-pin.featured {
+  filter: var(--pin-glow-amber) var(--pin-shadow-light);
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pin-drop {
+  0% {
+    transform: translateY(-50px) scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(5px) scale(1.1);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-2px) scale(0.95);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.map-pin-entering {
+  animation: pin-drop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ===== LEAFLET INTEGRATION ===== */
+
+.leaflet-marker-icon.map-pin {
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Remove any remaining debug styles */
+.leaflet-marker-icon {
+  /* Removed debug borders as requested */
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+.map-pin,
+.food-truck-pin {
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+
+@media (max-width: 768px) {
+  :root {
+    --pin-size-48: 40px;
+    --pin-size-64: 52px;
+    --pin-hover-scale: 1.05; /* Smaller scale on mobile */
+  }
+  
+  .map-pin:hover,
+  .food-truck-pin:hover {
+    transform: scale(var(--pin-hover-scale));
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --pin-size-48: 36px;
+    --pin-size-64: 48px;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .map-pin,
+  .food-truck-pin {
+    transition: none;
+    animation: none;
+  }
+  
+  .map-pin:hover,
+  .food-truck-pin:hover {
+    transform: none;
+  }
+  
+  .food-truck-pin.featured {
+    animation: none;
+  }
+}
+
+/* ===== HIGH DPI DISPLAYS ===== */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .map-pin,
+  .food-truck-pin {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}

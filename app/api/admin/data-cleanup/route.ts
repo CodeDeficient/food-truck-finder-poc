@@ -1,43 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { type DataCleanupRequestBody } from '@/lib/types';
+import { withValidation } from '@/lib/middleware/withValidation';
 import { handlePostRequest, handleGetRequest } from '@/lib/api/admin/data-cleanup/handlers';
+import { DataCleanupSchema } from '@/lib/validation/schemas/v1/api';
 
-export async function POST(request: NextRequest) {
-  try {
-    const rawBody: unknown = await request.json();
-
-    // Validate rawBody against DataCleanupRequestBody type
-    if (typeof rawBody !== 'object' || rawBody == undefined) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid request body: not an object' },
-        { status: 400 },
-      );
-    }
-
-    const body = rawBody as Partial<DataCleanupRequestBody>; // Use Partial for initial type assertion
-
-    if (typeof body.action !== 'string') {
-      return NextResponse.json(
-        { success: false, error: 'Invalid request body: missing or invalid action' },
-        { status: 400 },
-      );
-    }
-
-    // Further validation can be added here for other properties of DataCleanupRequestBody if needed
-
-    return await handlePostRequest(body as DataCleanupRequestBody);
-  } catch (error: unknown) {
-    console.error('Data cleanup API error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to process cleanup request',
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
-  }
-}
+export const POST = withValidation(DataCleanupSchema, async (_request: NextRequest, _params, validatedData) => {
+  return handlePostRequest(validatedData);
+});
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,9 +1,13 @@
 'use client';
 
 import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FormMessage } from '@/components/ui/form';
 import { Eye, EyeOff, Shield, AlertCircle, Loader2 } from 'lucide-react';
 
 interface AuthError {
@@ -19,24 +23,22 @@ interface PasswordStrength {
 }
 
 interface AuthEmailFormProps {
-  readonly email: string;
-  readonly password: string;
   readonly isLoading: boolean;
   readonly mode: 'signin' | 'signup';
   readonly error?: AuthError;
   readonly showPassword?: boolean;
   readonly passwordStrength?: PasswordStrength;
-  readonly onEmailChange: (email: string) => void;
-  readonly onPasswordChange: (password: string) => void;
-  readonly onSubmit: (e: React.FormEvent) => void;
+  readonly onSubmit: (data: { email: string; password: string }) => void;
   readonly onToggleMode: () => void;
   readonly onTogglePasswordVisibility?: () => void;
 }
 
-// Email validation - simple pattern to avoid complexity
-const isValidEmail = (email: string): boolean => {
-  return email.includes('@') && email.includes('.');
-};
+const authSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters')
+});
+
+type AuthFormData = z.infer<typeof authSchema>;
 
 const PasswordStrengthIndicator: React.FC<{ strength: PasswordStrength }> = ({ strength }) => {
   const getStrengthColor = (score: number) => {
@@ -104,81 +106,89 @@ const PasswordStrengthIndicator: React.FC<{ strength: PasswordStrength }> = ({ s
 };
 
 export const AuthEmailForm: React.FC<AuthEmailFormProps> = ({
-  email,
-  password,
   isLoading,
   mode,
   error,
   showPassword = false,
   passwordStrength,
-  onEmailChange,
-  onPasswordChange,
   onSubmit,
   onToggleMode,
   onTogglePasswordVisibility
 }) => {
+  const {
+    handleSubmit,
+    control,
+    formState: { errors }
+  } = useForm<AuthFormData>({
+    resolver: zodResolver(authSchema)
+  });
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => onEmailChange(e.target.value)}
-          disabled={isLoading}
-          className={error?.field === 'email' ? 'border-red-500' : ''}
-          required
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              {...field}
+              disabled={isLoading}
+              className={errors.email ? 'border-red-500' : ''}
+            />
+          )}
         />
+        {errors.email && <FormMessage>{errors.email.message}</FormMessage>}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <div className="relative">
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
-            disabled={isLoading}
-            className={`pr-10 ${error?.field === 'password' ? 'border-red-500' : ''}`}
-            required
-          />
-          {onTogglePasswordVisibility && (
-            <button
-              type="button"
-              onClick={onTogglePasswordVisibility}
-              className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              disabled={isLoading}
-            >
-              {showPassword ? (
-                <EyeOff className="size-4" />
-              ) : (
-                <Eye className="size-4" />
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                {...field}
+                disabled={isLoading}
+                className={`pr-10 ${errors.password ? 'border-red-500' : ''}`}
+              />
+              {onTogglePasswordVisibility && (
+                <button
+                  type="button"
+                  onClick={onTogglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
               )}
-            </button>
+            </div>
           )}
-        </div>
-        
-        {mode === 'signup' && passwordStrength && password && (
+        />
+        {errors.password && <FormMessage>{errors.password.message}</FormMessage>}
+        {mode === 'signup' && passwordStrength &&
           <PasswordStrengthIndicator strength={passwordStrength} />
-        )}
+        }
       </div>
 
-      <Button 
-        type="submit" 
-        className="w-full" 
-        disabled={
-          isLoading || 
-          !email || 
-          !password || 
-          (mode === 'signup' && passwordStrength && !passwordStrength.isValid)
-        }
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isLoading}
       >
         {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-        {isLoading 
+        {isLoading
           ? (mode === 'signin' ? 'Signing in...' : 'Creating account...')
           : (mode === 'signin' ? 'Sign In' : 'Create Account')
         }
@@ -191,8 +201,8 @@ export const AuthEmailForm: React.FC<AuthEmailFormProps> = ({
           className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           disabled={isLoading}
         >
-          {mode === 'signin' 
-            ? "Don't have an account? Sign up" 
+          {mode === 'signin'
+            ? "Don't have an account? Sign up"
             : 'Already have an account? Sign in'
           }
         </button>

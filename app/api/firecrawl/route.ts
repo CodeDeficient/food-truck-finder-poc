@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withValidation } from '@/lib/middleware/withValidation';
+import { FirecrawlRequestSchema } from '@/lib/validation/schemas/v1/api';
 import { firecrawl } from '@/lib/firecrawl';
 import {
   handleCrawlOperation,
@@ -7,51 +9,25 @@ import {
 } from '@/lib/api/firecrawl/handlers';
 import type { FirecrawlRequestBody } from '@/lib/api/firecrawl/types';
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = (await request.json()) as FirecrawlRequestBody;
-    const { operation, url, options = {} } = body;
-
-    switch (operation) {
-      case 'search': {
-        return handleSearchOperation();
-      }
-      case 'scrape': {
-        if (url == undefined) {
-          return NextResponse.json(
-            { success: false, error: 'URL is required for scrape operation' },
-            { status: 400 },
-          );
-        }
-        return handleScrapeOperation(url, options);
-      }
-      case 'crawl': {
-        if (url == undefined) {
-          return NextResponse.json(
-            { success: false, error: 'URL is required for crawl operation' },
-            { status: 400 },
-          );
-        }
-        return handleCrawlOperation(url, options);
-      }
-      default: {
-        return NextResponse.json(
-          { success: false, error: `Unknown operation: ${operation}` },
-          { status: 400 },
-        );
-      }
+export const POST = withValidation(FirecrawlRequestSchema, async (_request: NextRequest, _params, { operation, url, options = {} }) => {
+  switch (operation) {
+    case 'search': {
+      return handleSearchOperation();
     }
-  } catch (error) {
-    console.error('Firecrawl API error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Internal server error',
-      },
-      { status: 500 },
-    );
+    case 'scrape': {
+      return handleScrapeOperation(url!, options);
+    }
+    case 'crawl': {
+      return handleCrawlOperation(url!, options);
+    }
+    default: {
+      return NextResponse.json(
+        { success: false, error: `Unknown operation: ${operation}` },
+        { status: 400 },
+      );
+    }
   }
-}
+});
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

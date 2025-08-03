@@ -1,0 +1,42 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Subtle inner shadow for dark mode -->
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="1"/>
+      <feGaussianBlur stdDeviation="1" result="offset-blur"/>
+      <feFlood flood-color="#ffffff" flood-opacity="0.1"/>
+      <feComposite in2="offset-blur" operator="in"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    
+    <!-- Pin background gradient for dark mode -->
+    <linearGradient id="pinGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:hsl(var(--card));stop-opacity:1" />
+      <stop offset="100%" style="stop-color:hsl(var(--muted));stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Food truck gradient - brighter for dark mode -->
+    <linearGradient id="truckGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Pin shape with subtle shadow -->
+  <path d="M24 6C17.4 6 12 11.4 12 18c0 9 12 24 12 24s12-15 12-24c0-6.6-5.4-12-12-12z" 
+        fill="url(#pinGradient)" 
+        stroke="hsl(var(--border))" 
+        stroke-width="0.5" 
+        filter="url(#innerShadow)"/>
+  
+  <!-- Food truck icon -->
+  <g transform="translate(24, 18) scale(0.8)">
+    <!-- Main truck body -->
+    <rect x="-6" y="-3" width="10" height="5" rx="0.8" fill="url(#truckGradient)" stroke="#fbbf24" stroke-width="0.3"/>
+    <!-- Service window -->
+    <rect x="-2" y="-2.5" width="6" height="2.5" rx="0.4" fill="hsl(var(--card))" stroke="#fbbf24" stroke-width="0.2"/>
+    <!-- Wheels -->
+    <circle cx="-4" cy="2.5" r="1" fill="hsl(var(--muted-foreground))" stroke="hsl(var(--border))" stroke-width="0.2"/>
+    <circle cx="2" cy="2.5" r="1" fill="hsl(var(--muted-foreground))" stroke="hsl(var(--border))" stroke-width="0.2"/>
+  </g>
+</svg>

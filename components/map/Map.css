@@ -2,14 +2,13 @@
 
 /* ===== SIMPLE & EFFECTIVE MAP STYLES ===== */
 
-/* DEBUG: Test if classes are being applied */
+/* Light and dark map styling without debug borders */
 .light-crisp-map {
-  border: 2px solid red !important; /* TEMP DEBUG */
+  /* Clean appearance for light mode */
 }
 
 .dark-inverted-map {
-  border: 2px solid blue !important; /* TEMP DEBUG */
-  background: rgba(255, 0, 0, 0.1) !important; /* TEMP DEBUG */
+  /* Clean appearance for dark mode */
 }
 
 /* Light mode - Crisp OpenStreetMap (no filters) */
@@ -210,10 +209,10 @@
   color: #60a5fa;
 }
 
-/* Reduce visual noise during loading */
+/* Reduce visual noise during loading - reduced blur */
 .leaflet-tile-loading {
   opacity: 0.5;
-  filter: blur(1px);
+  filter: blur(0.5px); /* Reduced from 1px */
 }
 
 /* Better mobile responsiveness */
