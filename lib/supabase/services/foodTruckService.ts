@@ -75,7 +75,7 @@ export const FoodTruckService = {
     radiusKm: number,
   ): Promise<FoodTruck[] | { error: string }> {
     try {
-      const { trucks } = await FoodTruckService.getAllTrucks();
+      const { trucks } = await FoodTruckService.getAllTrucks() ?? {};
       const nearbyTrucks = trucks.filter((truck: FoodTruck) => {
         if (
           truck.current_location == undefined ||

@@ -14,7 +14,7 @@ export default function TrucksPage() {
     const fetchTrucks = async () => {
       const supabase = getSupabase();
       const { data, error: fetchError } = await supabase
-        .from('trucks')
+        .from('food_trucks')
         .select('*');
 
       if (fetchError) {

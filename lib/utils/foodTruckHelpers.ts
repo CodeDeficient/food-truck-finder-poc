@@ -193,7 +193,7 @@ export async function loadNearbyTrucksHelper(
   if (!userLocation) return;
 
   try {
-    const { trucks } = await supabaseFallback.getFoodTrucks();
+    const { trucks } = await supabaseFallback.getFoodTrucks() ?? {};
     setTrucks(trucks);
   } catch (error: unknown) {
     console.error('Failed to load nearby trucks:', error);
