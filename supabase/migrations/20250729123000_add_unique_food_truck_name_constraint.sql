@@ -10,9 +10,17 @@ WHERE a.ctid < (
     WHERE a.name = b.name
 );
 
--- Add unique constraint on name column
-ALTER TABLE food_trucks
-ADD CONSTRAINT unique_food_truck_name UNIQUE (name);
+-- Add unique constraint on name column (if it doesn't exist)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint 
+    WHERE conname = 'unique_food_truck_name'
+  ) THEN
+    ALTER TABLE food_trucks ADD CONSTRAINT unique_food_truck_name UNIQUE (name);
+  END IF;
+END
+$$;
 
 -- Create an index to support the unique constraint and improve query performance
 CREATE INDEX IF NOT EXISTS idx_food_trucks_name ON food_trucks (name);
