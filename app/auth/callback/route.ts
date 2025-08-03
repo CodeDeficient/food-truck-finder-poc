@@ -38,22 +38,28 @@ async function handleSuccessfulAuth({
 
   RateLimiter.recordSuccess(identifier, 'auth');
 
-  if (profile?.role === 'admin') {
-    return NextResponse.redirect(`${origin}${redirectTo}`);
-  } else {
-    await AuditLogger.logSecurityEvent({
-      event_type: 'permission_denied',
-      user_id: user.id,
-      user_email: user.email,
-      ip_address: requestMetadata.ip,
-      user_agent: requestMetadata.userAgent,
-      details: {
-        reason: 'insufficient_role',
-        user_role: profile?.role ?? 'none',
-      },
-      severity: 'warning',
-    });
-    return NextResponse.redirect(`${origin}/access-denied`);
+  // Role-based redirects
+  switch (profile?.role) {
+    case 'admin':
+      return NextResponse.redirect(`${origin}${redirectTo.startsWith('/admin') ? redirectTo : '/admin'}`);
+    case 'food_truck_owner':
+      return NextResponse.redirect(`${origin}/owner-dashboard`);
+    case 'customer':
+      return NextResponse.redirect(`${origin}/user-dashboard`);
+    default:
+      await AuditLogger.logSecurityEvent({
+        event_type: 'permission_denied',
+        user_id: user.id,
+        user_email: user.email,
+        ip_address: requestMetadata.ip,
+        user_agent: requestMetadata.userAgent,
+        details: {
+          reason: 'insufficient_role',
+          user_role: profile?.role ?? 'none',
+        },
+        severity: 'warning',
+      });
+      return NextResponse.redirect(`${origin}/access-denied`);
   }
 }
 
