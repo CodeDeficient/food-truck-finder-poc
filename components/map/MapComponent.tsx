@@ -12,6 +12,9 @@ import { useEffect, useState } from 'react';
 import type { FoodTruck } from '@/lib/types';
 import { isTruckOpen } from '@/lib/utils/foodTruckHelpers';
 import { geocodeAddress, CHARLESTON_FALLBACK } from '@/lib/utils/geocoding';
+import MarkerClusterGroup from './MarkerClusterGroup';
+import type { MarkerClusterGroupProps } from './MarkerClusterGroup';
+import { getDefaultClusterOptions } from './clusterIconUtils';
 
 interface MapComponentProps {
   readonly trucks: FoodTruck[];
@@ -21,6 +24,7 @@ interface MapComponentProps {
   readonly onSelectTruck?: (truckId: string) => void;
   readonly selectedTruckLocation?: LatLngExpression;
   readonly theme?: string;
+  readonly clusterRadius?: number;
 }
 
 const MapViewUpdater = ({
@@ -59,6 +63,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
   onSelectTruck,
   selectedTruckLocation,
   theme,
+  clusterRadius = 80,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [trucksWithCoords, setTrucksWithCoords] = useState<FoodTruck[]>([]);
@@ -168,31 +173,36 @@ const MapComponent: React.FC<MapComponentProps> = ({
         center={selectedTruckLocation}
         zoom={selectedTruckLocation ? 13 : undefined}
       />
-      {validTrucks.map((truck) => {
-        const isOpen = isTruckOpen(truck);
-        return (
-          <Marker
-            key={truck.id}
-            position={[truck.current_location.lat, truck.current_location.lng]}
-            icon={getFoodTruckIcon(isOpen, theme || 'light')}
-            eventHandlers={{
-              click: () => {
-                if (onSelectTruck) {
-                  onSelectTruck(truck.id);
-                }
-              },
-            }}
-          >
-            <Popup>
-              <h4 className="font-bold">{truck.name}</h4>
-              {truck.current_location.address && <div>{truck.current_location.address}</div>}
-              <div className={isOpen ? 'text-green-600' : 'text-red-600'}>
-                {isOpen ? 'Open' : 'Closed'}
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
+      <MarkerClusterGroup {...getDefaultClusterOptions(clusterRadius)}>
+        {validTrucks.map((truck) => {
+          const isOpen = isTruckOpen(truck);
+          return (
+            <Marker
+              key={truck.id}
+              position={[truck.current_location.lat, truck.current_location.lng]}
+              icon={getFoodTruckIcon(isOpen, theme || 'light')}
+              // Add truck data to marker options for cluster icon function
+              // @ts-ignore - Adding custom property for cluster analysis
+              truck={truck}
+              eventHandlers={{
+                click: () => {
+                  if (onSelectTruck) {
+                    onSelectTruck(truck.id);
+                  }
+                },
+              }}
+            >
+              <Popup>
+                <h4 className="font-bold">{truck.name}</h4>
+                {truck.current_location.address && <div>{truck.current_location.address}</div>}
+                <div className={isOpen ? 'text-green-600' : 'text-red-600'}>
+                  {isOpen ? 'Open' : 'Closed'}
+                </div>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MarkerClusterGroup>
       {userLocation && (
         <Marker position={[userLocation.lat, userLocation.lng]}>
           <Popup>You are here</Popup>

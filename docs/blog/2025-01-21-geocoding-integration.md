@@ -1,7 +1,7 @@
 # Improving Food Truck Location Data with Geocoding
 
 **Date:** January 21, 2025  
-**Author:** Development Team
+**Author**
 
 ## The Problem
 

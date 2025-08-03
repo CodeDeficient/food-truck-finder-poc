@@ -240,6 +240,87 @@
   transform: translate3d(0, 0, 0);
 }
 
+/* ===== MARKER CLUSTER STYLING ===== */
+
+/* Custom cluster icons using pin palette */
+.marker-cluster-small {
+  background-color: rgba(34, 197, 94, 0.8) !important;
+  border: 2px solid rgba(34, 197, 94, 1) !important;
+  border-radius: 50%;
+  color: white !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6), 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(34, 197, 94, 0.9) !important;
+  border: 3px solid rgba(34, 197, 94, 1) !important;
+  border-radius: 50%;
+  color: white !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.7), 0 3px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.marker-cluster-large {
+  background-color: rgba(34, 197, 94, 1) !important;
+  border: 4px solid rgba(16, 185, 129, 1) !important;
+  border-radius: 50%;
+  color: white !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8), 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Hover effects for clusters */
+.marker-cluster-small:hover,
+.marker-cluster-medium:hover,
+.marker-cluster-large:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.9), 0 6px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Mixed state clusters (open and closed trucks) */
+.marker-cluster-mixed {
+  background: linear-gradient(45deg, rgba(34, 197, 94, 0.8) 50%, rgba(239, 68, 68, 0.8) 50%) !important;
+  border: 3px solid rgba(156, 163, 175, 1) !important;
+  border-radius: 50%;
+  color: white !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 8px rgba(156, 163, 175, 0.7), 0 3px 6px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Dark mode adjustments for clusters */
+.dark .marker-cluster-small,
+.dark .marker-cluster-medium,
+.dark .marker-cluster-large {
+  border-color: rgba(34, 197, 94, 0.9) !important;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.8), 0 3px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .marker-cluster-mixed {
+  border-color: rgba(156, 163, 175, 0.9) !important;
+  box-shadow: 0 0 8px rgba(156, 163, 175, 0.8), 0 3px 6px rgba(0, 0, 0, 0.5) !important;
+}
+
 /* Smooth loading skeleton */
 .map-loading {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
