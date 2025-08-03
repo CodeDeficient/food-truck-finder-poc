@@ -1,4 +1,4 @@
-import type { FoodTruck } from '@/lib/supabase';
+import type { FoodTruck } from '@/lib/types';
 
 /**
 * Returns an array of regular expressions that identify placeholder patterns.
@@ -95,7 +95,7 @@ function getContactInfoUpdates(
   truck: FoodTruck,
   contactInfoUpdates: Partial<FoodTruck['contact_info']>,
 ): Partial<FoodTruck> | object {
-  if (Object.keys(contactInfoUpdates).length > 0) {
+if (contactInfoUpdates && Object.keys(contactInfoUpdates).length > 0) {
     return { contact_info: { ...truck.contact_info, ...contactInfoUpdates } };
   }
   return {};
@@ -131,19 +131,19 @@ function processContactInfoForPlaceholders(
 
   if (
     truck.contact_info?.phone !== undefined &&
-    patterns.some((pattern) => pattern.test(truck.contact_info.phone ?? ''))
+    patterns.some((pattern) => pattern.test(truck.contact_info?.phone ?? ''))
   ) {
     cleanContact.phone = undefined;
   }
   if (
     truck.contact_info?.website !== undefined &&
-    patterns.some((pattern) => pattern.test(truck.contact_info.website ?? ''))
+    patterns.some((pattern) => pattern.test(truck.contact_info?.website ?? ''))
   ) {
     cleanContact.website = undefined;
   }
   if (
     truck.contact_info?.email !== undefined &&
-    patterns.some((pattern) => pattern.test(truck.contact_info.email ?? ''))
+    patterns.some((pattern) => pattern.test(truck.contact_info?.email ?? ''))
   ) {
     cleanContact.email = undefined;
   }
