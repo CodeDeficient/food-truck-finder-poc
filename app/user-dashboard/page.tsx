@@ -69,17 +69,17 @@ export default function UserDashboard() {
 
         setProfile(profileData);
 
-        // Get favorite trucks
+        // Get favorite trucks using the view we created
         const { data: favoriteTrucksData, error: favoriteTrucksError } = await supabase
           .from('favorite_trucks')
-          .select('*, food_trucks (*)') // Assuming a relation exists
+          .select('*')
           .eq('user_id', user.id);
 
         if (favoriteTrucksError) {
           console.warn('Could not load favorite trucks:', favoriteTrucksError.message);
           setFavoriteTrucks([]);
         } else {
-          setFavoriteTrucks(favoriteTrucksData.map(fav => fav.food_trucks || []));
+          setFavoriteTrucks(favoriteTrucksData || []);
         }
 
       } catch (err) {
