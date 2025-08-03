@@ -1,0 +1,56 @@
+name: Error Handling CI
+
+on:
+  push:
+    paths:
+      - 'staging/data-specialist-2/**'
+  pull_request:
+    paths:
+      - 'staging/data-specialist-2/**'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  tests-and-linting:
+    name: 💼 Run Tests and Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Type Check
+        run: npm run type-check
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Tests
+        run: npm run test
+
+    # Require passing status for the merge
+    outputs:
+      lint_status: ${{ steps.lint.outcome }}
+      test_status: ${{ steps.tests.outcome }}
+
+  notify:
+    name: Notify Failure
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification on failure
+        run: |
+          echo "⚠️ Error in CI. Check the logs for details."
+          # Add notification logic here (e.g., email, Slack)
+
