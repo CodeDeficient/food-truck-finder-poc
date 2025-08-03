@@ -1,5 +1,5 @@
-import { CachedFoodTruckService } from '@/lib/performance/databaseCache';
-import { type FoodTruck } from '@/lib/types';
+import type { FoodTruck } from '@/lib/types.js';
+import { CachedFoodTruckService } from '@/lib/performance/databaseCache.js';
 
 /**
 * Retrieves and filters food trucks based on specified location and radius.

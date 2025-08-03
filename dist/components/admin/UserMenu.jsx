@@ -16,11 +16,12 @@ import { LogOut } from 'lucide-react';
  *   - Utilizes Avatar components to display user's profile picture or initials.
  */
 export function UserMenu({ user, userInitials, handleSignOut }) {
+    var _a, _b, _c, _d;
     return (<DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="secondary" size="icon" className="rounded-full">
           <Avatar>
-            <AvatarImage src={user?.user_metadata?.avatar_url} alt="Avatar"/>
+            <AvatarImage src={(_a = user === null || user === void 0 ? void 0 : user.user_metadata) === null || _a === void 0 ? void 0 : _a.avatar_url} alt="Avatar"/>
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
           <span className="sr-only">Toggle user menu</span>
@@ -30,9 +31,9 @@ export function UserMenu({ user, userInitials, handleSignOut }) {
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium">
-              {user?.user_metadata?.full_name ?? 'Admin'}
+              {(_c = (_b = user === null || user === void 0 ? void 0 : user.user_metadata) === null || _b === void 0 ? void 0 : _b.full_name) !== null && _c !== void 0 ? _c : 'Admin'}
             </p>
-            <p className="text-xs text-muted-foreground">{user?.email ?? 'N/A'}</p>
+            <p className="text-xs text-muted-foreground">{(_d = user === null || user === void 0 ? void 0 : user.email) !== null && _d !== void 0 ? _d : 'N/A'}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

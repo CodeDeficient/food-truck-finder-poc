@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { ScrapingJobService } from '@/lib/supabase';
-import { processScrapingJob } from '@/lib/pipelineProcessor';
+import { processScrapingJob } from '../../../lib/pipelineProcessor';
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,6 +1,22 @@
 // Shared types for the Food Truck Finder application
+import { ReactElement } from 'react';
 
 export type PriceRange = '$' | '$$' | '$$$' | '$$$$' | undefined;
+
+// Contact and Social Media types for reuse across interfaces
+export interface ContactInfo {
+  phone?: string;
+  email?: string;
+  website?: string;
+}
+
+export interface SocialMedia {
+  facebook?: string;
+  instagram?: string;
+  twitter?: string;
+  tiktok?: string;
+  yelp?: string;
+}
 
 export type DailyOperatingHours =
   | { open: string; close: string; closed?: boolean }
@@ -78,18 +94,8 @@ export interface ExtractedFoodTruckDetails {
   }[];
   operating_hours: OperatingHours;
   menu: MenuCategory[];
-  contact_info: {
-    phone?: string;
-    email?: string;
-    website?: string;
-  };
-  social_media: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-    tiktok?: string;
-    yelp?: string;
-  };
+  contact_info?: ContactInfo;
+  social_media?: SocialMedia;
   source_url: string;
 }
 
@@ -111,18 +117,8 @@ export interface FoodTruckSchema {
   scheduled_locations: ExtractedFoodTruckDetails['scheduled_locations'];
   operating_hours: OperatingHours;
   menu: MenuCategory[];
-  contact_info: {
-    phone?: string;
-    email?: string;
-    website?: string;
-  };
-  social_media: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-    tiktok?: string;
-    yelp?: string;
-  };
+  contact_info?: ContactInfo;
+  social_media?: SocialMedia;
   cuisine_type: string[];
   price_range: PriceRange | undefined;
   specialties: string[];
@@ -153,6 +149,8 @@ export interface FoodTruck extends FoodTruckSchema {
   image_url?: string;
   average_rating?: number;
   review_count?: number;
+  exact_location?: any;
+  city_location?: any;
 }
 
 export interface GeminiResponse<T = unknown> {
@@ -271,4 +269,184 @@ export interface EnhancedFoodTruckData {
   };
   data_quality_improvements: string[];
   confidence_score: number;
+}
+
+// Additional types needed by various parts of the application
+export interface DataProcessingQueue {
+  id: string;
+  truck_id?: string;
+  processing_type: string;
+  raw_data: Record<string, unknown>;
+  processed_data?: Record<string, unknown>;
+  gemini_tokens_used: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  priority: number;
+  created_at: string;
+  processed_at?: string;
+}
+
+export interface ApiUsage {
+  id: string;
+  service_name: string;
+  usage_date: string;
+  requests_count: number;
+  tokens_used: number;
+}
+
+export interface QualityCategory {
+  name: string;
+  score: number;
+  issues: string[];
+}
+
+export interface SystemAlert {
+  id: string;
+  type: string;
+  message: string;
+  timestamp: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+}
+
+export interface RealtimeAdminEvent {
+  type: string;
+  payload: Record<string, unknown>;
+  timestamp: string;
+}
+
+export interface FoodTruckWithRatings extends FoodTruck {
+  ratings?: TruckRating[];
+}
+
+export interface SecurityEvent {
+  event_type: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  timestamp: string;
+  details: Record<string, unknown>;
+}
+
+export interface APIService {
+  name: string;
+  endpoint: string;
+  status: 'active' | 'inactive';
+}
+
+export interface Database {
+  public: {
+    tables: Record<string, unknown>;
+  };
+}
+
+// Type aliases to replace namespace-style property access
+export type CleanupOperationType = 
+  | 'normalize_phone'
+  | 'fix_coordinates'
+  | 'remove_placeholders'
+  | 'update_quality_scores'
+  | 'merge_duplicates';
+
+export interface CleanupOperation {
+  type: CleanupOperationType;
+  description: string;
+  affectedCount: number;
+  successCount: number;
+  errorCount: number;
+  errors: string[];
+}
+
+export interface BatchCleanupResult {
+  totalProcessed: number;
+  operations: CleanupOperation[];
+  summary: {
+    trucksImproved: number;
+    duplicatesRemoved: number;
+    qualityScoreImprovement: number;
+    placeholdersRemoved: number;
+  };
+  duration: number;
+}
+
+// Request/Response types for various API endpoints
+export interface DataCleanupRequestBody {
+  action: string;
+  options?: {
+    batchSize?: number;
+    dryRun?: boolean;
+    operations?: string[];
+    truckData?: Record<string, unknown>;
+    targetId?: string;
+    sourceId?: string;
+  };
+}
+
+export interface FirecrawlRequestBody {
+  url: string;
+  extractorOptions?: Record<string, unknown>;
+}
+
+export interface TavilyRequestBody {
+  query: string;
+  searchDepth?: 'basic' | 'advanced';
+  includeImages?: boolean;
+  includeAnswer?: boolean;
+  maxResults?: number;
+}
+
+export interface PostRequestBody {
+  action: string;
+  data?: Record<string, unknown>;
+}
+
+export interface PutRequestBody {
+  id: string;
+  updates: Record<string, unknown>;
+}
+
+// UI Component Types
+export interface ButtonProps {
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  asChild?: boolean;
+}
+
+export interface ToasterToast {
+  id: string;
+  title?: string;
+  description?: string;
+  action?: ReactElement;
+  variant?: 'default' | 'destructive';
+}
+
+export interface ToastComponentProps {
+  toast: ToasterToast;
+}
+
+export interface ToastActionElement {
+  altText: string;
+  element: ReactElement;
+}
+
+// Generic Result types
+export interface CleanupResult {
+  success: boolean;
+  totalProcessed: number;
+  operations: CleanupOperation[];
+  summary: {
+    trucksImproved: number;
+    duplicatesRemoved: number;
+    qualityScoreImprovement: number;
+    placeholdersRemoved: number;
+  };
+  duration: number;
+  error?: string;
+}
+
+export interface RequestBody {
+  action: string;
+  options?: Record<string, unknown>;
+}
+
+export interface FirecrawlResponse {
+  success: boolean;
+  data?: Record<string, unknown>;
+  error?: string;
 }

@@ -1,5 +1,5 @@
-import { supabaseAdmin } from '../client';
-import { isMenuItem } from './typeGuards';
+import { getSupabaseAdmin } from '../client.js';
+import { isMenuItem } from './typeGuards.js';
 function handleSupabaseError(error, context) {
     console.warn(`Error in ${context}:`, error.message);
 }
@@ -70,6 +70,11 @@ function prepareMenuItemsForInsert(truckId, menuData) {
         .filter(Boolean));
 }
 async function insertMenuItems(truckId, menuData) {
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
+        console.error('Supabase admin client not available for menu item insertion');
+        return;
+    }
     const menuItems = prepareMenuItemsForInsert(truckId, menuData);
     if (menuItems.length === 0)
         return;
@@ -79,4 +84,4 @@ async function insertMenuItems(truckId, menuData) {
     }
 }
 export { handleSupabaseError, calculateDistance, normalizeTruckLocation, prepareMenuItemsForInsert, insertMenuItems, };
-export { buildMenuByTruck, groupMenuItems } from './menuUtils';
+export { buildMenuByTruck, groupMenuItems } from './menuUtils.js';

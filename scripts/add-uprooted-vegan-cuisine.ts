@@ -3,8 +3,8 @@
  * This is Jennifer's business - our first customer validation partner
  */
 
-import { FoodTruckService } from '../lib/supabase/services/foodTruckService';
-import type { FoodTruck, MenuItem, MenuCategory } from '../lib/supabase/types';
+import { FoodTruckService } from '@/lib/supabase/services/foodTruckService';
+import type { FoodTruck, MenuItem, MenuCategory } from '@/lib/types';
 
 // Uprooted Vegan Cuisine comprehensive data
 const uprootedVeganData: Partial<FoodTruck> = {
@@ -16,20 +16,6 @@ const uprootedVeganData: Partial<FoodTruck> = {
     lat: 33.526636,
     lng: -82.07125,
     address: "359 Furys Ferry Rd, Martinez, GA 30907",
-    timestamp: new Date().toISOString()
-  },
-  
-  exact_location: {
-    lat: 33.526636,
-    lng: -82.07125,
-    address: "359 Furys Ferry Rd, Martinez, GA 30907",
-    timestamp: new Date().toISOString()
-  },
-  
-  city_location: {
-    lat: 33.4734978,
-    lng: -82.0105148,
-    address: "Augusta, GA",
     timestamp: new Date().toISOString()
   },
 
@@ -47,20 +33,24 @@ const uprootedVeganData: Partial<FoodTruck> = {
   // Scheduled locations for food truck events
   scheduled_locations: [
     {
-      name: "Savannah River Brewing Co.",
       address: "813 5th Street, Augusta, GA 30901",
+      city: "Augusta",
+      state: "GA",
       lat: 33.4646051,
       lng: -81.963694,
-      schedule: "Regular events - check social media",
-      recurring: true
+      timestamp: new Date().toISOString(),
+      start_time: "00:00",
+      end_time: "23:59"
     },
     {
-      name: "Various CSRA Events",
       address: "Augusta, GA area",
+      city: "Augusta",
+      state: "GA",
       lat: 33.4734978,
       lng: -82.0105148,
-      schedule: "Weekends and special events",
-      recurring: true
+      timestamp: new Date().toISOString(),
+      start_time: "00:00",
+      end_time: "23:59"
     }
   ],
 
@@ -68,16 +58,13 @@ const uprootedVeganData: Partial<FoodTruck> = {
   contact_info: {
     phone: "(803) 514-4367",
     email: "info@eatuprootedvegan.com",
-    website: "https://eatuprootedvegan.com",
-    business_address: "359 Furys Ferry Rd, Martinez, GA 30907",
-    owner_name: "Jennifer"
+    website: "https://eatuprootedvegan.com"
   },
 
   // Social media
   social_media: {
     facebook: "https://www.facebook.com/uprooted.vegan.cuisine",
-    instagram: "https://www.instagram.com/uprootedvegancuisine/",
-    website: "https://eatuprootedvegan.com"
+    instagram: "https://www.instagram.com/uprootedvegancuisine/"
   },
 
   // Cuisine and specialties
@@ -116,8 +103,6 @@ const uprootedVeganData: Partial<FoodTruck> = {
     "https://wanderlog.com/place/details/13619791/uprooted-vegan-cuisine"
   ],
 
-  // Note: Ratings would be handled by a separate reviews system
-  
   // Active and current - timestamps will be managed by database
   last_scraped_at: new Date().toISOString(),
 

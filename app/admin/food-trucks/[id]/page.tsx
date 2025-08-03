@@ -1,5 +1,7 @@
 
 import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 import { isFoodTruck } from '@/lib/utils/typeGuards';
 import {
   categorizeQualityScore,

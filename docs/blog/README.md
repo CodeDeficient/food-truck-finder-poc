@@ -66,6 +66,8 @@ This blog documents the incredible journey of building the **Food Truck Finder**
 | **[17](17-lessons-learned.md)** | Lessons from a Self-Taught Journey | Key insights and knowledge gained |
 | **[18](18-ai-as-mentor.md)** | AI as Mentor: The Future of Learning | How AI transformed the learning experience |
 | **[19](19-whats-next.md)** | What's Next: UI Polish and Beyond | Future improvements and career goals |
+| **[20](20-summary-milestone.md)** | Milestone Achieved: From Zero to Production-Ready | Celebrating production deployment and next steps |
+| **[21](21-the-engine-comes-alive.md)** | The Engine Comes Alive: A Project Update | Build stabilization and unified user panel vision |
 
 ---
 
@@ -101,7 +103,7 @@ Week 7 (July 18): Professional documentation and architecture
 ## 🏆 **Metrics of Growth**
 
 ### **Technical Achievements**
-- **0 → 100%** TypeScript coverage
+- **0 → ~75%** TypeScript coverage
 - **Chaos → 37 files** in clean project structure (down from 83)
 - **Broken → 100%** build success rate
 - **Basic → Enterprise-grade** architecture and documentation

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { schedulerInstance, schedulerTasks, setSchedulerInstance } from './data';
-import type { PutRequestBody } from './types';
+import { schedulerInstance, schedulerTasks, setSchedulerInstance } from './data.js';
+import type { PutRequestBody } from './types.js';
 
 /**
  * Retrieves the current status and summary information of scheduler tasks.

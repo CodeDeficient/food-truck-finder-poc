@@ -1,4 +1,4 @@
-import { firecrawl } from './firecrawl'; // Import the firecrawl singleton
+import { firecrawl } from './firecrawl.js'; // Import the firecrawl singleton
 import * as crypto from 'node:crypto'; // Node.js crypto for secure randomness
 
 interface InstagramPost {
@@ -545,7 +545,8 @@ export class DataQualityAssessor {
     if (category.items == undefined || category.items.length === 0) {
       issues.push(`Menu category "${category.category ?? 'Unknown'}" has no items`);
     } else {
-      for (const [itemIndex, item] of category.items.entries()) {
+      for (let itemIndex = 0; itemIndex < category.items.length; itemIndex++) {
+        const item = category.items[itemIndex];
         if (item.name == undefined || item.name.trim().length === 0) {
           issues.push(
             `Menu item ${itemIndex + 1} in "${category.category ?? 'Unknown'}" missing name`,
@@ -561,7 +562,8 @@ export class DataQualityAssessor {
   private validateMenuData(menu: MenuCategory[]): string[] {
     const issues: string[] = [];
 
-    for (const [categoryIndex, category] of menu.entries()) {
+    for (let categoryIndex = 0; categoryIndex < menu.length; categoryIndex++) {
+      const category = menu[categoryIndex];
       this.validateMenuCategory(category, categoryIndex, issues);
       this.validateMenuItems(category, issues);
     }

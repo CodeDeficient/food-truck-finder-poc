@@ -20,11 +20,14 @@ const FoodTruckCard = ({ truck }) => {
 
       {/* Display active days (grey out inactive) */}
       <div className="flex gap-1 mt-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, idx) => (<span key={day} className={truck.schedule?.find((s) => s.day_of_week === idx && s.is_active)
-                ? 'font-bold text-primary'
-                : 'text-gray-400'}>
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, idx) => {
+            var _a;
+            return (<span key={day} className={((_a = truck.schedule) === null || _a === void 0 ? void 0 : _a.find((s) => s.day_of_week === idx && s.is_active))
+                    ? 'font-bold text-primary'
+                    : 'text-gray-400'}>
             {day}
-          </span>))}
+          </span>);
+        })}
       </div>
 
       {/* Upcoming Events section */}

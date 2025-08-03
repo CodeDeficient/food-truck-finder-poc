@@ -3,8 +3,8 @@
  * Implements automated data quality improvements and cleanup operations
  */
 import { FoodTruckService, DataQualityService } from '@/lib/supabase';
-import { DuplicatePreventionService } from './duplicatePrevention';
-import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils';
+import { DuplicatePreventionService } from './duplicatePrevention.js';
+import { getPlaceholderPatterns, processTruckForPlaceholders } from './placeholderUtils.js';
 /**
  * Automated Data Quality Cleanup Service
  */

@@ -1,6 +1,6 @@
 // lib/fallback/supabaseFallback.tsx
 // This creates a resilient data layer that gracefully handles Supabase outages
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 function isFoodTruckData(obj) {
     return (typeof obj === 'object' &&
         obj !== null &&

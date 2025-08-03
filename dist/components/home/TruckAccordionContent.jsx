@@ -11,10 +11,11 @@ export const TruckAccordionContent = ({ filteredTrucks, selectedTruckId, setSele
     }
     // Smart sorting: prioritize open trucks and specific locations
     const sortedTrucks = [...filteredTrucks].sort((a, b) => {
+        var _a, _b;
         const aOpen = isOpen(a);
         const bOpen = isOpen(b);
-        const aHasAddress = !!(a.current_location?.address && a.current_location.address.trim());
-        const bHasAddress = !!(b.current_location?.address && b.current_location.address.trim());
+        const aHasAddress = !!(((_a = a.current_location) === null || _a === void 0 ? void 0 : _a.address) && a.current_location.address.trim());
+        const bHasAddress = !!(((_b = b.current_location) === null || _b === void 0 ? void 0 : _b.address) && b.current_location.address.trim());
         // First, sort by open/closed status (open first)
         if (aOpen !== bOpen) {
             return aOpen ? -1 : 1;

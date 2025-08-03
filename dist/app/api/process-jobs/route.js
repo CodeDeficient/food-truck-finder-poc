@@ -54,19 +54,12 @@ export async function POST(request) {
         logActivity({
             type: 'cron_job',
             action: 'batch_process_completed',
-            details: {
-                timestamp: new Date().toISOString(),
-                ...results
-            }
+            details: Object.assign({ timestamp: new Date().toISOString() }, results)
         });
         return NextResponse.json({
             success: true,
             message: 'Job processing completed',
-            data: {
-                ...results,
-                remainingJobs: pendingJobs.length - results.processed,
-                executionTime: Date.now() - startTime
-            }
+            data: Object.assign(Object.assign({}, results), { remainingJobs: pendingJobs.length - results.processed, executionTime: Date.now() - startTime })
         });
     }
     catch (error) {

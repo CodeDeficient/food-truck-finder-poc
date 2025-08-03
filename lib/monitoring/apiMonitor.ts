@@ -3,7 +3,7 @@
  * Implements proactive monitoring, alerting, and throttling for all external APIs
  */
 
-import { APIUsageService } from '@/lib/supabase';
+import { APIUsageService } from '../supabase.js';
 
 // API Rate Limits Configuration
 export const API_LIMITS = {
@@ -363,7 +363,7 @@ export class APIMonitor {
       );
     }
 
-    return [...new Set(recommendations)]; // Remove duplicates
+    return Array.from(new Set(recommendations)); // Remove duplicates
   }
 
   /**

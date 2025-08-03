@@ -1,5 +1,5 @@
-import { APIUsageService } from '../supabase';
-import { APIMonitor } from '../monitoring/apiMonitor';
+import { APIUsageService } from '../supabase.js';
+import { APIMonitor } from '../monitoring/apiMonitor.js';
 
 export interface UsageLimits {
   dailyRequestLimit: number;

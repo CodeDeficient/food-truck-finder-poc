@@ -1,6 +1,6 @@
 // lib/discoveryEngine.ts
-import { supabaseAdmin } from './supabase';
-import { SC_TARGET_CITIES, DISCOVERY_CONFIG } from './config';
+import { supabaseAdmin } from './supabase.js';
+import { SC_TARGET_CITIES, DISCOVERY_CONFIG } from './config.js';
 
 export interface DiscoveredUrl {
   url: string;
@@ -166,17 +166,18 @@ export class FoodTruckDiscoveryEngine {
     discoveredUrls: Set<string>,
   ): Promise<void> {
     for (const result of searchResults) {
-      if (result.url && (await this.isFoodTruckUrl(result.url))) {
-        discoveredUrls.add(result.url);
+      const url: string = result.url;
+      if (url && (await this.isFoodTruckUrl(url))) {
+        discoveredUrls.add(url);
       }
 
       // Extract URLs from content
       if (result.content != undefined || result.raw_content != undefined) {
         const content = result.content ?? result.raw_content ?? '';
         const extractedUrls = this.extractFoodTruckUrls(content);
-        for (const url of extractedUrls) {
-          if (await this.isFoodTruckUrl(url)) {
-            discoveredUrls.add(url);
+        for (const extractedUrl of extractedUrls) {
+          if (await this.isFoodTruckUrl(extractedUrl)) {
+            discoveredUrls.add(extractedUrl);
           }
         }
       }
@@ -293,7 +294,8 @@ export class FoodTruckDiscoveryEngine {
     if (crawlResults != undefined && Array.isArray(crawlResults) && crawlResults.length > 0) {
       for (const result of crawlResults) {
         if (typeof result === 'object' && result !== null && 'url' in result) {
-          const resultUrl = (result as { url?: string }).url;
+          const resultObj = result as { url?: string };
+          const resultUrl: string | undefined = resultObj.url;
           if (
             resultUrl != undefined &&
             typeof resultUrl === 'string' &&
@@ -373,7 +375,8 @@ export class FoodTruckDiscoveryEngine {
     if (searchResults != undefined && Array.isArray(searchResults) && searchResults.length > 0) {
       for (const result of searchResults) {
         if (typeof result === 'object' && result !== null && 'url' in result) {
-          const resultUrl = (result as { url?: string }).url;
+          const resultObj = result as { url?: string };
+          const resultUrl: string | undefined = resultObj.url;
           if (
             resultUrl != undefined &&
             typeof resultUrl === 'string' &&
@@ -405,8 +408,9 @@ export class FoodTruckDiscoveryEngine {
     results: DiscoveryResult,
   ): Promise<void> {
     for (const url of discoveredUrls) {
+      const typedUrl: string = url;
       try {
-        const stored = await this.storeDiscoveredUrl(url, 'autonomous_search', {
+        const stored = await this.storeDiscoveredUrl(typedUrl, 'autonomous_search', {
           search_context: 'full_discovery',
           discovery_timestamp: new Date().toISOString(),
         });
@@ -685,7 +689,8 @@ export class FoodTruckDiscoveryEngine {
   // Helper method to process a single search result
   private async processSearchResult(result: unknown, discoveredUrls: Set<string>): Promise<void> {
     if (typeof result === 'object' && result !== null && 'url' in result) {
-      const resultUrl = (result as { url?: string }).url;
+      const resultObj = result as { url?: string };
+      const resultUrl: string | undefined = resultObj.url;
       if (resultUrl != undefined && resultUrl !== '' && (await this.isFoodTruckUrl(resultUrl))) {
         discoveredUrls.add(resultUrl);
       }
@@ -760,8 +765,9 @@ export class FoodTruckDiscoveryEngine {
   }): Promise<void> {
     const { discoveredUrls, locationQuery, city, state, results } = params;
     for (const url of discoveredUrls) {
+      const typedUrl: string = url;
       try {
-        const stored = await this.storeDiscoveredUrl(url, 'tavily_search', {
+        const stored = await this.storeDiscoveredUrl(typedUrl, 'tavily_search', {
           search_query: locationQuery,
           target_city: city,
           target_state: state,

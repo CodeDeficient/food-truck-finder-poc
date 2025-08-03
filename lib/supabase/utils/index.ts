@@ -1,8 +1,8 @@
 import { type PostgrestError } from '@supabase/supabase-js';
-import { supabaseAdmin } from '../client';
-import type { FoodTruck, FoodTruckLocation, MenuCategory, MenuItem } from '../types';
+import { getSupabaseAdmin } from '../client.js';
+import type { FoodTruck, FoodTruckLocation, MenuCategory, MenuItem } from '../types/index.js';
 
-import { isMenuItem } from './typeGuards';
+import { isMenuItem } from './typeGuards.js';
 
 function handleSupabaseError(error: PostgrestError | Error, context: string) {
   console.warn(`Error in ${context}:`, error.message);
@@ -94,9 +94,14 @@ function prepareMenuItemsForInsert(
 }
 
 async function insertMenuItems(truckId: string, menuData: MenuCategory[] | unknown[] | undefined) {
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    console.error('Supabase admin client not available for menu item insertion');
+    return;
+  }
   const menuItems = prepareMenuItemsForInsert(truckId, menuData);
   if (menuItems.length === 0) return;
-  const { error: menuError } = await supabaseAdmin!.from('menu_items').insert(menuItems);
+  const { error: menuError } = await supabaseAdmin.from('menu_items').insert(menuItems);
   if (menuError) {
     console.error('Error inserting menu items for truck', truckId, menuError);
   }
@@ -111,4 +116,4 @@ export {
     
     
 }
-export {buildMenuByTruck, groupMenuItems} from './menuUtils';
+export {buildMenuByTruck, groupMenuItems} from './menuUtils.js';

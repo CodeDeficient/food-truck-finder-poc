@@ -235,3 +235,88 @@ Project-specific guidelines for preventing diff mismatches when using AI-assiste
 
   - _Trigger Case_: ESLint fails with a `MODULE_NOT_FOUND` error.
   - _Example_: If `eslint-plugin-unicorn` is missing, run `npm install` to restore it.
+
+- **Rule 1.39: ESM Import Best Practices**: Always use explicit file extensions (`.js`) in relative imports and never import directly from directories. Use dynamic imports for modules that require environment variables to be loaded first.
+
+  - _Trigger Case_: ESM import resolution errors (`ERR_UNSUPPORTED_DIR_IMPORT`, `ERR_MODULE_NOT_FOUND`).
+  - _Example_: Instead of `import { APIUsageService } from '../supabase'`, use `import { APIUsageService } from '../supabase/services/apiUsageService.js'`.
+
+- **Rule 1.40: Environment Variable Loading in ESM**: Load environment variables before importing modules that depend on them. Use dynamic imports (`await import()`) for modules requiring environment variables, and initialize them after dotenv configuration.
+
+  - _Trigger Case_: Modules failing to initialize due to missing environment variables.
+  - _Example_: 
+    ```javascript
+    import dotenv from 'dotenv';
+    dotenv.config({ path: '.env.local' });
+    const { processScrapingJob } = await import('../dist/lib/pipeline/scrapingProcessor.js');
+    ```
+
+- **Rule 1.41: Unicode Normalization for Data Validation**: When comparing text data for duplicates or matches, always normalize Unicode characters (especially apostrophes, quotes, and special characters) before comparison to prevent false negatives due to character encoding differences.
+
+  - _Trigger Case_: Duplicate detection failing due to different Unicode representations of the same character.
+  - _Example_: Normalize apostrophes: `name.replace(/[\u2018\u2019\u0060\u00B4]/g, "'")`
+
+- **Rule 1.42: Intelligent Data Filtering and Quality Scoring**: Implement multi-tier filtering systems with quality scoring to prevent resource waste on poor-quality data sources. Use pre-filtering to reject obviously invalid data before expensive processing.
+
+  - _Trigger Case_: Repeated processing of URLs that consistently fail or produce invalid data.
+  - _Example_: URL quality scoring system that increases/decreases scores based on success/failure and automatically blacklists poor performers.
+
+- **Rule 1.43: Proper Invalid Data Handling**: Instead of creating placeholder entries for invalid data, implement proper validation that discards invalid data with appropriate logging and job status updates.
+
+  - _Trigger Case_: Pipeline creating "Unknown" or placeholder entries for invalid data.
+  - _Example_: Check for null/empty required fields and discard with proper job status update rather than creating fallback entries.
+
+- **Rule 1.44: Comprehensive Duplicate Prevention**: Implement advanced duplicate detection using normalization, fuzzy matching, and similarity scoring to catch duplicates that simple exact matching would miss.
+
+  - _Trigger Case_: Duplicate entries with slight variations in spelling, capitalization, or punctuation.
+  - _Example_: Combine case-insensitive matching, Unicode normalization, suffix removal, and Levenshtein distance for robust duplicate detection.
+
+- **Rule 1.45: Safe Job Creation with Error Handling**: When creating jobs or database entries, ensure all required fields are properly set and implement comprehensive error handling with appropriate status updates.
+
+  - _Trigger Case_: Job creation failing due to missing required fields or database errors.
+  - _Example_: Always set required fields like `job_type` and handle database errors gracefully with proper logging and status updates.
+
+- **Rule 1.46: Consistent Duplicate Prevention Logic**: Ensure that both real-time and batch duplicate detection systems use the same logic and thresholds to maintain consistency. Copy duplicate prevention algorithms directly into batch scripts when import dependencies are problematic.
+
+  - _Trigger Case_: Batch deduplication scripts producing different results than real-time duplicate prevention.
+  - _Example_: Copy `calculateSimilarity` and related functions directly into batch scripts to ensure identical duplicate detection logic.
+
+- **Rule 1.47: Proper ESM/CJS Interop**: When mixing ESM and CommonJS modules, use appropriate import/export syntax for each context. CommonJS files should use `require()` and `module.exports`, while ESM files should use `import` and `export`.
+
+  - _Trigger Case_: Mixing `import`/`export` syntax in CommonJS files or vice versa.
+  - _Example_: Use `require('dotenv').config()` in `.cjs` files instead of `import('dotenv/config')`.
+
+- **Rule 1.48: Robust Data Quality Validation**: Implement comprehensive validation at multiple pipeline stages to catch and handle invalid data before it pollutes the database. Use explicit checks rather than relying on fallback values.
+
+  - _Trigger Case_: Invalid data creating placeholder entries or corrupting existing records.
+  - _Example_: Check for required fields like `name` before processing and discard invalid data with proper logging rather than creating "Unknown" entries.
+
+- **Rule 1.49: Regular Job Queue Maintenance**: Implement regular monitoring and cleanup of job queues to prevent resource waste from duplicate jobs. Create diagnostic and cleanup tools for ongoing pipeline health.
+
+  - _Trigger Case_: Discovery of duplicate jobs causing resource waste and processing inefficiency.
+  - _Example_: Create `check-duplicate-jobs.js` and `cleanup-duplicate-jobs.js` scripts to identify and remove duplicate pending jobs, keeping only the most recent job for each URL.
+
+- **Rule 1.50: Database-Level Constraints for Data Integrity**: Implement database-level unique constraints to enforce data integrity and prevent duplicate entries at the source. This is more reliable than application-level duplicate prevention and eliminates race conditions.
+
+  - _Trigger Case_: Duplicate entries being created despite application-level duplicate prevention logic.
+  - _Example_: Add unique constraint on food truck names: `ALTER TABLE food_trucks ADD CONSTRAINT unique_food_truck_name UNIQUE (name);` and handle constraint violations in application code by updating existing entries instead of creating duplicates.
+
+- **Rule 1.51: GitHub Actions Branch Management**: When making changes that affect GitHub Actions workflows, always push to the current feature branch and use `gh` CLI commands with `--ref` option to ensure you're testing the correct workflow version. Never assume local changes will automatically trigger the correct remote workflow without explicit branch specification.
+
+  - _Trigger Case_: Making changes to GitHub Actions workflows or related scripts that need testing.
+  - _Example_: After modifying `scripts/github-action-scraper.js`, push to current branch and run `gh workflow run scrape-food-trucks.yml --ref feature/your-branch-name` to test the specific branch version.
+
+- **Rule 1.52: Pending Jobs Fetching Verification**: Always verify that pending jobs are being fetched correctly from Supabase before processing. Implement proper error handling and logging to detect mismatches between expected and actual job counts.
+
+  - _Trigger Case_: GitHub Actions workflow showing unexpected job processing behavior or "no pending jobs" messages.
+  - _Example_: Add logging to show job count before and after fetching, and verify job status filtering is working correctly: `console.log(`Found ${pendingJobs.length} pending jobs with status: ${status}`);`
+
+- **Rule 1.53: ESM Module Resolution in GitHub Actions**: Ensure all ESM imports in GitHub Actions scripts use explicit `.js` file extensions and avoid directory imports. Test scripts locally with `node` command before running in GitHub Actions to catch import resolution issues early.
+
+  - _Trigger Case_: `ERR_UNSUPPORTED_DIR_IMPORT` or `ERR_MODULE_NOT_FOUND` errors in GitHub Actions logs.
+  - _Example_: Instead of `import { ScrapingJobService } from '../dist/lib/supabase/services'`, use `import { ScrapingJobService } from '../dist/lib/supabase/services/scrapingJobService.js'`
+
+- **Rule 1.54: Environment Variable Validation in GitHub Actions**: Always validate that required environment variables are present and correctly loaded before initializing modules that depend on them. Use explicit error messages to identify missing configuration.
+
+  - _Trigger Case_: GitHub Actions failing due to missing API keys or configuration values.
+  - _Example_: Check for required vars before module initialization: `if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is required');`

@@ -1,6 +1,7 @@
-import { supabase, supabaseAdmin } from '../client';
+import { getSupabase, getSupabaseAdmin } from '../client.js';
 export const APIUsageService = {
     async trackUsage(serviceName, requests, tokens) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
         }
@@ -54,6 +55,7 @@ export const APIUsageService = {
     async getTodayUsage(serviceName) {
         try {
             const today = new Date().toISOString().split('T')[0];
+            const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('api_usage')
                 .select('*')
@@ -71,6 +73,7 @@ export const APIUsageService = {
     },
     async getAllUsageStats() {
         try {
+            const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('api_usage')
                 .select('*')

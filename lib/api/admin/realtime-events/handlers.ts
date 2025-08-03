@@ -6,7 +6,7 @@ import {
   type ScrapingJob,
   type FoodTruck,
 } from '@/lib/supabase';
-import type { AdminEvent } from './types';
+import type { AdminEvent } from './types.js';
 
 
 interface RealtimeMetrics {

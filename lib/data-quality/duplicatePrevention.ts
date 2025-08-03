@@ -3,7 +3,7 @@
  * Implements intelligent duplicate detection and prevention for food truck data
  */
 
-import { FoodTruckService, type FoodTruck } from '@/lib/supabase';
+import { FoodTruckService, type FoodTruck } from '../supabase.js';
 
 // Duplicate detection configuration
 export const DUPLICATE_DETECTION_CONFIG = {
@@ -69,6 +69,7 @@ export class DuplicatePreventionService {
       const matches: DuplicateMatch[] = [];
 
       for (const existingTruck of existingTrucks) {
+        console.log(`Checking existing truck with ID: ${existingTruck.id}`);
         const similarity = this.calculateSimilarity(candidateTruck, existingTruck);
 
         if (similarity.overall >= DUPLICATE_DETECTION_CONFIG.thresholds.overall) {
@@ -175,21 +176,50 @@ export class DuplicatePreventionService {
   }
 
   /**
-   * Calculate string similarity using Levenshtein distance
+   * Normalize food truck names for better comparison
+   * Removes common suffixes, normalizes case, handles punctuation variations
+   */
+  private static normalizeFoodTruckName(name: string): string {
+    if (!name) return '';
+
+    return name
+      .toLowerCase()
+      .trim()
+      // Normalize apostrophes (handle different Unicode apostrophes)
+      .replace(/[\u2018\u2019\u0060\u00B4]/g, "'")
+      // Remove common food truck suffixes/prefixes
+      .replace(/\s*\b(food\s+truck|food\s+trailer|mobile\s+kitchen|street\s+food|food\s+cart)\b\s*/gi, '')
+      // Remove extra whitespace and normalize punctuation
+      .replace(/\s+/g, ' ')
+      .replace(/[^\w\s&'-]/g, '')
+      .trim();
+  }
+
+  /**
+   * Calculate string similarity using Levenshtein distance with enhanced food truck name handling
    */
   private static calculateStringSimilarity(str1: string, str2: string): number {
     if (!str1 || !str2) return 0;
 
-    // Normalize strings
-    const s1 = str1.toLowerCase().trim();
-    const s2 = str2.toLowerCase().trim();
+    // Normalize food truck names for better comparison
+    const normalized1 = this.normalizeFoodTruckName(str1);
+    const normalized2 = this.normalizeFoodTruckName(str2);
 
-    if (s1 === s2) return 1;
+    if (normalized1 === normalized2) return 1;
 
-    // Calculate Levenshtein distance
+    // Also check if one is a substring of the other (for cases like "Page's Okra Grill" vs "Page's Okra Grill Food Truck")
+    const isSubstring = normalized1.includes(normalized2) || normalized2.includes(normalized1);
+    if (isSubstring && (normalized1.length > 0 && normalized2.length > 0)) {
+      const minLength = Math.min(normalized1.length, normalized2.length);
+      const maxLength = Math.max(normalized1.length, normalized2.length);
+      // High similarity for substring matches (0.8 to 0.95 based on length ratio)
+      return 0.8 + (0.15 * (minLength / maxLength));
+    }
+
+    // Calculate Levenshtein distance on normalized strings
     const matrix: number[][] = [];
-    const len1 = s1.length;
-    const len2 = s2.length;
+    const len1 = normalized1.length;
+    const len2 = normalized2.length;
 
     for (let i = 0; i <= len1; i+=1) {
       matrix[i] = [i];
@@ -202,7 +232,7 @@ export class DuplicatePreventionService {
     for (let i = 1; i <= len1; i+=1) {
       // eslint-disable-next-line sonarjs/no-redundant-assignments
       for (let j = 1; j <= len2; j+=1) {
-        const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+        const cost = normalized1[i - 1] === normalized2[j - 1] ? 0 : 1;
         matrix[i][j] = Math.min(
           matrix[i - 1][j] + 1, // deletion
           matrix[i][j - 1] + 1, // insertion
@@ -436,7 +466,7 @@ export class DuplicatePreventionService {
         ...source.social_media,
         ...target.social_media,
       },
-      source_urls: [...new Set([...(target.source_urls ?? []), ...(source.source_urls ?? [])])],
+      source_urls: Array.from(new Set([...(target.source_urls ?? []), ...(source.source_urls ?? [])])),
       last_scraped_at: new Date().toISOString(),
     };
 
@@ -452,5 +482,43 @@ export class DuplicatePreventionService {
     console.info(`Merged truck ${sourceId} into ${targetId}`);
 
     return updatedTruckResult;
+  }
+
+  /**
+   * Check if a food truck name already exists in the database to prevent duplicate scraping
+   * This is used for early duplicate detection before processing scraping jobs to save API resources
+   * @param truckName - The name of the food truck to check
+   * @returns Object with isDuplicate flag and reason
+   */
+  static async isDuplicateUrl(truckName: string): Promise<{ isDuplicate: boolean; reason: string }> {
+    try {
+      // Use existing FoodTruckService to get all trucks
+      const existingTrucksResult = await FoodTruckService.getAllTrucks();
+
+      if ('error' in existingTrucksResult) {
+        console.warn('Error fetching existing trucks for duplicate check:', existingTrucksResult.error);
+        return { isDuplicate: false, reason: 'Error checking database' };
+      }
+
+      const existingTrucks = existingTrucksResult.trucks;
+
+      // Check for similar names using existing normalization and similarity logic
+      for (const existingTruck of existingTrucks) {
+        const similarity = this.calculateStringSimilarity(truckName, existingTruck.name ?? '');
+        
+        // Use a high threshold to avoid false positives with "food truck" in names
+        if (similarity >= 0.95) {
+          return { 
+            isDuplicate: true, 
+            reason: `Similar truck name already exists: "${existingTruck.name}" (${Math.round(similarity * 100)}% similar)` 
+          };
+        }
+      }
+
+      return { isDuplicate: false, reason: 'No similar truck names found' };
+    } catch (error) {
+      console.warn('Error in isDuplicateUrl check:', error);
+      return { isDuplicate: false, reason: 'Error during duplicate check' };
+    }
   }
 }

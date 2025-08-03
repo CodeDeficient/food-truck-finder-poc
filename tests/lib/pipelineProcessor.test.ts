@@ -1,6 +1,6 @@
 // lib/pipelineProcessor.test.ts
 
-import { processScrapingJob, createOrUpdateFoodTruck } from '@/lib/pipelineProcessor';
+import { processScrapingJob, createOrUpdateFoodTruck } from '../../lib/pipelineProcessor';
 import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
 import { firecrawl } from '@/lib/firecrawl';
 import { gemini } from '@/lib/gemini';

@@ -1,4 +1,4 @@
-import type { MenuCategory, MenuItem } from '../types';
+import type { MenuCategory, MenuItem } from '../types/index.js';
 
 export const isMenuCategory = (obj: unknown): obj is MenuCategory =>
   typeof obj === 'object' &&
