@@ -242,6 +242,17 @@ To set up the project locally, follow these steps:
 
     Then, fill in the required environment variables in the `.env.local` file. Refer to the comments in the `.env.local.example` file for guidance on where to find the necessary API keys and other values.
 
+    **⚠️ IMPORTANT:** Do NOT use `vercel env pull` to automatically pull environment variables from Vercel. This will overwrite your current `.env.local` variables and delete any variables that aren't configured on Vercel. This is a **DANGEROUS ACTION** that can break your local development environment.
+
+    **Authentication Setup**:
+    - **Supabase Authentication**: This application uses Supabase for user authentication and session management
+    - **Required Auth Variables**:
+      - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
+      - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous/public key for client-side operations
+      - `SUPABASE_SERVICE_ROLE_KEY`: Service role key for server-side operations (admin access)
+    - **OAuth Providers**: The app supports OAuth authentication with various providers (Google, GitHub, etc.)
+    - **Session Handling**: User sessions are automatically managed through Supabase Auth with secure token refresh
+
 4.  **Run Database Migrations**:
     Ensure your Supabase database is set up and run any pending migrations. You can apply migrations using the Supabase CLI:
     ```bash
@@ -386,6 +397,7 @@ This project is documented using the standard **7-document model** for professio
 | **[📝 Product Requirements (PRD)](docs/PRODUCT_REQUIREMENTS.md)** | What we're building, for whom, and why. |
 | **[🛠️ Tech Stack](docs/TECH_STACK.md)** | The technologies used in the project. |
 | **[🏗️ System Architecture](docs/ARCHITECTURE.md)** | The blueprint of the system. |
+| **[👨‍💻 Developer Guide](docs/DEVELOPER_GUIDE.md)** | Comprehensive guide for developers including mock-up workflows. |
 | **[🎨 Frontend Guide](docs/FRONTEND_GUIDE.md)** | A guide to the frontend codebase. |
 | **[⚙️ Backend Guide](docs/BACKEND_GUIDE.md)** | A guide to the backend codebase. |
 | **[📡 API Reference](docs/API_REFERENCE.md)** | Detailed documentation for all API endpoints. |
