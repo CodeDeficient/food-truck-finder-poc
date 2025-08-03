@@ -1,20 +1,13 @@
 
 import { supabase } from '@/lib/supabase';
-
-export const dynamic = 'force-dynamic';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { PlusCircle, Edit } from 'lucide-react';
-import Link from 'next/link';
+  Card, CardContent, CardDescription, CardHeader, CardTitle,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Badge, Button, PlusCircle, Edit, Link,
+  dynamic
+} from '@/lib/admin/shared-admin-imports';
+
+export { dynamic };
 
 interface Event {
   id: string;
