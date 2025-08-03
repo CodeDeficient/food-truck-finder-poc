@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ScrapingJobService, FoodTruckService } from '@/lib/supabase';
-import { logActivity } from '@/lib/activityLogger';
 import { DEFAULT_SCRAPE_URLS } from '@/lib/config';
+import {
+  verifyCronSecret,
+  logAutoScrapeStart,
+  createAutoScrapeSuccessResponse,
+  createAutoScrapeErrorResponse,
+} from './shared-handlers.js';
+import type { AutoScrapeResult } from './types.js';
 
 // Vercel hobby plan has 10 second timeout, leave some buffer
 const FUNCTION_TIMEOUT_MS = 9000;
@@ -21,19 +27,12 @@ export async function handleAutoScrapeImproved(request: NextRequest): Promise<Ne
   const startTime = Date.now();
   
   try {
-    // Verify authorization
-    const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET;
-
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const authResponse = verifyCronSecret(request);
+    if (authResponse) {
+      return authResponse;
     }
 
-    logActivity({
-      type: 'cron_job',
-      action: 'auto_scrape_started',
-      details: { timestamp: new Date().toISOString() },
-    });
+    logAutoScrapeStart();
 
     const result: ProcessingResult = {
       trucksProcessed: 0,
@@ -94,46 +93,19 @@ export async function handleAutoScrapeImproved(request: NextRequest): Promise<Ne
       await processHighPriorityJobs(remainingTime - 1000);
     }
 
-    logActivity({
-      type: 'cron_job',
-      action: 'auto_scrape_completed',
-      details: {
-        timestamp: new Date().toISOString(),
-        trucksProcessed: result.trucksProcessed,
-        newTrucksFound: result.newTrucksFound,
-        errorsCount: result.errors.length,
-      },
-    });
+    // Map result to AutoScrapeResult format for shared utilities
+    const autoScrapeResult: AutoScrapeResult = {
+      trucksProcessed: result.trucksProcessed,
+      newTrucksFound: result.newTrucksFound,
+      errors: result.errors,
+    };
 
-    return NextResponse.json({
-      success: true,
-      message: 'Auto-scraping jobs created successfully',
-      data: {
-        trucksProcessed: result.trucksProcessed,
-        newTrucksFound: result.newTrucksFound,
-        timestamp: new Date().toISOString(),
-        note: 'Jobs created but not processed. Use separate job processor to avoid timeouts.',
-      },
-    });
-  } catch (error) {
-    console.error('Auto-scraping cron job failed:', error);
-    logActivity({
-      type: 'cron_job',
-      action: 'auto_scrape_failed',
-      details: {
-        timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-    });
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Auto-scraping failed',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 },
+    return createAutoScrapeSuccessResponse(
+      autoScrapeResult, 
+      'Auto-scraping jobs created successfully (Note: Jobs created but not processed. Use separate job processor to avoid timeouts.)'
     );
+  } catch (error) {
+    return createAutoScrapeErrorResponse(error);
   }
 }
 
