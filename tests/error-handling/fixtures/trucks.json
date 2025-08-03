@@ -1,0 +1,77 @@
+{
+  "trucks": [
+    {
+      "id": "test-truck-1",
+      "name": "Test Food Truck",
+      "cuisine_type": ["American"],
+      "current_location": {
+        "address": "123 Test Street, Test City",
+        "latitude": 40.7128,
+        "longitude": -74.0060
+      },
+      "contact_info": {
+        "phone": "555-0123",
+        "email": "test@foodtruck.com",
+        "website": "https://testfoodtruck.com"
+      },
+      "operating_hours": {
+        "monday": { "open": "11:00", "close": "21:00", "closed": false },
+        "tuesday": { "open": "11:00", "close": "21:00", "closed": false },
+        "wednesday": { "open": "11:00", "close": "21:00", "closed": false },
+        "thursday": { "open": "11:00", "close": "21:00", "closed": false },
+        "friday": { "open": "11:00", "close": "22:00", "closed": false },
+        "saturday": { "open": "10:00", "close": "22:00", "closed": false },
+        "sunday": { "closed": true }
+      },
+      "menu_items": [
+        {
+          "name": "Test Burger",
+          "price": 12.99,
+          "description": "A delicious test burger"
+        },
+        {
+          "name": "Test Fries",
+          "price": 4.99,
+          "description": "Crispy test fries"
+        }
+      ],
+      "social_media": {
+        "instagram": "testfoodtruck",
+        "facebook": "testfoodtruck"
+      },
+      "verification_status": "verified",
+      "average_rating": 4.5,
+      "total_reviews": 42
+    },
+    {
+      "id": "test-truck-2",
+      "name": "Another Test Truck",
+      "cuisine_type": ["Mexican"],
+      "current_location": {
+        "address": "456 Test Avenue, Test City",
+        "latitude": 40.7589,
+        "longitude": -73.9851
+      },
+      "contact_info": {
+        "phone": "555-0456"
+      },
+      "operating_hours": {
+        "monday": { "closed": true },
+        "tuesday": { "open": "12:00", "close": "20:00", "closed": false },
+        "wednesday": { "open": "12:00", "close": "20:00", "closed": false },
+        "thursday": { "open": "12:00", "close": "20:00", "closed": false },
+        "friday": { "open": "12:00", "close": "21:00", "closed": false },
+        "saturday": { "open": "11:00", "close": "21:00", "closed": false },
+        "sunday": { "open": "11:00", "close": "19:00", "closed": false }
+      },
+      "menu_items": [],
+      "social_media": {},
+      "verification_status": "pending",
+      "average_rating": 3.8,
+      "total_reviews": 15
+    }
+  ],
+  "total": 2,
+  "page": 1,
+  "limit": 10
+}
