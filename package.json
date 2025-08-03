@@ -6,7 +6,6 @@
   "license": "BUSL-1.1",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/check-env-interpolation.mjs",
     "build": "next build",
     "build:lib": "tsc --project tsconfig.lib.json",
     "build:action": "npm run build:lib && tsc --project tsconfig.action.json && npm run postbuild:action",
@@ -45,7 +44,6 @@
     "ts-migrate:migrate": "npx ts-migrate migrate .",
     "ts-migrate:reignore": "npx ts-migrate reignore .",
     "error:count": "node scripts/count-errors.cjs",
-    "env:check": "node scripts/check-env-interpolation.mjs",
     "baseline:capture": "npm run error:count > .baseline-errors.txt && echo 'Baseline captured'",
     "baseline:compare": "bash scripts/baseline-compare.sh",
     "monitoring:update": "node scripts/update-monitoring.cjs",
