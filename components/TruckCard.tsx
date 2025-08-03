@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import type { FoodTruck } from '@/lib/types';
 import { useTruckCard } from '@/hooks/useTruckCard';
 import { formatPrice } from '@/lib/utils/foodTruckHelpers';
+import { safe } from '@/lib/utils/safeObject';
 import { Eye, MapPin, Heart } from 'lucide-react';
 import { MenuSection } from '@/components/ui/MenuSection';
 import { SocialMediaSection } from '@/components/ui/SocialMediaSection';
@@ -40,12 +41,11 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, is
   const { popularItems, priceRange, todayHours } = useTruckCard(truck);
   const {
     name = 'Unnamed Truck',
-    social_media = {},
-    contact_info = {},
   } = truck;
   
-  // Safely extract contact info with fallbacks
-  const { phone = '', email = '', website = '' } = contact_info ?? {};
+  // Safely extract social media and contact info with safe utility
+  const socialMedia = safe(truck.social_media);
+  const { phone = '', email = '', website = '' } = safe(truck.contact_info);
 
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -128,8 +128,8 @@ export function TruckCard({ truck, isOpen, onSelectTruck, hideHeader = false, is
             />
           )}
 
-          {Object.keys(social_media).length > 0 && (typeof social_media === 'object')&& (
-            <SocialMediaSection socialMedia={social_media} />
+          {Object.keys(socialMedia).length > 0 && (
+            <SocialMediaSection socialMedia={socialMedia} />
           )}
 
           {(phone || email || website) && (
