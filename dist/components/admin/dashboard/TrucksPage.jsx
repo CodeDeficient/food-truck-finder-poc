@@ -22,7 +22,7 @@ const TrucksPage = () => {
         ]);
     }, []);
     return (<div className="trucks-container">
-      {trucks.length > 0 ? (trucks.map(truck => <TruckCard key={truck.id} title={truck.name} price={truck.price_range ?? ''} reviews={truck.review_count ?? 0} image_url={truck.image_url ?? '/placeholder-logo.png'} rating={truck.average_rating ?? 0}/>)) : (<p>Loading trucks...</p>)}
+      {trucks.length > 0 ? (trucks.map(truck => { var _a, _b, _c, _d; return <TruckCard key={truck.id} title={truck.name} price={(_a = truck.price_range) !== null && _a !== void 0 ? _a : ''} reviews={(_b = truck.review_count) !== null && _b !== void 0 ? _b : 0} image_url={(_c = truck.image_url) !== null && _c !== void 0 ? _c : '/placeholder-logo.png'} rating={(_d = truck.average_rating) !== null && _d !== void 0 ? _d : 0}/>; })) : (<p>Loading trucks...</p>)}
     </div>);
 };
 export default TrucksPage;

@@ -1,4 +1,15 @@
 'use client';
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import * as React from 'react';
 import { ThemeProvider as NextThemesProvider, useTheme } from 'next-themes';
 import {} from 'next-themes';
@@ -14,7 +25,8 @@ import {} from 'next-themes';
  *   - The `storageKey` prop sets the key for theme storage; defaults to "vite-ui-theme" but can be customized.
  *   - Disables transitions on theme change to ensure a smooth experience.
  */
-export function ThemeProvider({ children, ...props }) {
+export function ThemeProvider(_a) {
+    var { children } = _a, props = __rest(_a, ["children"]);
     return (<NextThemesProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="vite-ui-theme" // Default storage key used by next-themes, can be customized
      {...props}>
       {children}

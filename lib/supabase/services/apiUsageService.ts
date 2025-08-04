@@ -1,9 +1,10 @@
-import { supabase, supabaseAdmin } from '../client';
-import type { ApiUsage } from '../types';
+import { getSupabase, getSupabaseAdmin } from '../client.js';
+import type { ApiUsage } from '../types/index.js';
 import { type PostgrestResponse, type PostgrestSingleResponse, type PostgrestError } from '@supabase/supabase-js';
 
 export const APIUsageService = {
   async trackUsage(serviceName: string, requests: number, tokens: number): Promise<ApiUsage> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       throw new Error('Admin operations require SUPABASE_SERVICE_ROLE_KEY');
     }
@@ -65,6 +66,7 @@ export const APIUsageService = {
   async getTodayUsage(serviceName: string): Promise<ApiUsage | undefined> {
     try {
       const today = new Date().toISOString().split('T')[0];
+      const supabase = getSupabase();
 
       const { data, error }: PostgrestSingleResponse<ApiUsage> = await supabase
         .from('api_usage')
@@ -83,6 +85,7 @@ export const APIUsageService = {
 
   async getAllUsageStats(): Promise<ApiUsage[]> {
     try {
+      const supabase = getSupabase();
       const { data, error }: PostgrestResponse<ApiUsage> = await supabase
         .from('api_usage')
         .select('*')

@@ -103,3 +103,15 @@ When any validation cycle fails:
 3.  **Document**: Record what failed and why.
 4.  **Re-analyze**: Determine the root cause before retrying.
 5.  **Modify Approach**: Adjust the strategy based on the failure analysis.
+
+## Recent Updates - Data Pipeline Duplicate Prevention
+
+### Enhanced Duplicate Detection System
+The food truck data pipeline now implements sophisticated duplicate prevention using:
+- **Unicode Normalization**: Handles different Unicode representations of apostrophes and special characters
+- **Fuzzy Matching**: Uses Levenshtein distance for name similarity scoring
+- **Weighted Scoring**: Considers name, location, contact info, and menu similarity with configurable weights
+- **Threshold-Based Merging**: Automatically merges entries above 80% similarity threshold
+
+### Consistent Logic Across Environments
+Both real-time processing and batch deduplication now use identical duplicate detection algorithms to ensure consistency. When import dependencies are problematic in batch scripts, duplicate prevention logic is copied directly into the scripts rather than imported.

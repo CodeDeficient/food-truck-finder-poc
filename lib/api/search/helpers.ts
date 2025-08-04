@@ -12,14 +12,15 @@ import type { FoodTruck } from '@/lib/types';
  * @example
  * processSearchRequest(request)
  * { trucks: [/* filtered food trucks */
-export async function processSearchRequest(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get('q');
-  const cuisine = searchParams.get('cuisine');
-  const openNow = searchParams.get('openNow') === 'true';
-  const lat = searchParams.get('lat');
-  const lng = searchParams.get('lng');
-  const radius = searchParams.get('radius');
+export async function processSearchRequest({ query, cuisine, openNow, lat, lng, radius }: {
+  query: string | null;
+  cuisine: string | null;
+  openNow: boolean;
+  lat: string | null;
+  lng: string | null;
+  radius: string | null;
+}) {
+  
 
   let trucks: FoodTruck[] = await getAndFilterFoodTrucks(lat, lng, radius);
 

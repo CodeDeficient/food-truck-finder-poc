@@ -1,0 +1,123 @@
+{
+    "main_branch": "main",
+    "collection_timestamp": "2025-01-13T21:30:00Z",
+    "branches": {
+        "add-more-logging": {
+            "latest_commit": "f5992a4f332facd90b2e3fd3a011537efe261b00",
+            "latest_commit_message": "feat: Add debug log for UUID in pipelineHelpers.js",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 40
+        },
+        "data-specialist-2-work": {
+            "latest_commit": "91507f7087f4bb64207d90f1ea3e1d7258d05f82",
+            "latest_commit_message": "UI_SPECIALIST_2 work staging for review - Task 1.2 Badge & Layout Optimization",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 93
+        },
+        "debug/leaflet-map-load": {
+            "latest_commit": "d22ec6cd5f94df0185fe1ddfaf6e3771e1963c7d",
+            "latest_commit_message": "feat: restore full truck card accordion functionality with map integration",
+            "merge_base": "d22ec6cd5f94df0185fe1ddfaf6e3771e1963c7d",
+            "commit_count_since_base": 0
+        },
+        "feat/restore-finder-layout": {
+            "latest_commit": "91507f7087f4bb64207d90f1ea3e1d7258d05f82",
+            "latest_commit_message": "UI_SPECIALIST_2 work staging for review - Task 1.2 Badge & Layout Optimization",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 93
+        },
+        "feat/sc-food-truck-pipeline": {
+            "latest_commit": "5013a65a8f4a3c5e182011810440321f3d4a72e0",
+            "latest_commit_message": "I've made some changes to address issues with how HTML content was being accessed and to restore some functionality:",
+            "merge_base": "5ce649d40464b89d6fe212d55a04685dcfcdcd54",
+            "commit_count_since_base": 6
+        },
+        "feature/admin-dashboard-updates-p1": {
+            "latest_commit": "de55045f5963df000d871782d6f54e7a0ea86a28",
+            "latest_commit_message": "Admin Dashboard Phase 2 Progress & API Cleanup",
+            "merge_base": "41b9ba301f7becb0810d1857c4456799a4ec43b6",
+            "commit_count_since_base": 1
+        },
+        "feature/comprehensive-code-quality-improvements": {
+            "latest_commit": "abc5279d9ece7d79d4705b8b4c78fdab38f07c23",
+            "latest_commit_message": "feat: Stage all changes and prepare for remote update",
+            "merge_base": "abc5279d9ece7d79d4705b8b4c78fdab38f07c23",
+            "commit_count_since_base": 0
+        },
+        "feature/github-actions-scraper": {
+            "latest_commit": "4d93bace9750ce3272fc24bcf8f37cd6c8f00106",
+            "latest_commit_message": "fix: Remove type: module from package.json",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 19
+        },
+        "feature/phase-4-ui-overhaul": {
+            "latest_commit": "39eb3bb694df369fbc790f8a922bdf6e7094e582",
+            "latest_commit_message": "fix: remove unsupported style prop from TileLayer component",
+            "merge_base": "39eb3bb694df369fbc790f8a922bdf6e7094e582",
+            "commit_count_since_base": 0
+        },
+        "feature/pipeline-improvements": {
+            "latest_commit": "9f63f158e9d8e5049ca74e12869edaf5267e6545",
+            "latest_commit_message": "Fix ESM import issues and update duplicate prevention for GitHub Actions pipeline",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 50
+        },
+        "fix/dir-imports": {
+            "latest_commit": "b91c8f5d72a3e84762d4b040d984d6930bd47e4f",
+            "latest_commit_message": "Fix: safe handling of nullable contact/social fields",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 82
+        },
+        "fix/map-init-error": {
+            "latest_commit": "5f4ec404bbc21a55bc1a198c13f6449e6c353130",
+            "latest_commit_message": "Fix: Re-integrate Next.js ESLint config via FlatCompat",
+            "merge_base": "c739b1db29beb968a627dba1ba96524ad1a402a3",
+            "commit_count_since_base": 10
+        },
+        "fix/mermaid-diagrams": {
+            "latest_commit": "aa1efd5cfea281bcd062b151bc7412623cd16973",
+            "latest_commit_message": "fix: update all Mermaid diagrams to SOTA GitHub-compatible syntax",
+            "merge_base": "f3a66110c774294d2e917090b9b290baba286ffd",
+            "commit_count_since_base": 1
+        },
+        "jules-tasks-1": {
+            "latest_commit": "4bbea1bfe87e79160ddfe4b14674b05745280ef4",
+            "latest_commit_message": "WIP",
+            "merge_base": "4bbea1bfe87e79160ddfe4b14674b05745280ef4",
+            "commit_count_since_base": 0
+        },
+        "scrub-history": {
+            "latest_commit": "c14bb78d559494714812c3565935f0ee6a25c3bb",
+            "latest_commit_message": "chore: remove content references from working tree",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 1
+        },
+        "vercel-deployment-fix": {
+            "latest_commit": "d22ec6cd5f94df0185fe1ddfaf6e3771e1963c7d",
+            "latest_commit_message": "feat: restore full truck card accordion functionality with map integration",
+            "merge_base": "d22ec6cd5f94df0185fe1ddfaf6e3771e1963c7d",
+            "commit_count_since_base": 0
+        },
+        "verify/ui_specialist_2": {
+            "latest_commit": "5ac1c4a24a123651f8955e80e5628c5538cf3807",
+            "latest_commit_message": "Snapshot: UI_SPECIALIST_2 verification state - freeze current code state for repeatable tests",
+            "merge_base": "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+            "commit_count_since_base": 93
+        }
+    },
+    "summary": {
+        "total_branches": 17,
+        "branches_with_changes": 14,
+        "branches_up_to_date": 3,
+        "most_commits_ahead": {
+            "branch": "data-specialist-2-work",
+            "commits": 93
+        },
+        "recently_active_branches": [
+            "data-specialist-2-work",
+            "feat/restore-finder-layout", 
+            "verify/ui_specialist_2",
+            "fix/dir-imports"
+        ]
+    }
+}

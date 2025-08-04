@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { RateLimiter, getClientIdentifier } from '@/lib/security/rateLimiter';
 import { AuditLogger } from '@/lib/security/auditLogger';
 async function handleSuccessfulAuth({ user, redirectTo, origin, identifier, requestMetadata, }) {
+    var _a;
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -13,10 +14,10 @@ async function handleSuccessfulAuth({ user, redirectTo, origin, identifier, requ
         userEmail: user.email,
         userId: user.id,
         request: requestMetadata,
-        details: { provider: 'google', role: profile?.role },
+        details: { provider: 'google', role: profile === null || profile === void 0 ? void 0 : profile.role },
     });
     RateLimiter.recordSuccess(identifier, 'auth');
-    if (profile?.role === 'admin') {
+    if ((profile === null || profile === void 0 ? void 0 : profile.role) === 'admin') {
         return NextResponse.redirect(`${origin}${redirectTo}`);
     }
     else {
@@ -28,7 +29,7 @@ async function handleSuccessfulAuth({ user, redirectTo, origin, identifier, requ
             user_agent: requestMetadata.userAgent,
             details: {
                 reason: 'insufficient_role',
-                user_role: profile?.role ?? 'none',
+                user_role: (_a = profile === null || profile === void 0 ? void 0 : profile.role) !== null && _a !== void 0 ? _a : 'none',
             },
             severity: 'warning',
         });
@@ -45,13 +46,14 @@ async function handleAuthFailure(error, identifier, requestMetadata) {
     });
 }
 export async function GET(request) {
+    var _a, _b, _c;
     const identifier = getClientIdentifier(request);
     const rateLimitResult = RateLimiter.checkRateLimit(identifier, 'auth');
     if (!rateLimitResult.allowed) {
         await AuditLogger.logSecurityEvent({
             event_type: 'login_failure',
             ip_address: identifier.split(':')[0],
-            user_agent: request.headers.get('user-agent') ?? 'unknown',
+            user_agent: (_a = request.headers.get('user-agent')) !== null && _a !== void 0 ? _a : 'unknown',
             details: {
                 reason: 'rate_limit_exceeded',
                 retryAfter: rateLimitResult.retryAfter,
@@ -62,10 +64,10 @@ export async function GET(request) {
     }
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get('code');
-    const redirectTo = searchParams.get('redirectTo') ?? '/admin';
+    const redirectTo = (_b = searchParams.get('redirectTo')) !== null && _b !== void 0 ? _b : '/admin';
     const requestMetadata = {
         ip: identifier.split(':')[0],
-        userAgent: request.headers.get('user-agent') ?? 'unknown',
+        userAgent: (_c = request.headers.get('user-agent')) !== null && _c !== void 0 ? _c : 'unknown',
     };
     if (code !== null && code.length > 0) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);

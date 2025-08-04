@@ -3,7 +3,7 @@
  * This shows Jennifer's food truck schedule and event appearances
  */
 
-import { supabaseAdmin } from '../lib/supabase/client';
+import { supabaseAdmin } from '@/lib/supabase/client.js';
 
 const uprootedEvents = [
   {

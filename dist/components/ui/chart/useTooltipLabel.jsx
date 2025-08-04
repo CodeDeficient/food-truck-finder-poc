@@ -23,15 +23,16 @@ import { getPayloadConfigFromPayload } from './getPayloadConfigFromPayload';
  */
 export function useTooltipLabel({ hideLabel, payload, label, labelFormatter, labelClassName, config, labelKey, }) {
     return React.useMemo(() => {
+        var _a, _b, _c, _d;
         if (hideLabel || !payload || payload.length === 0) {
             return; // Return undefined or an empty div if no label or payload
         }
         const [item] = payload;
-        const key = `${labelKey ?? item.dataKey ?? item.name ?? 'value'}`;
+        const key = `${(_b = (_a = labelKey !== null && labelKey !== void 0 ? labelKey : item.dataKey) !== null && _a !== void 0 ? _a : item.name) !== null && _b !== void 0 ? _b : 'value'}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
         const value = labelKey === undefined && typeof label === 'string'
-            ? (config[label]?.label ?? label)
-            : itemConfig?.label;
+            ? ((_d = (_c = config[label]) === null || _c === void 0 ? void 0 : _c.label) !== null && _d !== void 0 ? _d : label)
+            : itemConfig === null || itemConfig === void 0 ? void 0 : itemConfig.label;
         if (labelFormatter) {
             return (<div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload)}</div>);
         }

@@ -1,8 +1,8 @@
 // lib/autoScraper.ts
-import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config';
-import { supabaseAdmin, ScrapingJobService } from './supabase';
-import { processScrapingJob } from '@/lib/pipelineProcessor';
-import { dispatchGeminiOperation } from './gemini';
+import { DEFAULT_SCRAPE_URLS, DEFAULT_STALENESS_THRESHOLD_DAYS } from './config.js';
+import { supabaseAdmin, ScrapingJobService } from './supabase.js';
+import { processScrapingJob } from './pipelineProcessor';
+import { dispatchGeminiOperation } from './gemini.js';
 
 // Define interfaces for better type safety
 interface FoodTruck {
@@ -145,7 +145,7 @@ async function triggerScrapingProcess(targetUrl: string): Promise<TriggerScrapin
       priority: 5,
       scheduled_at: new Date().toISOString(),
     });
-    processScrapingJob(job.id).catch((error) => {
+    processScrapingJob(job.id).catch((error: Error) => {
       console.error('Failed to process scraping job:', error);
     });
     return {
@@ -477,7 +477,7 @@ async function getUrlsToScrape(): Promise<string[]> {
   try {
     if (!supabaseAdmin) {
       console.warn('AutoScraper: Supabase admin client not available for discovered URLs');
-      return [...urls];
+      return Array.from(urls);
     }
 
     const { data: discoveredUrls, error } = await supabaseAdmin
@@ -497,7 +497,7 @@ async function getUrlsToScrape(): Promise<string[]> {
     console.warn('AutoScraper: Failed to fetch discovered URLs:', error);
   }
 
-  return [...urls];
+  return Array.from(urls);
 }
 
 // Helper to update discovered URL status after processing

@@ -8,6 +8,7 @@
   "ignore": [
     "**/lib/database.types.ts",
     "**/.claude-thoughts/**",
+    "**/.claudethoughts/**",
     "**/node_modules/**",
     "**/.git/**",
     "**/*.md",
@@ -20,10 +21,11 @@
     "**/CodeAnt/**",
     "**/errors/**",
     "**/playwright-report/**",
-    "**/scripts/**",
     "**/test-results/**",
     "**/tests/**",
-    "**/supabase/**"
+    "**/supabase/**",
+    "**/dist/**",
+    "**/jscpd-report/**"
   ],
   "gitignore":true
 }

@@ -14,6 +14,7 @@ import {} from '@/lib/supabase';
  *   - Handles cases where there are no ratings available.
  */
 export function RatingsReviewsCard({ truck }) {
+    var _a;
     return (<Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -26,12 +27,15 @@ export function RatingsReviewsCard({ truck }) {
         {truck.average_rating === undefined ? (<p className="text-gray-400 text-sm">No ratings available</p>) : (<div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="flex">
-                {[1, 2, 3, 4, 5].map((star) => (<Star key={star} className={`size-5 ${star <= Math.round(truck.average_rating ?? 0)
-                    ? 'text-yellow-400 fill-current'
-                    : 'text-gray-300'}`}/>))}
+                {[1, 2, 3, 4, 5].map((star) => {
+                var _a;
+                return (<Star key={star} className={`size-5 ${star <= Math.round((_a = truck.average_rating) !== null && _a !== void 0 ? _a : 0)
+                        ? 'text-yellow-400 fill-current'
+                        : 'text-gray-300'}`}/>);
+            })}
               </div>
               <span className="text-lg font-semibold">
-                {(truck.average_rating ?? 0).toFixed(1)}
+                {((_a = truck.average_rating) !== null && _a !== void 0 ? _a : 0).toFixed(1)}
               </span>
             </div>
             {truck.review_count !== undefined && (<div className="flex items-center gap-1 text-gray-600">

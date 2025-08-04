@@ -1,5 +1,5 @@
-import { supabaseAdmin } from '../client';
-import { handleSupabaseError } from '../utils';
+import { getSupabaseAdmin } from '../client.js';
+import { handleSupabaseError } from '../utils/index.js';
 export const DataQualityService = {
     calculateQualityScore: (truck) => {
         // Placeholder for actual quality score calculation logic
@@ -26,6 +26,7 @@ export const DataQualityService = {
         return { score: Math.min(100, score) };
     },
     async updateTruckQualityScore(truckId) {
+        const supabaseAdmin = getSupabaseAdmin();
         if (!supabaseAdmin) {
             return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
         }

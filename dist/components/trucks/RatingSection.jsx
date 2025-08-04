@@ -19,7 +19,7 @@ export function RatingSection({ averageRating, reviewCount }) {
       <h4 className="font-medium mb-2 text-sm dark:text-gray-100">Rating</h4>
       <div className="flex items-center gap-2">
         <div className="flex">
-          {[1, 2, 3, 4, 5].map((star) => (<Star key={star} className={`size-4 ${star <= Math.round(averageRating ?? 0)
+          {[1, 2, 3, 4, 5].map((star) => (<Star key={star} className={`size-4 ${star <= Math.round(averageRating !== null && averageRating !== void 0 ? averageRating : 0)
                 ? 'text-yellow-400 fill-current'
                 : 'text-gray-300'}`}/>))}
         </div>

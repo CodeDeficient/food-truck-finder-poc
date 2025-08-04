@@ -1,0 +1,1955 @@
+{
+  "statistics": {
+    "detectionDate": "2025-07-30T15:25:47.880Z",
+    "formats": {
+      "javascript": {
+        "sources": {
+          "C:/AI/food-truck-finder-poc/.github/actions/scrape/src/actions/github-action-scraper.js": {
+            "lines": 147,
+            "tokens": 1158,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 152,
+            "duplicatedTokens": 1178,
+            "percentage": 103.4,
+            "percentageTokens": 101.73,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "C:/AI/food-truck-finder-poc/scripts/github-action-scraper.js": {
+            "lines": 187,
+            "tokens": 1410,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 152,
+            "duplicatedTokens": 1178,
+            "percentage": 81.28,
+            "percentageTokens": 83.55,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 334,
+          "tokens": 2568,
+          "sources": 2,
+          "clones": 4,
+          "duplicatedLines": 152,
+          "duplicatedTokens": 1178,
+          "percentage": 45.51,
+          "percentageTokens": 45.87,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 334,
+      "tokens": 2568,
+      "sources": 2,
+      "clones": 4,
+      "duplicatedLines": 152,
+      "duplicatedTokens": 1178,
+      "percentage": 45.51,
+      "percentageTokens": 45.87,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "javascript",
+      "lines": 34,
+      "fragment": ";\r\n\r\n// Parse command line arguments\r\nconst options = {\r\n  limit: {\r\n    type: 'string',\r\n    short: 'l',\r\n    default: '10'\r\n  },\r\n  help: {\r\n    type: 'boolean',\r\n    short: 'h',\r\n    default: false\r\n  }\r\n};\r\n\r\nconst { values } = parseArgs({ options, allowPositionals: false });\r\n\r\nif (values.help) {\r\n  console.log(`\r\nGitHub Action Scraper\r\n\r\nUsage: node scripts/github-action-scraper.js [options]\r\n\r\nOptions:\r\n  -l, --limit <number>  Maximum number of jobs to process (default: 10)\r\n  -h, --help           Show this help message\r\n\r\nEnvironment Variables Required:\r\n  - NEXT_PUBLIC_SUPABASE_URL\r\n  - SUPABASE_SERVICE_ROLE_KEY\r\n  - FIRECRAWL_API_KEY\r\n  - GEMINI_API_KEY or GOOGLE_API_KEY\r\n  `",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/scripts/github-action-scraper.js",
+        "start": 15,
+        "end": 48,
+        "startLoc": {
+          "line": 15,
+          "column": 12,
+          "position": 58
+        },
+        "endLoc": {
+          "line": 48,
+          "column": 4,
+          "position": 195
+        },
+        "blame": {
+          "15": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "15",
+            "rev": "cc089ed4"
+          },
+          "16": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "16",
+            "rev": "643a12bd"
+          },
+          "17": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "17",
+            "rev": "643a12bd"
+          },
+          "18": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "18",
+            "rev": "cc089ed4"
+          },
+          "19": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "19",
+            "rev": "cc089ed4"
+          },
+          "20": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "20",
+            "rev": "cc089ed4"
+          },
+          "21": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "21",
+            "rev": "cc089ed4"
+          },
+          "22": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "22",
+            "rev": "cc089ed4"
+          },
+          "23": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "23",
+            "rev": "cc089ed4"
+          },
+          "24": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "24",
+            "rev": "cc089ed4"
+          },
+          "25": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "25",
+            "rev": "cc089ed4"
+          },
+          "26": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "26",
+            "rev": "cc089ed4"
+          },
+          "27": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "27",
+            "rev": "cc089ed4"
+          },
+          "28": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "28",
+            "rev": "cc089ed4"
+          },
+          "29": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "29",
+            "rev": "643a12bd"
+          },
+          "30": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "30",
+            "rev": "643a12bd"
+          },
+          "31": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "31",
+            "rev": "cc089ed4"
+          },
+          "32": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "32",
+            "rev": "643a12bd"
+          },
+          "33": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "33",
+            "rev": "cc089ed4"
+          },
+          "34": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "34",
+            "rev": "cc089ed4"
+          },
+          "35": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "35",
+            "rev": "cc089ed4"
+          },
+          "36": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "36",
+            "rev": "643a12bd"
+          },
+          "37": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "37",
+            "rev": "cc089ed4"
+          },
+          "38": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "38",
+            "rev": "643a12bd"
+          },
+          "39": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "39",
+            "rev": "cc089ed4"
+          },
+          "40": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "40",
+            "rev": "cc089ed4"
+          },
+          "41": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "41",
+            "rev": "cc089ed4"
+          },
+          "42": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "42",
+            "rev": "643a12bd"
+          },
+          "43": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "43",
+            "rev": "cc089ed4"
+          },
+          "44": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "44",
+            "rev": "cc089ed4"
+          },
+          "45": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "45",
+            "rev": "cc089ed4"
+          },
+          "46": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "46",
+            "rev": "cc089ed4"
+          },
+          "47": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "47",
+            "rev": "cc089ed4"
+          },
+          "48": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "48",
+            "rev": "cc089ed4"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/.github/actions/scrape/src/actions/github-action-scraper.js",
+        "start": 12,
+        "end": 42,
+        "startLoc": {
+          "line": 12,
+          "column": 52,
+          "position": 50
+        },
+        "endLoc": {
+          "line": 42,
+          "column": 4,
+          "position": 165
+        },
+        "blame": {
+          "12": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "12",
+            "rev": "cc089ed4"
+          },
+          "13": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "13",
+            "rev": "cc089ed4"
+          },
+          "14": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "14",
+            "rev": "cc089ed4"
+          },
+          "15": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "15",
+            "rev": "cc089ed4"
+          },
+          "16": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "16",
+            "rev": "cc089ed4"
+          },
+          "17": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "17",
+            "rev": "cc089ed4"
+          },
+          "18": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "18",
+            "rev": "cc089ed4"
+          },
+          "19": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "19",
+            "rev": "cc089ed4"
+          },
+          "20": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "20",
+            "rev": "cc089ed4"
+          },
+          "21": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "21",
+            "rev": "cc089ed4"
+          },
+          "22": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "22",
+            "rev": "cc089ed4"
+          },
+          "23": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "23",
+            "rev": "cc089ed4"
+          },
+          "24": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "24",
+            "rev": "cc089ed4"
+          },
+          "25": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "25",
+            "rev": "cc089ed4"
+          },
+          "26": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "26",
+            "rev": "cc089ed4"
+          },
+          "27": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "27",
+            "rev": "cc089ed4"
+          },
+          "28": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "28",
+            "rev": "cc089ed4"
+          },
+          "29": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "29",
+            "rev": "cc089ed4"
+          },
+          "30": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "30",
+            "rev": "cc089ed4"
+          },
+          "31": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "31",
+            "rev": "cc089ed4"
+          },
+          "32": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "32",
+            "rev": "cc089ed4"
+          },
+          "33": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "33",
+            "rev": "cc089ed4"
+          },
+          "34": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "34",
+            "rev": "cc089ed4"
+          },
+          "35": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "35",
+            "rev": "cc089ed4"
+          },
+          "36": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "36",
+            "rev": "cc089ed4"
+          },
+          "37": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "37",
+            "rev": "cc089ed4"
+          },
+          "38": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "38",
+            "rev": "cc089ed4"
+          },
+          "39": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "39",
+            "rev": "cc089ed4"
+          },
+          "40": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "40",
+            "rev": "cc089ed4"
+          },
+          "41": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "41",
+            "rev": "cc089ed4"
+          },
+          "42": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "42",
+            "rev": "cc089ed4"
+          }
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 31,
+      "fragment": ");\r\n  process.exit(0);\r\n}\r\n\r\nconst limit = parseInt(values.limit || '10', 10);\r\n\r\n// Validate environment variables\r\nconst requiredEnvVars = [\r\n  'NEXT_PUBLIC_SUPABASE_URL',\r\n  'SUPABASE_SERVICE_ROLE_KEY', \r\n  'FIRECRAWL_API_KEY'\r\n];\r\n\r\nconst missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);\r\nif (missingEnvVars.length > 0) {\r\n  console.error('❌ Missing required environment variables:');\r\n  missingEnvVars.forEach(envVar => console.error(`  - ${envVar}`));\r\n  process.exit(1);\r\n}\r\n\r\n// Check for AI API key\r\nif (!process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {\r\n  console.error('❌ Missing AI API key: either GEMINI_API_KEY or GOOGLE_API_KEY is required');\r\n  process.exit(1);\r\n}\r\n\r\nconsole.log('🚀 GitHub Action Scraper Starting');\r\nconsole.log(`📊 Processing up to ${limit} jobs`);\r\nconsole.log(`🔗 Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 50)}...`);\r\n\r\n// Import these after dotenv is loaded to ensure environment variables are available",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/scripts/github-action-scraper.js",
+        "start": 48,
+        "end": 78,
+        "startLoc": {
+          "line": 48,
+          "column": 4,
+          "position": 196
+        },
+        "endLoc": {
+          "line": 78,
+          "column": 85,
+          "position": 460
+        },
+        "blame": {
+          "48": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "48",
+            "rev": "cc089ed4"
+          },
+          "49": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "49",
+            "rev": "cc089ed4"
+          },
+          "50": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "50",
+            "rev": "cc089ed4"
+          },
+          "51": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "51",
+            "rev": "643a12bd"
+          },
+          "52": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "52",
+            "rev": "cc089ed4"
+          },
+          "53": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "53",
+            "rev": "643a12bd"
+          },
+          "54": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "54",
+            "rev": "cc089ed4"
+          },
+          "55": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "55",
+            "rev": "cc089ed4"
+          },
+          "56": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "56",
+            "rev": "cc089ed4"
+          },
+          "57": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "57",
+            "rev": "cc089ed4"
+          },
+          "58": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "58",
+            "rev": "cc089ed4"
+          },
+          "59": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "59",
+            "rev": "cc089ed4"
+          },
+          "60": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "60",
+            "rev": "643a12bd"
+          },
+          "61": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "61",
+            "rev": "cc089ed4"
+          },
+          "62": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "62",
+            "rev": "cc089ed4"
+          },
+          "63": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "63",
+            "rev": "cc089ed4"
+          },
+          "64": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "64",
+            "rev": "cc089ed4"
+          },
+          "65": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "65",
+            "rev": "cc089ed4"
+          },
+          "66": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "66",
+            "rev": "643a12bd"
+          },
+          "67": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "67",
+            "rev": "643a12bd"
+          },
+          "68": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "68",
+            "rev": "cc089ed4"
+          },
+          "69": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "69",
+            "rev": "cc089ed4"
+          },
+          "70": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "70",
+            "rev": "cc089ed4"
+          },
+          "71": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "71",
+            "rev": "cc089ed4"
+          },
+          "72": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "72",
+            "rev": "643a12bd"
+          },
+          "73": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "73",
+            "rev": "643a12bd"
+          },
+          "74": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "74",
+            "rev": "cc089ed4"
+          },
+          "75": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "75",
+            "rev": "cc089ed4"
+          },
+          "76": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "76",
+            "rev": "cc089ed4"
+          },
+          "77": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "77",
+            "rev": "cc089ed4"
+          },
+          "78": {
+            "author": "CodeDeficient",
+            "date": "2025-07-29 12:21:19 -0400",
+            "line": "78",
+            "rev": "1759904d"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/.github/actions/scrape/src/actions/github-action-scraper.js",
+        "start": 42,
+        "end": 68,
+        "startLoc": {
+          "line": 42,
+          "column": 4,
+          "position": 166
+        },
+        "endLoc": {
+          "line": 68,
+          "column": 4,
+          "position": 394
+        },
+        "blame": {
+          "42": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "42",
+            "rev": "cc089ed4"
+          },
+          "43": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "43",
+            "rev": "cc089ed4"
+          },
+          "44": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "44",
+            "rev": "cc089ed4"
+          },
+          "45": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "45",
+            "rev": "cc089ed4"
+          },
+          "46": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "46",
+            "rev": "cc089ed4"
+          },
+          "47": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "47",
+            "rev": "cc089ed4"
+          },
+          "48": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "48",
+            "rev": "cc089ed4"
+          },
+          "49": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "49",
+            "rev": "cc089ed4"
+          },
+          "50": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "50",
+            "rev": "cc089ed4"
+          },
+          "51": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "51",
+            "rev": "cc089ed4"
+          },
+          "52": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "52",
+            "rev": "cc089ed4"
+          },
+          "53": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "53",
+            "rev": "cc089ed4"
+          },
+          "54": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "54",
+            "rev": "cc089ed4"
+          },
+          "55": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "55",
+            "rev": "cc089ed4"
+          },
+          "56": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "56",
+            "rev": "cc089ed4"
+          },
+          "57": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "57",
+            "rev": "cc089ed4"
+          },
+          "58": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "58",
+            "rev": "cc089ed4"
+          },
+          "59": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "59",
+            "rev": "cc089ed4"
+          },
+          "60": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "60",
+            "rev": "cc089ed4"
+          },
+          "61": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "61",
+            "rev": "cc089ed4"
+          },
+          "62": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "62",
+            "rev": "cc089ed4"
+          },
+          "63": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "63",
+            "rev": "cc089ed4"
+          },
+          "64": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "64",
+            "rev": "cc089ed4"
+          },
+          "65": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "65",
+            "rev": "cc089ed4"
+          },
+          "66": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "66",
+            "rev": "cc089ed4"
+          },
+          "67": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "67",
+            "rev": "cc089ed4"
+          },
+          "68": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "68",
+            "rev": "cc089ed4"
+          }
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 35,
+      "fragment": "let processedCount = 0;\r\n  let successCount = 0;\r\n  let failureCount = 0;\r\n\r\n  try {\r\n    console.log('\\n📋 Fetching pending scraping jobs...');\r\n    \r\n    // Get pending jobs from Supabase\r\n    const pendingJobs = await ScrapingJobService.getJobsByStatus('pending');\r\n    \r\n    if (!pendingJobs || pendingJobs.length === 0) {\r\n      console.log('✅ No pending jobs found');\r\n      return;\r\n    }\r\n\r\n    console.log(`📦 Found ${pendingJobs.length} pending jobs`);\r\n    \r\n    // Limit the number of jobs to process\r\n    const jobsToProcess = pendingJobs.slice(0, limit);\r\n    console.log(`⚡ Processing ${jobsToProcess.length} jobs`);\r\n\r\n    // Process jobs sequentially to avoid overwhelming APIs\r\n    for (const job of jobsToProcess) {\r\n      processedCount++;\r\n      console.log(`\\n[${processedCount}/${jobsToProcess.length}] Processing job: ${job.id}`);\r\n      console.log(`🎯 Target URL: ${job.target_url}`);\r\n      \r\n      try {\r\n        // Process the scraping job using the pipeline\r\n        await processScrapingJob(job.id);\r\n        successCount++;\r\n        console.log(`✅ Job ${job.id} completed successfully`);\r\n      } catch (error) {\r\n        failureCount++;\r\n        console",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/scripts/github-action-scraper.js",
+        "start": 95,
+        "end": 129,
+        "startLoc": {
+          "line": 95,
+          "column": 3,
+          "position": 574
+        },
+        "endLoc": {
+          "line": 129,
+          "column": 8,
+          "position": 884
+        },
+        "blame": {
+          "95": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "95",
+            "rev": "cc089ed4"
+          },
+          "96": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "96",
+            "rev": "cc089ed4"
+          },
+          "97": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "97",
+            "rev": "cc089ed4"
+          },
+          "98": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "98",
+            "rev": "cc089ed4"
+          },
+          "99": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "99",
+            "rev": "cc089ed4"
+          },
+          "100": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "100",
+            "rev": "cc089ed4"
+          },
+          "101": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "101",
+            "rev": "cc089ed4"
+          },
+          "102": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "102",
+            "rev": "cc089ed4"
+          },
+          "103": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "103",
+            "rev": "cc089ed4"
+          },
+          "104": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "104",
+            "rev": "643a12bd"
+          },
+          "105": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "105",
+            "rev": "cc089ed4"
+          },
+          "106": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "106",
+            "rev": "cc089ed4"
+          },
+          "107": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "107",
+            "rev": "cc089ed4"
+          },
+          "108": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "108",
+            "rev": "643a12bd"
+          },
+          "109": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "109",
+            "rev": "643a12bd"
+          },
+          "110": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "110",
+            "rev": "cc089ed4"
+          },
+          "111": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "111",
+            "rev": "cc089ed4"
+          },
+          "112": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "112",
+            "rev": "cc089ed4"
+          },
+          "113": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "113",
+            "rev": "cc089ed4"
+          },
+          "114": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "114",
+            "rev": "cc089ed4"
+          },
+          "115": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "115",
+            "rev": "643a12bd"
+          },
+          "116": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "116",
+            "rev": "cc089ed4"
+          },
+          "117": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "117",
+            "rev": "cc089ed4"
+          },
+          "118": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "118",
+            "rev": "cc089ed4"
+          },
+          "119": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "119",
+            "rev": "cc089ed4"
+          },
+          "120": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "120",
+            "rev": "cc089ed4"
+          },
+          "121": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "121",
+            "rev": "cc089ed4"
+          },
+          "122": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "122",
+            "rev": "cc089ed4"
+          },
+          "123": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "123",
+            "rev": "cc089ed4"
+          },
+          "124": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "124",
+            "rev": "cc089ed4"
+          },
+          "125": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "125",
+            "rev": "cc089ed4"
+          },
+          "126": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "126",
+            "rev": "cc089ed4"
+          },
+          "127": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "127",
+            "rev": "cc089ed4"
+          },
+          "128": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "128",
+            "rev": "cc089ed4"
+          },
+          "129": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "129",
+            "rev": "cc089ed4"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/.github/actions/scrape/src/actions/github-action-scraper.js",
+        "start": 70,
+        "end": 98,
+        "startLoc": {
+          "line": 70,
+          "column": 5,
+          "position": 407
+        },
+        "endLoc": {
+          "line": 98,
+          "column": 6,
+          "position": 677
+        },
+        "blame": {
+          "70": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "70",
+            "rev": "cc089ed4"
+          },
+          "71": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "71",
+            "rev": "cc089ed4"
+          },
+          "72": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "72",
+            "rev": "cc089ed4"
+          },
+          "73": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "73",
+            "rev": "cc089ed4"
+          },
+          "74": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "74",
+            "rev": "cc089ed4"
+          },
+          "75": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "75",
+            "rev": "cc089ed4"
+          },
+          "76": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "76",
+            "rev": "cc089ed4"
+          },
+          "77": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "77",
+            "rev": "cc089ed4"
+          },
+          "78": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "78",
+            "rev": "cc089ed4"
+          },
+          "79": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "79",
+            "rev": "cc089ed4"
+          },
+          "80": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "80",
+            "rev": "cc089ed4"
+          },
+          "81": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "81",
+            "rev": "cc089ed4"
+          },
+          "82": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "82",
+            "rev": "cc089ed4"
+          },
+          "83": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "83",
+            "rev": "cc089ed4"
+          },
+          "84": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "84",
+            "rev": "cc089ed4"
+          },
+          "85": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "85",
+            "rev": "cc089ed4"
+          },
+          "86": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "86",
+            "rev": "cc089ed4"
+          },
+          "87": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "87",
+            "rev": "cc089ed4"
+          },
+          "88": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "88",
+            "rev": "cc089ed4"
+          },
+          "89": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "89",
+            "rev": "cc089ed4"
+          },
+          "90": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "90",
+            "rev": "cc089ed4"
+          },
+          "91": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "91",
+            "rev": "cc089ed4"
+          },
+          "92": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "92",
+            "rev": "cc089ed4"
+          },
+          "93": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "93",
+            "rev": "cc089ed4"
+          },
+          "94": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "94",
+            "rev": "cc089ed4"
+          },
+          "95": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "95",
+            "rev": "cc089ed4"
+          },
+          "96": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "96",
+            "rev": "cc089ed4"
+          },
+          "97": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "97",
+            "rev": "cc089ed4"
+          },
+          "98": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "98",
+            "rev": "cc089ed4"
+          }
+        }
+      }
+    },
+    {
+      "format": "javascript",
+      "lines": 56,
+      "fragment": ");\r\n        \r\n        // Log the error but continue processing other jobs\r\n        console.error('Error details:', error);\r\n      }\r\n\r\n      // Add a small delay between jobs to be respectful to APIs\r\n      if (processedCount < jobsToProcess.length) {\r\n        console.log('⏱️  Waiting 2 seconds before next job...');\r\n        await new Promise(resolve => setTimeout(resolve, 2000));\r\n      }\r\n    }\r\n\r\n  } catch (error) {\r\n    console.error('💥 Fatal error in main execution:', error);\r\n    process.exit(1);\r\n  }\r\n\r\n  // Final summary\r\n  console.log('\\n📊 Processing Summary:');\r\n  console.log(`  Total processed: ${processedCount}`);\r\n  console.log(`  Successful: ${successCount} ✅`);\r\n  console.log(`  Failed: ${failureCount} ❌`);\r\n  console.log(`  Success rate: ${processedCount > 0 ? Math.round((successCount / processedCount) * 100) : 0}%`);\r\n\r\n  if (failureCount > 0) {\r\n    console.log('\\n⚠️  Some jobs failed. Check the logs above for details.');\r\n    // Don't exit with error code as partial success is acceptable\r\n  }\r\n\r\n  console.log('\\n🏁 GitHub Action Scraper completed');\r\n}\r\n\r\n// Error handlers\r\nprocess.on('uncaughtException', (error) => {\r\n  console.error('💥 Uncaught Exception:', error);\r\n  process.exit(1);\r\n});\r\n\r\nprocess.on('unhandledRejection', (reason, promise) => {\r\n  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);\r\n  process.exit(1);\r\n});\r\n\r\n// Graceful shutdown\r\nprocess.on('SIGINT', () => {\r\n  console.log('\\n⏹️  Received SIGINT, shutting down gracefully...');\r\n  process.exit(0);\r\n});\r\n\r\nprocess.on('SIGTERM', () => {\r\n  console.log('\\n⏹️  Received SIGTERM, shutting down gracefully...');\r\n  process.exit(0);\r\n});\r\n\r\n// Run the main function",
+      "tokens": 0,
+      "firstFile": {
+        "name": "C:/AI/food-truck-finder-poc/scripts/github-action-scraper.js",
+        "start": 129,
+        "end": 184,
+        "startLoc": {
+          "line": 129,
+          "column": 8,
+          "position": 900
+        },
+        "endLoc": {
+          "line": 184,
+          "column": 25,
+          "position": 1367
+        },
+        "blame": {
+          "129": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "129",
+            "rev": "cc089ed4"
+          },
+          "130": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "130",
+            "rev": "cc089ed4"
+          },
+          "131": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "131",
+            "rev": "cc089ed4"
+          },
+          "132": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "132",
+            "rev": "cc089ed4"
+          },
+          "133": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "133",
+            "rev": "cc089ed4"
+          },
+          "134": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "134",
+            "rev": "cc089ed4"
+          },
+          "135": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "135",
+            "rev": "cc089ed4"
+          },
+          "136": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "136",
+            "rev": "cc089ed4"
+          },
+          "137": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "137",
+            "rev": "cc089ed4"
+          },
+          "138": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "138",
+            "rev": "cc089ed4"
+          },
+          "139": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "139",
+            "rev": "cc089ed4"
+          },
+          "140": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "140",
+            "rev": "643a12bd"
+          },
+          "141": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "141",
+            "rev": "643a12bd"
+          },
+          "142": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "142",
+            "rev": "643a12bd"
+          },
+          "143": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "143",
+            "rev": "cc089ed4"
+          },
+          "144": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "144",
+            "rev": "643a12bd"
+          },
+          "145": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "145",
+            "rev": "643a12bd"
+          },
+          "146": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "146",
+            "rev": "cc089ed4"
+          },
+          "147": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "147",
+            "rev": "cc089ed4"
+          },
+          "148": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "148",
+            "rev": "cc089ed4"
+          },
+          "149": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "149",
+            "rev": "cc089ed4"
+          },
+          "150": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "150",
+            "rev": "cc089ed4"
+          },
+          "151": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "151",
+            "rev": "cc089ed4"
+          },
+          "152": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "152",
+            "rev": "cc089ed4"
+          },
+          "153": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "153",
+            "rev": "cc089ed4"
+          },
+          "154": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "154",
+            "rev": "cc089ed4"
+          },
+          "155": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "155",
+            "rev": "cc089ed4"
+          },
+          "156": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "156",
+            "rev": "cc089ed4"
+          },
+          "157": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "157",
+            "rev": "643a12bd"
+          },
+          "158": {
+            "author": "CodeDeficient",
+            "date": "2025-07-21 15:50:11 -0400",
+            "line": "158",
+            "rev": "643a12bd"
+          },
+          "159": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "159",
+            "rev": "cc089ed4"
+          },
+          "160": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "160",
+            "rev": "cc089ed4"
+          },
+          "161": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "161",
+            "rev": "cc089ed4"
+          },
+          "162": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "162",
+            "rev": "cc089ed4"
+          },
+          "163": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "163",
+            "rev": "cc089ed4"
+          },
+          "164": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "164",
+            "rev": "cc089ed4"
+          },
+          "165": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "165",
+            "rev": "cc089ed4"
+          },
+          "166": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "166",
+            "rev": "cc089ed4"
+          },
+          "167": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "167",
+            "rev": "cc089ed4"
+          },
+          "168": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "168",
+            "rev": "cc089ed4"
+          },
+          "169": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "169",
+            "rev": "cc089ed4"
+          },
+          "170": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "170",
+            "rev": "cc089ed4"
+          },
+          "171": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "171",
+            "rev": "cc089ed4"
+          },
+          "172": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "172",
+            "rev": "cc089ed4"
+          },
+          "173": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "173",
+            "rev": "cc089ed4"
+          },
+          "174": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "174",
+            "rev": "cc089ed4"
+          },
+          "175": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "175",
+            "rev": "cc089ed4"
+          },
+          "176": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "176",
+            "rev": "cc089ed4"
+          },
+          "177": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "177",
+            "rev": "cc089ed4"
+          },
+          "178": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "178",
+            "rev": "cc089ed4"
+          },
+          "179": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "179",
+            "rev": "cc089ed4"
+          },
+          "180": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "180",
+            "rev": "cc089ed4"
+          },
+          "181": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "181",
+            "rev": "cc089ed4"
+          },
+          "182": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "182",
+            "rev": "cc089ed4"
+          },
+          "183": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "183",
+            "rev": "cc089ed4"
+          },
+          "184": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "184",
+            "rev": "cc089ed4"
+          }
+        }
+      },
+      "secondFile": {
+        "name": "C:/AI/food-truck-finder-poc/.github/actions/scrape/src/actions/github-action-scraper.js",
+        "start": 99,
+        "end": 144,
+        "startLoc": {
+          "line": 99,
+          "column": 13,
+          "position": 715
+        },
+        "endLoc": {
+          "line": 144,
+          "column": 67,
+          "position": 1117
+        },
+        "blame": {
+          "99": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "99",
+            "rev": "cc089ed4"
+          },
+          "100": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "100",
+            "rev": "cc089ed4"
+          },
+          "101": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "101",
+            "rev": "cc089ed4"
+          },
+          "102": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "102",
+            "rev": "cc089ed4"
+          },
+          "103": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "103",
+            "rev": "cc089ed4"
+          },
+          "104": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "104",
+            "rev": "cc089ed4"
+          },
+          "105": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "105",
+            "rev": "cc089ed4"
+          },
+          "106": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "106",
+            "rev": "cc089ed4"
+          },
+          "107": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "107",
+            "rev": "cc089ed4"
+          },
+          "108": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "108",
+            "rev": "cc089ed4"
+          },
+          "109": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "109",
+            "rev": "cc089ed4"
+          },
+          "110": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "110",
+            "rev": "cc089ed4"
+          },
+          "111": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "111",
+            "rev": "cc089ed4"
+          },
+          "112": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "112",
+            "rev": "cc089ed4"
+          },
+          "113": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "113",
+            "rev": "cc089ed4"
+          },
+          "114": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "114",
+            "rev": "cc089ed4"
+          },
+          "115": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "115",
+            "rev": "cc089ed4"
+          },
+          "116": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "116",
+            "rev": "cc089ed4"
+          },
+          "117": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "117",
+            "rev": "cc089ed4"
+          },
+          "118": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "118",
+            "rev": "cc089ed4"
+          },
+          "119": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "119",
+            "rev": "cc089ed4"
+          },
+          "120": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "120",
+            "rev": "cc089ed4"
+          },
+          "121": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "121",
+            "rev": "cc089ed4"
+          },
+          "122": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "122",
+            "rev": "cc089ed4"
+          },
+          "123": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "123",
+            "rev": "cc089ed4"
+          },
+          "124": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "124",
+            "rev": "cc089ed4"
+          },
+          "125": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "125",
+            "rev": "cc089ed4"
+          },
+          "126": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "126",
+            "rev": "cc089ed4"
+          },
+          "127": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "127",
+            "rev": "cc089ed4"
+          },
+          "128": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "128",
+            "rev": "cc089ed4"
+          },
+          "129": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "129",
+            "rev": "cc089ed4"
+          },
+          "130": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "130",
+            "rev": "cc089ed4"
+          },
+          "131": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "131",
+            "rev": "cc089ed4"
+          },
+          "132": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "132",
+            "rev": "cc089ed4"
+          },
+          "133": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "133",
+            "rev": "cc089ed4"
+          },
+          "134": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "134",
+            "rev": "cc089ed4"
+          },
+          "135": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "135",
+            "rev": "cc089ed4"
+          },
+          "136": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "136",
+            "rev": "cc089ed4"
+          },
+          "137": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "137",
+            "rev": "cc089ed4"
+          },
+          "138": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "138",
+            "rev": "cc089ed4"
+          },
+          "139": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "139",
+            "rev": "cc089ed4"
+          },
+          "140": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "140",
+            "rev": "cc089ed4"
+          },
+          "141": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "141",
+            "rev": "cc089ed4"
+          },
+          "142": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "142",
+            "rev": "cc089ed4"
+          },
+          "143": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "143",
+            "rev": "cc089ed4"
+          },
+          "144": {
+            "author": "CodeDeficient",
+            "date": "2025-07-23 14:12:36 -0400",
+            "line": "144",
+            "rev": "cc089ed4"
+          }
+        }
+      }
+    }
+  ]
+}

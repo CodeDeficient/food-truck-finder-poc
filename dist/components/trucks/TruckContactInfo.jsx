@@ -92,6 +92,7 @@ function SocialMediaLinks({ socialMedia, }) {
  *   - SocialMediaLinks component is used to list the truck's social media presence.
  */
 export function TruckContactInfo({ truck }) {
+    var _a, _b, _c, _d, _e, _f;
     return (<Card className="dark:bg-slate-800 dark:border-slate-700">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 dark:text-gray-100">
@@ -101,15 +102,15 @@ export function TruckContactInfo({ truck }) {
         <CardDescription className="dark:text-gray-400">Get in touch</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <ContactField icon={Phone} label="Phone" value={truck.contact_info?.phone} href={truck.contact_info?.phone !== undefined && truck.contact_info.phone !== ''
+        <ContactField icon={Phone} label="Phone" value={(_a = truck.contact_info) === null || _a === void 0 ? void 0 : _a.phone} href={((_b = truck.contact_info) === null || _b === void 0 ? void 0 : _b.phone) !== undefined && truck.contact_info.phone !== ''
             ? `tel:${truck.contact_info.phone}`
             : undefined} unavailableText="No phone number available"/>
 
-        <ContactField icon={Mail} label="Email" value={truck.contact_info?.email} href={truck.contact_info?.email !== undefined && truck.contact_info.email !== ''
+        <ContactField icon={Mail} label="Email" value={(_c = truck.contact_info) === null || _c === void 0 ? void 0 : _c.email} href={((_d = truck.contact_info) === null || _d === void 0 ? void 0 : _d.email) !== undefined && truck.contact_info.email !== ''
             ? `mailto:${truck.contact_info.email}`
             : undefined} unavailableText="No email available"/>
 
-        <ContactField icon={Globe} label="Website" value={truck.contact_info?.website} href={truck.contact_info?.website} unavailableText="No website available"/>
+        <ContactField icon={Globe} label="Website" value={(_e = truck.contact_info) === null || _e === void 0 ? void 0 : _e.website} href={(_f = truck.contact_info) === null || _f === void 0 ? void 0 : _f.website} unavailableText="No website available"/>
 
         <SocialMediaLinks socialMedia={truck.social_media}/>
       </CardContent>

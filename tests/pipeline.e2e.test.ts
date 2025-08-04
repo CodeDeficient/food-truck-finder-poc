@@ -1,4 +1,3 @@
-// @ts-expect-error TS(2792): Cannot find module '@playwright/test'. Did you mea... Remove this comment to see the full error message
 import { test, expect } from '@playwright/test';
 import { cleanupTestData, setupTestData } from './utils/testSetup';
 

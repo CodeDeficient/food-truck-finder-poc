@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "es2022",
+    "noEmit": false,
+    "declaration": true,
+    "outDir": "./.github/actions/scrape/dist",
+    "downlevelIteration": true
+  },
+  "include": ["src/actions/**/*.ts"],
+  "exclude": ["node_modules", "dist", "lib"]
+}

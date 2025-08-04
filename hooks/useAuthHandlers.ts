@@ -77,10 +77,19 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
             throw profileError;
           }
 
-          if (profile?.role === 'admin') {
-            router.push(redirectTo);
-          } else {
-            router.push('/access-denied');
+          // Role-based redirects
+          switch (profile?.role) {
+            case 'admin':
+              router.push(redirectTo.startsWith('/admin') ? redirectTo : '/admin');
+              break;
+            case 'food_truck_owner':
+              router.push('/owner-dashboard');
+              break;
+            case 'customer':
+              router.push('/user-dashboard');
+              break;
+            default:
+              router.push('/access-denied');
           }
         }
       } catch (error_: unknown) {

@@ -4,8 +4,189 @@ async function findAndMergeDuplicates() {
   console.log('=== Finding and Merging Duplicate Food Trucks ===\n');
   
   // Import modules
-  const { createClient } = await import('@supabase/supabase-js');
+  const { createClient } = require('@supabase/supabase-js');
   
+  // Copy the duplicate prevention logic directly to avoid import issues
+  const DUPLICATE_DETECTION_CONFIG = {
+    thresholds: {
+      name: 0.85,
+      location: 0.9,
+      phone: 1,
+      website: 1,
+      overall: 0.8,
+    },
+    weights: {
+      name: 0.4,
+      location: 0.3,
+      contact: 0.2,
+      menu: 0.1,
+    },
+  };
+
+  // Helper functions copied from duplicatePrevention.js
+  function normalizeFoodTruckName(name) {
+    if (!name) return '';
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[\u2018\u2019\u0060\u00B4]/g, "'")
+      .replace(/\s*\b(food\s+truck|food\s+trailer|mobile\s+kitchen|street\s+food|food\s+cart)\b\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .replace(/[^\w\s&'-]/g, '')
+      .trim();
+  }
+
+  function calculateStringSimilarity(str1, str2) {
+    if (!str1 || !str2) return 0;
+    const normalized1 = normalizeFoodTruckName(str1);
+    const normalized2 = normalizeFoodTruckName(str2);
+    if (normalized1 === normalized2) return 1;
+    
+    const isSubstring = normalized1.includes(normalized2) || normalized2.includes(normalized1);
+    if (isSubstring && (normalized1.length > 0 && normalized2.length > 0)) {
+      const minLength = Math.min(normalized1.length, normalized2.length);
+      const maxLength = Math.max(normalized1.length, normalized2.length);
+      return 0.8 + (0.15 * (minLength / maxLength));
+    }
+
+    const matrix = [];
+    const len1 = normalized1.length;
+    const len2 = normalized2.length;
+
+    for (let i = 0; i <= len1; i++) {
+      matrix[i] = [i];
+    }
+    for (let j = 0; j <= len2; j++) {
+      matrix[0][j] = j;
+    }
+    for (let i = 1; i <= len1; i++) {
+      for (let j = 1; j <= len2; j++) {
+        const cost = normalized1[i - 1] === normalized2[j - 1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j - 1] + cost
+        );
+      }
+    }
+
+    const distance = matrix[len1][len2];
+    const maxLength = Math.max(len1, len2);
+    return maxLength === 0 ? 1 : 1 - distance / maxLength;
+  }
+
+  function calculateLocationSimilarity(loc1, loc2) {
+    if (!loc1 || !loc2) return 0;
+    let similarity = 0;
+    let factors = 0;
+
+    if (loc1.address && loc2.address) {
+      similarity += calculateStringSimilarity(loc1.address, loc2.address);
+      factors += 1;
+    }
+
+    if (loc1.lat && loc1.lng && loc2.lat && loc2.lng) {
+      const R = 6371;
+      const dLat = ((loc2.lat - loc1.lat) * Math.PI) / 180;
+      const dLng = ((loc2.lng - loc1.lng) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((loc1.lat * Math.PI) / 180) *
+        Math.cos((loc2.lat * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+      const distanceSimilarity = distance <= 0.1 ? 1 : Math.max(0, 1 - distance / 1);
+      similarity += distanceSimilarity;
+      factors += 1;
+    }
+
+    return factors > 0 ? similarity / factors : 0;
+  }
+
+  function calculateContactSimilarity(contact1, contact2) {
+    if (!contact1 || !contact2) return 0;
+    let matches = 0;
+    let total = 0;
+
+    if (contact1.phone != undefined && contact2.phone != undefined) {
+      const phone1 = contact1.phone.replaceAll(/\D/g, '');
+      const phone2 = contact2.phone.replaceAll(/\D/g, '');
+      if (phone1 === phone2) matches += 1;
+      total += 1;
+    }
+
+    if (contact1.website != undefined && contact2.website != undefined) {
+      const url1 = contact1.website
+        .toLowerCase()
+        .replace(/^https?:\/\//, '')
+        .replace(/\/$/, '');
+      const url2 = contact2.website
+        .toLowerCase()
+        .replace(/^https?:\/\//, '')
+        .replace(/\/$/, '');
+      if (url1 === url2) matches += 1;
+      total += 1;
+    }
+
+    if (contact1.email != undefined && contact2.email != undefined) {
+      if (contact1.email.toLowerCase() === contact2.email.toLowerCase()) matches += 1;
+      total += 1;
+    }
+
+    return total > 0 ? matches / total : 0;
+  }
+
+  function calculateMenuSimilarity(menu1, menu2) {
+    if (!menu1 || !menu2 || menu1.length === 0 || menu2.length === 0) return 0;
+    const categories1 = menu1
+      .map((cat) => cat.category?.toLowerCase() ?? '')
+      .filter(Boolean);
+    const categories2 = menu2
+      .map((cat) => cat.category?.toLowerCase() ?? '')
+      .filter(Boolean);
+    const commonCategories = categories1.filter((cat) => categories2.includes(cat));
+    const totalCategories = new Set([...categories1, ...categories2]).size;
+    return totalCategories > 0 ? commonCategories.length / totalCategories : 0;
+  }
+
+  function calculateSimilarity(candidate, existing) {
+    const breakdown = {};
+    const matchedFields = [];
+
+    const nameSimilarity = calculateStringSimilarity(candidate.name ?? '', existing.name ?? '');
+    breakdown.name = nameSimilarity;
+    if (nameSimilarity >= DUPLICATE_DETECTION_CONFIG.thresholds.name) {
+      matchedFields.push('name');
+    }
+
+    const locationSimilarity = calculateLocationSimilarity(candidate.current_location, existing.current_location);
+    breakdown.location = locationSimilarity;
+    if (locationSimilarity >= DUPLICATE_DETECTION_CONFIG.thresholds.location) {
+      matchedFields.push('location');
+    }
+
+    const contactSimilarity = calculateContactSimilarity(candidate.contact_info, existing.contact_info);
+    breakdown.contact = contactSimilarity;
+    if (contactSimilarity >= DUPLICATE_DETECTION_CONFIG.thresholds.phone) {
+      matchedFields.push('contact');
+    }
+
+    const menuSimilarity = calculateMenuSimilarity(candidate.menu, existing.menu);
+    breakdown.menu = menuSimilarity;
+    if (menuSimilarity > 0.7) {
+      matchedFields.push('menu');
+    }
+
+    const overall =
+      nameSimilarity * DUPLICATE_DETECTION_CONFIG.weights.name +
+      locationSimilarity * DUPLICATE_DETECTION_CONFIG.weights.location +
+      contactSimilarity * DUPLICATE_DETECTION_CONFIG.weights.contact +
+      menuSimilarity * DUPLICATE_DETECTION_CONFIG.weights.menu;
+
+    return { overall, matchedFields, breakdown };
+  }
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -24,7 +205,7 @@ async function findAndMergeDuplicates() {
 
   console.log(`Analyzing ${allTrucks.length} food trucks for duplicates...\n`);
 
-  // Group potential duplicates by similar names
+  // Group potential duplicates using enhanced duplicate prevention logic
   const duplicateGroups = [];
   const processed = new Set();
 
@@ -35,23 +216,17 @@ async function findAndMergeDuplicates() {
     const group = [truck];
     processed.add(i);
 
-    // Find similar trucks
+    // Find similar trucks using enhanced duplicate detection
     for (let j = i + 1; j < allTrucks.length; j++) {
       if (processed.has(j)) continue;
       
       const otherTruck = allTrucks[j];
       
-      // Check for name similarity (case insensitive, partial match)
-      const name1 = truck.name.toLowerCase().trim();
-      const name2 = otherTruck.name.toLowerCase().trim();
+      // Use the sophisticated duplicate prevention logic
+      const similarity = calculateSimilarity(truck, otherTruck);
       
-      // Check if names are similar
-      if (
-        name1 === name2 || // Exact match
-        name1.includes(name2) || // One contains the other
-        name2.includes(name1) ||
-        levenshteinDistance(name1, name2) <= 3 // Close match
-      ) {
+      // Check if they are duplicates based on the enhanced threshold
+      if (similarity.overall >= 0.8) { // Use the same threshold as real-time system
         group.push(otherTruck);
         processed.add(j);
       }
@@ -144,31 +319,6 @@ function calculateDataScore(truck) {
   if (truck.source_urls?.length > 0) score += truck.source_urls.length;
   if (truck.last_scraped_at) score += 2;
   return score;
-}
-
-// Simple Levenshtein distance for string similarity
-function levenshteinDistance(a, b) {
-  const matrix = [];
-  for (let i = 0; i <= b.length; i++) {
-    matrix[i] = [i];
-  }
-  for (let j = 0; j <= a.length; j++) {
-    matrix[0][j] = j;
-  }
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
-        );
-      }
-    }
-  }
-  return matrix[b.length][a.length];
 }
 
 findAndMergeDuplicates().catch(console.error);
