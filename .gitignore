@@ -4,6 +4,9 @@
 /node_modules
 bfg-1.15.0.jar
 
+# Security tools (large binaries)
+trufflehog.exe
+
 # next.js
 /.next/
 /out/
