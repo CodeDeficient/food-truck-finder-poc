@@ -1,0 +1,62 @@
+# TruffleHog Custom Configuration
+# Reduces false positives by excluding common development patterns
+
+detectors:
+  - name: ExcludeESLintRules
+    keywords:
+      - "eslint"
+      - "ruleId"
+    exclude_regexes_match:
+      - "\"ruleId\":\\s*\"[^\"]*\""
+      - "max-lines-per-function"
+      - "@typescript-eslint/.*"
+      - "sonarjs/.*"
+      - "unicorn/.*"
+      - "no-unsafe-.*"
+    exclude_words:
+      - "ruleId"
+      - "eslint"
+      - "typescript-eslint"
+      - "sonarjs"
+      - "unicorn"
+
+  - name: ExcludeCodePatterns
+    keywords:
+      - "ReadableStream"
+      - "food-truck-finder"
+      - "DataProcessing"
+    exclude_regexes_match:
+      - "ReadableStreamDefault.*"
+      - "food-truck-finder-po.*"
+      - "DataProcessingServic.*"
+      - "CachedFoodTruckServi.*"
+      - "ExtractedFoodTruckDe.*"
+      - "FirecrawlRequestBody"
+      - "calculateMetricsSumm.*"
+      - "UpdateFoodTruckSchem.*"
+      - "mapExtractedDataToTr.*"
+      - "handleFirecrawlStage"
+      - "performDataQualityCheck.*"
+    exclude_words:
+      - "ReadableStream"
+      - "DataProcessing"
+      - "CachedFoodTruck"
+      - "ExtractedFoodTruck"
+      - "FirecrawlRequest"
+      - "UpdateFoodTruck"
+      - "handleFirecrawl"
+      - "performDataQuality"
+
+  - name: ExcludeTestResults
+    keywords:
+      - "filePath"
+      - "source"
+    exclude_regexes_match:
+      - "\"filePath\":\\s*\"[^\"]*test-results[^\"]*\""
+      - "\"filePath\":\\s*\"[^\"]*current-errors[^\"]*\""
+      - "C:\\\\AI\\\\food-truck-finder-poc\\\\.*"
+    exclude_words:
+      - "filePath"
+      - "test-results"
+      - "current-errors"
+      - "food-truck-finder-poc"
