@@ -1,0 +1,7 @@
+tests/results/.*
+.*lint.*\.json
+.*error.*\.json
+.*batch.*\.json
+.*report.*\.json
+.*current-errors.*\.json
+.*test-results.*
