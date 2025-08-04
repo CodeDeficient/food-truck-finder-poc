@@ -343,6 +343,9 @@ export const Modal: React.FC<ModalProps> = (props) => {
 // Export individual modal components for direct usage
 export { SimpleModal, ContentModal, FormModal, ConfirmationModal };
 
+// Export hooks
+export * from './hooks';
+
 // Export types
 export * from './types';
 

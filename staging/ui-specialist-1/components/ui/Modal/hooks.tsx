@@ -115,7 +115,7 @@ export interface UseFormModalReturn extends UseModalReturn {
   isSubmitting: boolean;
   setSubmitting: (submitting: boolean) => void;
   submitForm: () => void;
-  formRef: React.RefObject<HTMLFormElement>;
+  formRef: React.RefObject<HTMLFormElement | null>;
 }
 
 /**

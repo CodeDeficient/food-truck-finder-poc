@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Modal, useModal, useFormModal, useConfirmationModal } from '../components/ui/Modal';
-import { Button } from '../components/ui/button';
+import { Button } from '../../../components/ui/button';
 
 /**
  * Simple Modal Example
