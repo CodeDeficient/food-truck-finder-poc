@@ -3,60 +3,13 @@
 
 detectors:
   - name: ExcludeESLintRules
-    keywords:
-      - "eslint"
-      - "ruleId"
-    exclude_regexes_match:
-      - "\"ruleId\":\\s*\"[^\"]*\""
-      - "max-lines-per-function"
-      - "@typescript-eslint/.*"
-      - "sonarjs/.*"
-      - "unicorn/.*"
-      - "no-unsafe-.*"
-    exclude_words:
-      - "ruleId"
-      - "eslint"
-      - "typescript-eslint"
-      - "sonarjs"
-      - "unicorn"
+    regex:
+      pattern: "^\\s*\\b(?:ruleId|eslint|typescript-eslint|sonarjs|unicorn|no-unsafe).*"
 
   - name: ExcludeCodePatterns
-    keywords:
-      - "ReadableStream"
-      - "food-truck-finder"
-      - "DataProcessing"
-    exclude_regexes_match:
-      - "ReadableStreamDefault.*"
-      - "food-truck-finder-po.*"
-      - "DataProcessingServic.*"
-      - "CachedFoodTruckServi.*"
-      - "ExtractedFoodTruckDe.*"
-      - "FirecrawlRequestBody"
-      - "calculateMetricsSumm.*"
-      - "UpdateFoodTruckSchem.*"
-      - "mapExtractedDataToTr.*"
-      - "handleFirecrawlStage"
-      - "performDataQualityCheck.*"
-    exclude_words:
-      - "ReadableStream"
-      - "DataProcessing"
-      - "CachedFoodTruck"
-      - "ExtractedFoodTruck"
-      - "FirecrawlRequest"
-      - "UpdateFoodTruck"
-      - "handleFirecrawl"
-      - "performDataQuality"
+    regex:
+      pattern: "^(ReadableStream|food-truck-finder|DataProcessing|CachedFoodTruck|ExtractedFoodTruck|FirecrawlRequest|UpdateFoodTruck|handleFirecrawl|performDataQuality).*$"
 
   - name: ExcludeTestResults
-    keywords:
-      - "filePath"
-      - "source"
-    exclude_regexes_match:
-      - "\"filePath\":\\s*\"[^\"]*test-results[^\"]*\""
-      - "\"filePath\":\\s*\"[^\"]*current-errors[^\"]*\""
-      - "C:\\\\AI\\\\food-truck-finder-poc\\\\.*"
-    exclude_words:
-      - "filePath"
-      - "test-results"
-      - "current-errors"
-      - "food-truck-finder-poc"
+    regex:
+      pattern: "^(filePath|test-results|current-errors|food-truck-finder-poc).*$"
