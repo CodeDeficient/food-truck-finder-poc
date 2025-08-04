@@ -1,0 +1,534 @@
+﻿[
+    {
+        "BranchName":  "add-more-logging",
+        "BranchType":  "other",
+        "LatestHash":  "51313ae710b2a626a2319ad50e68ef40e65a57f9",
+        "LatestMsg":  "\u0027Update THE-9-MILLION-DOLLAR-CODE.md\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  115,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  87
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  20
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  8
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "add-more-logging",
+        "BranchType":  "other",
+        "LatestHash":  "51313ae710b2a626a2319ad50e68ef40e65a57f9",
+        "LatestMsg":  "\u0027Update THE-9-MILLION-DOLLAR-CODE.md\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  115,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  87
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  20
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  8
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "add-more-logging",
+        "BranchType":  "other",
+        "LatestHash":  "51313ae710b2a626a2319ad50e68ef40e65a57f9",
+        "LatestMsg":  "\u0027Update THE-9-MILLION-DOLLAR-CODE.md\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  115,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  87
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  20
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  8
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "add-more-logging",
+        "BranchType":  "other",
+        "LatestHash":  "51313ae710b2a626a2319ad50e68ef40e65a57f9",
+        "LatestMsg":  "\u0027Update THE-9-MILLION-DOLLAR-CODE.md\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  115,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  87
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  20
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  8
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "data-specialist-2-work",
+        "BranchType":  "other",
+        "LatestHash":  "91507f7087f4bb64207d90f1ea3e1d7258d05f82",
+        "LatestMsg":  "\u0027UI_SPECIALIST_2 work staging for review - Task 1.2 Badge \u0026 Layout Optimization\u0027",
+        "MergeBaseHash":  "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+        "CommitsSinceBase":  93,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  86
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  7
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "debug/leaflet-map-load",
+        "BranchType":  "other",
+        "LatestHash":  "2d5425f7598e248fb75811c81b8891d7ab59a66f",
+        "LatestMsg":  "\u0027feat: restore full truck card accordion functionality with map integration\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  5,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  5
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feat/restore-finder-layout",
+        "BranchType":  "feature",
+        "LatestHash":  "91507f7087f4bb64207d90f1ea3e1d7258d05f82",
+        "LatestMsg":  "\u0027UI_SPECIALIST_2 work staging for review - Task 1.2 Badge \u0026 Layout Optimization\u0027",
+        "MergeBaseHash":  "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+        "CommitsSinceBase":  93,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  86
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  7
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feat/sc-food-truck-pipeline",
+        "BranchType":  "feature",
+        "LatestHash":  "5013a65a8f4a3c5e182011810440321f3d4a72e0",
+        "LatestMsg":  "\u0027I\u0027ve made some changes to address issues with how HTML content was being accessed and to restore some functionality:\u0027",
+        "MergeBaseHash":  "5ce649d40464b89d6fe212d55a04685dcfcdcd54",
+        "CommitsSinceBase":  6,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  6
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feature/admin-dashboard-updates-p1",
+        "BranchType":  "feature",
+        "LatestHash":  "de55045f5963df000d871782d6f54e7a0ea86a28",
+        "LatestMsg":  "\u0027Admin Dashboard Phase 2 Progress \u0026 API Cleanup\u0027",
+        "MergeBaseHash":  "41b9ba301f7becb0810d1857c4456799a4ec43b6",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feature/admin-dashboard-updates-p1",
+        "BranchType":  "feature",
+        "LatestHash":  "de55045f5963df000d871782d6f54e7a0ea86a28",
+        "LatestMsg":  "\u0027Admin Dashboard Phase 2 Progress \u0026 API Cleanup\u0027",
+        "MergeBaseHash":  "41b9ba301f7becb0810d1857c4456799a4ec43b6",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feature/github-actions-scraper",
+        "BranchType":  "feature",
+        "LatestHash":  "ee13974f8fada60e137e497ca3dde5bd872dc80e",
+        "LatestMsg":  "\u0027\\\"fix: Add ncc target and minify options to bundle-action.cjs\\\"\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  91,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  72
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  19
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feature/phase-4-ui-overhaul",
+        "BranchType":  "feature",
+        "LatestHash":  "adb9966329639effcbd04f2c4c9ac07af73a182e",
+        "LatestMsg":  "\u0027fix: remove unsupported style prop from TileLayer component\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  34,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  32
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  2
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "feature/pipeline-improvements",
+        "BranchType":  "feature",
+        "LatestHash":  "efbd22c22efbbfa76b6e749162e11ea155cfa22a",
+        "LatestMsg":  "\u0027Fix ESM import issues and update duplicate prevention for GitHub Actions pipeline\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  124,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  97
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  19
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  8
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix-GitHub-action-path-resolution",
+        "BranchType":  "other",
+        "LatestHash":  "4140ec3faf050c4e904c0187bba39a2702239835",
+        "LatestMsg":  "\u0027Update github-action-scraper.js\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  52,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  45
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  7
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/action-bundling",
+        "BranchType":  "hotfix",
+        "LatestHash":  "9b751ea3ef61f888f6901d113c7b7fff6b129314",
+        "LatestMsg":  "\u0027fix: Add .js extension to all relative imports in lib directory\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  95,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  72
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  19
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  4
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/critical-code-quality-issues",
+        "BranchType":  "hotfix",
+        "LatestHash":  "4e179a753594baff619adb1b7999ddbd2f6fab2b",
+        "LatestMsg":  "\u0027fix: Address critical code quality issues\u0027",
+        "MergeBaseHash":  "c739b1db29beb968a627dba1ba96524ad1a402a3",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/dir-imports",
+        "BranchType":  "hotfix",
+        "LatestHash":  "1edb8b5986869f77408f3e1b226555ca406f6ed2",
+        "LatestMsg":  "\u0027Update execute-migration.cjs\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  158,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  129
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  21
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  8
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/github-action",
+        "BranchType":  "hotfix",
+        "LatestHash":  "7ec4e15fbe5b208d234f9203fa47bd9e32f0c0a2",
+        "LatestMsg":  "\u0027I\u0027ve refactored the scraping workflow to use a local action.\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  97,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  72
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  19
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  6
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/leaflet-map-reinitialization",
+        "BranchType":  "hotfix",
+        "LatestHash":  "0635106a507cbc652d330b0033c1a27f3aab1051",
+        "LatestMsg":  "\u0027fix(map): prevent leaflet map re-initialization\u0027",
+        "MergeBaseHash":  "116882ebf80f3705fe2cd9ee8bf3890fab6265df",
+        "CommitsSinceBase":  3,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  3
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/linter-errors-batch-1",
+        "BranchType":  "hotfix",
+        "LatestHash":  "ea62333d619ad039f0360e1549549834ccbc8a6c",
+        "LatestMsg":  "\u0027Fix: Address multiple ESLint rule violations\u0027",
+        "MergeBaseHash":  "ebfa0a1ff7c624b8aaabf0374d923aee717e8819",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/linting-and-scripts",
+        "BranchType":  "hotfix",
+        "LatestHash":  "c324997120887be5d3ab3971064ab1fb77ebdb19",
+        "LatestMsg":  "\u0027Fix linting issues and harden scripts\u0027",
+        "MergeBaseHash":  "ea5be7eb36caf8beeea36d3b4bd4f59fd20725d1",
+        "CommitsSinceBase":  4,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  3
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/linting-and-tests-v2",
+        "BranchType":  "hotfix",
+        "LatestHash":  "25ce6687c1e5aae70cd2653cafd8fc1257265f0a",
+        "LatestMsg":  "\u0027Fix various linting issues and test failures\u0027",
+        "MergeBaseHash":  "b6d275a79692a033f7fa741244fb7f45aa01e4d3",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/map-init-error",
+        "BranchType":  "hotfix",
+        "LatestHash":  "5f4ec404bbc21a55bc1a198c13f6449e6c353130",
+        "LatestMsg":  "\u0027Fix: Re-integrate Next.js ESLint config via FlatCompat\u0027",
+        "MergeBaseHash":  "c739b1db29beb968a627dba1ba96524ad1a402a3",
+        "CommitsSinceBase":  10,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  10
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/mermaid-diagrams",
+        "BranchType":  "hotfix",
+        "LatestHash":  "aa1efd5cfea281bcd062b151bc7412623cd16973",
+        "LatestMsg":  "\u0027fix: update all Mermaid diagrams to SOTA GitHub-compatible syntax\u0027",
+        "MergeBaseHash":  "f3a66110c774294d2e917090b9b290baba286ffd",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/type-errors-and-initial-dedupe",
+        "BranchType":  "hotfix",
+        "LatestHash":  "181eefe2ddf790e3eba0a930c4141b7a3eff3c15",
+        "LatestMsg":  "\u0027Fix: Address critical type errors and initial code cleanup\u0027",
+        "MergeBaseHash":  "63d7232eb0c773321e1314264f8a0f35501ed7fe",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "fix/type-errors-and-initial-dedupe",
+        "BranchType":  "hotfix",
+        "LatestHash":  "181eefe2ddf790e3eba0a930c4141b7a3eff3c15",
+        "LatestMsg":  "\u0027Fix: Address critical type errors and initial code cleanup\u0027",
+        "MergeBaseHash":  "63d7232eb0c773321e1314264f8a0f35501ed7fe",
+        "CommitsSinceBase":  1,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "linting-fixes-phase1-3",
+        "BranchType":  "other",
+        "LatestHash":  "a32be1c17c4dc116f257177429b232170d594c92",
+        "LatestMsg":  "\u0027Refactor: Linting error reduction and ESLint configuration improvements.\u0027",
+        "MergeBaseHash":  "ea5be7eb36caf8beeea36d3b4bd4f59fd20725d1",
+        "CommitsSinceBase":  3,
+        "TopAuthors":  [
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  2
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "linting-remediation-attempt-1",
+        "BranchType":  "other",
+        "LatestHash":  "0dcf203bddc18df9dc34f4e1787525d5792dad9a",
+        "LatestMsg":  "\u0027Update database.types.ts\u0027",
+        "MergeBaseHash":  "ea5be7eb36caf8beeea36d3b4bd4f59fd20725d1",
+        "CommitsSinceBase":  2,
+        "TopAuthors":  [
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  1
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "main",
+        "BranchType":  "main",
+        "LatestHash":  "ec221a242f3e19dca28d955160e7f4c1cf74b99b",
+        "LatestMsg":  "\u0027Update workflow to point at rebuilt GitHub action file\u0027",
+        "MergeBaseHash":  "",
+        "CommitsSinceBase":  0,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  180
+                           },
+                           {
+                               "Author":  "Daniel King \u003c89734689+CodeDeficient@users.noreply.github.com\u003e",
+                               "Count":  45
+                           },
+                           {
+                               "Author":  "google-labs-jules[bot] \u003c161369871+google-labs-jules[bot]@users.noreply.github.com\u003e",
+                               "Count":  23
+                           },
+                           {
+                               "Author":  "CodeAnt AI \u003csupport@codeant.ai\u003e",
+                               "Count":  20
+                           },
+                           {
+                               "Author":  "v0 \u003cvercel[bot]@users.noreply.github.com\u003e",
+                               "Count":  1
+                           }
+                       ]
+    },
+    {
+        "BranchName":  "vercel-deployment-fix",
+        "BranchType":  "other",
+        "LatestHash":  "2d5425f7598e248fb75811c81b8891d7ab59a66f",
+        "LatestMsg":  "\u0027feat: restore full truck card accordion functionality with map integration\u0027",
+        "MergeBaseHash":  "58d61158fd957580b7aec2ae7c32678ec00ebcfd",
+        "CommitsSinceBase":  5,
+        "TopAuthors":  [
+                           {
+                               "Author":  "CodeDeficient \u003cuser@example.com\u003e",
+                               "Count":  5
+                           }
+                       ]
+    }
+]

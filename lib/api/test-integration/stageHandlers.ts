@@ -8,7 +8,7 @@ import {
   type StageResult,
   type FoodTruckSchema,
 } from '@/lib/types';
-import { mapExtractedDataToTruckSchema } from './schemaMapper';
+import { mapExtractedDataToTruckSchema } from './schemaMapper.js';
 
 function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error) return error.message;

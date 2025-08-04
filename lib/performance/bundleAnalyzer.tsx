@@ -122,21 +122,7 @@ export function checkPerformanceBudget(analysis: Partial<BundleAnalysis>): {
 /**
  * Dynamic import utilities for code splitting
  */
-export const DynamicImports = {
-  // Admin dashboard components
-  AdminDashboard: () => import('@/app/admin/page'),
-  FoodTruckManagement: () => import('@/app/admin/food-trucks/page'),
-  Analytics: () => import('@/app/admin/analytics/page'),
 
-  // Chart components (heavy dependencies)
-  Charts: () => import('recharts'),
-
-  // Authentication components
-  LoginPage: () => import('@/app/login/page'),
-
-  // Map components - commented out until component exists
-  // MapDisplay: () => import('@/components/MapDisplay'),
-};
 
 /**
  * Optimized imports for common libraries
@@ -185,7 +171,11 @@ export class BundlePerformanceMonitor {
    * Get chunk load statistics
    */
   static getLoadStats(): Array<{ chunk: string; loadTime: number }> {
-    return [...this.loadTimes.entries()].map(([chunk, loadTime]) => ({
+    const entries: [string, number][] = [];
+    this.loadTimes.forEach((loadTime, chunk) => {
+      entries.push([chunk, loadTime]);
+    });
+    return entries.map(([chunk, loadTime]) => ({
       chunk,
       loadTime,
     }));
@@ -195,7 +185,10 @@ export class BundlePerformanceMonitor {
    * Get average load time
    */
   static getAverageLoadTime(): number {
-    const times = [...this.loadTimes.values()];
+    const times: number[] = [];
+    this.loadTimes.forEach((time) => {
+      times.push(time);
+    });
     return times.length > 0 ? times.reduce((sum, time) => sum + time, 0) / times.length : 0;
   }
 }

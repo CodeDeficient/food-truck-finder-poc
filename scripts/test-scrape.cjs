@@ -5,7 +5,7 @@ async function testScrape() {
   
   // Check environment variables
   console.log('Environment Check:');
-  console.log('- SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✓ Set' : '✗ Missing');
+  console.log('- NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✓ Set' : '✗ Missing');
   console.log('- SUPABASE_SERVICE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? '✓ Set' : '✗ Missing');
   console.log('- FIRECRAWL_API_KEY:', process.env.FIRECRAWL_API_KEY ? '✓ Set' : '✗ Missing');
   console.log('- GEMINI_API_KEY:', process.env.GEMINI_API_KEY ? '✓ Set' : '✗ Missing');

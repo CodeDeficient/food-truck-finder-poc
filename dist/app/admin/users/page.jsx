@@ -16,6 +16,7 @@ import { UserTable } from '@/components/admin/users/UserTable';
  *   - Maps profile roles to users, defaulting roles to 'user' when not found.
  */
 async function getUsersData() {
+    var _a, _b;
     if (!supabaseAdmin) {
         throw new Error('Supabase admin client not available');
     }
@@ -24,7 +25,7 @@ async function getUsersData() {
         console.error('Error fetching users:', error);
         return [];
     }
-    const users = data.users ?? [];
+    const users = (_a = data.users) !== null && _a !== void 0 ? _a : [];
     // Fetch profiles to get roles
     const { data: profiles, error: profilesError } = await supabaseAdmin
         .from('profiles')
@@ -33,14 +34,17 @@ async function getUsersData() {
         console.error('Error fetching profiles:', profilesError);
         // Continue with users data even if profiles fetch fails
     }
-    const profilesMap = new Map(profiles?.map((p) => [p.id, p.role]) ?? []);
-    return users.map((user) => ({
-        id: user.id,
-        email: user.email,
-        created_at: user.created_at,
-        last_sign_in_at: user.last_sign_in_at,
-        role: profilesMap.get(user.id) ?? 'user', // Default to 'user' if no profile role
-    }));
+    const profilesMap = new Map((_b = profiles === null || profiles === void 0 ? void 0 : profiles.map((p) => [p.id, p.role])) !== null && _b !== void 0 ? _b : []);
+    return users.map((user) => {
+        var _a;
+        return ({
+            id: user.id,
+            email: user.email,
+            created_at: user.created_at,
+            last_sign_in_at: user.last_sign_in_at,
+            role: (_a = profilesMap.get(user.id)) !== null && _a !== void 0 ? _a : 'user', // Default to 'user' if no profile role
+        });
+    });
 }
 /**
  * Renders the header section for the user management page

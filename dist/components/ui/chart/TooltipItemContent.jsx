@@ -28,9 +28,10 @@ import { cn } from '@/lib/utils';
  *   - Uses 'text-muted-foreground' and 'text-foreground' for text styling.
  */
 export function TooltipItemContent(props) {
+    var _a;
     const { formatter, itemData, item, index, itemConfig, nestLabel, tooltipLabel } = props;
     if (formatter !== undefined &&
-        itemData?.value !== undefined &&
+        (itemData === null || itemData === void 0 ? void 0 : itemData.value) !== undefined &&
         itemData.name !== undefined &&
         itemData.name !== '') {
         const payloadArray = Array.isArray(itemData.payload)
@@ -41,7 +42,7 @@ export function TooltipItemContent(props) {
     return (<div className={cn('flex flex-1 justify-between leading-none', nestLabel ? 'items-end' : 'items-center')}>
       <div className="grid gap-1.5">
         {nestLabel ? tooltipLabel : undefined}
-        <span className="text-muted-foreground">{itemConfig?.label ?? itemData.name}</span>
+        <span className="text-muted-foreground">{(_a = itemConfig === null || itemConfig === void 0 ? void 0 : itemConfig.label) !== null && _a !== void 0 ? _a : itemData.name}</span>
       </div>
       {itemData.value !== undefined && itemData.value !== 0 && (<span className="font-mono font-medium tabular-nums text-foreground">
           {itemData.value.toLocaleString()}

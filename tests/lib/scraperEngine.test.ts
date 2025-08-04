@@ -1,6 +1,6 @@
 // lib/scraperEngine.test.ts
-import { ScraperEngine, GeminiDataProcessor } from '@/lib/ScraperEngine.ts';
-import { firecrawl } from '@/lib/firecrawl.ts';
+import { ScraperEngine, GeminiDataProcessor } from '@/lib/ScraperEngine.js';
+import { firecrawl } from '@/lib/firecrawl.js';
 
 // Mock firecrawl
 jest.mock('@/lib/firecrawl', () => ({

@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-// @ts-expect-error TS(2306): File 'C:/AI/food-truck-finder-poc/lib/database.typ... Remove this comment to see the full error message
-import { Database } from './database.types';
+import { Database } from './types.js';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**

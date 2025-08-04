@@ -1,11 +1,39 @@
 # Duplication Remediation Guide
 
+## Current Issue: Large-Scale Duplication (435+ Changes)
+
+The project is currently experiencing significant code duplication and a large number of changes due to the mixed nature of the codebase and build processes. Here's a detailed breakdown of the issues and solutions.
+
+### Root Causes of Duplication
+
+1. **Mixed Module Systems**
+   - Next.js web application
+   - Node.js ESM modules for GitHub Actions
+   - Shared utilities being compiled multiple times
+
+2. **Multiple Build Targets**
+   - Next.js compilation generates one set of files
+   - TypeScript compilation for Actions generates another set
+   - Both processes transform the same source files differently
+
+3. **Import Resolution Conflicts**
+   - Next.js uses path aliases (`@/*`)
+   - Node.js ESM requires `.js` extensions
+   - Different module resolution strategies cause duplicate outputs
+
+### Impact on /dist Directory
+
+The `/dist` directory has become bloated because:
+- Files are being compiled twice for different targets
+- Each compilation process handles imports differently
+- Shared code is duplicated with different import statements
+
 ## Work Breakdown Structure (WBS) Checklist
 
 ### Phase 1: Analysis and Prioritization
-- [x] Read `jscpd-report/jscpd-report.json` to identify all duplicate code instances.
-- [x] Categorize duplicates (e.g., UI components, utility functions, hooks, interfaces).
-- [x] Prioritize fixes based on file timestamps (newer files take precedence).
+- [x] Read `jscpd-report/jscpd-report.json` to identify all duplicate code instances
+- [x] Categorize duplicates (e.g., UI components, utility functions, hooks, interfaces)
+- [x] Prioritize fixes based on file timestamps (newer files take precedence)
 
 ### Phase 2: Implementation
 - [x] **Refactor `RealtimeMetrics` interface:**

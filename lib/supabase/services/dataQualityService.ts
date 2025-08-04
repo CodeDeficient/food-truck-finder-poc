@@ -1,6 +1,6 @@
-import { supabaseAdmin } from '../client';
-import type { FoodTruck } from '../types';
-import { handleSupabaseError } from '../utils';
+import { getSupabaseAdmin } from '../client.js';
+import type { FoodTruck } from '../types/index.js';
+import { handleSupabaseError } from '../utils/index.js';
 import { type PostgrestSingleResponse } from '@supabase/supabase-js';
 
 export const DataQualityService = {
@@ -31,6 +31,7 @@ export const DataQualityService = {
   },
 
   async updateTruckQualityScore(truckId: string): Promise<FoodTruck | { error: string }> {
+    const supabaseAdmin = getSupabaseAdmin();
     if (!supabaseAdmin) {
       return { error: 'Admin operations require SUPABASE_SERVICE_ROLE_KEY' };
     }

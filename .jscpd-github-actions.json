@@ -1,0 +1,32 @@
+{
+  "reporters": ["consoleFull", "json"],
+  "output": "jscpd-report/github-actions/",
+  "minLines": 5,
+  "minTokens": 50,
+  "absolute": true,
+  "blame": true,
+  "ignore": [
+    "**/lib/database.types.ts",
+    "**/.claude-thoughts/**",
+    "**/.claudethoughts/**",
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/*.md",
+    "**/build/**",
+    "**/docs/**",
+    "**/.clinerules/**",
+    "**/.husky/**",
+    "**/.next/**",
+    "**/CodeAnt/**",
+    "**/errors/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/tests/**",
+    "**/supabase/**",
+    "**/dist/**",
+    "**/jscpd-report/**",
+    "**/*.d.ts"
+  ],
+  "gitignore": true,
+  "formats": ["javascript", "typescript"]
+}

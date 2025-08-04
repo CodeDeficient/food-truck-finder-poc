@@ -447,8 +447,10 @@ async function previewCleanupOperations(operations: string[]): Promise<PreviewRe
       estimatedChanges: result.summary as Record<string, unknown>,
       operationDetails: (() => {
         const details: Record<string, unknown> = {};
-        for (const [index, op] of result.operations.entries()) {
-          details[`operation_${index}`] = {
+        const operationsArray = Array.from(result.operations.entries());
+        for (let index = 0; index < operationsArray.length; index++) {
+          const [idx, op] = operationsArray[index];
+          details[`operation_${idx}`] = {
             type: op.type,
             description: op.description,
             affectedCount: op.affectedCount,

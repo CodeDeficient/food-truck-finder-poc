@@ -1,7 +1,7 @@
 // lib/utils/typeGuards.ts
 
 // Helper types from lib/types.ts are imported at the top for clarity.
-import type { FoodTruck, PriceRange, MenuCategory, MenuItem, DailyOperatingHours, OperatingHours, LocationData, FoodTruckSchema } from '../types';
+import type { FoodTruck, PriceRange, MenuCategory, MenuItem, DailyOperatingHours, OperatingHours, LocationData, FoodTruckSchema } from '../types.js';
 
 // --- CORE UTILITY FUNCTIONS (Task 1.1.1 & 1.1.2) ---
 

@@ -6,14 +6,7 @@ import { getAndFilterFoodTrucks, sortFoodTrucksByQuality } from '@/lib/api/searc
  * @example
  * processSearchRequest(request)
  * { trucks: [/* filtered food trucks */
-export async function processSearchRequest(request) {
-    const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q');
-    const cuisine = searchParams.get('cuisine');
-    const openNow = searchParams.get('openNow') === 'true';
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
-    const radius = searchParams.get('radius');
+export async function processSearchRequest({ query, cuisine, openNow, lat, lng, radius }) {
     let trucks = await getAndFilterFoodTrucks(lat, lng, radius);
     // Apply filters
     trucks = applyTextSearchFilter(trucks, query);

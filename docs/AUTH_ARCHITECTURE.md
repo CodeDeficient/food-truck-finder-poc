@@ -1,10 +1,10 @@
 # Authentication Architecture Plan
 
-This document outlines the strategy for implementing authentication and authorization in the Food Truck Finder application, using Firebase Authentication as the primary identity provider and Supabase for the backend database and Row Level Security (RLS).
+This document outlines the implemented authentication and authorization architecture for the Food Truck Finder application, which uses a Supabase-native Role-Based Access Control (RBAC) system.
 
 ## 1. Core Architecture
 
-- **Identity Provider:** [Firebase Authentication](https://firebase.google.com/docs/auth) will handle all user sign-up, sign-in, and session management. We will primarily use the Google Sign-In provider.
+- **Identity Provider:** Supabase Auth handles all user sign-up, sign-in, and session management.
 - **Backend & Database:** [Supabase](https://supabase.com) will serve as the backend, managing the database, storage, and data APIs.
 - **Authorization:** Supabase's Row Level Security (RLS) will be used to control data access. Authorization decisions will be based on custom claims embedded in the JSON Web Token (JWT) provided by Firebase.
 
@@ -12,51 +12,21 @@ This decoupled architecture prevents a single point of failure. If Supabase expe
 
 ## 2. Implementation Steps
 
-### Step 2.1: Configure Supabase Integration
+### Step 2.1: Configure Supabase Auth
 
-1.  **Retrieve Firebase Project ID:** Obtain the Project ID from the Firebase Console settings.
-2.  **Add Third-Party Auth Integration:** In the Supabase project dashboard, navigate to `Authentication > Providers > Third-Party Auth`.
-3.  **Create Integration:** Add a new integration, providing the Firebase Project ID. This tells Supabase to trust JWTs issued by this specific Firebase project.
+1.  **Enable Auth Providers:** In the Supabase dashboard, enable the desired authentication providers (e.g., Email/Password, Google, etc.).
+2.  **User Table:** Supabase automatically manages the `auth.users` table.
+3.  **Profiles Table:** A public `profiles` table is created to store user-specific data, including their role. This table is linked to `auth.users` via the user's `id`.
 
-### Step 2.2: Configure Firebase Custom Claims
+### Step 2.2: Configure Role-Based Access Control (RBAC)
 
-To enable role-based access control in Supabase, we must add a `role` claim to the Firebase JWT.
+To enable role-based access control, a `role` column is added to the `profiles` table.
 
-1.  **Create Firebase Cloud Function:** Deploy a `beforeUserCreated` blocking function in Firebase.
-2.  **Assign Default Role:** This function will intercept every new user creation and add the following custom claim to their token:
-    ```json
-    {
-      "role": "authenticated"
-    }
-    ```
-3.  This ensures that every logged-in user who is not an admin will have the `authenticated` role in Supabase.
+1.  **Assign Default Role:** A database trigger or server-side function assigns a default role (e.g., `authenticated`) to every new user profile.
+2.  **Admin Role:** An administrator manually updates a user's role to `admin` directly in the `profiles` table.
 
-### Step 2.3: Configure Next.js Supabase Client
-
-The Supabase client in the Next.js application must be initialized to dynamically provide the Firebase JWT.
-
-1.  **Modify Client Initialization:** The `createClient` function will be configured with an `accessToken` function.
-2.  **Implementation:**
-    ```typescript
-    import { createClient } from '@supabase/supabase-js';
-    import { getAuth } from 'firebase/auth';
-
-    // This assumes firebase app is initialized elsewhere
-    const auth = getAuth();
-
-    const supabase = createClient(
-      'YOUR_SUPABASE_URL',
-      'YOUR_SUPABASE_ANON_KEY',
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${await auth.currentUser?.getIdToken()}`,
-          },
-        },
-      }
-    );
-    ```
-    *Note: The exact implementation will use an async function to get the token on demand, as shown in the Supabase documentation.*
+### Step 2.3: Configure Next.js Supabase SSR Client
+The Supabase SSR client is used in Next.js middleware and server components to securely handle user sessions. It automatically manages JWTs via cookies.
 
 ## 3. Admin Access Control & RBAC Implementation
 
@@ -64,13 +34,13 @@ Securing the `/admin` dashboard and implementing a robust Role-Based Access Cont
 
 ### 3.1 Database Schema for RBAC
 
-We will create a permissions-based system in the Supabase database, inspired by the official Supabase RBAC guide.
+A permissions-based system is implemented directly in the Supabase database.
 
 1.  **Define Custom Types:** Create `enum` types for roles and permissions to ensure data integrity.
     ```sql
     -- Custom types
-    create type public.app_role as enum ('admin', 'moderator');
-    create type public.app_permission as enum ('trucks.delete', 'users.edit', 'events.create');
+    create type public.app_role as enum ('admin', 'authenticated');
+    create type public.app_permission as enum ('trucks.delete', 'users.edit');
     ```
 2.  **Create `role_permissions` Table:** This table will map roles to their specific permissions.
     ```sql
@@ -90,21 +60,9 @@ We will create a permissions-based system in the Supabase database, inspired by 
       ('admin', 'users.edit');
     ```
 
-### 3.2 Firebase Role Assignment
-
-Roles will be assigned within Firebase and embedded in the JWT.
-
-1.  **Default Role:** The `beforeUserCreated` Firebase Cloud Function will assign the `authenticated` role by default.
-2.  **Admin Role:** Using the Firebase Admin SDK in a secure backend environment (e.g., a one-off script), we will manually assign the `admin` role to the designated admin user's Firebase UID.
-    ```json
-    {
-      "role": "admin"
-    }
-    ```
-
 ### 3.3 Supabase Authorization Function
 
-We will create a central SQL function in Supabase to check permissions. This function will be used in all RLS policies.
+A central SQL function in Supabase checks permissions and is used in all RLS policies.
 
 1.  **Create `authorize` Function:** This function reads the `role` from the Firebase JWT and checks it against the `role_permissions` table.
     ```sql
@@ -116,8 +74,8 @@ We will create a central SQL function in Supabase to check permissions. This fun
       bind_permissions int;
       user_role public.app_role;
     begin
-      -- Read the role from the JWT
-      select (auth.jwt() ->> 'role')::public.app_role into user_role;
+      -- Get the user's role from their profile
+      select role into user_role from public.profiles where id = auth.uid();
       -- Check if the role has the requested permission
       select count(*)
       into bind_permissions
@@ -141,6 +99,6 @@ We will create a central SQL function in Supabase to check permissions. This fun
     USING ( public.authorize('trucks.delete') );
     ```
 2.  **Middleware Protection:** The Next.js middleware (`app/middleware.ts`) will be updated to:
-    a. Verify the user's Firebase session.
-    b. Decode the JWT to check for the `role: 'admin'` claim.
+    a. Verify the user's Supabase session.
+    b. Check the user's profile for the `admin` role.
     c. Redirect any user without the `admin` role away from `/admin/*` routes. This provides a fast, user-friendly layer of security before hitting the database.

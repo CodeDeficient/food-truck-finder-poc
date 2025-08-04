@@ -5,7 +5,7 @@
  * to match our FoodTruck schema, including field mappings and defaults.
  */
 
-import type { FoodTruck, MenuCategory, OperatingHours } from '../types';
+import type { FoodTruck, MenuCategory, OperatingHours } from '../types.js';
 
 export interface UprootedVeganData {
   // Core fields
