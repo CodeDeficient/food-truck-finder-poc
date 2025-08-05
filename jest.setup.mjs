@@ -1,6 +1,6 @@
-
 import 'jest-axe/extend-expect';
 import '@testing-library/jest-dom';
+import { jest } from '@jest/globals';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {

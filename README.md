@@ -289,6 +289,10 @@ We welcome contributions to the Food Truck Finder Application! Please follow the
 6.  Commit your changes with a descriptive message.
 7.  Push your branch and open a pull request.
 
+### Feedback Channel
+
+For any feedback, bug reports, or suggestions, please open an issue on our [GitHub Issues page](https://github.com/codedeficients/food-truck-finder-poc/issues).
+
 ## Local Development & Debugging
 
 ### Development Scripts

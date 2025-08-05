@@ -9,11 +9,13 @@ export default defineConfig({
     screenshotOnRunFailure: true,
     viewportWidth: 1280,
     viewportHeight: 720,
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on: Cypress.PluginEvents, config: Cypress.PluginConfigOptions) {
       // implement node event listeners here      
     },
   },
   component: {
+    supportFile: 'cypress/support/component.ts',
+    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
     devServer: {
       framework: 'next',
       bundler: 'webpack',

@@ -93,3 +93,9 @@ errors/mapcontainer-already-initialized.md
 test-lint.ts
 /errors/
 .env*.local
+
+# Temporary cleanup scripts (to prevent infinite loops)
+scripts/purge-sensitive-content.ps1
+scripts/find-sensitive-references.ps1
+temp-replacements.txt
+sensitive-references-*.json

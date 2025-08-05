@@ -1,16 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-<<<<<<< HEAD
-import { supabase } from '@/lib/supabase/client';
-=======
 import { getSupabase } from '@/lib/supabase/client';
->>>>>>> data-specialist-2-work
 import { useRouter } from 'next/navigation';
-import { User, Settings, LogOut, Loader2, Shield } from 'lucide-react';
+import { AvatarMenuItems } from './AvatarMenuItems';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface AvatarMenuProps {
@@ -21,24 +17,37 @@ interface AvatarMenuProps {
   readonly onProfileClick?: () => void;
 }
 
+interface UserMetadata {
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+  name?: string;
+  avatar_url?: string;
+  picture?: string;
+}
+
 // Helper function to generate user initials from Supabase User
 const getUserInitials = (user: SupabaseUser | null): string => {
   if (!user) return '?';
   
+  const metadata = user.user_metadata as UserMetadata | undefined;
+  
   // Try full name from user metadata
-  if (user.user_metadata?.full_name) {
-    const names = user.user_metadata.full_name.split(' ');
-    return names.map((name: string) => name[0]).join('').substring(0, 2).toUpperCase();
+  if (metadata?.full_name !== undefined && metadata.full_name.trim() !== '' && typeof metadata.full_name === 'string') {
+    const names = metadata.full_name.split(' ');
+    return names.map((name: string) => name[0]).join('').slice(0, 2).toUpperCase();
   }
   
   // Try first and last name from user metadata
-  if (user.user_metadata?.first_name && user.user_metadata?.last_name) {
-    return (user.user_metadata.first_name[0] + user.user_metadata.last_name[0]).toUpperCase();
+  if (metadata?.first_name !== undefined && metadata.first_name.trim() !== '' && 
+      metadata?.last_name !== undefined && metadata.last_name.trim() !== '' && 
+      typeof metadata.first_name === 'string' && typeof metadata.last_name === 'string') {
+    return (metadata.first_name[0] + metadata.last_name[0]).toUpperCase();
   }
   
   // Fallback to email
-  if (user.email) {
-    return user.email.substring(0, 2).toUpperCase();
+  if (user.email !== undefined && user.email.trim() !== '' && typeof user.email === 'string') {
+    return user.email.slice(0, 2).toUpperCase();
   }
   
   return '?';
@@ -48,19 +57,23 @@ const getUserInitials = (user: SupabaseUser | null): string => {
 const getUserDisplayName = (user: SupabaseUser | null): string => {
   if (!user) return 'Anonymous';
   
-  if (user.user_metadata?.full_name) {
-    return user.user_metadata.full_name;
+  const metadata = user.user_metadata as UserMetadata | undefined;
+  
+  if (metadata?.full_name !== undefined && metadata.full_name.trim() !== '' && typeof metadata.full_name === 'string') {
+    return metadata.full_name;
   }
   
-  if (user.user_metadata?.first_name && user.user_metadata?.last_name) {
-    return `${user.user_metadata.first_name} ${user.user_metadata.last_name}`;
+  if (metadata?.first_name !== undefined && metadata.first_name.trim() !== '' && 
+      metadata?.last_name !== undefined && metadata.last_name.trim() !== '' && 
+      typeof metadata.first_name === 'string' && typeof metadata.last_name === 'string') {
+    return `${metadata.first_name} ${metadata.last_name}`;
   }
   
-  if (user.user_metadata?.name) {
-    return user.user_metadata.name;
+  if (metadata?.name !== undefined && metadata.name.trim() !== '' && typeof metadata.name === 'string') {
+    return metadata.name;
   }
   
-  if (user.email) {
+  if (user.email !== undefined && user.email.trim() !== '' && typeof user.email === 'string') {
     return user.email.split('@')[0];
   }
   
@@ -69,21 +82,17 @@ const getUserDisplayName = (user: SupabaseUser | null): string => {
 
 export const AvatarMenu: React.FC<AvatarMenuProps> = ({ 
   mounted, 
-  resolvedTheme, 
+  resolvedTheme: _resolvedTheme, 
   user, 
   onSignOut,
   onProfileClick 
 }) => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
-<<<<<<< HEAD
-  // Use the imported supabase client directly
-=======
   const supabase = getSupabase();
->>>>>>> data-specialist-2-work
 
   // Support theme-aware styling in the future
-  void resolvedTheme;
+  // void resolvedTheme; // Removed for linting compliance
 
   const handleSignOut = async () => {
     if (!mounted) return;
@@ -123,14 +132,15 @@ export const AvatarMenu: React.FC<AvatarMenuProps> = ({
     router.push('/settings');
   };
 
-  // Return null if not mounted or no user
+  // Return undefined if not mounted or no user
   if (!mounted || !user) {
-    return null;
+    return;
   }
 
   const userInitials = getUserInitials(user);
   const displayName = getUserDisplayName(user);
-  const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+  const metadata = user.user_metadata as UserMetadata | undefined;
+  const avatarUrl = metadata?.avatar_url ?? metadata?.picture;
 
   return (
     <DropdownMenu>
@@ -141,7 +151,7 @@ export const AvatarMenu: React.FC<AvatarMenuProps> = ({
           disabled={isSigningOut}
         >
           <Avatar className="h-8 w-8">
-            {avatarUrl && (
+            {Boolean(avatarUrl) && (
               <AvatarImage 
                 src={avatarUrl} 
                 alt={displayName}
@@ -159,7 +169,7 @@ export const AvatarMenu: React.FC<AvatarMenuProps> = ({
         <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
             <p className="font-medium text-sm">{displayName}</p>
-            {user.email && (
+            {Boolean(user.email) && (
               <p className="text-xs text-muted-foreground truncate max-w-[180px]">
                 {user.email}
               </p>
@@ -169,36 +179,12 @@ export const AvatarMenu: React.FC<AvatarMenuProps> = ({
         
         <DropdownMenuSeparator />
         
-        <DropdownMenuItem 
-          onClick={handleProfileClick}
-          className="cursor-pointer"
-        >
-          <User className="mr-2 size-4" />
-          <span>Profile</span>
-        </DropdownMenuItem>
-        
-        <DropdownMenuItem 
-          onClick={handleSettingsClick}
-          className="cursor-pointer"
-        >
-          <Settings className="mr-2 size-4" />
-          <span>Settings</span>
-        </DropdownMenuItem>
-        
-        <DropdownMenuSeparator />
-        
-        <DropdownMenuItem 
-          onClick={() => { void handleSignOut(); }}
-          disabled={isSigningOut}
-          className="cursor-pointer text-red-600 focus:text-red-600"
-        >
-          {isSigningOut ? (
-            <Loader2 className="mr-2 size-4 animate-spin" />
-          ) : (
-            <LogOut className="mr-2 size-4" />
-          )}
-          <span>Sign out</span>
-        </DropdownMenuItem>
+        <AvatarMenuItems
+          isSigningOut={isSigningOut}
+          handleProfileClick={handleProfileClick}
+          handleSettingsClick={handleSettingsClick}
+          handleSignOut={handleSignOut}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

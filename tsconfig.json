@@ -28,6 +28,9 @@
     "**/__tests__/**/*",
     "**/tests/**/*",
     "cypress/**/*",
-    "**/*.cy.ts"
+    "**/*.cy.ts",
+    "cypress.config.ts",
+    "jest.setup.ts",
+    "jest.config.ts"
   ]
 }

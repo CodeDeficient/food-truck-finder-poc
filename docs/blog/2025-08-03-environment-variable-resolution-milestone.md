@@ -1,7 +1,7 @@
 # Environment Variable Hell: A Senior Developer's Guide to Debugging Production Issues
 
 **Date:** August 3, 2025  
-**Author:** Zabrina  
+**Author:** Daniel King  
 **Series:** Production Debugging Chronicles  
 **Reading Time:** 8 minutes  
 
@@ -9,7 +9,7 @@
 
 ## 🚨 The Crisis: "Failed to Load Food Trucks"
 
-**9:30 AM Saturday morning.** Coffee in hand, I opened the production Food Truck Finder app expecting to see our 85 carefully curated food trucks loading beautifully on the map.
+**9:30 AM Saturday morning.** Creatine in hand, I opened the production Food Truck Finder app expecting to see our 85 carefully curated food trucks loading beautifully on the map.
 
 Instead: **"Failed to load food trucks"**
 

@@ -1,4 +1,35 @@
 import '@testing-library/jest-dom';
+import { jest } from '@jest/globals';
+
+// Mock Supabase modules before any other imports
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      signInWithOAuth: jest.fn().mockResolvedValue({ error: null }),
+      signOut: jest.fn().mockResolvedValue({ error: null }),
+      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  })),
+}));
+
+// Mock isows and WebSocket dependencies
+jest.mock('isows', () => ({
+  WebSocket: class MockWebSocket {
+    constructor() {}
+    close() {}
+    send() {}
+  },
+}));
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -12,7 +43,7 @@ jest.mock('next/router', () => ({
       pop: jest.fn(),
       reload: jest.fn(),
       back: jest.fn(),
-      prefetch: jest.fn().mockResolvedValue(undefined),
+      prefetch: jest.fn().mockImplementation(() => Promise.resolve()),
       beforePopState: jest.fn(),
       events: {
         on: jest.fn(),

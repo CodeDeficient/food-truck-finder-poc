@@ -1,6 +1,7 @@
-/** @type {import('jest').Config} */
-module.exports = {
-  preset: 'ts-jest',
+import type { Config } from 'jest';
+
+const config: Config = {
+  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
@@ -8,10 +9,14 @@ module.exports = {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
+      useESM: true,
       tsconfig: {
         jsx: 'react-jsx',
+        module: 'esnext',
+        target: 'es2017'
       },
     }],
+    '^.+\\.mjs$': ['babel-jest', { presets: [['@babel/preset-env', { targets: { node: 'current' } }]] }],
   },
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
@@ -19,6 +24,8 @@ module.exports = {
     '<rootDir>/tests/e2e.test.ts',
     '<rootDir>/tests/pipeline.*.e2e.test.ts',
     '<rootDir>/tests/playwright.config.test.ts',
+    '<rootDir>/dist/',
+    '<rootDir>/staging/',
   ],
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',
@@ -32,12 +39,9 @@ module.exports = {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-      tsconfig: {
-        jsx: 'react-jsx',
-      },
-    },
-  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\.mjs$|@supabase/.*|isows.*|@jest/.*|jest-axe|ws.*|realtime-js.*))',
+  ],
 };
+
+export default config;

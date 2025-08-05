@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { isValidObject, hasProperty, isStringArray, assertType, safeAssign } from '../../lib/utils/typeGuards';
 
 describe('isValidObject', () => {
