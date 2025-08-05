@@ -1,0 +1,1297 @@
+"Category","FileName","RelativePath","LastWriteTime","IsDuplicate","IsNewestVersion","MigrationPriority","YAMLFrontMatter"
+"Rules","ai-edit-safety.md",".clinerules\ai-edit-safety.md","7/21/2025 11:45:41 AM","False",,"Standard","---
+original_path: .clinerules\ai-edit-safety.md
+last_modified: 7/21/2025 11:45:41 AM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","clinerules-overview.md",".clinerules\clinerules-overview.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\clinerules-overview.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","code-duplication-detection.md",".clinerules\code-duplication-detection.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: .clinerules\code-duplication-detection.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","component-deduplication.md",".clinerules\component-deduplication.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: .clinerules\component-deduplication.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","component-props-validation.md",".clinerules\component-props-validation.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\component-props-validation.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","coordinate-data-management.md",".clinerules\coordinate-data-management.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: .clinerules\coordinate-data-management.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","dev-conventions.md",".clinerules\dev-conventions.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\dev-conventions.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","esm-import-best-practices.md",".clinerules\esm-import-best-practices.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: .clinerules\esm-import-best-practices.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","impact-analysis-protocol.md",".clinerules\impact-analysis-protocol.md","7/21/2025 11:44:35 AM","False",,"Standard","---
+original_path: .clinerules\impact-analysis-protocol.md
+last_modified: 7/21/2025 11:44:35 AM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","leaflet-map-rendering.md",".clinerules\leaflet-map-rendering.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\leaflet-map-rendering.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","mermaid-syntax.md",".clinerules\mermaid-syntax.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\mermaid-syntax.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","operational-learnings.md",".clinerules\operational-learnings.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: .clinerules\operational-learnings.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","secrets-management.md",".clinerules\secrets-management.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: .clinerules\secrets-management.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","supabase-best-practices.md",".clinerules\supabase-best-practices.md","7/19/2025 2:06:49 PM","False",,"Standard","---
+original_path: .clinerules\supabase-best-practices.md
+last_modified: 7/19/2025 2:06:49 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","type-safety.md",".clinerules\type-safety.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\type-safety.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","variants.md",".clinerules\variants.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\variants.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","wbs-task-breakdown.md",".clinerules\wbs-task-breakdown.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\wbs-task-breakdown.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","zero-trust-planning-protocol.md",".clinerules\zero-trust-planning-protocol.md","7/19/2025 3:13:38 PM","False",,"Standard","---
+original_path: .clinerules\zero-trust-planning-protocol.md
+last_modified: 7/19/2025 3:13:38 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","zero-trust-post-action-verification-protocol.md",".clinerules\zero-trust-post-action-verification-protocol.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: .clinerules\zero-trust-post-action-verification-protocol.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","AGENT_GUIDELINES.md","docs\AGENT_GUIDELINES.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\AGENT_GUIDELINES.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","MERGE_SAFETY_PROTOCOLS.md","docs\MERGE_SAFETY_PROTOCOLS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\MERGE_SAFETY_PROTOCOLS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","TYPE_VALIDATION_PROTOCOL.md","docs\TYPE_VALIDATION_PROTOCOL.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\TYPE_VALIDATION_PROTOCOL.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","ZERO_TRUST_VERIFICATION_PROTOCOL.md","docs\ZERO_TRUST_VERIFICATION_PROTOCOL.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\ZERO_TRUST_VERIFICATION_PROTOCOL.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","2025-08-03_Final-QA-Protocol-Launch-Preparation.md","docs\blog\2025-08-03_Final-QA-Protocol-Launch-Preparation.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\2025-08-03_Final-QA-Protocol-Launch-Preparation.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Rules","styling-guidelines.md","staging\ui-specialist-2\styling-guidelines.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\styling-guidelines.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Rules
+migration_date: 2025-08-05
+---"
+"Operations","typescript-error-ts2322.md",".claude-thoughts\typescript-error-ts2322.md","7/14/2025 9:58:22 PM","False",,"Standard","---
+original_path: .claude-thoughts\typescript-error-ts2322.md
+last_modified: 7/14/2025 9:58:22 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","typescript-eslint-no-unsafe-call.md",".claude-thoughts\typescript-eslint-no-unsafe-call.md","7/14/2025 10:53:33 PM","False",,"Standard","---
+original_path: .claude-thoughts\typescript-eslint-no-unsafe-call.md
+last_modified: 7/14/2025 10:53:33 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","CRON_JOB_FIX.md","docs\CRON_JOB_FIX.md","7/21/2025 12:54:56 PM","False",,"Standard","---
+original_path: docs\CRON_JOB_FIX.md
+last_modified: 7/21/2025 12:54:56 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","JOB_DUPLICATION_ISSUE_RESOLVED.md","docs\JOB_DUPLICATION_ISSUE_RESOLVED.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\JOB_DUPLICATION_ISSUE_RESOLVED.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","MONITORING_AND_ALERTING_PLAN.md","docs\MONITORING_AND_ALERTING_PLAN.md","7/21/2025 9:55:12 AM","False",,"Standard","---
+original_path: docs\MONITORING_AND_ALERTING_PLAN.md
+last_modified: 7/21/2025 9:55:12 AM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","CYPRESS_FIX_REPORT.md","docs\testing\CYPRESS_FIX_REPORT.md","8/5/2025 2:21:20 PM","False",,"Standard","---
+original_path: docs\testing\CYPRESS_FIX_REPORT.md
+last_modified: 8/5/2025 2:21:20 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","JEST_FIX_REPORT.md","docs\testing\JEST_FIX_REPORT.md","8/5/2025 2:16:11 PM","False",,"Standard","---
+original_path: docs\testing\JEST_FIX_REPORT.md
+last_modified: 8/5/2025 2:16:11 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","JEST_FIX_WBS.md","docs\testing\JEST_FIX_WBS.md","8/5/2025 3:39:42 PM","False",,"Standard","---
+original_path: docs\testing\JEST_FIX_WBS.md
+last_modified: 8/5/2025 3:39:42 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","UPROOTED-ONBOARDING.md","scripts\UPROOTED-ONBOARDING.md","7/18/2025 9:44:10 PM","False",,"Standard","---
+original_path: scripts\UPROOTED-ONBOARDING.md
+last_modified: 7/18/2025 9:44:10 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Operations","TESTING_IMPLEMENTATION_SUMMARY.md","tests\TESTING_IMPLEMENTATION_SUMMARY.md","7/3/2025 3:56:18 PM","False",,"Standard","---
+original_path: tests\TESTING_IMPLEMENTATION_SUMMARY.md
+last_modified: 7/3/2025 3:56:18 PM
+category: Operations
+migration_date: 2025-08-05
+---"
+"Misc","2.5.2_SUBTASKS_TEMPLATE.md","2.5.2_SUBTASKS_TEMPLATE.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: 2.5.2_SUBTASKS_TEMPLATE.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","accessibility-report.md","accessibility-report.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: accessibility-report.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CHANGELOG.md","CHANGELOG.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: CHANGELOG.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CODEBASE_STRUCTURE_ANALYSIS.md","CODEBASE_STRUCTURE_ANALYSIS.md","7/18/2025 9:34:20 PM","False",,"Standard","---
+original_path: CODEBASE_STRUCTURE_ANALYSIS.md
+last_modified: 7/18/2025 9:34:20 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CONSERVATIVE_MERGE_PLAN.md","CONSERVATIVE_MERGE_PLAN.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: CONSERVATIVE_MERGE_PLAN.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CURRENT_STATUS_LAUNCH_READINESS.md","CURRENT_STATUS_LAUNCH_READINESS.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: CURRENT_STATUS_LAUNCH_READINESS.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","current-work-for-Gemini-cli.md","current-work-for-Gemini-cli.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: current-work-for-Gemini-cli.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","GEMINI.md","GEMINI.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: GEMINI.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","IMPACT_ANALYSIS_NULLABLE_FIELDS.md","IMPACT_ANALYSIS_NULLABLE_FIELDS.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: IMPACT_ANALYSIS_NULLABLE_FIELDS.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","INVENTORY_ANALYSIS_REPORT.md","INVENTORY_ANALYSIS_REPORT.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: INVENTORY_ANALYSIS_REPORT.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","MERGE_STRATEGY.md","MERGE_STRATEGY.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: MERGE_STRATEGY.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","PIN_IMPACT_REPORT.md","PIN_IMPACT_REPORT.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: PIN_IMPACT_REPORT.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","prompt-Gemini-cli.md","prompt-Gemini-cli.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: prompt-Gemini-cli.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","warp-conversation.md","warp-conversation.md","8/5/2025 4:29:08 PM","False",,"Standard","---
+original_path: warp-conversation.md
+last_modified: 8/5/2025 4:29:08 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","launch_blockers_report.md",".claude-thoughts\launch_blockers_report.md","7/13/2025 6:11:15 PM","False",,"Standard","---
+original_path: .claude-thoughts\launch_blockers_report.md
+last_modified: 7/13/2025 6:11:15 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","thoughts-from-Claude.md",".claude-thoughts\thoughts-from-Claude.md","7/13/2025 4:14:55 PM","False",,"Standard","---
+original_path: .claude-thoughts\thoughts-from-Claude.md
+last_modified: 7/13/2025 4:14:55 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","thoughts-from-Claude2.md",".claude-thoughts\thoughts-from-Claude2.md","7/13/2025 4:28:50 PM","False",,"Standard","---
+original_path: .claude-thoughts\thoughts-from-Claude2.md
+last_modified: 7/13/2025 4:28:50 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","thoughts-from-Claude3.md",".claude-thoughts\thoughts-from-Claude3.md","7/13/2025 4:59:47 PM","False",,"Standard","---
+original_path: .claude-thoughts\thoughts-from-Claude3.md
+last_modified: 7/13/2025 4:59:47 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","thoughts-from-Claude4.md",".claude-thoughts\thoughts-from-Claude4.md","7/13/2025 5:54:17 PM","False",,"Standard","---
+original_path: .claude-thoughts\thoughts-from-Claude4.md
+last_modified: 7/13/2025 5:54:17 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","thoughts-from-Claude5.md",".claude-thoughts\thoughts-from-Claude5.md","7/13/2025 6:16:35 PM","False",,"Standard","---
+original_path: .claude-thoughts\thoughts-from-Claude5.md
+last_modified: 7/13/2025 6:16:35 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","thoughts-from-Claude6.md",".claude-thoughts\thoughts-from-Claude6.md","7/14/2025 7:59:40 PM","False",,"Standard","---
+original_path: .claude-thoughts\thoughts-from-Claude6.md
+last_modified: 7/14/2025 7:59:40 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","DASHBOARD_PLAN.md","app\admin\DASHBOARD_PLAN.md","7/3/2025 3:56:02 PM","False",,"Standard","---
+original_path: app\admin\DASHBOARD_PLAN.md
+last_modified: 7/3/2025 3:56:02 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","ADMIN_SECURITY_AUDIT.md","docs\ADMIN_SECURITY_AUDIT.md","7/21/2025 10:47:34 AM","False",,"Standard","---
+original_path: docs\ADMIN_SECURITY_AUDIT.md
+last_modified: 7/21/2025 10:47:34 AM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","ARCHITECTURE_DECISIONS.md","docs\ARCHITECTURE_DECISIONS.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\ARCHITECTURE_DECISIONS.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","ARCHITECTURE_OVERVIEW.md","docs\ARCHITECTURE_OVERVIEW.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\ARCHITECTURE_OVERVIEW.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","ARCHITECTURE.md","docs\ARCHITECTURE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\ARCHITECTURE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","BLOG_2025-08-05_FUNCTIONAL_SMOKE_TEST_SUCCESS.md","docs\BLOG_2025-08-05_FUNCTIONAL_SMOKE_TEST_SUCCESS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\BLOG_2025-08-05_FUNCTIONAL_SMOKE_TEST_SUCCESS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CHALLENGES_OVERCOME.md","docs\CHALLENGES_OVERCOME.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\CHALLENGES_OVERCOME.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","COCOMO_ANALYSIS.md","docs\COCOMO_ANALYSIS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\COCOMO_ANALYSIS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CONTRIBUTING.md","docs\CONTRIBUTING.md","7/21/2025 9:42:08 AM","False",,"Standard","---
+original_path: docs\CONTRIBUTING.md
+last_modified: 7/21/2025 9:42:08 AM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","current_issues_and_goals.md","docs\current_issues_and_goals.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\current_issues_and_goals.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CURRENT_WORK_TRACKER.md","docs\CURRENT_WORK_TRACKER.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\CURRENT_WORK_TRACKER.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","DOCUMENTATION_UPDATE_PLAN_MILESTONE_ENV_VAR_RESOLUTION.md","docs\DOCUMENTATION_UPDATE_PLAN_MILESTONE_ENV_VAR_RESOLUTION.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\DOCUMENTATION_UPDATE_PLAN_MILESTONE_ENV_VAR_RESOLUTION.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","DOCUMENTATION_UPDATE_PLAN.md","docs\DOCUMENTATION_UPDATE_PLAN.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\DOCUMENTATION_UPDATE_PLAN.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","DUPLICATE_STRATEGY_ANALYSIS.md","docs\DUPLICATE_STRATEGY_ANALYSIS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\DUPLICATE_STRATEGY_ANALYSIS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","Get-GitBranchMeta.md","docs\Get-GitBranchMeta.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\Get-GitBranchMeta.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","IMPACT_ANALYSIS_SearchFilters.md","docs\IMPACT_ANALYSIS_SearchFilters.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\IMPACT_ANALYSIS_SearchFilters.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","LICENSE_IP_RESEARCH.md","docs\LICENSE_IP_RESEARCH.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\LICENSE_IP_RESEARCH.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","MAP-ENHANCEMENTS.md","docs\MAP-ENHANCEMENTS.md","7/21/2025 8:40:01 AM","False",,"Standard","---
+original_path: docs\MAP-ENHANCEMENTS.md
+last_modified: 7/21/2025 8:40:01 AM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","PROFITABILITY_MODEL_RESEARCH_1.md","docs\PROFITABILITY_MODEL_RESEARCH_1.md","7/21/2025 3:29:09 PM","False",,"Standard","---
+original_path: docs\PROFITABILITY_MODEL_RESEARCH_1.md
+last_modified: 7/21/2025 3:29:09 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","PROJECT_PLAN.md","docs\PROJECT_PLAN.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\PROJECT_PLAN.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","PROJECT_PLANNING_AND_STATUS.md","docs\PROJECT_PLANNING_AND_STATUS.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\PROJECT_PLANNING_AND_STATUS.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","PROJECT_STATUS_2025-08-05.md","docs\PROJECT_STATUS_2025-08-05.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\PROJECT_STATUS_2025-08-05.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","SECRET_MANAGEMENT_PLAN.md","docs\SECRET_MANAGEMENT_PLAN.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\SECRET_MANAGEMENT_PLAN.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","SESSION_NOTES_ESM_FIX_2025-07-28.md","docs\SESSION_NOTES_ESM_FIX_2025-07-28.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\SESSION_NOTES_ESM_FIX_2025-07-28.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","STEP_7_COMPLETION_SUMMARY.md","docs\STEP_7_COMPLETION_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\STEP_7_COMPLETION_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","STRATEGIC_LAUNCH_PLAN_REVISED.md","docs\STRATEGIC_LAUNCH_PLAN_REVISED.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\STRATEGIC_LAUNCH_PLAN_REVISED.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","TASK_TEMPLATES_WITH_CHECKLISTS.md","docs\TASK_TEMPLATES_WITH_CHECKLISTS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\TASK_TEMPLATES_WITH_CHECKLISTS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","TECH_STACK.md","docs\TECH_STACK.md","7/21/2025 9:44:40 AM","False",,"Standard","---
+original_path: docs\TECH_STACK.md
+last_modified: 7/21/2025 9:44:40 AM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","TSC_REMEDIATION_PLAN.md","docs\TSC_REMEDIATION_PLAN.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\TSC_REMEDIATION_PLAN.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","TYPE_MAPPING.md","docs\TYPE_MAPPING.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\TYPE_MAPPING.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","USAGE.md","docs\USAGE.md","7/21/2025 9:41:26 AM","False",,"Standard","---
+original_path: docs\USAGE.md
+last_modified: 7/21/2025 9:41:26 AM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","USER_PORTAL_PLAN.md","docs\USER_PORTAL_PLAN.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\USER_PORTAL_PLAN.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","WBS_ADMIN_DYNAMIC_RENDERING_CHECKLIST.md","docs\WBS_ADMIN_DYNAMIC_RENDERING_CHECKLIST.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\WBS_ADMIN_DYNAMIC_RENDERING_CHECKLIST.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","WBS_ROADMAP.md","docs\WBS_ROADMAP.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\WBS_ROADMAP.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","WBS_TypeNamespaceFix.md","docs\WBS_TypeNamespaceFix.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\WBS_TypeNamespaceFix.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","linter-fix-plan-from-Claude.md","docs\analysis\linter-fix-plan-from-Claude.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\analysis\linter-fix-plan-from-Claude.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","TEST_DEBUG_PLAN.md","docs\analysis\TEST_DEBUG_PLAN.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\analysis\TEST_DEBUG_PLAN.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","CONSOLIDATED_LAUNCH_READINESS_PLAN.md","docs\archive\CONSOLIDATED_LAUNCH_READINESS_PLAN.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\archive\CONSOLIDATED_LAUNCH_READINESS_PLAN.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","leaflet_debug_checklist_v2.md","docs\archive\leaflet_debug_checklist_v2.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\archive\leaflet_debug_checklist_v2.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","leaflet_debug_checklist.md","docs\archive\leaflet_debug_checklist.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\archive\leaflet_debug_checklist.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","WBS_ARCHIVE_INDEX.md","docs\archive\WBS_ARCHIVE_INDEX.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\archive\WBS_ARCHIVE_INDEX.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","WBS_REMEDIATION_PLAN.md","docs\archive\WBS_REMEDIATION_PLAN.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\archive\WBS_REMEDIATION_PLAN.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","09-leaflet-map-debugging-saga.md","docs\blog\09-leaflet-map-debugging-saga.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\blog\09-leaflet-map-debugging-saga.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","13-zero-trust-development.md","docs\blog\13-zero-trust-development.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\blog\13-zero-trust-development.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","18-ai-as-mentor.md","docs\blog\18-ai-as-mentor.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\blog\18-ai-as-mentor.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","19-whats-next.md","docs\blog\19-whats-next.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\19-whats-next.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","20-summary-milestone.md","docs\blog\20-summary-milestone.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\20-summary-milestone.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","2025-01-21-geocoding-integration.md","docs\blog\2025-01-21-geocoding-integration.md","8/3/2025 5:08:47 PM","False",,"Standard","---
+original_path: docs\blog\2025-01-21-geocoding-integration.md
+last_modified: 8/3/2025 5:08:47 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","2025-07-19_WBS-Methodology-Refinement.md","docs\blog\2025-07-19_WBS-Methodology-Refinement.md","7/19/2025 3:18:12 PM","False",,"Standard","---
+original_path: docs\blog\2025-07-19_WBS-Methodology-Refinement.md
+last_modified: 7/19/2025 3:18:12 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","2025-08-03-environment-variable-resolution-milestone.md","docs\blog\2025-08-03-environment-variable-resolution-milestone.md","8/5/2025 4:54:03 PM","False",,"Standard","---
+original_path: docs\blog\2025-08-03-environment-variable-resolution-milestone.md
+last_modified: 8/5/2025 4:54:03 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","21-the-engine-comes-alive.md","docs\blog\21-the-engine-comes-alive.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\21-the-engine-comes-alive.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","STEP_4_BLOG_OUTLINE.md","docs\blog\STEP_4_BLOG_OUTLINE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\STEP_4_BLOG_OUTLINE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","best-practices.md","docs\error-handling\best-practices.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\error-handling\best-practices.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","patterns.md","docs\error-handling\patterns.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\error-handling\patterns.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","browser-console-output-8-2-25.md","docs\errors\browser-console-output-8-2-25.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\errors\browser-console-output-8-2-25.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","mapcontainer-already-initialized.md","docs\errors\mapcontainer-already-initialized.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\errors\mapcontainer-already-initialized.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Misc","npm_install_warnings.md","docs\errors\npm_install_warnings.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\errors\npm_install_warnings.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Misc
+migration_date: 2025-08-05
+---"
+"Deployment","temp_scratchpad_github_actions_analysis.md","temp_scratchpad_github_actions_analysis.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: temp_scratchpad_github_actions_analysis.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","ACTIONS_ESM_DEBUGGING.md","docs\ACTIONS_ESM_DEBUGGING.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\ACTIONS_ESM_DEBUGGING.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","ALTERNATIVE_DEPLOYMENT_PLATFORMS.md","docs\ALTERNATIVE_DEPLOYMENT_PLATFORMS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\ALTERNATIVE_DEPLOYMENT_PLATFORMS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","DEPLOYMENT_PLAN.md","docs\DEPLOYMENT_PLAN.md","7/21/2025 9:50:21 AM","False",,"Standard","---
+original_path: docs\DEPLOYMENT_PLAN.md
+last_modified: 7/21/2025 9:50:21 AM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_DIST_CONSOLIDATION_COMPLETED.md","docs\GITHUB_ACTIONS_DIST_CONSOLIDATION_COMPLETED.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_DIST_CONSOLIDATION_COMPLETED.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_DIST_CONSOLIDATION_STRATEGY.md","docs\GITHUB_ACTIONS_DIST_CONSOLIDATION_STRATEGY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_DIST_CONSOLIDATION_STRATEGY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_FINAL_ATTEMPT_CHECKLIST.md","docs\GITHUB_ACTIONS_FINAL_ATTEMPT_CHECKLIST.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_FINAL_ATTEMPT_CHECKLIST.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_GEMINI_INTEGRATION.md","docs\GITHUB_ACTIONS_GEMINI_INTEGRATION.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_GEMINI_INTEGRATION.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_IMPROVEMENTS_SUMMARY.md","docs\GITHUB_ACTIONS_IMPROVEMENTS_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_IMPROVEMENTS_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_RESEARCH_BY_GEMINI.md","docs\GITHUB_ACTIONS_RESEARCH_BY_GEMINI.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_RESEARCH_BY_GEMINI.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB_ACTIONS_SUCCESS_SUMMARY.md","docs\GITHUB_ACTIONS_SUCCESS_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_SUCCESS_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","GITHUB-ACTIONS-DEBUG-CHECKLIST.md","docs\GITHUB-ACTIONS-DEBUG-CHECKLIST.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\GITHUB-ACTIONS-DEBUG-CHECKLIST.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Deployment","2025-07-30-github-actions-success-and-lessons-learned.md","docs\blog\2025-07-30-github-actions-success-and-lessons-learned.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\2025-07-30-github-actions-success-and-lessons-learned.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Deployment
+migration_date: 2025-08-05
+---"
+"Frontend","AUTH_UI_IMPACT.md","AUTH_UI_IMPACT.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: AUTH_UI_IMPACT.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","build-baseline-20250805.md","build-baseline-20250805.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: build-baseline-20250805.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","UI_SPECIALIST_2_DELIVERABLES_MANIFEST.md","UI_SPECIALIST_2_DELIVERABLES_MANIFEST.md","8/5/2025 4:53:43 PM","True","False","Archive","---
+original_path: UI_SPECIALIST_2_DELIVERABLES_MANIFEST.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","UX_Authentication_Inspiration_Guide.md","UX_Authentication_Inspiration_Guide.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: UX_Authentication_Inspiration_Guide.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","usage_guide.md",".claude-thoughts\leaflet_map_guide\usage_guide.md","7/15/2025 4:29:48 PM","False",,"Standard","---
+original_path: .claude-thoughts\leaflet_map_guide\usage_guide.md
+last_modified: 7/15/2025 4:29:48 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","AUTH_ARCHITECTURE.md","docs\AUTH_ARCHITECTURE.md","8/3/2025 8:49:21 PM","False",,"Standard","---
+original_path: docs\AUTH_ARCHITECTURE.md
+last_modified: 8/3/2025 8:49:21 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","AUTH_READINESS_REPORT.md","docs\AUTH_READINESS_REPORT.md","8/5/2025 1:24:22 PM","False",,"Standard","---
+original_path: docs\AUTH_READINESS_REPORT.md
+last_modified: 8/5/2025 1:24:22 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","build-failure-2025-08-03.md","docs\build-failure-2025-08-03.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\build-failure-2025-08-03.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","CALL_VARIANCE_AUTHORITY.md","docs\CALL_VARIANCE_AUTHORITY.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\CALL_VARIANCE_AUTHORITY.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","DEVELOPER_GUIDE.md","docs\DEVELOPER_GUIDE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\DEVELOPER_GUIDE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","DUPLICATION_REMEDIATION_GUIDE.md","docs\DUPLICATION_REMEDIATION_GUIDE.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\DUPLICATION_REMEDIATION_GUIDE.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","FRONTEND_GUIDE.md","docs\FRONTEND_GUIDE.md","8/3/2025 3:41:06 PM","False",,"Standard","---
+original_path: docs\FRONTEND_GUIDE.md
+last_modified: 8/3/2025 3:41:06 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","LINTING_AND_CODE_QUALITY_GUIDE.md","docs\LINTING_AND_CODE_QUALITY_GUIDE.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\LINTING_AND_CODE_QUALITY_GUIDE.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","OUTPUT_REQUIREMENTS.md","docs\OUTPUT_REQUIREMENTS.md","7/21/2025 9:49:50 AM","False",,"Standard","---
+original_path: docs\OUTPUT_REQUIREMENTS.md
+last_modified: 7/21/2025 9:49:50 AM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","PRODUCT_REQUIREMENTS.md","docs\PRODUCT_REQUIREMENTS.md","7/21/2025 9:44:21 AM","False",,"Standard","---
+original_path: docs\PRODUCT_REQUIREMENTS.md
+last_modified: 7/21/2025 9:44:21 AM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","SCRIPT_USAGE_GUIDE.md","docs\SCRIPT_USAGE_GUIDE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\SCRIPT_USAGE_GUIDE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","UI_DESIGN_GUIDE.md","docs\UI_DESIGN_GUIDE.md","8/3/2025 3:41:06 PM","False",,"Standard","---
+original_path: docs\UI_DESIGN_GUIDE.md
+last_modified: 8/3/2025 3:41:06 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","VALIDATION_GUIDE.md","docs\VALIDATION_GUIDE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\VALIDATION_GUIDE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","WBS_CCR_PATTERN_COMPLIANCE_GUIDE.md","docs\WBS_CCR_PATTERN_COMPLIANCE_GUIDE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\WBS_CCR_PATTERN_COMPLIANCE_GUIDE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","AUTH_MODAL_FIX_LOG.md","docs\auth\AUTH_MODAL_FIX_LOG.md","8/5/2025 1:54:27 PM","False",,"Standard","---
+original_path: docs\auth\AUTH_MODAL_FIX_LOG.md
+last_modified: 8/5/2025 1:54:27 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","AVATAR_MENU_FIX_LOG.md","docs\auth\AVATAR_MENU_FIX_LOG.md","8/5/2025 2:05:40 PM","False",,"Standard","---
+original_path: docs\auth\AVATAR_MENU_FIX_LOG.md
+last_modified: 8/5/2025 2:05:40 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","WBS_IMPACT_AUTH.md","docs\auth\WBS_IMPACT_AUTH.md","8/5/2025 2:53:31 PM","False",,"Standard","---
+original_path: docs\auth\WBS_IMPACT_AUTH.md
+last_modified: 8/5/2025 2:53:31 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","06-first-build-crisis.md","docs\blog\06-first-build-crisis.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\blog\06-first-build-crisis.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","2025-07-23-typescript-build-fixes.md","docs\blog\2025-07-23-typescript-build-fixes.md","8/3/2025 8:48:33 PM","False",,"Standard","---
+original_path: docs\blog\2025-07-23-typescript-build-fixes.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","2025-08-05-authentication-system-remediation.md","docs\blog\2025-08-05-authentication-system-remediation.md","8/5/2025 4:30:56 PM","False",,"Standard","---
+original_path: docs\blog\2025-08-05-authentication-system-remediation.md
+last_modified: 8/5/2025 4:30:56 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","2025-08-05-authentication-testing-milestone.md","docs\blog\2025-08-05-authentication-testing-milestone.md","8/5/2025 4:01:01 PM","False",,"Standard","---
+original_path: docs\blog\2025-08-05-authentication-testing-milestone.md
+last_modified: 8/5/2025 4:01:01 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","auth-refactor-journey.md","docs\blog\auth-refactor-journey.md","8/5/2025 3:25:16 PM","False",,"Standard","---
+original_path: docs\blog\auth-refactor-journey.md
+last_modified: 8/5/2025 3:25:16 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","build_errors_8-2-2025.md","docs\errors\build_errors_8-2-2025.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\errors\build_errors_8-2-2025.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","vercel_build_logs_7_21_25.md","docs\errors\vercel_build_logs_7_21_25.md","7/21/2025 4:01:13 PM","False",,"Standard","---
+original_path: docs\errors\vercel_build_logs_7_21_25.md
+last_modified: 7/21/2025 4:01:13 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","manual_contract_audit.md","reports\ui_specialist_2\manual_contract_audit.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: reports\ui_specialist_2\manual_contract_audit.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","modal-audit.md","staging\ui-specialist-1\modal-audit.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-1\modal-audit.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","Modal-Usage-Guide.md","staging\ui-specialist-1\Modal-Usage-Guide.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-1\Modal-Usage-Guide.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","badge-positioning-audit.md","staging\ui-specialist-2\badge-positioning-audit.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\badge-positioning-audit.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","Design-System-Updates.md","staging\ui-specialist-2\Design-System-Updates.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\Design-System-Updates.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","UI_SPECIALIST_2_DELIVERABLES_MANIFEST.md","staging\ui-specialist-2\UI_SPECIALIST_2_DELIVERABLES_MANIFEST.md","8/5/2025 4:53:45 PM","True","True","Primary","---
+original_path: staging\ui-specialist-2\UI_SPECIALIST_2_DELIVERABLES_MANIFEST.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","badge-visibility-tests.md","staging\ui-specialist-2\tests\badge-visibility-tests.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\tests\badge-visibility-tests.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","cross-browser-compatibility-tests.md","staging\ui-specialist-2\tests\cross-browser-compatibility-tests.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\tests\cross-browser-compatibility-tests.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","responsive-design-tests.md","staging\ui-specialist-2\tests\responsive-design-tests.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\tests\responsive-design-tests.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Frontend","status-accuracy-tests.md","staging\ui-specialist-2\tests\status-accuracy-tests.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\tests\status-accuracy-tests.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Frontend
+migration_date: 2025-08-05
+---"
+"Backend","supabase-advisor-alerts.md","supabase-advisor-alerts.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: supabase-advisor-alerts.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","API_REFERENCE.md","docs\API_REFERENCE.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\API_REFERENCE.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","BACKEND_GUIDE.md","docs\BACKEND_GUIDE.md","7/21/2025 9:45:18 AM","False",,"Standard","---
+original_path: docs\BACKEND_GUIDE.md
+last_modified: 7/21/2025 9:45:18 AM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATA_MODEL.md","docs\DATA_MODEL.md","7/21/2025 9:40:47 AM","False",,"Standard","---
+original_path: docs\DATA_MODEL.md
+last_modified: 7/21/2025 9:40:47 AM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATA_PIPELINE_ARCHITECTURE.md","docs\DATA_PIPELINE_ARCHITECTURE.md","8/3/2025 8:49:21 PM","False",,"Standard","---
+original_path: docs\DATA_PIPELINE_ARCHITECTURE.md
+last_modified: 8/3/2025 8:49:21 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATA_QUALITY_GUIDE.md","docs\DATA_QUALITY_GUIDE.md","7/19/2025 1:40:47 PM","False",,"Standard","---
+original_path: docs\DATA_QUALITY_GUIDE.md
+last_modified: 7/19/2025 1:40:47 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATA_SOURCE_SPECIFICATIONS.md","docs\DATA_SOURCE_SPECIFICATIONS.md","7/21/2025 9:49:12 AM","False",,"Standard","---
+original_path: docs\DATA_SOURCE_SPECIFICATIONS.md
+last_modified: 7/21/2025 9:49:12 AM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATA_TRANSFORMATION_SPECIFICATIONS.md","docs\DATA_TRANSFORMATION_SPECIFICATIONS.md","7/21/2025 9:49:29 AM","False",,"Standard","---
+original_path: docs\DATA_TRANSFORMATION_SPECIFICATIONS.md
+last_modified: 7/21/2025 9:49:29 AM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATABASE_TYPE_REFERRENCES.md","docs\DATABASE_TYPE_REFERRENCES.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\DATABASE_TYPE_REFERRENCES.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","DATABASE_UNIQUE_CONSTRAINT_IMPLEMENTATION.md","docs\DATABASE_UNIQUE_CONSTRAINT_IMPLEMENTATION.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\DATABASE_UNIQUE_CONSTRAINT_IMPLEMENTATION.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","GEMINI_API_ENHANCEMENTS_SUMMARY.md","docs\GEMINI_API_ENHANCEMENTS_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GEMINI_API_ENHANCEMENTS_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","GEMINI_API_ERROR_ANALYSIS_AND_RESOLUTION_STRATEGY.md","docs\GEMINI_API_ERROR_ANALYSIS_AND_RESOLUTION_STRATEGY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GEMINI_API_ERROR_ANALYSIS_AND_RESOLUTION_STRATEGY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","GEMINI_API_IMPLEMENTATION_PLAN.md","docs\GEMINI_API_IMPLEMENTATION_PLAN.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GEMINI_API_IMPLEMENTATION_PLAN.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","GEMINI_API_ISSUES_AND_RESOLUTION_SUMMARY.md","docs\GEMINI_API_ISSUES_AND_RESOLUTION_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GEMINI_API_ISSUES_AND_RESOLUTION_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","GITHUB_ACTIONS_PIPELINE_VERIFICATION.md","docs\GITHUB_ACTIONS_PIPELINE_VERIFICATION.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_PIPELINE_VERIFICATION.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","PIPELINE_ISSUES_RESOLVED_SUMMARY.md","docs\PIPELINE_ISSUES_RESOLVED_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\PIPELINE_ISSUES_RESOLVED_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","PIPELINE_QUALITY_CONTROL_IMPROVEMENTS.md","docs\PIPELINE_QUALITY_CONTROL_IMPROVEMENTS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\PIPELINE_QUALITY_CONTROL_IMPROVEMENTS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","PIPELINE_QUALITY_IMPROVEMENTS_SUMMARY.md","docs\PIPELINE_QUALITY_IMPROVEMENTS_SUMMARY.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\PIPELINE_QUALITY_IMPROVEMENTS_SUMMARY.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","SCRAPING_ALTERNATIVES.md","docs\SCRAPING_ALTERNATIVES.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\SCRAPING_ALTERNATIVES.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","SOTA_DATA_PIPELINE_RESEARCH.md","docs\SOTA_DATA_PIPELINE_RESEARCH.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\SOTA_DATA_PIPELINE_RESEARCH.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","supabase-advisor-fixes.md","docs\supabase-advisor-fixes.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\supabase-advisor-fixes.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","supabase-rls-lessons-learned.md","docs\supabase-rls-lessons-learned.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\supabase-rls-lessons-learned.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","SUPABASE_REMEDIATION_WBS.md","docs\archive\SUPABASE_REMEDIATION_WBS.md","7/20/2025 8:23:00 PM","False",,"Standard","---
+original_path: docs\archive\SUPABASE_REMEDIATION_WBS.md
+last_modified: 7/20/2025 8:23:00 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","2025-07-29-pipeline-quality-improvements.md","docs\blog\2025-07-29-pipeline-quality-improvements.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\2025-07-29-pipeline-quality-improvements.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","2025-07-30-github-actions-pipeline-success.md","docs\blog\2025-07-30-github-actions-pipeline-success.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\blog\2025-07-30-github-actions-pipeline-success.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","supabase-SQL-output-8-2-25.md","docs\errors\supabase-SQL-output-8-2-25.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\errors\supabase-SQL-output-8-2-25.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","supabasefallback-tsx-tsc-errors-7-15-25.md","docs\errors\supabasefallback-tsx-tsc-errors-7-15-25.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\errors\supabasefallback-tsx-tsc-errors-7-15-25.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","data-source-research.md","staging\research-specialist-1\data-source-research.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: staging\research-specialist-1\data-source-research.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","Modal-API-Documentation.md","staging\ui-specialist-1\Modal-API-Documentation.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-1\Modal-API-Documentation.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Backend","Badge-API-Documentation.md","staging\ui-specialist-2\Badge-API-Documentation.md","8/5/2025 4:53:45 PM","False",,"Standard","---
+original_path: staging\ui-specialist-2\Badge-API-Documentation.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Backend
+migration_date: 2025-08-05
+---"
+"Setup","README-GitMeta.md","README-GitMeta.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: README-GitMeta.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README-InvokeGitSafe.md","README-InvokeGitSafe.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: README-InvokeGitSafe.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","README.md","8/5/2025 4:54:03 PM","True","True","Primary","---
+original_path: README.md
+last_modified: 8/5/2025 4:54:03 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","supabase-configuration.md",".clinerules\supabase-configuration.md","8/5/2025 4:53:43 PM","False",,"Standard","---
+original_path: .clinerules\supabase-configuration.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","app\admin\README.md","7/3/2025 3:56:03 PM","True","False","Archive","---
+original_path: app\admin\README.md
+last_modified: 7/3/2025 3:56:03 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","components\auth\README.md","8/5/2025 4:53:43 PM","True","False","Archive","---
+original_path: components\auth\README.md
+last_modified: 8/5/2025 4:53:43 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","CONFIGURATION_MIGRATION_GUIDE.md","docs\CONFIGURATION_MIGRATION_GUIDE.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\CONFIGURATION_MIGRATION_GUIDE.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","GEMINI-CLI-CONFIGURATION-INSTRUCTIONS.md","docs\GEMINI-CLI-CONFIGURATION-INSTRUCTIONS.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\GEMINI-CLI-CONFIGURATION-INSTRUCTIONS.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","GITHUB_ACTIONS_ESM_CONFIGURATION_CONFLICTS.md","docs\GITHUB_ACTIONS_ESM_CONFIGURATION_CONFLICTS.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\GITHUB_ACTIONS_ESM_CONFIGURATION_CONFLICTS.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","INSTALLATION.md","docs\INSTALLATION.md","7/21/2025 9:41:06 AM","False",,"Standard","---
+original_path: docs\INSTALLATION.md
+last_modified: 7/21/2025 9:41:06 AM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","MIGRATION_PLAN.md","docs\MIGRATION_PLAN.md","7/18/2025 9:34:21 PM","False",,"Standard","---
+original_path: docs\MIGRATION_PLAN.md
+last_modified: 7/18/2025 9:34:21 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","NODEJS_CONFIGURATION_MANAGEMENT.md","docs\NODEJS_CONFIGURATION_MANAGEMENT.md","8/5/2025 4:53:44 PM","False",,"Standard","---
+original_path: docs\NODEJS_CONFIGURATION_MANAGEMENT.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","docs\README.md","8/3/2025 8:48:33 PM","True","False","Archive","---
+original_path: docs\README.md
+last_modified: 8/3/2025 8:48:33 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","SUPABASE_SETUP_GUIDE.md","docs\auth\SUPABASE_SETUP_GUIDE.md","8/5/2025 2:37:39 PM","False",,"Standard","---
+original_path: docs\auth\SUPABASE_SETUP_GUIDE.md
+last_modified: 8/5/2025 2:37:39 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","2025-07-19_supabase-migration-adventures.md","docs\blog\2025-07-19_supabase-migration-adventures.md","7/19/2025 1:09:00 PM","False",,"Standard","---
+original_path: docs\blog\2025-07-19_supabase-migration-adventures.md
+last_modified: 7/19/2025 1:09:00 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","docs\blog\README.md","8/5/2025 4:54:03 PM","True","False","Archive","---
+original_path: docs\blog\README.md
+last_modified: 8/5/2025 4:54:03 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","docs\error-handling\README.md","8/5/2025 4:53:44 PM","True","False","Archive","---
+original_path: docs\error-handling\README.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","docs\mockups\README.md","8/5/2025 4:53:44 PM","True","False","Archive","---
+original_path: docs\mockups\README.md
+last_modified: 8/5/2025 4:53:44 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","scripts\README.md","7/18/2025 9:34:22 PM","True","False","Archive","---
+original_path: scripts\README.md
+last_modified: 7/18/2025 9:34:22 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","staging\ui-specialist-1\README.md","8/5/2025 4:53:45 PM","True","False","Archive","---
+original_path: staging\ui-specialist-1\README.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Setup
+migration_date: 2025-08-05
+---"
+"Setup","README.md","tests\README.md","8/5/2025 4:53:45 PM","True","False","Archive","---
+original_path: tests\README.md
+last_modified: 8/5/2025 4:53:45 PM
+category: Setup
+migration_date: 2025-08-05
+---"
