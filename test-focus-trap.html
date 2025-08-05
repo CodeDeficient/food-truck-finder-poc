@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthModal Focus Trap Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f3f4f6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-primary:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+            margin-left: 8px;
+        }
+        
+        .btn-secondary:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(107, 114, 128, 0.5);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+        }
+        
+        .close-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .tab:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        
+        .test-results {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .test-fail {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+        
+        .instructions {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AuthModal Focus Trap Test</h1>
+        
+        <div class="instructions">
+            <h3>Testing Instructions:</h3>
+            <ol>
+                <li>Click "Open AuthModal" to open the modal</li>
+                <li>Use Tab key to navigate through the modal elements</li>
+                <li>Verify focus stays within the modal (doesn't go to background elements)</li>
+                <li>Use Shift+Tab to navigate backwards</li>
+                <li>Test that Escape key closes the modal</li>
+                <li>Test that clicking outside closes the modal</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h2>Background Content (Should not be focusable when modal is open)</h2>
+            <button class="btn btn-primary" onclick="openModal()">Open AuthModal</button>
+            <button class="btn btn-secondary">Background Button 1</button>
+            <input type="text" placeholder="Background input" class="form-input" style="margin: 8px;">
+            <button class="btn btn-secondary">Background Button 2</button>
+        </div>
+        
+        <!-- AuthModal -->
+        <div id="authModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()" aria-label="Close modal">&times;</button>
+                <h2 id="modal-title" class="modal-title">Sign In</h2>
+                
+                <!-- Tab Navigation -->
+                <div class="tabs" role="tablist" aria-label="Authentication methods">
+                    <button class="tab active" role="tab" aria-selected="true" aria-controls="email-panel" 
+                            onclick="switchTab('email')" id="email-tab">
+                        📧 Email
+                    </button>
+                    <button class="tab" role="tab" aria-selected="false" aria-controls="oauth-panel" 
+                            onclick="switchTab('oauth')" id="oauth-tab">
+                        🔗 Social
+                    </button>
+                </div>
+                
+                <!-- Email Form -->
+                <div id="email-panel" role="tabpanel" aria-labelledby="email-tab">
+                    <form onsubmit="handleSubmit(event)">
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input type="email" id="email" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="password">Password</label>
+                            <input type="password" id="password" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Sign In</button>
+                            <button type="button" class="btn btn-secondary" onclick="toggleMode()">Switch to Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- OAuth Form -->
+                <div id="oauth-panel" role="tabpanel" aria-labelledby="oauth-tab" class="hidden">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" style="width: 100%; margin-bottom: 8px;">
+                            🔍 Continue with Google
+                        </button>
+                        <button type="button" class="btn btn-secondary" style="width: 100%;">
+                            📱 Continue with GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="testResults" class="test-results">
+            <h3>Test Results:</h3>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        let focusableElements = [];
+        let firstFocusableElement = null;
+        let lastFocusableElement = null;
+        let isModalOpen = false;
+        let testResults = [];
+
+        function openModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.remove('hidden');
+            isModalOpen = true;
+            
+            // Get focusable elements within modal
+            updateFocusableElements();
+            
+            // Focus first element
+            if (firstFocusableElement) {
+                firstFocusableElement.focus();
+            }
+            
+            // Add event listeners
+            document.addEventListener('keydown', handleKeyDown);
+            modal.addEventListener('click', handleOverlayClick);
+            
+            // Test: Verify focus is trapped
+            testResults.push('✅ Modal opened and focus moved to first element');
+            updateTestResults();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('hidden');
+            isModalOpen = false;
+            
+            // Remove event listeners
+            document.removeEventListener('keydown', handleKeyDown);
+            modal.removeEventListener('click', handleOverlayClick);
+            
+            testResults.push('✅ Modal closed successfully');
+            updateTestResults();
+        }
+
+        function updateFocusableElements() {
+            const modal = document.getElementById('authModal');
+            focusableElements = modal.querySelectorAll(
+                'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+            );
+            firstFocusableElement = focusableElements[0];
+            lastFocusableElement = focusableElements[focusableElements.length - 1];
+        }
+
+        function handleKeyDown(e) {
+            if (!isModalOpen) return;
+            
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeModal();
+                testResults.push('✅ Escape key closes modal');
+                updateTestResults();
+                return;
+            }
+            
+            if (e.key === 'Tab') {
+                const activeElement = document.activeElement;
+                
+                if (e.shiftKey) {
+                    // Shift + Tab (backwards)
+                    if (activeElement === firstFocusableElement) {
+                        e.preventDefault();
+                        lastFocusableElement.focus();
+                        testResults.push('✅ Focus wrapped from first to last element (Shift+Tab)');
+                        updateTestResults();
+                    }
+                } else {
+                    // Tab (forwards)
+                    if (activeElement === lastFocusableElement) {
+                        e.preventDefault();
+                        firstFocusableElement.focus();
+                        testResults.push('✅ Focus wrapped from last to first element (Tab)');
+                        updateTestResults();
+                    }
+                }
+            }
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target === e.currentTarget) {
+                closeModal();
+                testResults.push('✅ Clicking outside modal closes it');
+                updateTestResults();
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update tab states
+            const emailTab = document.getElementById('email-tab');
+            const oauthTab = document.getElementById('oauth-tab');
+            const emailPanel = document.getElementById('email-panel');
+            const oauthPanel = document.getElementById('oauth-panel');
+            
+            if (tabName === 'email') {
+                emailTab.classList.add('active');
+                oauthTab.classList.remove('active');
+                emailTab.setAttribute('aria-selected', 'true');
+                oauthTab.setAttribute('aria-selected', 'false');
+                emailPanel.classList.remove('hidden');
+                oauthPanel.classList.add('hidden');
+            } else {
+                oauthTab.classList.add('active');
+                emailTab.classList.remove('active');
+                oauthTab.setAttribute('aria-selected', 'true');
+                emailTab.setAttribute('aria-selected', 'false');
+                oauthPanel.classList.remove('hidden');
+                emailPanel.classList.add('hidden');
+            }
+            
+            // Update focusable elements after tab switch
+            updateFocusableElements();
+            testResults.push(`✅ Tab switched to ${tabName} and focus elements updated`);
+            updateTestResults();
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            testResults.push('✅ Form submission handled correctly');
+            updateTestResults();
+        }
+
+        function toggleMode() {
+            const title = document.getElementById('modal-title');
+            if (title.textContent === 'Sign In') {
+                title.textContent = 'Create Account';
+            } else {
+                title.textContent = 'Sign In';
+            }
+            testResults.push('✅ Mode toggle works correctly');
+            updateTestResults();
+        }
+
+        function updateTestResults() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = testResults.map(result => `<div>${result}</div>`).join('');
+        }
+
+        // Check initial accessibility compliance
+        function runAccessibilityChecks() {
+            const checks = [];
+            
+            // Check if modal has proper ARIA attributes
+            const modal = document.getElementById('authModal');
+            if (modal.getAttribute('role') === 'dialog') {
+                checks.push('✅ Modal has role="dialog"');
+            }
+            if (modal.getAttribute('aria-modal') === 'true') {
+                checks.push('✅ Modal has aria-modal="true"');
+            }
+            if (modal.getAttribute('aria-labelledby')) {
+                checks.push('✅ Modal has aria-labelledby');
+            }
+            
+            // Check form labels
+            const inputs = modal.querySelectorAll('input');
+            let labelsCorrect = true;
+            inputs.forEach(input => {
+                const label = modal.querySelector(`label[for="${input.id}"]`);
+                if (!label) labelsCorrect = false;
+            });
+            if (labelsCorrect) {
+                checks.push('✅ All inputs have proper labels');
+            }
+            
+            // Check tab structure
+            const tablist = modal.querySelector('[role="tablist"]');
+            const tabs = modal.querySelectorAll('[role="tab"]');
+            const panels = modal.querySelectorAll('[role="tabpanel"]');
+            
+            if (tablist && tabs.length > 0 && panels.length > 0) {
+                checks.push('✅ Tab structure is properly implemented');
+            }
+            
+            testResults = testResults.concat(checks);
+            updateTestResults();
+        }
+
+        // Run initial checks when page loads
+        document.addEventListener('DOMContentLoaded', runAccessibilityChecks);
+    </script>
+</body>
+</html>

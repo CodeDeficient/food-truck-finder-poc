@@ -3,7 +3,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+<<<<<<< HEAD
 import { supabase } from '@/lib/supabase/client';
+=======
+import { getSupabase } from '@/lib/supabase/client';
+>>>>>>> data-specialist-2-work
 import { Mail, Chrome, AlertCircle } from 'lucide-react';
 import type { Provider } from '@supabase/supabase-js';
 import { AuthEmailForm } from './AuthEmailForm';
@@ -124,7 +128,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({ score: 0, feedback: [], isValid: false });
   const deviceFingerprintRef = useRef<string | undefined>(undefined);
 
+<<<<<<< HEAD
   // Use the imported supabase client directly
+=======
+  const supabase = getSupabase();
+>>>>>>> data-specialist-2-work
 
   // Suppress unused variable warnings for future use
   void resolvedTheme;

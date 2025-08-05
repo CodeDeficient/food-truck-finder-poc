@@ -103,6 +103,7 @@ analyzePipelineQuality().catch(error => {
     console.error('❌ Analysis failed:', error);
     process.exit(1);
 });
+<<<<<<< HEAD
         }
         urlPerformance[job.target_url].total++;
         urlPerformance[job.target_url][job.status]++;
@@ -150,3 +151,5 @@ analyzePipelineQuality().then(() => {
   console.error('💥 Fatal error:', error);
   process.exit(1);
 });
+=======
+>>>>>>> data-specialist-2-work

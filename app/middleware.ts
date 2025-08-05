@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { protectAdminRoutes } from '@/lib/middleware/middlewareHelpers';
+import { protectAdminRoutes, protectUserRoutes } from '@/lib/middleware/middlewareHelpers';
 
 /**
  * Handles requests and applies specific middleware logic.
@@ -12,6 +12,7 @@ import { protectAdminRoutes } from '@/lib/middleware/middlewareHelpers';
  * @description
  *   - Extracts request metadata, including IP, user agent, URL, and method from request headers.
  *   - Applies admin route protection if the request URL pathname starts with '/admin'.
+ *   - Applies user route protection for '/profile' and '/favorites' routes.
  */
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -27,9 +28,14 @@ export async function middleware(req: NextRequest) {
     return await protectAdminRoutes(req, res, requestMetadata);
   }
 
+  // Protect user routes that require authentication
+  if (req.nextUrl.pathname.startsWith('/profile') || req.nextUrl.pathname.startsWith('/favorites')) {
+    return await protectUserRoutes(req, res, requestMetadata);
+  }
+
   return res;
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/profile/:path*', '/favorites/:path*'],
 };

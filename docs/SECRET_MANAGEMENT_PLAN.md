@@ -34,7 +34,7 @@
 | Secret Name | Purpose | Location | Last Updated | Rotation Schedule | Status |
 |-------------|---------|----------|--------------|-------------------|--------|
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public database access | Vercel + Local | 2024-05-31 | 180 days | ⚠️ **CHECK NEEDED** |
-| `DATABASE_PASSWORD` | Direct DB connection | Local only | Unknown | 90 days | ⚠️ **AUDIT NEEDED** |
+| `SUPABASE_DB_PASSWORD` | Direct DB connection | Local only | Unknown | 90 days | ⚠️ **AUDIT NEEDED** |
 
 ---
 
@@ -43,7 +43,7 @@
 ### **High-Risk Secrets (90 days)**
 - `CRON_SECRET` - Protects critical automation
 - `JWT_SECRET` - Core authentication
-- `DATABASE_PASSWORD` - Direct database access
+- `SUPABASE_DB_PASSWORD` - Direct database access
 
 ### **Medium-Risk Secrets (180 days)**
 - `SUPABASE_SERVICE_ROLE_KEY` - Database admin

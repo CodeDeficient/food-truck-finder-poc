@@ -1,10 +1,19 @@
 # System Architecture
 
-This document provides a detailed overview of the Food Truck Finder system architecture. It is based on the existing `docs/ARCHITECTURE_OVERVIEW.md` and will be expanded upon to create a comprehensive architectural reference.
+**Last Updated**: August 3, 2025  
+**Current Status**: Environment Variable Milestone Completed ✅ | Authentication & RBAC Implementation Phase
+
+This document provides a detailed overview of the Food Truck Finder system architecture. It reflects the current production-ready state following the successful resolution of environment variable issues and restoration of database connectivity.
 
 ## 1. High-Level Overview
 
-The Food Truck Finder is a full-stack web application built with Next.js and Supabase. It is designed to be a comprehensive platform for discovering and managing food truck information. The system is composed of a user-facing web application, a powerful admin dashboard, and an automated data pipeline for discovering and processing food truck data.
+The Food Truck Finder is a production-deployed, full-stack web application built with Next.js and Supabase. It is designed to be a comprehensive, enterprise-grade platform for discovering and managing food truck information. The system is composed of:
+
+- **User-facing web application** with real-time food truck discovery
+- **Powerful admin dashboard** with comprehensive data management
+- **Automated data pipeline** with AI-powered scraping and processing
+- **Secure authentication system** (currently implementing RBAC)
+- **Zero-trust development protocol** ensuring production stability
 
 ## 2. Project Structure and Key Directories
 
@@ -173,6 +182,26 @@ The enhanced pipeline operates in three main phases:
 -   **`discovery-only`**: Only discover new URLs.
 -   **`processing-only`**: Process existing discovered URLs.
 -   **`location-specific`**: Target specific cities.
+
+## 4.1 Current Pipeline Status & Known Issues
+
+**Environment Variable Milestone (August 3, 2025)** - ✅ **COMPLETED**
+- Database connectivity fully restored
+- 85 food trucks loading successfully
+- Automated dotenv-expand solution deployed
+- Legacy Supabase API key lifecycle managed
+
+**Critical Issues Under Investigation:**
+- **CRON Job Data Persistence**: Auto-scrape endpoints report success ("79 trucks processed, 70 new") but data not persisting to database
+- **Stuck Scraping Jobs**: 82 scraping jobs stuck in "running" status for extended periods
+- **Data Quality Verification**: Need to verify scraping pipeline end-to-end functionality
+
+**Priority Actions:**
+1. Investigate Vercel function logs for timeout/memory errors
+2. Check RLS policies potentially blocking data insertion
+3. Debug individual scraping job with extensive logging
+4. Verify external API keys and quotas (Firecrawl, Gemini)
+5. Test database connection permissions in production environment
 
 ## 5. Database Schema
 

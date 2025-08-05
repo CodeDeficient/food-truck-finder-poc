@@ -1,0 +1,100 @@
+﻿[
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:14",
+        "BranchName":  "codeantai-changes8eb0d8adb737ec03c1c134b351b83e95dee8f409gjqly",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:14",
+        "BranchName":  "codeantai-changes8eb0d8adb737ec03c1c134b351b83e95dee8f409vcttk",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:15",
+        "BranchName":  "codeantai-changesb822a6bf3e1a11bcbbfca3eed2943b2c271868fccdbps",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:15",
+        "BranchName":  "debug/leaflet-map-load",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:17",
+        "BranchName":  "feature/comprehensive-code-quality-improvements",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:17",
+        "BranchName":  "feature/github-actions-scraper",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:17",
+        "BranchName":  "feature/phase-4-ui-overhaul",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:18",
+        "BranchName":  "feature/pipeline-improvements",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:18",
+        "BranchName":  "fix-GitHub-action-path-resolution",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:19",
+        "BranchName":  "fix/action-bundling",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:20",
+        "BranchName":  "fix/dir-imports",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:20",
+        "BranchName":  "fix/github-action",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:25",
+        "BranchName":  "jules-tasks-1",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    },
+    {
+        "Context":  "Branch Processing",
+        "Timestamp":  "2025-08-05 11:22:26",
+        "BranchName":  "vercel-deployment-fix",
+        "Exception":  "RuntimeException",
+        "Message":  "Cannot create object of type \"GitBranchMetadata\". Unable to cast object of type \u0027System.Management.Automation.PSObject\u0027 to type \u0027System.Object[]\u0027."
+    }
+]

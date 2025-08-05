@@ -54,6 +54,9 @@ next-env.d.ts
 *.backup
 **/*.ts.backup
 **/*.tsx.backup
+
+# Infra Backups
+infra/backups/
 *.png
 
 # Log files

@@ -14,14 +14,14 @@ if (Test-Path ".env.local") {
 
 $supabaseUrl = $env:NEXT_PUBLIC_SUPABASE_URL
 $serviceKey = $env:SUPABASE_SERVICE_ROLE_KEY
-$dbPassword = $env:DATABASE_PASSWORD
+$dbPassword = $env:SUPABASE_DB_PASSWORD
 
 Write-Host "Running SQL script against Supabase database..." -ForegroundColor Cyan
 Write-Host "URL: $supabaseUrl" -ForegroundColor Gray
 
 if (-not $supabaseUrl -or -not $serviceKey -or -not $dbPassword) {
     Write-Host "ERROR: Missing required environment variables!" -ForegroundColor Red
-    Write-Host "   Need: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, DATABASE_PASSWORD" -ForegroundColor Yellow
+    Write-Host "   Need: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_DB_PASSWORD" -ForegroundColor Yellow
     exit 1
 }
 

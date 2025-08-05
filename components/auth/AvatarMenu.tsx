@@ -4,7 +4,11 @@ import React, { useState } from 'react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+<<<<<<< HEAD
 import { supabase } from '@/lib/supabase/client';
+=======
+import { getSupabase } from '@/lib/supabase/client';
+>>>>>>> data-specialist-2-work
 import { useRouter } from 'next/navigation';
 import { User, Settings, LogOut, Loader2, Shield } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -72,7 +76,11 @@ export const AvatarMenu: React.FC<AvatarMenuProps> = ({
 }) => {
   const [isSigningOut, setIsSigningOut] = useState(false);
   const router = useRouter();
+<<<<<<< HEAD
   // Use the imported supabase client directly
+=======
+  const supabase = getSupabase();
+>>>>>>> data-specialist-2-work
 
   // Support theme-aware styling in the future
   void resolvedTheme;

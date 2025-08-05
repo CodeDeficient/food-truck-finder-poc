@@ -5,11 +5,15 @@
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-Professional-green?style=for-the-badge)](docs/ZERO_TRUST_VERIFICATION_PROTOCOL.md)
 [![Launch Ready](https://img.shields.io/badge/Launch%20Ready-✅-brightgreen?style=for-the-badge)](CONSOLIDATED_LAUNCH_READINESS_PLAN.md)
 
-## 🚀 **Enterprise-Grade Food Truck Discovery Platform**
+## 🚀 **Enterprise-Grade Food Truck Discovery Platform (Updated)**
 
-A modern, full-stack web application built with **professional-grade architecture** and **enterprise development standards**. Features an AI-powered data pipeline, comprehensive admin dashboard, and real-time food truck discovery capabilities.
+A cutting-edge, full-stack web application leveraging **enterprise-grade architecture** and modern development standards. 
 
-**Built with Zero Trust Development Protocol** - Every code change verified through systematic quality gates to ensure production stability.
+### **Latest Milestone: Environment Variable Resolution**
+- **Key Fixes**: Resolved environment variable expansion issues and Supabase connectivity
+- **Current Focus**: Authentication and Role-Based Access Control (RBAC) setup for users, truck owners, and administrators
+
+**Built with Zero Trust Development Protocol** - Ensuring every code change meets rigorous quality gates to deliver a robust production environment.
 
 ## Key Technologies
 
@@ -25,23 +29,25 @@ A modern, full-stack web application built with **professional-grade architectur
 - **Testing**: Playwright (E2E), Jest (Unit/Integration)
 - **Type Safety**: TypeScript
 
-## Features
+## Updated Features
 
-- **Food Truck Discovery**: Easily find food trucks based on location, cuisine type, and operating status.
-- **Detailed Information**: View comprehensive details for each food truck, including menus, operating hours, contact information, and social media links.
-- **Real-time Updates**: Get live updates on food truck locations and availability.
-- **Advanced Search & Filtering**: Robust search capabilities with filters for cuisine type, price range, and operating status.
-- **Event & Schedule Management**: Integration for food truck events and operating schedules.
-- **User Profiles**: Personalized user profiles for enhanced experience.
-- **Data Quality Metrics**: Built-in functions and dashboards to monitor and ensure data quality.
-- **Comprehensive Security**: Implemented security hardening measures across the application and database.
-- **Admin Dashboard**: A secure and comprehensive interface for administrators, currently under active development. It includes:
-  - **Food Truck Management**: CRUD operations for food truck data.
-  - **User Management**: Oversee and manage user accounts.
-  - **Data Pipeline Monitoring**: Track scraping jobs, data quality, and automated cleanup processes.
-  - **System Metrics & Alerts**: Real-time monitoring of application performance and system health, with configurable alerts.
-  - **Analytics**: Insights into application usage and food truck popularity.
-  - **Test Pipeline**: Tools for testing data scraping and processing pipelines.
+### Core Functionality
+- **Food Truck Discovery**: Find food trucks based on location, cuisine type, and operating status.
+- **Detailed Information**: Comprehensive truck details including menus, operating hours, contacts.
+- **Real-time Updates**: Receive live notifications of food truck location changes.
+
+### Advanced Capabilities
+- **AI-Powered Search 0 Filtering**: Sophisticated filtering for cuisine, price range, and operating status.
+- **Event 6 Schedule Management**: Integrated scheduling for truck events.
+- **Enhanced User Profiles**: Personalized profiles with role-based access (in-progress).
+- **Security Hardening**: Advanced security measures and continuous threat monitoring.
+- **Admin Dashboard Enhancements**:
+  - **Food Truck Management**: CRUD operations for truck data.
+  - **User Management**: Comprehensive user oversight capabilities.
+  - **Data Pipeline Monitoring**: Track scraping jobs and data quality metrics.
+  - **System Metrics 6 Alerts**: Real-time performance and health alerts.
+  - **Analytics**: Track application usage and food truck popularity trends.
+  - **Test Pipeline**: Advanced testing tools for scraping processes.
 
 ## AI-Powered Data Pipeline
 
@@ -218,9 +224,9 @@ See the [LICENSE](LICENSE) file for complete terms and commercial use definition
 
 ---
 
-## Installation
+### Installation
 
-To set up the project locally, follow these steps:
+To deploy this project locally, execute the following steps:
 
 1.  **Clone the repository**:
     ```bash
@@ -233,17 +239,28 @@ To set up the project locally, follow these steps:
     # or using pnpm
     pnpm install
     ```
-3.  **Set up Environment Variables**:
-    Create a `.env.local` file by copying the example file:
 
+3.  **Set up Environment Variables**:
+    Generate a `.env.local` file from the example:
     ```bash
     cp .env.local.example .env.local
     ```
 
-    Then, fill in the required environment variables in the `.env.local` file. Refer to the comments in the `.env.local.example` file for guidance on where to find the necessary API keys and other values.
+    Populate the `.env.local` with desired values. The example file outlines how to configure keys and necessary values.
 
-4.  **Run Database Migrations**:
-    Ensure your Supabase database is set up and run any pending migrations. You can apply migrations using the Supabase CLI:
+    **⚠️ IMPORTANT:** Avoid using `vercel env pull` for syncing env variables automatically as it risks overwriting your current setup.
+
+    **Authentication Setup**:
+    - **Supabase Authentication**: Powers user authentication and session management
+    - **Critical Auth Variables**:
+      - `NEXT_PUBLIC_SUPABASE_URL`: URL for your Supabase project
+      - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Public key for client-side Supabase connection
+      - `SUPABASE_SERVICE_ROLE_KEY`: Service role key for server-side use
+    - **OAuth Providers**: Utilize providers such as Google and GitHub for login
+    - **Session Maintenance**: Secure token refresh handled by Supabase Auth
+
+4.  **Execute Database Migrations**:
+    Ensure Supabase is configured and migrations are applied via Supabase CLI:
     ```bash
     npx supabase db push
     ```
@@ -386,6 +403,7 @@ This project is documented using the standard **7-document model** for professio
 | **[📝 Product Requirements (PRD)](docs/PRODUCT_REQUIREMENTS.md)** | What we're building, for whom, and why. |
 | **[🛠️ Tech Stack](docs/TECH_STACK.md)** | The technologies used in the project. |
 | **[🏗️ System Architecture](docs/ARCHITECTURE.md)** | The blueprint of the system. |
+| **[👨‍💻 Developer Guide](docs/DEVELOPER_GUIDE.md)** | Comprehensive guide for developers including mock-up workflows. |
 | **[🎨 Frontend Guide](docs/FRONTEND_GUIDE.md)** | A guide to the frontend codebase. |
 | **[⚙️ Backend Guide](docs/BACKEND_GUIDE.md)** | A guide to the backend codebase. |
 | **[📡 API Reference](docs/API_REFERENCE.md)** | Detailed documentation for all API endpoints. |
