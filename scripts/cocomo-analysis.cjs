@@ -352,9 +352,22 @@ This analysis demonstrates:
   shouldIgnoreFile(filePath) {
     const ignorePaths = [
       'node_modules', '.next', 'dist', 'build', '.git',
-      'coverage', 'playwright-report', 'jscpd-report'
+      'coverage', 'playwright-report', 'jscpd-report',
+      'tests/results', 'test-results'
     ];
-    return ignorePaths.some(ignore => filePath.includes(ignore));
+    
+    const ignoreFiles = [
+      'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock',
+      'lint-results.json', 'eslint-report.json', 'baseline-errors-inventory.json', 
+      'baseline-lint-errors.json', 'baseline-lint-summary.txt',
+      '.cocomo-metrics.json', 'jscpd-report.json',
+      'branch-meta.json', 'branch-analysis.json', 'current-branch-analysis.json'
+    ];
+    
+    const fileName = path.basename(filePath);
+    
+    return ignorePaths.some(ignore => filePath.includes(ignore)) || 
+           ignoreFiles.includes(fileName);
   }
   
   shouldIgnoreDir(dirName) {

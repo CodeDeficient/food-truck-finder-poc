@@ -1,37 +1,37 @@
 {
-  "sourceFiles": 585,
-  "totalLOC": 174248,
-  "logicalLOC": 158183,
-  "commentLines": 7942,
-  "blankLines": 8123,
+  "sourceFiles": 951,
+  "totalLOC": 119519,
+  "logicalLOC": 89091,
+  "commentLines": 13874,
+  "blankLines": 16554,
   "languages": {
     "Markdown": {
-      "files": 65,
-      "lines": 12763
+      "files": 229,
+      "lines": 38498
     },
     "CSS": {
-      "files": 4,
-      "lines": 103
+      "files": 5,
+      "lines": 657
     },
     "TypeScript": {
-      "files": 169,
-      "lines": 24919
+      "files": 205,
+      "lines": 29099
     },
     "TypeScript React": {
-      "files": 237,
-      "lines": 20408
+      "files": 265,
+      "lines": 27658
     },
     "JSON": {
-      "files": 48,
-      "lines": 113425
-    },
-    "JavaScript": {
-      "files": 47,
-      "lines": 1437
+      "files": 41,
+      "lines": 1073
     },
     "SQL": {
-      "files": 15,
-      "lines": 1193
+      "files": 14,
+      "lines": 1450
+    },
+    "JavaScript": {
+      "files": 192,
+      "lines": 21084
     }
   },
   "cyclomaticComplexity": 0,
@@ -39,18 +39,18 @@
   "typeScriptCoverage": 0,
   "testCoverage": 0,
   "lintingErrors": 0,
-  "components": 171,
-  "apiEndpoints": 26,
+  "components": 184,
+  "apiEndpoints": 29,
   "customHooks": 23,
-  "utilityFunctions": 92,
-  "totalCommits": 196,
+  "utilityFunctions": 200,
+  "totalCommits": 378,
   "developmentDays": 0,
   "branchesUsed": 0,
   "aiAssistedFiles": 0,
   "promptingPatterns": 0,
   "systematicRefactoring": 0,
-  "documentationFiles": 45,
-  "testFiles": 95,
+  "documentationFiles": 146,
+  "testFiles": 93,
   "configurationFiles": 0,
   "processDocumentation": 2
 }

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { MapPin, Phone, Mail, Calendar, Settings, LogOut } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 
@@ -28,13 +28,23 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  
+  // Fix hydration issues by ensuring we only run on client side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+    
     const getProfile = async () => {
       try {
         setLoading(true);
         setError(null);
+        
+        const supabase = getSupabase();
 
         // Get current user
         const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -94,10 +104,11 @@ export default function ProfilePage() {
     };
 
     getProfile();
-  }, [router]);
+  }, [router, mounted]);
 
   const handleSignOut = async () => {
     try {
+      const supabase = getSupabase();
       const { error } = await supabase.auth.signOut();
       if (error) {
         throw error;
@@ -152,7 +163,8 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) {
+  // Show loading state during hydration
+  if (!mounted || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -299,7 +311,8 @@ export default function ProfilePage() {
                       <Mail className="size-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">Email</p>
-                        <p className="text-sm text-muted-foreground">{profile.email}</p>
+                        <p className="text-sm text-muted-foreground">••••••@••••••</p>
+                        <p className="text-xs text-muted-foreground">Email hidden for security</p>
                       </div>
                     </div>
                     

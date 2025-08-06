@@ -1,6 +1,6 @@
 'use client';
 
-
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -172,6 +172,12 @@ export default function LoginPage() {
   // Support both 'redirectedFrom' (from middleware) and 'next' (from manual redirects)
   const redirectTo = searchParams.get('next') ?? searchParams.get('redirectedFrom') ?? '/admin';
 
+  // Fix hydration issues by ensuring we only run on client side
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const {
     handleEmailLogin,
     handleGoogleLogin,
@@ -182,6 +188,22 @@ export default function LoginPage() {
     password,
     setPassword,
   } = useAuthHandlers(redirectTo);
+
+  // Show loading state during hydration
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <Loader2 className="mx-auto h-8 w-8 animate-spin" />
+              <p className="mt-2 text-muted-foreground">Loading...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
