@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import { RateLimiter, getClientIdentifier } from '@/lib/security/rateLimiter';
 import { AuditLogger } from '@/lib/security/auditLogger';
 import type { User } from '@supabase/supabase-js';
@@ -15,12 +15,14 @@ async function handleSuccessfulAuth({
   origin,
   identifier,
   requestMetadata,
+  supabase,
 }: {
   user: User;
   redirectTo: string;
   origin: string;
   identifier: string;
   requestMetadata: RequestMetadata;
+  supabase: any;
 }) {
   const { data: profile } = await supabase
     .from('profiles')
@@ -40,16 +42,8 @@ async function handleSuccessfulAuth({
 
   // Smart role-based redirects
   if (redirectTo === '/') {
-    // If coming from home page, route based on role
-    switch (profile?.role) {
-      case 'admin':
-        return NextResponse.redirect(`${origin}/admin`);
-      case 'food_truck_owner':
-        return NextResponse.redirect(`${origin}/owner-dashboard`);
-      case 'customer':
-      default:
-        return NextResponse.redirect(`${origin}/profile`);
-    }
+    // For regular login, everyone goes to homepage
+    return NextResponse.redirect(`${origin}/`);
   } else if (redirectTo.startsWith('/admin')) {
     // Admin routes require admin role
     if (profile?.role === 'admin') {
@@ -80,6 +74,17 @@ async function handleAuthFailure(
 }
 
 export async function GET(request: NextRequest) {
+  // Create Supabase client for this request
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Missing Supabase environment variables');
+    return NextResponse.redirect(`${new URL(request.url).origin}/login?error=config`);
+  }
+  
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  
   const identifier = getClientIdentifier(request);
   const rateLimitResult = RateLimiter.checkRateLimit(identifier, 'auth');
 
@@ -124,6 +129,7 @@ export async function GET(request: NextRequest) {
           origin,
           identifier,
           requestMetadata,
+          supabase,
         });
       }
     }
@@ -139,6 +145,7 @@ export async function GET(request: NextRequest) {
       origin,
       identifier,
       requestMetadata,
+      supabase,
     });
   }
 

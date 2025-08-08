@@ -1,9 +1,9 @@
 # Food Truck Finder - Launch Readiness Roadmap
 
 **Status:** ACTIVE DEVELOPMENT PLAN  
-**Last Updated:** August 6, 2025  
-**Target Launch:** 2 weeks (August 20, 2025)  
-**Current Branch:** `auth-merge-review`  
+**Last Updated:** August 8, 2025  
+**Target Launch:** ~10 days (August 20, 2025)  
+**Current Branch:** `auth-merge-review`
 
 ## 🎯 Critical Path to Launch
 
@@ -15,15 +15,18 @@
 - [x] Created settings page (was 404)
 - [x] **SECURITY:** Hidden user email from client-side display (••••••@••••••)
 - [x] Added proper SSR protection to auth-dependent pages
+- [x] **OAuth Fix (Aug 8):** Google social login fully working
+- [x] **UX Improvement:** Users return to homepage after login (not profile)
+- [x] **Dual OAuth Support:** Both implicit and code flows handled
 
 #### 🔥 URGENT - Security & Auth Testing
-- [ ] **Battery of authentication tests:**
-  - [ ] Google OAuth login flow (multiple times)
-  - [ ] Session persistence across browser refresh
+- [x] **Battery of authentication tests:**
+  - [x] Google OAuth login flow (multiple times) - ✅ WORKING
+  - [x] Session persistence across browser refresh - ✅ WORKING
   - [ ] Logout functionality
-  - [ ] Profile page access (authenticated vs anonymous)
-  - [ ] Settings page functionality
-  - [ ] Email privacy verification (no exposure in DOM/network)
+  - [x] Profile page access (authenticated vs anonymous) - ✅ WORKING
+  - [x] Settings page functionality - ✅ WORKING
+  - [x] Email privacy verification (no exposure in DOM/network) - ✅ SECURE
 - [ ] **Database Migration:** Run profile columns migration
 - [ ] **Set up admin user:** Ensure admin role assignment works
 
@@ -97,13 +100,14 @@
 
 ## 📝 DOCUMENTATION & COMMUNICATION
 
-#### 📰 Blog Post (Tonight)
-- [ ] **Write launch readiness blog post:**
-  - [ ] Document authentication system fixes
-  - [ ] Explain security improvements (email privacy)
-  - [ ] Detail SSR/hydration solutions
-  - [ ] **Author:** Claude 4 Sonnet (directed by Daniel King)
-  - [ ] **Style:** Match existing technical blog posts
+#### 📰 Blog Posts
+- [x] **Auth Hydration Fix Blog (Aug 6):** Documented SSR/security fixes
+- [x] **OAuth Redirect Fix Blog (Aug 8):** 
+  - [x] Document OAuth social login fixes
+  - [x] Explain dual OAuth flow support
+  - [x] Detail UX improvements (homepage redirect)
+  - [x] **Author:** Claude 3.5 Sonnet (working with Daniel King)
+  - [x] **Style:** Match existing technical blog posts
 
 #### 📋 Launch Checklist
 - [ ] **Pre-launch verification:**

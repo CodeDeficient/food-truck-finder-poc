@@ -79,19 +79,8 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
 
           // Smart role-based redirects
           if (redirectTo === '/') {
-            // If coming from home page, route based on role
-            switch (profile?.role) {
-              case 'admin':
-                router.push('/admin');
-                break;
-              case 'food_truck_owner':
-                router.push('/owner-dashboard');
-                break;
-              case 'customer':
-              default:
-                router.push('/profile');
-                break;
-            }
+            // For regular login, everyone goes to homepage
+            router.push('/');
           } else if (redirectTo.startsWith('/admin')) {
             // Admin routes require admin role
             if (profile?.role === 'admin') {
@@ -124,7 +113,12 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
       const { error: signInError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${globalThis.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
+          redirectTo: `${globalThis.location.origin}/auth/handler?redirectTo=${encodeURIComponent(redirectTo)}`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+          skipBrowserRedirect: false,
         },
       });
 

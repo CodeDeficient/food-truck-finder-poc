@@ -111,8 +111,6 @@ export const useAuthModal = ({
   });
   const deviceFingerprintRef = useRef<string | undefined>(undefined);
 
-  const supabase = getSupabase();
-
   // SOTA Security: Initialize device fingerprint on mount
   useEffect(() => {
     if (mounted && deviceFingerprintRef.current === undefined) {
@@ -164,6 +162,7 @@ export const useAuthModal = ({
     setAuthState(prev => ({ ...prev, isLoading: true, error: undefined }));
 
     try {
+      const supabase = getSupabase();
       const { error } = authState.mode === 'signin' 
         ? await supabase.auth.signInWithPassword({ email, password })
         : await supabase.auth.signUp({ email, password });
@@ -197,9 +196,10 @@ export const useAuthModal = ({
     setAuthState(prev => ({ ...prev, isLoading: true, error: undefined }));
 
     try {
+      const supabase = getSupabase();
       // Include the current path as the redirect target after OAuth
       const currentPath = globalThis.location.pathname || '/';
-      const redirectTo = `${globalThis.location.origin}/auth/callback?redirectTo=${encodeURIComponent(currentPath)}`;
+      const redirectTo = `${globalThis.location.origin}/auth/handler?redirectTo=${encodeURIComponent(currentPath)}`;
       console.log('[OAuth Debug] Redirect URL:', redirectTo);
       console.log('[OAuth Debug] Current path:', currentPath);
       

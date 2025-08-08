@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -187,15 +187,58 @@ function LoginDivider() {
  */
 export default function LoginPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  
   // Support both 'redirectedFrom' (from middleware) and 'next' (from manual redirects)
   // Default to home page instead of admin for regular users
   const redirectTo = searchParams.get('next') ?? searchParams.get('redirectedFrom') ?? '/';
 
   // Fix hydration issues by ensuring we only run on client side
   const [mounted, setMounted] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Check if user is already logged in
+    const checkAuth = async () => {
+      try {
+        const { getSupabase } = await import('@/lib/supabase/client');
+        const supabase = getSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
+          // User is already logged in, get their profile and redirect
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          
+          // Smart role-based redirects
+          if (redirectTo === '/') {
+            // For regular login, everyone goes to homepage
+            router.push('/');
+          } else if (redirectTo.startsWith('/admin')) {
+            if (profile?.role === 'admin') {
+              router.push(redirectTo);
+            } else {
+              router.push(profile?.role === 'food_truck_owner' ? '/owner-dashboard' : '/profile');
+            }
+          } else {
+            router.push(redirectTo);
+          }
+        } else {
+          setCheckingAuth(false);
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        setCheckingAuth(false);
+      }
+    };
+    
+    checkAuth();
+  }, [redirectTo, router]);
 
   const {
     handleEmailLogin,
@@ -208,8 +251,8 @@ export default function LoginPage() {
     setPassword,
   } = useAuthHandlers(redirectTo);
 
-  // Show loading state during hydration
-  if (!mounted) {
+  // Show loading state during hydration or auth check
+  if (!mounted || checkingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
         <Card className="w-full max-w-md">
