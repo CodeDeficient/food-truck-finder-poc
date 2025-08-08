@@ -197,8 +197,11 @@ export const useAuthModal = ({
     setAuthState(prev => ({ ...prev, isLoading: true, error: undefined }));
 
     try {
-      const redirectTo = `${globalThis.location.origin}/auth/callback`;
+      // Include the current path as the redirect target after OAuth
+      const currentPath = globalThis.location.pathname || '/';
+      const redirectTo = `${globalThis.location.origin}/auth/callback?redirectTo=${encodeURIComponent(currentPath)}`;
       console.log('[OAuth Debug] Redirect URL:', redirectTo);
+      console.log('[OAuth Debug] Current path:', currentPath);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,

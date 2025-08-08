@@ -111,6 +111,8 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       await handleAuthFailure(error, identifier, requestMetadata);
+      // On error, redirect to login with error message
+      return NextResponse.redirect(`${origin}/login?error=oauth_failed`);
     } else {
       const {
         data: { user },
@@ -127,5 +129,19 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login`);
+  // Check if user is already authenticated
+  const { data: { user: existingUser } } = await supabase.auth.getUser();
+  if (existingUser) {
+    // User is already logged in, redirect them appropriately
+    return await handleSuccessfulAuth({
+      user: existingUser,
+      redirectTo,
+      origin,
+      identifier,
+      requestMetadata,
+    });
+  }
+
+  // Only redirect to login if there's no code AND no existing session
+  return NextResponse.redirect(`${origin}/login?error=no_code`);
 }
