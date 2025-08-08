@@ -1,5 +1,8 @@
 #!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Check for internal/sensitive documents FIRST
+node scripts/check-internal-docs.cjs || exit 1
+
 # Run our custom secrets scanner instead of TruffleHog to avoid false positives
 npm run scan:secrets

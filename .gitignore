@@ -34,6 +34,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Internal Business Documents - NEVER COMMIT
+.internal/
+_internal/
+.private/
+_private/
+*.confidential.*
+*.internal.*
+*.private.*
+*.sensitive.*
+
 # Prevent duplicate ESLint config files
 .eslintrc.js
 
