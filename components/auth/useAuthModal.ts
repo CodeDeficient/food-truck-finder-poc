@@ -193,17 +193,25 @@ export const useAuthModal = ({
   const handleOAuthSignIn = async (provider: Provider) => {
     if (!mounted) return;
     
+    console.log(`[OAuth Debug] Starting ${provider} sign-in`);
     setAuthState(prev => ({ ...prev, isLoading: true, error: undefined }));
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const redirectTo = `${globalThis.location.origin}/auth/callback`;
+      console.log('[OAuth Debug] Redirect URL:', redirectTo);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${globalThis.location.origin}/auth/callback`
+          redirectTo,
+          skipBrowserRedirect: false // Ensure browser redirect happens
         }
       });
 
+      console.log('[OAuth Debug] OAuth response:', { data, error });
+
       if (error) {
+        console.error('[OAuth Debug] OAuth error:', error);
         setAuthState(prev => ({
           ...prev,
           isLoading: false,
@@ -212,9 +220,17 @@ export const useAuthModal = ({
         return;
       }
 
+      // If we have a URL, the redirect should happen automatically
+      if (data?.url) {
+        console.log('[OAuth Debug] Redirecting to:', data.url);
+        // The Supabase client should handle the redirect automatically
+        // but let's log to see if it's happening
+      }
+
       // OAuth redirect will handle success
       setAuthState(prev => ({ ...prev, isLoading: false }));
-    } catch {
+    } catch (err) {
+      console.error('[OAuth Debug] Unexpected error:', err);
       setAuthState(prev => ({
         ...prev,
         isLoading: false,

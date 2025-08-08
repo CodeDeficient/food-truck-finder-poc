@@ -38,28 +38,30 @@ async function handleSuccessfulAuth({
 
   RateLimiter.recordSuccess(identifier, 'auth');
 
-  // Role-based redirects
-  switch (profile?.role) {
-    case 'admin':
-      return NextResponse.redirect(`${origin}${redirectTo.startsWith('/admin') ? redirectTo : '/admin'}`);
-    case 'food_truck_owner':
-      return NextResponse.redirect(`${origin}/owner-dashboard`);
-    case 'customer':
-      return NextResponse.redirect(`${origin}/user-dashboard`);
-    default:
-      await AuditLogger.logSecurityEvent({
-        event_type: 'permission_denied',
-        user_id: user.id,
-        user_email: user.email,
-        ip_address: requestMetadata.ip,
-        user_agent: requestMetadata.userAgent,
-        details: {
-          reason: 'insufficient_role',
-          user_role: profile?.role ?? 'none',
-        },
-        severity: 'warning',
-      });
-      return NextResponse.redirect(`${origin}/access-denied`);
+  // Smart role-based redirects
+  if (redirectTo === '/') {
+    // If coming from home page, route based on role
+    switch (profile?.role) {
+      case 'admin':
+        return NextResponse.redirect(`${origin}/admin`);
+      case 'food_truck_owner':
+        return NextResponse.redirect(`${origin}/owner-dashboard`);
+      case 'customer':
+      default:
+        return NextResponse.redirect(`${origin}/profile`);
+    }
+  } else if (redirectTo.startsWith('/admin')) {
+    // Admin routes require admin role
+    if (profile?.role === 'admin') {
+      return NextResponse.redirect(`${origin}${redirectTo}`);
+    } else {
+      // Non-admins go to their appropriate dashboard
+      return NextResponse.redirect(`${origin}${profile?.role === 'food_truck_owner' ? '/owner-dashboard' : '/profile'}`);
+    }
+  } else {
+    // For any other specific route, just redirect there
+    // The middleware will handle access control
+    return NextResponse.redirect(`${origin}${redirectTo}`);
   }
 }
 
@@ -97,7 +99,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const redirectTo = searchParams.get('redirectTo') ?? '/admin';
+  const redirectTo = searchParams.get('redirectTo') ?? '/';
 
   const requestMetadata = {
     ip: identifier.split(':')[0],

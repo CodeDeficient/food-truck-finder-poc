@@ -40,7 +40,7 @@ export function EmailFormFields({
         <Input
           id="email"
           type="email"
-          placeholder="zabrien@gmail.com"
+          placeholder="username@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

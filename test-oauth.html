@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth Test</title>
+</head>
+<body>
+    <h1>OAuth Flow Test</h1>
+    <button onclick="testOAuth()">Test Google OAuth</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testOAuth() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing OAuth...';
+            
+            try {
+                // Check if we're getting redirected
+                const currentUrl = window.location.href;
+                resultDiv.innerHTML += '<br>Current URL: ' + currentUrl;
+                
+                // Check localStorage for any auth state
+                const authState = localStorage.getItem('supabase.auth.token');
+                resultDiv.innerHTML += '<br>Auth State: ' + (authState ? 'Present' : 'Not found');
+                
+                // Try to get Supabase config
+                const supabaseUrl = 'https://ibcmwydfngsnfzdcyqxr.supabase.co';
+                const redirectUrl = window.location.origin + '/auth/callback';
+                
+                resultDiv.innerHTML += '<br>Redirect URL: ' + redirectUrl;
+                
+                // Construct OAuth URL
+                const oauthUrl = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(redirectUrl)}`;
+                resultDiv.innerHTML += '<br>OAuth URL: ' + oauthUrl;
+                
+                // Add button to test redirect
+                resultDiv.innerHTML += '<br><br><button onclick="window.location.href=\'' + oauthUrl + '\'">Try OAuth Redirect</button>';
+            } catch (error) {
+                resultDiv.innerHTML += '<br>Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

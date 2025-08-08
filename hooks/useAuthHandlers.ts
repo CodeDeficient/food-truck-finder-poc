@@ -77,19 +77,9 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
             throw profileError;
           }
 
-          // Role-based redirects
-          if (redirectTo.startsWith('/admin')) {
-            // Admin routes require admin role
-            if (profile?.role === 'admin') {
-              router.push(redirectTo);
-            } else {
-              router.push('/access-denied');
-            }
-          } else if (redirectTo.startsWith('/profile') || redirectTo.startsWith('/favorites')) {
-            // User routes - any authenticated user can access
-            router.push(redirectTo);
-          } else {
-            // Default role-based redirects
+          // Smart role-based redirects
+          if (redirectTo === '/') {
+            // If coming from home page, route based on role
             switch (profile?.role) {
               case 'admin':
                 router.push('/admin');
@@ -98,11 +88,22 @@ export function useAuthHandlers(redirectTo: string): UseAuthHandlersReturn {
                 router.push('/owner-dashboard');
                 break;
               case 'customer':
+              default:
                 router.push('/profile');
                 break;
-              default:
-                router.push('/profile'); // Default to profile for any authenticated user
             }
+          } else if (redirectTo.startsWith('/admin')) {
+            // Admin routes require admin role
+            if (profile?.role === 'admin') {
+              router.push(redirectTo);
+            } else {
+              // Non-admins go to their appropriate dashboard
+              router.push(profile?.role === 'food_truck_owner' ? '/owner-dashboard' : '/profile');
+            }
+          } else {
+            // For any other specific route, just redirect there
+            // The middleware will handle access control
+            router.push(redirectTo);
           }
         }
       } catch (error_: unknown) {
