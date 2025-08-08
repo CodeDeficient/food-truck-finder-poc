@@ -15,7 +15,7 @@ if (!(Test-Path "bfg-1.15.0.jar")) {
 Write-Host "`nThis will remove the following from git history:" -ForegroundColor Yellow
 Write-Host "- All files matching patterns: *STRATEGY*, *PLAN*, *ANALYSIS*, *AUDIT*" -ForegroundColor White
 Write-Host "- All files matching: *Gemini*, *work-for-*, *prompt-*, *advisor*, *scratchpad*" -ForegroundColor White
-Write-Host "- Directories: .clinerules/, staging/, reports/, jscpd-report/" -ForegroundColor White
+Write-Host "- Directories: staging/, reports/, jscpd-report/" -ForegroundColor White
 Write-Host "- Specific sensitive files from root" -ForegroundColor White
 
 Write-Host "`n⚠️ WARNING: This will rewrite git history!" -ForegroundColor Red
@@ -55,8 +55,7 @@ java -jar bfg-1.15.0.jar --delete-files "*SUBTASKS*.md" .
 java -jar bfg-1.15.0.jar --delete-files "README-GitMeta.md" .
 java -jar bfg-1.15.0.jar --delete-files "README-InvokeGitSafe.md" .
 
-# Remove directories
-java -jar bfg-1.15.0.jar --delete-folders ".clinerules" .
+# Remove directories (NOT .clinerules - it stays but is gitignored)
 java -jar bfg-1.15.0.jar --delete-folders "staging" .
 java -jar bfg-1.15.0.jar --delete-folders "reports" .
 java -jar bfg-1.15.0.jar --delete-folders "jscpd-report" .

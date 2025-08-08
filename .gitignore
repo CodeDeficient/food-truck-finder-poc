@@ -46,6 +46,7 @@ next-env.d.ts
 # AI Assistant / Tooling
 .claude-thoughts/
 .DS_Store
+.clinerules/
 
 # Temporary files
 *.tmp
