@@ -1,0 +1,193 @@
+# Gitignore for Public Repository
+# This file defines what should be excluded when creating the public version of the repository
+
+# Core exclusions from original .gitignore
+# =========================================
+
+# Dependencies
+/node_modules
+bfg-1.15.0.jar
+
+# Security tools (large binaries)
+trufflehog.exe
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment files - CRITICAL TO EXCLUDE
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prevent duplicate ESLint config files
+.eslintrc.js
+
+# IDE / Editor specific
+.vscode/
+.idea/
+*.swp
+*~
+
+# AI Assistant / Tooling
+.claude-thoughts/
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+**/*.ts.backup
+**/*.tsx.backup
+*.png
+
+# Log files
+*.log
+logs/
+
+# Test reports
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Local artifacts
+*.patch
+*.diff
+
+# JSON analysis/baseline files
+*-baseline.json
+comparison-logic-baseline.json
+eslint-config-baseline.json
+lib/supabase-baseline.json
+lib/types-baseline.json
+lint-results.json
+lint-results-focused.json
+lint-analysis.json
+error-analysis.json
+strict-boolean-errors.json
+app/admin/page-baseline.json
+app/auth/callback/route-baseline.json
+
+# Specific files to ignore
+components/map/DebugOverlay.tsx
+errors/mapcontainer-already-initialized.md
+test-lint.ts
+/errors/
+
+# INTERNAL DOCUMENTATION & RESEARCH - CRITICAL EXCLUSIONS
+# =========================================================
+
+# Entire .internal directory and all its contents
+.internal/
+.internal/**/*
+.internal/**/.*
+
+# Specifically exclude internal documentation
+.internal/docs/
+.internal/docs/**/*
+.internal/docs/research/
+.internal/docs/research/**/*
+
+# Security-sensitive documentation
+**/SECRET_*.md
+**/SECURITY_*.md
+**/*_AUDIT.md
+**/*_KEYS.md
+**/*_CREDENTIALS.md
+
+# Business-sensitive documentation
+**/PROFIT*.md
+**/COMPETITOR*.md
+**/PRICING*.md
+**/REVENUE*.md
+**/COST*.md
+**/FINANCIAL*.md
+
+# Implementation details that should remain private
+**/INTERNAL_*.md
+**/TODO_*.md
+**/WORK_TRACKER*.md
+**/CURRENT_WORK*.md
+
+# Git cleanup and security-related files
+git-cleanup-temp/
+*-cleaned/
+*.jar
+trufflehog*
+bfg*
+
+# Backup files
+**/*.backup
+**/*.old
+**/*.orig
+
+# Local development databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Sensitive configuration
+firebase.json
+firebase.config.json
+serviceAccountKey.json
+
+# Analytics and tracking
+*analytics*.json
+*tracking*.json
+*telemetry*.json
+
+# Build artifacts that may contain sensitive info
+dist/**/*.map
+build/**/*.map
+
+# Error reports that might expose system details
+*error-report*.json
+*crash-report*.json
+*exception*.log
+
+# Any files with 'private' or 'secret' in the name
+*private*
+*secret*
+*confidential*
+
+# Exclude any local notes or planning documents
+NOTES.md
+notes.md
+planning.md
+draft*.md
+
+# Exclude any deployment-specific configurations
+deploy.json
+deployment-config.json
+infrastructure.json
+
+# Exclude performance benchmarks and internal metrics
+*benchmark*.json
+*performance*.json
+*metrics*.json
+
+# Exclude internal API documentation that might reveal architecture
+api-internal.md
+internal-api.md
+system-design.md
+architecture-internal.md
