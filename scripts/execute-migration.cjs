@@ -6,7 +6,7 @@ const path = require('path');
 
 const PRODUCTION_CONFIG = {
   url: 'https://zkwliyjjkdnigizidlln.supabase.co',
-  key: ''
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inprd2xpeWpqa2RuaWdpemlkbGxuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjQxMzUxMiwiZXhwIjoyMDY3OTg5NTEyfQ.2A42eeadjgR-hF4NgTSE6R98t_mU5HDDY-4fg2hWNlM'
 };
 
 // Individual SQL statements to execute

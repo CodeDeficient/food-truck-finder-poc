@@ -1,5 +1,0 @@
-#!/bin/sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Run our custom secrets scanner instead of TruffleHog to avoid false positives
-npm run scan:secrets

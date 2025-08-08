@@ -4,9 +4,6 @@
 /node_modules
 bfg-1.15.0.jar
 
-# Security tools (large binaries)
-trufflehog.exe
-
 # next.js
 /.next/
 /out/
@@ -46,7 +43,6 @@ next-env.d.ts
 # AI Assistant / Tooling
 .claude-thoughts/
 .DS_Store
-.clinerules/
 
 # Temporary files
 *.tmp
@@ -91,3 +87,7 @@ errors/mapcontainer-already-initialized.md
 test-lint.ts
 /errors/
 .env*.local
+
+# Internal sensitive documentation
+.internal/
+.internal/**
