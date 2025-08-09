@@ -9,7 +9,6 @@
 
 A modern, full-stack web application built with **professional-grade architecture** and **enterprise development standards**. Features an AI-powered data pipeline, comprehensive admin dashboard, and real-time food truck discovery capabilities.
 
-**Built with Zero Trust Development Protocol** - Every code change verified through systematic quality gates to ensure production stability.
 
 ## Key Technologies
 
