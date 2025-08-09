@@ -184,7 +184,7 @@ This project is licensed under the **[Business Source License 1.1](LICENSE)**.
 
 See the [LICENSE](LICENSE) file for complete terms and commercial use definitions.
 
-**Commercial licensing:** user@example.com
+**Commercial licensing:** @NFTMedi on X
 
 ---
 
